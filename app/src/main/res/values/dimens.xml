@@ -6,4 +6,20 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="text_size_display_4">112sp</dimen>
+    <dimen name="text_size_display_3">56sp</dimen>
+    <dimen name="text_size_display_2">45sp</dimen>
+    <dimen name="text_size_display_1">34sp</dimen>
+    <dimen name="text_size_headline">24sp</dimen>
+    <dimen name="text_size_title">21sp</dimen>
+    <dimen name="text_size_body_2">15sp</dimen>
+    <dimen name="text_size_body_1">15sp</dimen>
+    <dimen name="text_size_caption">13sp</dimen>
+    <dimen name="text_size_button">15sp</dimen>
+
+    <dimen name="margin_outline">16dp</dimen>
+    <dimen name="margin_content_from_screen">72dp</dimen>
+
+    <dimen name="icon_size_list">40dp</dimen>
 </resources>

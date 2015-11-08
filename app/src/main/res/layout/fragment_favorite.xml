@@ -6,7 +6,7 @@
     tools:context=".fragments.FavoriteFragment">
 
     <ListView
-        android:id="@id/android:list"
+        android:id="@+id/list_bookmark_favorite"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
