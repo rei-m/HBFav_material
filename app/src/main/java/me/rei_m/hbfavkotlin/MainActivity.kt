@@ -9,9 +9,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import me.rei_m.hbfavkotlin.fragments.FavoriteFragment
 
-public class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
+import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
+import me.rei_m.hbfavkotlin.fragments.FavoriteFragment
+import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.utils.*
+
+public class MainActivity : AppCompatActivity(),
+        NavigationView.OnNavigationItemSelectedListener,
+        FavoriteFragment.OnFragmentInteractionListener,
+        BookmarkFragment.OnFragmentInteractionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +28,12 @@ public class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         setSupportActionBar(toolbar)
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        val toggle = ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this,
+                drawer,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
+
         drawer.setDrawerListener(toggle)
         toggle.syncState()
 
@@ -29,10 +41,7 @@ public class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.container, FavoriteFragment.newInstance())
-                    .commit();
+            setFragment(FavoriteFragment.newInstance())
         }
     }
 
@@ -87,5 +96,13 @@ public class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onClickFavoriteItem(bookmark: Bookmark) {
+        replaceFragment(BookmarkFragment.newInstance(bookmark))
+    }
+
+    override fun onClickBookmark(bookmark: Bookmark) {
+        replaceFragment(BookmarkWebViewFragment.newInstance(bookmark))
     }
 }

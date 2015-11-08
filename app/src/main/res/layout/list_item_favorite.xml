@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<me.rei_m.hbfavkotlin.views.widgets.list.FavoriteItemLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_user_icon"
+        android:layout_width="@dimen/icon_size_list"
+        android:layout_height="@dimen/icon_size_list"
+        android:layout_margin="@dimen/margin_outline"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin_outline"
+        />
+
+    <include layout="@layout/layout_bookmark"
+        android:id="@+id/layout_bookmark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_user_name"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginBottom="@dimen/margin_outline"
+        />
+
+</me.rei_m.hbfavkotlin.views.widgets.list.FavoriteItemLayout>

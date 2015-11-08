@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.BookmarkFragment">
+
+    <include layout="@layout/layout_bookmark_header"
+        android:id="@+id/layout_bookmark_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <include layout="@layout/layout_bookmark"
+        android:id="@+id/layout_bookmark"
+        android:layout_below="@id/layout_bookmark_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        />
+
+    <include layout="@layout/layout_article"
+        android:id="@+id/layout_article"
+        android:layout_below="@id/layout_bookmark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        />
+
+</RelativeLayout>
