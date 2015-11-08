@@ -52,4 +52,9 @@ class BookmarkLayout : RelativeLayout {
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
     }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        super.setOnClickListener(l)
+        setBackgroundResource(R.drawable.bg_layout_pressed)
+    }
 }
