@@ -1,7 +1,9 @@
 package me.rei_m.hbfavkotlin.utils
 
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+
 import me.rei_m.hbfavkotlin.R
 
 fun AppCompatActivity.setFragment(fragment: Fragment,
@@ -16,6 +18,7 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment,
                                       containerId: Int = R.id.content) {
     supportFragmentManager
             .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .replace(containerId, fragment)
             .addToBackStack(null)
             .commit();

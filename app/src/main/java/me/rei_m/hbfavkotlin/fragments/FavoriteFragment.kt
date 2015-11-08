@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
@@ -20,13 +21,15 @@ import me.rei_m.hbfavkotlin.models.Bookmark
 import me.rei_m.hbfavkotlin.network.BookmarkFavorite
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkAdapter
 
-public class FavoriteFragment : Fragment() {
+public class FavoriteFragment : Fragment(), FragmentAnimationI {
 
     private var mListener: OnFragmentInteractionListener? = null
 
     private var mSubscription: Subscription? = null
 
     private var mAdapter: BookmarkAdapter? = null
+
+    override var mContainerWidth: Float = 0.0f
 
     companion object {
 
@@ -46,7 +49,7 @@ public class FavoriteFragment : Fragment() {
 
         val listView = view.findViewById(R.id.list_bookmark_favorite) as ListView
 
-        val footerView = inflater.inflate(R.layout.list_fotter_loading, null, false)
+        val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
 
         listView.addFooterView(footerView, null, false)
 
@@ -77,12 +80,19 @@ public class FavoriteFragment : Fragment() {
             drawFavoriteList()
         }
 
+        setContainer(container!!)
+
         return view
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         mSubscription?.unsubscribe()
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
+        return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     private fun drawFavoriteList(startIndex: Int = 0){
