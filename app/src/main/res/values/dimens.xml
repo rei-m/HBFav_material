@@ -18,8 +18,12 @@
     <dimen name="text_size_caption">13sp</dimen>
     <dimen name="text_size_button">15sp</dimen>
 
+    <dimen name="margin_half">4dp</dimen>
+    <dimen name="margin">8dp</dimen>
     <dimen name="margin_outline">16dp</dimen>
     <dimen name="margin_content_from_screen">72dp</dimen>
 
     <dimen name="icon_size_list">40dp</dimen>
+    <dimen name="icon_size_article">15dp</dimen>
+    <dimen name="image_size_article">56dp</dimen>
 </resources>

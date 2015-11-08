@@ -37,6 +37,7 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-support-v4-kotlin:$rx_android_kotlin_version"
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7-kotlin:$rx_android_kotlin_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'org.jsoup:jsoup:1.8.3'
 }
 buildscript {
     ext.kotlin_version = '1.0.0-beta-1103'

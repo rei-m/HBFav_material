@@ -1,28 +1,32 @@
 package me.rei_m.hbfavkotlin.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.AdapterView
 import android.widget.ListView
-
-import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
-import me.rei_m.hbfavkotlin.network.BookmarkFavorite
-import me.rei_m.hbfavkotlin.views.adapters.BookmarkAdaptor
 
 import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
+import me.rei_m.hbfavkotlin.R
+import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.network.BookmarkFavorite
+import me.rei_m.hbfavkotlin.views.adapters.BookmarkAdapter
+
 public class FavoriteFragment : Fragment() {
+
+    private var mListener: OnFragmentInteractionListener? = null
 
     private var mSubscription: Subscription? = null
 
-    private var mAdaptor: BookmarkAdaptor? = null
+    private var mAdapter: BookmarkAdapter? = null
 
     companion object {
 
@@ -33,7 +37,7 @@ public class FavoriteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAdaptor = BookmarkAdaptor(activity, R.layout.list_item_bookmark)
+        mAdapter = BookmarkAdapter(activity, R.layout.list_item_favorite)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,7 +55,7 @@ public class FavoriteFragment : Fragment() {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     if(!BookmarkFavorite.isLoading){
-                        drawFavoriteList(mAdaptor!!.nextIndex)
+                        drawFavoriteList(mAdapter!!.nextIndex)
                     }
                 }
             }
@@ -61,9 +65,17 @@ public class FavoriteFragment : Fragment() {
             }
         })
 
-        listView.adapter = mAdaptor
+        listView.onItemClickListener = object : AdapterView.OnItemClickListener {
+            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                mListener?.onClickFavoriteItem(parent?.adapter?.getItem(position) as Bookmark)
+            }
+        }
 
-        drawFavoriteList()
+        listView.adapter = mAdapter
+
+        if(mAdapter?.count!! === 0){
+            drawFavoriteList()
+        }
 
         return view
     }
@@ -78,11 +90,11 @@ public class FavoriteFragment : Fragment() {
         // Observerを作成
         val observer = object : Observer<Bookmark>{
             override fun onNext(t: Bookmark?) {
-                mAdaptor?.add(t)
+                mAdapter?.add(t)
             }
 
             override fun onCompleted() {
-                mAdaptor?.notifyDataSetChanged()
+                mAdapter?.notifyDataSetChanged()
             }
 
             override fun onError(e: Throwable?) {
@@ -102,4 +114,21 @@ public class FavoriteFragment : Fragment() {
         mSubscription = observable.subscribe(observer)
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try {
+            mListener = activity as OnFragmentInteractionListener;
+        } catch (e: ClassCastException) {
+            throw ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mListener = null
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onClickFavoriteItem(bookmark: Bookmark)
+    }
 }

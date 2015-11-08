@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_article_body_image"
+        android:layout_width="@dimen/image_size_article"
+        android:layout_height="@dimen/image_size_article"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/margin_half"
+        android:layout_marginEnd="@dimen/margin_half"
+        android:layout_marginLeft="@dimen/margin_half"
+        android:layout_marginStart="@dimen/margin_half"
+        android:layout_marginTop="@dimen/margin"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_article_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_toStartOf="@id/image_article_body_image"
+        android:layout_toLeftOf="@id/image_article_body_image"
+        android:minHeight="@dimen/image_size_article"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_article_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_article_body"
+        android:layout_marginTop="@dimen/margin"
+        />
+
+</me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout>

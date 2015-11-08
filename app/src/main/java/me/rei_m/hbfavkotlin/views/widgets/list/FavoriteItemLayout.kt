@@ -10,15 +10,16 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
-class BookmarkItemLayout : RelativeLayout {
+class FavoriteItemLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder {
-            var title: AppCompatTextView? = null
             var name: AppCompatTextView? = null
             var iconImage: AppCompatImageView? = null
+            var bookmarkLayout: BookmarkLayout? = null
         }
     }
 
@@ -33,19 +34,19 @@ class BookmarkItemLayout : RelativeLayout {
     override fun onFinishInflate() {
         super.onFinishInflate()
         val holder = ViewHolder()
-        holder.title = findViewById(R.id.text_bookmark_title) as AppCompatTextView
         holder.name = findViewById(R.id.text_user_name) as AppCompatTextView
         holder.iconImage = findViewById(R.id.image_user_icon) as AppCompatImageView
+        holder.bookmarkLayout = findViewById(R.id.layout_bookmark) as BookmarkLayout
         tag = holder
     }
 
     fun bindView(bookmark: Bookmark) {
         val holder = tag as ViewHolder
-        holder.title?.text = bookmark.title
         holder.name?.text = bookmark.creator
         Picasso.with(context)
-                .load(bookmark.iconUrl)
+                .load(bookmark.bookmarkIconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
+        holder.bookmarkLayout?.bindView(bookmark)
     }
 }

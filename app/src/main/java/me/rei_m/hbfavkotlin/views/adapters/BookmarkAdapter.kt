@@ -7,16 +7,16 @@ import android.widget.ArrayAdapter
 
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.models.Bookmark
-import me.rei_m.hbfavkotlin.views.widgets.list.BookmarkItemLayout
+import me.rei_m.hbfavkotlin.views.widgets.list.FavoriteItemLayout
 
-public class BookmarkAdaptor constructor(context: Context, resource: Int) :
+public class BookmarkAdapter constructor(context: Context, resource: Int) :
         ArrayAdapter<Bookmark>(context, resource){
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView ?: View.inflate(context, R.layout.list_item_bookmark, null)
+        val view = convertView ?: View.inflate(context, R.layout.list_item_favorite, null)
 
-        (view as BookmarkItemLayout).bindView(getItem(position))
+        (view as FavoriteItemLayout).bindView(getItem(position))
 
         return view
     }
