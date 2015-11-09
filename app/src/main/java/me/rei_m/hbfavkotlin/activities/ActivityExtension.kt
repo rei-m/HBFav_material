@@ -1,4 +1,4 @@
-package me.rei_m.hbfavkotlin.utils
+package me.rei_m.hbfavkotlin.activities
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction

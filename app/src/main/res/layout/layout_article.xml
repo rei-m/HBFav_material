@@ -35,4 +35,12 @@
         android:layout_marginTop="@dimen/margin"
         />
 
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_add_bookmark_timing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_article_url"
+        android:layout_marginTop="@dimen/margin"
+        />
+
 </me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout>

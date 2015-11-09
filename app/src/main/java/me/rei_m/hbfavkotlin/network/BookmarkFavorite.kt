@@ -17,6 +17,8 @@ import org.jsoup.nodes.Document
 import org.w3c.dom.Node
 
 import me.rei_m.hbfavkotlin.models.Bookmark
+import java.text.SimpleDateFormat
+import java.util.*
 
 public final class BookmarkFavorite private constructor() {
 
@@ -24,6 +26,8 @@ public final class BookmarkFavorite private constructor() {
 
         public var isLoading = false
             private set
+
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
         public fun request(startIndex: Int): Observable<Bookmark> {
 
@@ -77,7 +81,7 @@ public final class BookmarkFavorite private constructor() {
             var link = ""
             var description = ""
             var creator = ""
-            var date = ""
+            var date: Date? = null
             var bookmarkCount = 0
             var content = ""
 
@@ -93,7 +97,7 @@ public final class BookmarkFavorite private constructor() {
                     "dc:creator" ->
                         creator = feedItem.textContent
                     "dc:date" ->
-                        date = feedItem.textContent
+                        date = dateFormat.parse(feedItem.textContent)
                     "hatena:bookmarkcount" ->
                         bookmarkCount = feedItem.textContent.toInt()
                     "content:encoded" ->
@@ -108,7 +112,7 @@ public final class BookmarkFavorite private constructor() {
                     link,
                     description,
                     creator,
-                    date,
+                    date!!,
                     bookmarkCount,
                     extractProfileIcon(parsedContent),
                     extractArticleIcon(parsedContent),
@@ -129,10 +133,11 @@ public final class BookmarkFavorite private constructor() {
                 .first()
                 .attr("src")
 
-        private fun extractArticleBody(content: Document): String = content
-                .getElementsByTag("p")
-                .eq(1)
-                .text()
+        private fun extractArticleBody(content: Document): String {
+            val pTags = content.getElementsByTag("p")
+            val bodyIndex = pTags.size - 2
+            return pTags.eq(bodyIndex - 1).text()
+        }
 
         private fun extractArticleImageUrl(content: Document): String {
             val articleImageElement = content

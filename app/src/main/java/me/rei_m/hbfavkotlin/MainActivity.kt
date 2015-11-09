@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import me.rei_m.hbfavkotlin.activities.replaceFragment
+import me.rei_m.hbfavkotlin.activities.setFragment
 
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
