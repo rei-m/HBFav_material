@@ -14,13 +14,25 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text_user_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_content_from_screen"
         android:layout_marginStart="@dimen/margin_content_from_screen"
         android:layout_marginRight="@dimen/margin_outline"
         android:layout_marginEnd="@dimen/margin_outline"
         android:layout_marginTop="@dimen/margin_outline"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_add_bookmark_timing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_outline"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:textSize="@dimen/text_size_caption"
         />
 
     <include layout="@layout/layout_bookmark"
