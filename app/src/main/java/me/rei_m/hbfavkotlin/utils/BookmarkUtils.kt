@@ -4,10 +4,11 @@ import java.util.*
 
 class BookmarkUtils private constructor() {
     companion object {
-        fun getAddBookmarkTimeString(bookmarkAddedDatetime: Date): String {
-            val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
+        fun getAddBookmarkTimeString(bookmarkAddedDatetime: Date,
+                                     cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time
+        ): String {
 
-            val diffSec = cal.time.time - bookmarkAddedDatetime.time / 1000
+            val diffSec = (cal.time - bookmarkAddedDatetime.time) / 1000
 
             if(diffSec < 60) {
                 return "${diffSec.toString()}秒前"
@@ -41,15 +42,20 @@ class BookmarkUtils private constructor() {
                 return "${diffWeek.toString()}週間前"
             }
 
-            // 先月
-
-            // ヶ月前
+            val diffMonth = diffDay / 30
+            if(diffMonth.toInt() == 1) {
+                return "先月"
+            } else if(diffMonth < 12) {
+                return "${diffMonth.toString()}ヶ月前"
+            }
 
             // 昨年
-
-            // 年前
-
-            return diffSec.toString()
+            val diffYear = diffMonth / 12
+            if(diffYear.toInt() == 1) {
+                return "昨年"
+            } else {
+                return "${diffYear.toString()}年前"
+            }
         }
     }
 }

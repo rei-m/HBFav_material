@@ -10,7 +10,6 @@ import com.squareup.picasso.Picasso
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.models.Bookmark
 import me.rei_m.hbfavkotlin.utils.BookmarkUtils
-import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
 class ArticleLayout : RelativeLayout {
 
@@ -19,6 +18,7 @@ class ArticleLayout : RelativeLayout {
             var body: AppCompatTextView? = null
             var image: AppCompatImageView? = null
             var link: AppCompatTextView? = null
+            var timing: AppCompatTextView? = null
         }
     }
 
@@ -36,6 +36,7 @@ class ArticleLayout : RelativeLayout {
         holder.body = findViewById(R.id.text_article_body) as AppCompatTextView
         holder.image = findViewById(R.id.image_article_body_image) as AppCompatImageView
         holder.link = findViewById(R.id.text_article_url) as AppCompatTextView
+        holder.timing = findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView
         tag = holder
     }
 
@@ -51,6 +52,6 @@ class ArticleLayout : RelativeLayout {
                     .into(holder.image)
         }
         holder.link?.text = bookmark.link
-        BookmarkUtils.getAddBookmarkTimeString(bookmark.date)
+        holder.timing?.text = BookmarkUtils.getAddBookmarkTimeString(bookmark.date)
     }
 }
