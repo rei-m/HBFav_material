@@ -1,33 +1,43 @@
-package me.rei_m.hbfavkotlin
+package me.rei_m.hbfavkotlin.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.FrameLayout
-import me.rei_m.hbfavkotlin.activities.BookmarkActivity
-import me.rei_m.hbfavkotlin.activities.replaceFragment
-import me.rei_m.hbfavkotlin.activities.setFragment
-
+import android.view.View
+import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
-import me.rei_m.hbfavkotlin.fragments.FavoriteFragment
 import me.rei_m.hbfavkotlin.models.Bookmark
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
-public class MainActivity : AppCompatActivity(),
+public class BookmarkActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener,
-        FavoriteFragment.OnFragmentInteractionListener {
+        BookmarkFragment.OnFragmentInteractionListener {
+
+    companion object {
+
+        private val ARG_BOOKMARK = "ARG_BOOKMARK"
+
+        public fun createIntent(context: Context, bookmark: Bookmark): Intent {
+            val intent = Intent(context, BookmarkActivity::class.java)
+            intent.putExtra(ARG_BOOKMARK, bookmark)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
@@ -45,38 +55,17 @@ public class MainActivity : AppCompatActivity(),
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            val pager = findViewById(R.id.pager) as ViewPager
-            pager.adapter = BookmarkPagerAdaptor(supportFragmentManager)
-        }
-    }
-
-    override fun onBackPressed() {
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true
+            val bookmark = intent.getSerializableExtra(ARG_BOOKMARK) as Bookmark
+            setFragment(BookmarkFragment.newInstance(bookmark))
         }
 
-        return super.onOptionsItemSelected(item)
+//        val fab = findViewById(R.id.fab) as FloatingActionButton
+//        fab.setOnClickListener(object : View.OnClickListener {
+//            override fun onClick(view: View) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+//            }
+//        })
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -103,8 +92,7 @@ public class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onClickFavoriteItem(bookmark: Bookmark) {
-//        replaceFragment(BookmarkFragment.newInstance(bookmark))
-        startActivity(BookmarkActivity.createIntent(this, bookmark))
+    override fun onClickBookmark(bookmark: Bookmark) {
+        replaceFragment(BookmarkWebViewFragment.newInstance(bookmark))
     }
 }

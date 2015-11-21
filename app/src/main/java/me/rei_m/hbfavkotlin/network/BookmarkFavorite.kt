@@ -10,7 +10,7 @@ import com.squareup.okhttp.Request
 import rx.Observable
 import rx.Subscriber
 
-import kotlin.dom.parseXml
+import kotlinx.dom.parseXml
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
