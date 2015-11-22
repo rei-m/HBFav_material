@@ -3,6 +3,7 @@ package me.rei_m.hbfavkotlin
 import android.app.Application
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
+import me.rei_m.hbfavkotlin.models.BookmarkOwnModel
 
 public class App : Application() {
 
@@ -13,5 +14,6 @@ public class App : Application() {
 
         // ModelLocatorにModelの参照を登録
         ModelLocator.register(ModelLocator.Companion.Tag.FAVORITE, BookmarkFavoriteModel());
+        ModelLocator.register(ModelLocator.Companion.Tag.OWN, BookmarkOwnModel());
     }
 }

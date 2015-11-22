@@ -9,6 +9,7 @@ public class ModelLocator private constructor() {
 
         public enum class Tag {
             FAVORITE,
+            OWN,
         }
 
         public fun register(tag: Tag, model: Any): Unit {

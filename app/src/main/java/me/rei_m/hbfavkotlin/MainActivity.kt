@@ -10,14 +10,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.activities.BookmarkActivity
-import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.fragments.FavoriteFragment
+import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
+import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
 public class MainActivity : AppCompatActivity(),
-        NavigationView.OnNavigationItemSelectedListener,
-        FavoriteFragment.OnFragmentInteractionListener {
+        NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +42,20 @@ public class MainActivity : AppCompatActivity(),
             val pager = findViewById(R.id.pager) as ViewPager
             pager.adapter = BookmarkPagerAdaptor(supportFragmentManager)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // EventBus登録
+        EventBusHolder.EVENT_BUS.register(this);
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // EventBus登録解除
+        EventBusHolder.EVENT_BUS.unregister(this);
     }
 
     override fun onBackPressed() {
@@ -97,8 +111,10 @@ public class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onClickFavoriteItem(bookmarkEntity: BookmarkEntity) {
-        //        replaceFragment(BookmarkFragment.newInstance(bookmark))
-        startActivity(BookmarkActivity.createIntent(this, bookmarkEntity))
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkListClick(event: BookmarkListClickEvent) {
+        println("hogehoge")
+        startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }
