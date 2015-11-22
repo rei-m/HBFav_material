@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import me.rei_m.hbfavkotlin.fragments.BookmarkFavoriteFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkOwnFragment
+import me.rei_m.hbfavkotlin.fragments.HotEntryFragment
 
 class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
@@ -12,7 +13,7 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
         return when (position) {
             0 -> BookmarkFavoriteFragment.newInstance()
             1 -> BookmarkOwnFragment.newInstance()
-            2 -> BookmarkFavoriteFragment.newInstance()
+            2 -> HotEntryFragment.newInstance()
             3 -> BookmarkFavoriteFragment.newInstance()
             else -> null
         }

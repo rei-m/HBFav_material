@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<me.rei_m.hbfavkotlin.views.widgets.list.EntryItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_article_body_image"
+        android:layout_width="@dimen/image_size_article"
+        android:layout_height="@dimen/image_size_article"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginLeft="@dimen/margin_half"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginStart="@dimen/margin_half"
+        android:layout_marginTop="@dimen/margin_outline" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_article_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginStart="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin_outline"
+        android:layout_toLeftOf="@id/image_article_body_image"
+        android:layout_toStartOf="@id/image_article_body_image"
+        android:minHeight="@dimen/image_size_article" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_article_icon"
+        android:layout_width="@dimen/icon_size_article"
+        android:layout_height="@dimen/icon_size_article"
+        android:layout_below="@id/text_article_title"
+        android:layout_marginEnd="@dimen/margin_half"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_half"
+        android:layout_marginStart="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_article_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_article_title"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_toEndOf="@id/image_article_icon"
+        android:layout_toRightOf="@id/image_article_icon" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_entry_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_article_url"
+        android:layout_marginBottom="@dimen/margin_outline"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/image_article_icon"
+        android:layout_toRightOf="@id/image_article_icon" />
+
+</me.rei_m.hbfavkotlin.views.widgets.list.EntryItemLayout>

@@ -14,11 +14,9 @@ import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 class BookmarkLayout : RelativeLayout {
 
     companion object {
-        private class ViewHolder {
-            var description: AppCompatTextView? = null
-            var title: AppCompatTextView? = null
-            var iconImage: AppCompatImageView? = null
-        }
+        private class ViewHolder(val description: AppCompatTextView,
+                                 val title: AppCompatTextView,
+                                 val iconImage: AppCompatImageView)
     }
 
     constructor(context: Context?) : super(context)
@@ -31,22 +29,20 @@ class BookmarkLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        val holder = ViewHolder()
-        holder.description = findViewById(R.id.text_bookmark_description) as AppCompatTextView
-        holder.title = findViewById(R.id.text_bookmark_title) as AppCompatTextView
-        holder.iconImage = findViewById(R.id.image_article_icon) as AppCompatImageView
-        tag = holder
+        tag = ViewHolder(findViewById(R.id.text_bookmark_description) as AppCompatTextView,
+                findViewById(R.id.text_bookmark_title) as AppCompatTextView,
+                findViewById(R.id.image_article_icon) as AppCompatImageView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        if(bookmarkEntity.description.isEmpty()) {
-            holder.description?.visibility = GONE
+        if (bookmarkEntity.description.isEmpty()) {
+            holder.description.visibility = GONE
         } else {
-            holder.description?.visibility = VISIBLE
-            holder.description?.text = bookmarkEntity.description
+            holder.description.visibility = VISIBLE
+            holder.description.text = bookmarkEntity.description
         }
-        holder.title?.text = bookmarkEntity.title
+        holder.title.text = bookmarkEntity.title
         Picasso.with(context)
                 .load(bookmarkEntity.articleIconUrl)
                 .transform(RoundedTransformation())

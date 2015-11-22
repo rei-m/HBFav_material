@@ -14,10 +14,8 @@ import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 class BookmarkHeaderLayout : RelativeLayout {
 
     companion object {
-        private class ViewHolder {
-            var name: AppCompatTextView? = null
-            var iconImage: AppCompatImageView? = null
-        }
+        private class ViewHolder(val name: AppCompatTextView,
+                                 val iconImage: AppCompatImageView)
     }
 
     constructor(context: Context?) : super(context)
@@ -30,15 +28,13 @@ class BookmarkHeaderLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        val holder = ViewHolder()
-        holder.name = findViewById(R.id.text_user_name) as AppCompatTextView
-        holder.iconImage = findViewById(R.id.image_user_icon) as AppCompatImageView
-        tag = holder
+        tag = ViewHolder(findViewById(R.id.text_user_name) as AppCompatTextView,
+                findViewById(R.id.image_user_icon) as AppCompatImageView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.name?.text = bookmarkEntity.creator
+        holder.name.text = bookmarkEntity.creator
         Picasso.with(context)
                 .load(bookmarkEntity.bookmarkIconUrl)
                 .transform(RoundedTransformation())

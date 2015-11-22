@@ -5,24 +5,25 @@ import com.squareup.okhttp.HttpUrl
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.dom.parseXml
-import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.entities.EntryEntity
 import me.rei_m.hbfavkotlin.utils.RssXmlUtils
 import rx.Observable
 import java.net.HttpURLConnection
 
-public final class BookmarkFavoriteRss private constructor() {
+public final class HotEntryRss private constructor() {
 
     companion object {
 
-        public fun request(startIndex: Int = 0): Observable<BookmarkEntity> {
+        public fun request(startIndex: Int = 0): Observable<EntryEntity> {
 
             return Observable.create({ t ->
 
                 val url = HttpUrl.Builder()
                         .scheme("http")
-                        .host("b.hatena.ne.jp")
-                        .addPathSegment("Rei19")
-                        .addPathSegment("favorite.rss")
+                        .host("feeds.feedburner.com")
+                        .addPathSegment("hatena")
+                        .addPathSegment("b")
+                        .addPathSegment("hotentry")
                         .addQueryParameter("of", startIndex.toString())
                         .build()
 
@@ -42,7 +43,7 @@ public final class BookmarkFavoriteRss private constructor() {
                     val feedCount = feeds.length
 
                     for (i_feed in 0..feedCount - 1) {
-                        t.onNext(RssXmlUtils.createBookmarkFromFeed(feeds.item(i_feed)))
+                        t.onNext(RssXmlUtils.createEntryFromFeed(feeds.item(i_feed)))
                     }
 
                 } else {

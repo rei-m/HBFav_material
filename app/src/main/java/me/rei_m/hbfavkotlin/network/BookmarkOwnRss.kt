@@ -6,7 +6,7 @@ import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.utils.BookmarkXmlUtils
+import me.rei_m.hbfavkotlin.utils.RssXmlUtils
 import rx.Observable
 import java.net.HttpURLConnection
 
@@ -42,7 +42,7 @@ public final class BookmarkOwnRss private constructor() {
                     val feedCount = feeds.length
 
                     for (i_feed in 0..feedCount - 1) {
-                        t.onNext(BookmarkXmlUtils.createBookmarkFromFeed(feeds.item(i_feed)))
+                        t.onNext(RssXmlUtils.createBookmarkFromFeed(feeds.item(i_feed)))
                     }
 
                 } else {

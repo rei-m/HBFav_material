@@ -6,36 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
-import me.rei_m.hbfavkotlin.events.BookmarkOwnLoadedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.managers.ModelLocator
-import me.rei_m.hbfavkotlin.models.BookmarkOwnModel
-import me.rei_m.hbfavkotlin.views.adapters.BookmarkListAdapter
-import me.rei_m.hbfavkotlin.events.BookmarkOwnLoadedEvent.Companion.Type as EventType
+import me.rei_m.hbfavkotlin.models.HotEntryModel
+import me.rei_m.hbfavkotlin.views.adapters.EntryListAdapter
+import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
-public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
+public class HotEntryFragment : Fragment(), FragmentAnimationI {
 
-    private var mListAdapter: BookmarkListAdapter? = null
+    private var mListAdapter: EntryListAdapter? = null
 
     override var mContainerWidth: Float = 0.0f
 
     companion object {
-        fun newInstance(): BookmarkOwnFragment {
-            return BookmarkOwnFragment()
+        fun newInstance(): HotEntryFragment {
+            return HotEntryFragment()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
+        mListAdapter = EntryListAdapter(activity, R.layout.list_item_entry)
     }
 
     override fun onDestroy() {
@@ -53,25 +50,9 @@ public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
 
         listView.addFooterView(footerView, null, false)
 
-        listView.setOnScrollListener(object : AbsListView.OnScrollListener {
-
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    val favoriteModel = ModelLocator.get(ModelTag.OWN) as BookmarkOwnModel
-                    if (!favoriteModel.isBusy) {
-                        favoriteModel.fetch(mListAdapter!!.nextIndex)
-                    }
-                }
-            }
-
-            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
-
-            }
-        })
-
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            EventBusHolder.EVENT_BUS.post(BookmarkListClickEvent(bookmarkEntity))
+            //            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
+            //            EventBusHolder.EVENT_BUS.post(BookmarkListClickEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter
@@ -91,19 +72,19 @@ public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
         // EventBus登録
         EventBusHolder.EVENT_BUS.register(this);
 
-        val bookmarkOwnModel = ModelLocator.get(ModelTag.OWN) as BookmarkOwnModel
+        val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
 
         val displayedCount = mListAdapter?.count!!
 
-        if (displayedCount != bookmarkOwnModel.bookmarkList.size) {
+        if (displayedCount != hotEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
             // 差分があれば未表示のブックマークがあるのでリストに表示する
             mListAdapter?.clear()
-            mListAdapter?.addAll(bookmarkOwnModel.bookmarkList)
+            mListAdapter?.addAll(hotEntryModel.entryList)
             mListAdapter?.notifyDataSetChanged()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
-            bookmarkOwnModel.fetch()
+            hotEntryModel.fetch()
         }
     }
 
@@ -121,15 +102,15 @@ public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onBookmarkOwnLoaded(event: BookmarkOwnLoadedEvent) {
+    public fun onHotEntryLoadedEvent(event: HotEntryLoadedEvent) {
         when (event.type) {
-            BookmarkOwnLoadedEvent.Companion.Type.COMPLETE -> {
-                val bookmarkOwnModel = ModelLocator.get(ModelTag.OWN) as BookmarkOwnModel
+            HotEntryLoadedEvent.Companion.Type.COMPLETE -> {
+                val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
                 mListAdapter?.clear()
-                mListAdapter?.addAll(bookmarkOwnModel.bookmarkList)
+                mListAdapter?.addAll(hotEntryModel.entryList)
                 mListAdapter?.notifyDataSetChanged()
             }
-            BookmarkOwnLoadedEvent.Companion.Type.ERROR -> {
+            HotEntryLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
         }
