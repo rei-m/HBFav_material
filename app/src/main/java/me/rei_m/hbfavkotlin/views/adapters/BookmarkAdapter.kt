@@ -14,7 +14,7 @@ public class BookmarkAdapter constructor(context: Context, resource: Int) :
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView ?: View.inflate(context, R.layout.list_item_favorite, null)
+        val view = convertView ?: View.inflate(context, R.layout.list_item_bookmark, null)
 
         (view as FavoriteItemLayout).bindView(getItem(position))
 

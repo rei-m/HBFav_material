@@ -10,7 +10,7 @@ import me.rei_m.hbfavkotlin.utils.BookmarkXmlUtils
 import rx.Observable
 import java.net.HttpURLConnection
 
-public final class BookmarkFavoriteRss private constructor() {
+public final class BookmarkOwnRss private constructor() {
 
     companion object {
 
@@ -22,7 +22,7 @@ public final class BookmarkFavoriteRss private constructor() {
                         .scheme("http")
                         .host("b.hatena.ne.jp")
                         .addPathSegment("Rei19")
-                        .addPathSegment("favorite.rss")
+                        .addPathSegment("rss")
                         .addQueryParameter("of", startIndex.toString())
                         .build()
 
