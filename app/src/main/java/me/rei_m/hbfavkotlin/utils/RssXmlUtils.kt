@@ -1,13 +1,14 @@
 package me.rei_m.hbfavkotlin.utils
 
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.entities.EntryEntity
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.w3c.dom.Node
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BookmarkXmlUtils private constructor() {
+class RssXmlUtils private constructor() {
 
     companion object {
 
@@ -54,7 +55,51 @@ class BookmarkXmlUtils private constructor() {
                     bookmarkCount,
                     extractProfileIcon(parsedContent),
                     extractArticleIcon(parsedContent),
-                    extractArticleBody(parsedContent),
+                    extractArticleBodyForBookmark(parsedContent),
+                    extractArticleImageUrl(parsedContent))
+        }
+
+        public fun createEntryFromFeed(feed: Node): EntryEntity {
+
+            var title = ""
+            var link = ""
+            var description = ""
+            var subject = ""
+            var date: Date? = null
+            var bookmarkCount = 0
+            var content = ""
+
+            for (i_node in 0..feed.childNodes.length - 1) {
+                val feedItem = feed.childNodes.item(i_node)
+                when (feedItem.nodeName) {
+                    "title" ->
+                        title = feedItem.textContent
+                    "link" ->
+                        link = feedItem.textContent
+                    "description" ->
+                        description = feedItem.textContent
+                    "dc:subject" ->
+                        subject = feedItem.textContent
+                    "dc:date" ->
+                        date = dateFormat.parse(feedItem.textContent)
+                    "hatena:bookmarkcount" ->
+                        bookmarkCount = feedItem.textContent.toInt()
+                    "content:encoded" ->
+                        content = feedItem.textContent
+                }
+            }
+
+            val parsedContent = Jsoup.parse(content)
+
+            return EntryEntity(
+                    title,
+                    link,
+                    description,
+                    date!!,
+                    bookmarkCount,
+                    subject,
+                    extractArticleIcon(parsedContent),
+                    extractArticleBodyForEntry(parsedContent),
                     extractArticleImageUrl(parsedContent))
         }
 
@@ -71,10 +116,16 @@ class BookmarkXmlUtils private constructor() {
                 .first()
                 .attr("src")
 
-        private fun extractArticleBody(content: Document): String {
+        private fun extractArticleBodyForBookmark(content: Document): String {
+            val pTags = content.getElementsByTag("p")
+            val bodyIndex = pTags.size - 3
+            return pTags.eq(bodyIndex).text()
+        }
+
+        private fun extractArticleBodyForEntry(content: Document): String {
             val pTags = content.getElementsByTag("p")
             val bodyIndex = pTags.size - 2
-            return pTags.eq(bodyIndex - 1).text()
+            return pTags.eq(bodyIndex).text()
         }
 
         private fun extractArticleImageUrl(content: Document): String {

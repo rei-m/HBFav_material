@@ -114,7 +114,6 @@ public class MainActivity : AppCompatActivity(),
     @Subscribe
     @SuppressWarnings("unused")
     public fun onBookmarkListClick(event: BookmarkListClickEvent) {
-        println("hogehoge")
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }

@@ -12,5 +12,4 @@ public data class BookmarkEntity(val title: String,
                            val bookmarkIconUrl: String,
                            val articleIconUrl: String,
                            val articleBody: String,
-                           val articleImageUrl: String
-                           ): Serializable
+                           val articleImageUrl: String): Serializable
