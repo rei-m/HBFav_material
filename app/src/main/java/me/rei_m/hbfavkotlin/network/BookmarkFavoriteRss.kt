@@ -1,81 +1,65 @@
 package me.rei_m.hbfavkotlin.network
 
-import java.net.HttpURLConnection
-
 import com.squareup.okhttp.CacheControl
 import com.squareup.okhttp.HttpUrl
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
-
-import rx.Observable
-import rx.Subscriber
-
-import kotlin.dom.parseXml
-
+import kotlinx.dom.parseXml
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.w3c.dom.Node
-
-import me.rei_m.hbfavkotlin.models.Bookmark
+import rx.Observable
+import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.util.*
 
-public final class BookmarkFavorite private constructor() {
+public class BookmarkFavoriteRss {
 
     companion object {
 
-        public var isLoading = false
-            private set
-
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
-        public fun request(startIndex: Int): Observable<Bookmark> {
+        public fun request(startIndex: Int = 0): Observable<BookmarkEntity> {
 
-            isLoading = true
+            return Observable.create({ t ->
 
-            return Observable.create(object : Observable.OnSubscribe<Bookmark> {
+                val url = HttpUrl.Builder()
+                        .scheme("http")
+                        .host("b.hatena.ne.jp")
+                        .addPathSegment("Rei19")
+                        .addPathSegment("favorite.rss")
+                        .addQueryParameter("of", startIndex.toString())
+                        .build()
 
-                override fun call(t: Subscriber<in Bookmark>) {
+                val request = Request.Builder()
+                        .url(url)
+                        .cacheControl(CacheControl.FORCE_NETWORK)
+                        .build()
 
-                    val url = HttpUrl.Builder()
-                            .scheme("http")
-                            .host("b.hatena.ne.jp")
-                            .addPathSegment("Rei19")
-                            .addPathSegment("favorite.rss")
-                            .addQueryParameter("of", startIndex.toString())
-                            .build()
+                val response = OkHttpClient().newCall(request).execute()
 
-                    val request = Request.Builder()
-                            .url(url)
-                            .cacheControl(CacheControl.FORCE_NETWORK)
-                            .build()
+                if (response.code() == HttpURLConnection.HTTP_OK) {
 
-                    val response = OkHttpClient().newCall(request).execute()
+                    val document = parseXml(response.body().byteStream())
 
-                    if (response.code() == HttpURLConnection.HTTP_OK) {
+                    val feeds = document.getElementsByTagName("item")
 
-                        val document = parseXml(response.body().byteStream())
+                    val feedCount = feeds.length
 
-                        val feeds = document.getElementsByTagName("item")
-
-                        val feedCount = feeds.length
-
-                        for(i_feed in 0..feedCount - 1){
-                            t.onNext(createBookmarkFromFeed(feeds.item(i_feed)))
-                        }
-
-                    } else {
-                        t.onError(Throwable(response.code().toString()))
+                    for (i_feed in 0..feedCount - 1) {
+                        t.onNext(createBookmarkFromFeed(feeds.item(i_feed)))
                     }
 
-                    t.onCompleted()
-
-                    isLoading = false
+                } else {
+                    t.onError(Throwable(response.code().toString()))
                 }
+
+                t.onCompleted()
             })
         }
 
-        private fun createBookmarkFromFeed(feed: Node): Bookmark {
+        private fun createBookmarkFromFeed(feed: Node): BookmarkEntity {
 
             var title = ""
             var link = ""
@@ -85,7 +69,7 @@ public final class BookmarkFavorite private constructor() {
             var bookmarkCount = 0
             var content = ""
 
-            for(i_node in 0..feed.childNodes.length - 1) {
+            for (i_node in 0..feed.childNodes.length - 1) {
                 val feedItem = feed.childNodes.item(i_node)
                 when (feedItem.nodeName) {
                     "title" ->
@@ -107,7 +91,7 @@ public final class BookmarkFavorite private constructor() {
 
             val parsedContent = Jsoup.parse(content)
 
-            return Bookmark(
+            return BookmarkEntity(
                     title,
                     link,
                     description,
@@ -144,7 +128,7 @@ public final class BookmarkFavorite private constructor() {
                     .getElementsByClass("entry-image")
                     .first()
 
-            return if(articleImageElement == null) "" else articleImageElement.attr("src")
+            return if (articleImageElement == null) "" else articleImageElement.attr("src")
         }
     }
 }

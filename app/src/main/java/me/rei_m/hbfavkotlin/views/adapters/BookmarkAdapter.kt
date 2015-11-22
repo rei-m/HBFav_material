@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.views.widgets.list.FavoriteItemLayout
 
 public class BookmarkAdapter constructor(context: Context, resource: Int) :
-        ArrayAdapter<Bookmark>(context, resource){
+        ArrayAdapter<BookmarkEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 

@@ -9,7 +9,7 @@ import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.utils.BookmarkUtils
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
@@ -43,14 +43,14 @@ class FavoriteItemLayout : RelativeLayout {
         tag = holder
     }
 
-    fun bindView(bookmark: Bookmark) {
+    fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.name?.text = bookmark.creator
+        holder.name?.text = bookmarkEntity.creator
         Picasso.with(context)
-                .load(bookmark.bookmarkIconUrl)
+                .load(bookmarkEntity.bookmarkIconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
-        holder.bookmarkLayout?.bindView(bookmark)
-        holder.timing?.text = BookmarkUtils.getAddBookmarkTimeString(bookmark.date)
+        holder.bookmarkLayout?.bindView(bookmarkEntity)
+        holder.timing?.text = BookmarkUtils.getAddBookmarkTimeString(bookmarkEntity.date)
     }
 }

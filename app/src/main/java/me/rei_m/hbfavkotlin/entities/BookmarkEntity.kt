@@ -1,9 +1,9 @@
-package me.rei_m.hbfavkotlin.models
+package me.rei_m.hbfavkotlin.entities
 
 import java.io.Serializable
 import java.util.*
 
-public data class Bookmark(val title: String,
+public data class BookmarkEntity(val title: String,
                            val link: String,
                            val description: String,
                            val creator: String,
