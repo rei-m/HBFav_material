@@ -14,12 +14,10 @@ import me.rei_m.hbfavkotlin.utils.RssUtils
 class ArticleLayout : RelativeLayout {
 
     companion object {
-        private class ViewHolder {
-            var body: AppCompatTextView? = null
-            var image: AppCompatImageView? = null
-            var link: AppCompatTextView? = null
-            var timing: AppCompatTextView? = null
-        }
+        private class ViewHolder(val body: AppCompatTextView,
+                                 val image: AppCompatImageView,
+                                 val link: AppCompatTextView,
+                                 val timing: AppCompatTextView)
     }
 
     constructor(context: Context?) : super(context)
@@ -32,26 +30,25 @@ class ArticleLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        val holder = ViewHolder()
-        holder.body = findViewById(R.id.text_article_body) as AppCompatTextView
-        holder.image = findViewById(R.id.image_article_body_image) as AppCompatImageView
-        holder.link = findViewById(R.id.text_article_url) as AppCompatTextView
-        holder.timing = findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView
-        tag = holder
+        tag = ViewHolder(
+                findViewById(R.id.text_article_body) as AppCompatTextView,
+                findViewById(R.id.image_article_body_image) as AppCompatImageView,
+                findViewById(R.id.text_article_url) as AppCompatTextView,
+                findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.body?.text = bookmarkEntity.articleBody
-        if(bookmarkEntity.articleImageUrl.isEmpty()) {
-            holder.image?.visibility = GONE
+        holder.body.text = bookmarkEntity.articleBody
+        if (bookmarkEntity.articleImageUrl.isEmpty()) {
+            holder.image.visibility = GONE
         } else {
-            holder.image?.visibility = VISIBLE
+            holder.image.visibility = VISIBLE
             Picasso.with(context)
                     .load(bookmarkEntity.articleImageUrl)
                     .into(holder.image)
         }
-        holder.link?.text = bookmarkEntity.link
-        holder.timing?.text = RssUtils.getPastTimeString(bookmarkEntity.date)
+        holder.link.text = bookmarkEntity.link
+        holder.timing.text = RssUtils.getPastTimeString(bookmarkEntity.date)
     }
 }

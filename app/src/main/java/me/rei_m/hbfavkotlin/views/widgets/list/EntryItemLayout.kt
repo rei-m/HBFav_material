@@ -43,7 +43,7 @@ class EntryItemLayout : RelativeLayout {
     fun bindView(entryEntity: EntryEntity) {
         val holder = tag as ViewHolder
 
-        if(entryEntity.articleImageUrl.isEmpty()) {
+        if (entryEntity.articleImageUrl.isEmpty()) {
             holder.bodyImage.visibility = GONE
         } else {
             holder.bodyImage.visibility = VISIBLE
