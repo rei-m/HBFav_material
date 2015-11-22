@@ -17,7 +17,7 @@ import android.view.View
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
 public class BookmarkActivity : AppCompatActivity(),
@@ -28,9 +28,9 @@ public class BookmarkActivity : AppCompatActivity(),
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        public fun createIntent(context: Context, bookmark: Bookmark): Intent {
+        public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             val intent = Intent(context, BookmarkActivity::class.java)
-            intent.putExtra(ARG_BOOKMARK, bookmark)
+            intent.putExtra(ARG_BOOKMARK, bookmarkEntity)
             return intent
         }
     }
@@ -55,7 +55,7 @@ public class BookmarkActivity : AppCompatActivity(),
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            val bookmark = intent.getSerializableExtra(ARG_BOOKMARK) as Bookmark
+            val bookmark = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
             setFragment(BookmarkFragment.newInstance(bookmark))
         }
 
@@ -92,7 +92,7 @@ public class BookmarkActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onClickBookmark(bookmark: Bookmark) {
-        replaceFragment(BookmarkWebViewFragment.newInstance(bookmark))
+    override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
+        replaceFragment(BookmarkWebViewFragment.newInstance(bookmarkEntity))
     }
 }

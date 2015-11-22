@@ -10,15 +10,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.FrameLayout
 import me.rei_m.hbfavkotlin.activities.BookmarkActivity
-import me.rei_m.hbfavkotlin.activities.replaceFragment
-import me.rei_m.hbfavkotlin.activities.setFragment
-
-import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
-import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.fragments.FavoriteFragment
-import me.rei_m.hbfavkotlin.models.Bookmark
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
 public class MainActivity : AppCompatActivity(),
@@ -103,8 +97,8 @@ public class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onClickFavoriteItem(bookmark: Bookmark) {
-//        replaceFragment(BookmarkFragment.newInstance(bookmark))
-        startActivity(BookmarkActivity.createIntent(this, bookmark))
+    override fun onClickFavoriteItem(bookmarkEntity: BookmarkEntity) {
+        //        replaceFragment(BookmarkFragment.newInstance(bookmark))
+        startActivity(BookmarkActivity.createIntent(this, bookmarkEntity))
     }
 }

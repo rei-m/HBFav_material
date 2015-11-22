@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkHeaderLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
@@ -18,7 +18,7 @@ public class BookmarkFragment private constructor() : Fragment(), FragmentAnimat
 
     private var mListener: OnFragmentInteractionListener? = null
 
-    private var mBookmark: Bookmark? = null
+    private var mBookmarkEntity: BookmarkEntity? = null
 
     override var mContainerWidth: Float = 0.0f
 
@@ -26,10 +26,10 @@ public class BookmarkFragment private constructor() : Fragment(), FragmentAnimat
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        public fun newInstance(bookmark: Bookmark): BookmarkFragment {
+        public fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkFragment {
             val fragment = BookmarkFragment()
             val args = Bundle()
-            args.putSerializable(ARG_BOOKMARK, bookmark)
+            args.putSerializable(ARG_BOOKMARK, bookmarkEntity)
             fragment.arguments = args
             return fragment
         }
@@ -37,22 +37,22 @@ public class BookmarkFragment private constructor() : Fragment(), FragmentAnimat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBookmark = arguments.getSerializable(ARG_BOOKMARK) as Bookmark
+        mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
 
-        (view.findViewById(R.id.layout_bookmark_header) as BookmarkHeaderLayout).bindView(mBookmark!!)
+        (view.findViewById(R.id.layout_bookmark_header) as BookmarkHeaderLayout).bindView(mBookmarkEntity!!)
 
         val bookmarkLayout = view.findViewById(R.id.layout_bookmark) as BookmarkLayout
-        bookmarkLayout.bindView(mBookmark!!)
+        bookmarkLayout.bindView(mBookmarkEntity!!)
         bookmarkLayout.setOnClickListener { v ->
-            mListener?.onClickBookmark(mBookmark!!)
+            mListener?.onClickBookmark(mBookmarkEntity!!)
         }
 
-        (view.findViewById(R.id.layout_article) as ArticleLayout).bindView(mBookmark!!)
+        (view.findViewById(R.id.layout_article) as ArticleLayout).bindView(mBookmarkEntity!!)
 
         setContainer(container!!)
 
@@ -79,6 +79,6 @@ public class BookmarkFragment private constructor() : Fragment(), FragmentAnimat
     }
 
     interface OnFragmentInteractionListener {
-        fun onClickBookmark(bookmark: Bookmark)
+        fun onClickBookmark(bookmarkEntity: BookmarkEntity)
     }
 }

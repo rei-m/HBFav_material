@@ -9,20 +9,20 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 
 public class BookmarkWebViewFragment private constructor() : Fragment() {
 
-    private var mBookmark: Bookmark? = null
+    private var mBookmarkEntity: BookmarkEntity? = null
 
     companion object {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        public fun newInstance(bookmark: Bookmark): BookmarkWebViewFragment {
+        public fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkWebViewFragment {
             val fragment = BookmarkWebViewFragment()
             val args = Bundle()
-            args.putSerializable(ARG_BOOKMARK, bookmark)
+            args.putSerializable(ARG_BOOKMARK, bookmarkEntity)
             fragment.arguments = args
             return fragment
         }
@@ -30,7 +30,7 @@ public class BookmarkWebViewFragment private constructor() : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBookmark = arguments.getSerializable(ARG_BOOKMARK) as Bookmark
+        mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -39,13 +39,13 @@ public class BookmarkWebViewFragment private constructor() : Fragment() {
 
         val webView = view.findViewById(R.id.view_bookmark_web) as WebView
         webView.setWebChromeClient(WebChromeClient())
-        webView.loadUrl(mBookmark!!.link)
+        webView.loadUrl(mBookmarkEntity!!.link)
 
         return view
     }
 
     override fun onDetach() {
         super.onDetach()
-        mBookmark = null
+        mBookmarkEntity = null
     }
 }

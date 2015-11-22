@@ -10,29 +10,26 @@ import android.view.animation.Animation
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
-
-import rx.Observer
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
-import me.rei_m.hbfavkotlin.network.BookmarkFavorite
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent
+import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.managers.ModelLocator
+import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkAdapter
+import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent.Companion.Type as EventType
+import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
 public class FavoriteFragment : Fragment(), FragmentAnimationI {
 
     private var mListener: OnFragmentInteractionListener? = null
-
-    private var mSubscription: Subscription? = null
 
     private var mAdapter: BookmarkAdapter? = null
 
     override var mContainerWidth: Float = 0.0f
 
     companion object {
-
         fun newInstance(): FavoriteFragment {
             return FavoriteFragment()
         }
@@ -41,6 +38,11 @@ public class FavoriteFragment : Fragment(), FragmentAnimationI {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAdapter = BookmarkAdapter(activity, R.layout.list_item_favorite)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mAdapter = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,12 +55,13 @@ public class FavoriteFragment : Fragment(), FragmentAnimationI {
 
         listView.addFooterView(footerView, null, false)
 
-        listView.setOnScrollListener(object : AbsListView.OnScrollListener{
+        listView.setOnScrollListener(object : AbsListView.OnScrollListener {
 
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    if(!BookmarkFavorite.isLoading){
-                        drawFavoriteList(mAdapter!!.nextIndex)
+                    val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+                    if (!favoriteModel.isBusy) {
+                        favoriteModel.fetch(mAdapter!!.nextIndex)
                     }
                 }
             }
@@ -68,17 +71,11 @@ public class FavoriteFragment : Fragment(), FragmentAnimationI {
             }
         })
 
-        listView.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                mListener?.onClickFavoriteItem(parent?.adapter?.getItem(position) as Bookmark)
-            }
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            mListener?.onClickFavoriteItem(parent?.adapter?.getItem(position) as BookmarkEntity)
         }
 
         listView.adapter = mAdapter
-
-        if(mAdapter?.count!! === 0){
-            drawFavoriteList()
-        }
 
         setContainer(container!!)
 
@@ -87,41 +84,35 @@ public class FavoriteFragment : Fragment(), FragmentAnimationI {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mSubscription?.unsubscribe()
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
-        return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
-    }
+    override fun onResume() {
+        super.onResume()
 
-    private fun drawFavoriteList(startIndex: Int = 0){
+        // EventBus登録
+        EventBusHolder.EVENT_BUS.register(this);
 
-        // Observerを作成
-        val observer = object : Observer<Bookmark>{
-            override fun onNext(t: Bookmark?) {
-                mAdapter?.add(t)
-            }
+        val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
 
-            override fun onCompleted() {
-                mAdapter?.notifyDataSetChanged()
-            }
+        val displayedCount = mAdapter?.count!!
 
-            override fun onError(e: Throwable?) {
-                println("Error!! ${e?.message}")
-            }
+        if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
+            // 表示済の件数とModel内で保持している件数をチェックし、
+            // 差分があれば未表示のブックマークがあるのでリストに表示する
+            mAdapter?.clear()
+            mAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
+            mAdapter?.notifyDataSetChanged()
+        } else if (displayedCount === 0) {
+            // 1件も表示していなければお気に入りのブックマーク情報を取得する
+            bookmarkFavoriteModel.fetch()
         }
+    }
 
-        // Observableを作成
-        // 配信時は新しいスレッド
-        // 監視者はメインスレッド
-        val observable = BookmarkFavorite.request(startIndex)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
+    override fun onPause() {
+        super.onPause()
 
-        // 購読を開始
-        mSubscription = observable.subscribe(observer)
+        // EventBus登録解除
+        EventBusHolder.EVENT_BUS.unregister(this);
     }
 
     override fun onAttach(context: Context?) {
@@ -138,7 +129,28 @@ public class FavoriteFragment : Fragment(), FragmentAnimationI {
         mListener = null
     }
 
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
+        return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkFavoriteLoaded(event: BookmarkFavoriteLoadedEvent) {
+        when (event.type) {
+            BookmarkFavoriteLoadedEvent.Companion.Type.COMPLETE -> {
+                val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+                mAdapter?.clear()
+                mAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
+                mAdapter?.notifyDataSetChanged()
+            }
+            BookmarkFavoriteLoadedEvent.Companion.Type.ERROR -> {
+                // TODO エラー表示
+            }
+        }
+    }
+
     interface OnFragmentInteractionListener {
-        fun onClickFavoriteItem(bookmark: Bookmark)
+        fun onClickFavoriteItem(bookmarkEntity: BookmarkEntity)
     }
 }

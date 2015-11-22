@@ -8,7 +8,7 @@ import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.models.Bookmark
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
 class BookmarkLayout : RelativeLayout {
@@ -38,17 +38,17 @@ class BookmarkLayout : RelativeLayout {
         tag = holder
     }
 
-    fun bindView(bookmark: Bookmark) {
+    fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        if(bookmark.description.isEmpty()) {
+        if(bookmarkEntity.description.isEmpty()) {
             holder.description?.visibility = GONE
         } else {
             holder.description?.visibility = VISIBLE
-            holder.description?.text = bookmark.description
+            holder.description?.text = bookmarkEntity.description
         }
-        holder.title?.text = bookmark.title
+        holder.title?.text = bookmarkEntity.title
         Picasso.with(context)
-                .load(bookmark.articleIconUrl)
+                .load(bookmarkEntity.articleIconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
     }
