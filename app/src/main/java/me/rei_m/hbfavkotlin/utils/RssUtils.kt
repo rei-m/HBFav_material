@@ -2,9 +2,9 @@ package me.rei_m.hbfavkotlin.utils
 
 import java.util.*
 
-class BookmarkUtils private constructor() {
+class RssUtils private constructor() {
     companion object {
-        fun getAddBookmarkTimeString(bookmarkAddedDatetime: Date,
+        fun getPastTimeString(bookmarkAddedDatetime: Date,
                                      cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time
         ): String {
 

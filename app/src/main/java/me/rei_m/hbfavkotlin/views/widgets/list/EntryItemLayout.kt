@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.EntryEntity
-import me.rei_m.hbfavkotlin.utils.BookmarkUtils
+import me.rei_m.hbfavkotlin.utils.RssUtils
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
 class EntryItemLayout : RelativeLayout {
@@ -62,6 +62,6 @@ class EntryItemLayout : RelativeLayout {
         holder.url.text = entryEntity.link
         holder.footer.text = entryEntity.bookmarkCount.toString() + " users - " +
                 entryEntity.subject + " - " +
-                BookmarkUtils.getAddBookmarkTimeString(entryEntity.date)
+                RssUtils.getPastTimeString(entryEntity.date)
     }
 }

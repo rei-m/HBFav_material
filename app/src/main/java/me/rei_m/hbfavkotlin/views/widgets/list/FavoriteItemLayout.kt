@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.utils.BookmarkUtils
+import me.rei_m.hbfavkotlin.utils.RssUtils
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
@@ -51,6 +51,6 @@ class FavoriteItemLayout : RelativeLayout {
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
         holder.bookmarkLayout?.bindView(bookmarkEntity)
-        holder.timing?.text = BookmarkUtils.getAddBookmarkTimeString(bookmarkEntity.date)
+        holder.timing?.text = RssUtils.getPastTimeString(bookmarkEntity.date)
     }
 }

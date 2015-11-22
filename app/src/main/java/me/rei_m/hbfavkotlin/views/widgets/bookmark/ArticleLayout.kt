@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.utils.BookmarkUtils
+import me.rei_m.hbfavkotlin.utils.RssUtils
 
 class ArticleLayout : RelativeLayout {
 
@@ -52,6 +52,6 @@ class ArticleLayout : RelativeLayout {
                     .into(holder.image)
         }
         holder.link?.text = bookmarkEntity.link
-        holder.timing?.text = BookmarkUtils.getAddBookmarkTimeString(bookmarkEntity.date)
+        holder.timing?.text = RssUtils.getPastTimeString(bookmarkEntity.date)
     }
 }
