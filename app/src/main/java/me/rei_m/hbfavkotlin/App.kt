@@ -5,6 +5,7 @@ import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
 import me.rei_m.hbfavkotlin.models.BookmarkOwnModel
 import me.rei_m.hbfavkotlin.models.HotEntryModel
+import me.rei_m.hbfavkotlin.models.NewEntryModel
 
 public class App : Application() {
 
@@ -17,5 +18,6 @@ public class App : Application() {
         ModelLocator.register(ModelLocator.Companion.Tag.FAVORITE, BookmarkFavoriteModel());
         ModelLocator.register(ModelLocator.Companion.Tag.OWN, BookmarkOwnModel());
         ModelLocator.register(ModelLocator.Companion.Tag.HOT_ENTRY, HotEntryModel());
+        ModelLocator.register(ModelLocator.Companion.Tag.NEW_ENTRY, NewEntryModel());
     }
 }

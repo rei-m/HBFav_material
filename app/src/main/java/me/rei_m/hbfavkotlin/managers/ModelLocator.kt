@@ -11,6 +11,7 @@ public class ModelLocator private constructor() {
             FAVORITE,
             OWN,
             HOT_ENTRY,
+            NEW_ENTRY,
         }
 
         public fun register(tag: Tag, model: Any): Unit {

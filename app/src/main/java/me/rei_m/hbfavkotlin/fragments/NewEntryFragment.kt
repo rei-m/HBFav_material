@@ -11,22 +11,22 @@ import android.widget.ListView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.EventBusHolder
-import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
+import me.rei_m.hbfavkotlin.events.NewEntryLoadedEvent
 import me.rei_m.hbfavkotlin.managers.ModelLocator
-import me.rei_m.hbfavkotlin.models.HotEntryModel
+import me.rei_m.hbfavkotlin.models.NewEntryModel
 import me.rei_m.hbfavkotlin.views.adapters.EntryListAdapter
 import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
-public class HotEntryFragment : Fragment(), FragmentAnimationI {
+public class NewEntryFragment : Fragment(), FragmentAnimationI {
 
     private var mListAdapter: EntryListAdapter? = null
 
     override var mContainerWidth: Float = 0.0f
 
     companion object {
-        fun newInstance(): HotEntryFragment {
-            return HotEntryFragment()
+        fun newInstance(): NewEntryFragment {
+            return NewEntryFragment()
         }
     }
 
@@ -68,19 +68,19 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
         // EventBus登録
         EventBusHolder.EVENT_BUS.register(this);
 
-        val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+        val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
 
         val displayedCount = mListAdapter?.count!!
 
-        if (displayedCount != hotEntryModel.entryList.size) {
+        if (displayedCount != newEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
             // 差分があれば未表示のブックマークがあるのでリストに表示する
             mListAdapter?.clear()
-            mListAdapter?.addAll(hotEntryModel.entryList)
+            mListAdapter?.addAll(newEntryModel.entryList)
             mListAdapter?.notifyDataSetChanged()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
-            hotEntryModel.fetch()
+            newEntryModel.fetch()
         }
     }
 
@@ -98,15 +98,15 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onHotEntryLoadedEvent(event: HotEntryLoadedEvent) {
+    public fun onNewEntryLoadedEvent(event: NewEntryLoadedEvent) {
         when (event.type) {
-            HotEntryLoadedEvent.Companion.Type.COMPLETE -> {
-                val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+            NewEntryLoadedEvent.Companion.Type.COMPLETE -> {
+                val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
                 mListAdapter?.clear()
-                mListAdapter?.addAll(hotEntryModel.entryList)
+                mListAdapter?.addAll(newEntryModel.entryList)
                 mListAdapter?.notifyDataSetChanged()
             }
-            HotEntryLoadedEvent.Companion.Type.ERROR -> {
+            NewEntryLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
         }
