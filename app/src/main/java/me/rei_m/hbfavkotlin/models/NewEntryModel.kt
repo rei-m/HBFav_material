@@ -41,7 +41,7 @@ public class NewEntryModel {
             }
         }
 
-        NewEntryRss.request()
+        NewEntryRss().request()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

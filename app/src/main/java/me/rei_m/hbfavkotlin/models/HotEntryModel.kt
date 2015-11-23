@@ -41,7 +41,7 @@ public class HotEntryModel {
             }
         }
 
-        HotEntryRss.request()
+        HotEntryRss().request()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

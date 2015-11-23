@@ -43,7 +43,7 @@ public class BookmarkFavoriteModel {
             }
         }
 
-        BookmarkFavoriteRss.request(startIndex)
+        BookmarkFavoriteRss().request(startIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

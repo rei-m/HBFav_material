@@ -43,7 +43,7 @@ public class BookmarkOwnModel {
             }
         }
 
-        BookmarkOwnRss.request(startIndex)
+        BookmarkOwnRss().request(startIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
