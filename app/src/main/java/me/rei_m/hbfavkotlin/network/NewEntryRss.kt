@@ -10,7 +10,7 @@ import me.rei_m.hbfavkotlin.utils.RssXmlUtils
 import rx.Observable
 import java.net.HttpURLConnection
 
-public final class HotEntryRss private constructor() {
+public final class NewEntryRss private constructor() {
 
     companion object {
 
@@ -20,10 +20,9 @@ public final class HotEntryRss private constructor() {
 
                 val url = HttpUrl.Builder()
                         .scheme("http")
-                        .host("feeds.feedburner.com")
-                        .addPathSegment("hatena")
-                        .addPathSegment("b")
-                        .addPathSegment("hotentry")
+                        .host("b.hatena.ne.jp")
+                        .addPathSegment("entrylist")
+                        .addQueryParameter("mode", "rss")
                         .build()
 
                 val request = Request.Builder()

@@ -1,16 +1,16 @@
 package me.rei_m.hbfavkotlin.models
 
 import me.rei_m.hbfavkotlin.entities.EntryEntity
-import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
-import me.rei_m.hbfavkotlin.network.HotEntryRss
+import me.rei_m.hbfavkotlin.events.NewEntryLoadedEvent
+import me.rei_m.hbfavkotlin.network.NewEntryRss
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
-import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent.Companion.Type as EventType
+import me.rei_m.hbfavkotlin.events.NewEntryLoadedEvent.Companion.Type as EventType
 
-public class HotEntryModel {
+public class NewEntryModel {
 
     public var isBusy = false
         private set
@@ -33,15 +33,15 @@ public class HotEntryModel {
             }
 
             override fun onCompleted() {
-                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(EventType.COMPLETE))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.ERROR))
+                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(EventType.ERROR))
             }
         }
 
-        HotEntryRss.request()
+        NewEntryRss.request()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
