@@ -16,6 +16,7 @@ import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
+import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavkotlin.views.widgets.manager.BookmarkViewPager
 import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent.Companion.Kind as pageKind
 
@@ -31,6 +32,7 @@ public class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolbar)
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+
         val toggle = ActionBarDrawerToggle(this,
                 drawer,
                 toolbar,
@@ -100,24 +102,24 @@ public class MainActivity : AppCompatActivity(),
 
     @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        val id = item.itemId
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        val viewPager = findViewById(R.id.pager) as BookmarkViewPager
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        viewPager.currentItem = when (item.itemId) {
+            R.id.nav_bookmark_favorite ->
+                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
+            R.id.nav_bookmark_own ->
+                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN
+            R.id.nav_hot_entry ->
+                BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY
+            R.id.nav_new_entry ->
+                BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
+            else ->
+                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
         }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
@@ -131,18 +133,30 @@ public class MainActivity : AppCompatActivity(),
     @Subscribe
     @SuppressWarnings("unused")
     public fun onBookmarkPageDisplay(event: BookmarkPageDisplayEvent) {
+
         val pager = findViewById(R.id.pager) as BookmarkViewPager
+
+        val navigationView = findViewById(R.id.nav_view) as NavigationView
+
         supportActionBar.title = pager.getCurrentPageTitle()
 
         when (event.kind) {
-            pageKind.BOOKMARK_FAVORITE ->
+            pageKind.BOOKMARK_FAVORITE -> {
                 mMenu?.hide()
-            pageKind.BOOKMARK_OWN ->
+                navigationView.setCheckedItem(R.id.nav_bookmark_favorite)
+            }
+            pageKind.BOOKMARK_OWN -> {
                 mMenu?.hide()
-            pageKind.HOT_ENTRY ->
+                navigationView.setCheckedItem(R.id.nav_bookmark_own)
+            }
+            pageKind.HOT_ENTRY -> {
                 mMenu?.show()
-            pageKind.NEW_ENTRY ->
+                navigationView.setCheckedItem(R.id.nav_hot_entry)
+            }
+            pageKind.NEW_ENTRY -> {
                 mMenu?.show()
+                navigationView.setCheckedItem(R.id.nav_new_entry)
+            }
         }
     }
 }
