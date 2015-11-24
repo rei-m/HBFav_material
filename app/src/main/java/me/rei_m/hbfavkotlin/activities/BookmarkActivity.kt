@@ -18,6 +18,8 @@ import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.extensions.replaceFragment
+import me.rei_m.hbfavkotlin.extensions.setFragment
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
 public class BookmarkActivity : AppCompatActivity(),

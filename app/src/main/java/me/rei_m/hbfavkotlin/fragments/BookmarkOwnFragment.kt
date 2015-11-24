@@ -89,7 +89,7 @@ public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
         super.onResume()
 
         // EventBus登録
-        EventBusHolder.EVENT_BUS.register(this);
+        EventBusHolder.EVENT_BUS.register(this)
 
         val bookmarkOwnModel = ModelLocator.get(ModelTag.OWN) as BookmarkOwnModel
 
@@ -111,7 +111,7 @@ public class BookmarkOwnFragment : Fragment(), FragmentAnimationI {
         super.onPause()
 
         // EventBus登録解除
-        EventBusHolder.EVENT_BUS.unregister(this);
+        EventBusHolder.EVENT_BUS.unregister(this)
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

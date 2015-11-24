@@ -3,7 +3,6 @@ package me.rei_m.hbfavkotlin
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -13,11 +12,17 @@ import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.activities.BookmarkActivity
 import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
+import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
-import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavkotlin.extensions.hide
+import me.rei_m.hbfavkotlin.extensions.show
+import me.rei_m.hbfavkotlin.views.widgets.manager.BookmarkViewPager
+import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent.Companion.Kind as pageKind
 
 public class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
+
+    private var mMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +44,8 @@ public class MainActivity : AppCompatActivity(),
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            val pager = findViewById(R.id.pager) as ViewPager
-            pager.adapter = BookmarkPagerAdaptor(supportFragmentManager)
+            val pager = findViewById(R.id.pager) as BookmarkViewPager
+            pager.init(supportFragmentManager, this)
         }
     }
 
@@ -48,14 +53,14 @@ public class MainActivity : AppCompatActivity(),
         super.onResume()
 
         // EventBus登録
-        EventBusHolder.EVENT_BUS.register(this);
+        EventBusHolder.EVENT_BUS.register(this)
     }
 
     override fun onPause() {
         super.onPause()
 
         // EventBus登録解除
-        EventBusHolder.EVENT_BUS.unregister(this);
+        EventBusHolder.EVENT_BUS.unregister(this)
     }
 
     override fun onBackPressed() {
@@ -70,6 +75,12 @@ public class MainActivity : AppCompatActivity(),
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        mMenu = menu
+
+        val pager = findViewById(R.id.pager) as BookmarkViewPager
+
+        pager.postCurrentPageDisplayEvent()
+
         return true
     }
 
@@ -80,9 +91,9 @@ public class MainActivity : AppCompatActivity(),
         val id = item.itemId
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true
-        }
+        //        if (id == R.id.action_settings) {
+        //            return true
+        //        }
 
         return super.onOptionsItemSelected(item)
     }
@@ -115,5 +126,23 @@ public class MainActivity : AppCompatActivity(),
     @SuppressWarnings("unused")
     public fun onBookmarkListClick(event: BookmarkListClickEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkPageDisplay(event: BookmarkPageDisplayEvent) {
+        val pager = findViewById(R.id.pager) as BookmarkViewPager
+        supportActionBar.title = pager.getCurrentPageTitle()
+
+        when (event.kind) {
+            pageKind.BOOKMARK_FAVORITE ->
+                mMenu?.hide()
+            pageKind.BOOKMARK_OWN ->
+                mMenu?.hide()
+            pageKind.HOT_ENTRY ->
+                mMenu?.show()
+            pageKind.NEW_ENTRY ->
+                mMenu?.show()
+        }
     }
 }
