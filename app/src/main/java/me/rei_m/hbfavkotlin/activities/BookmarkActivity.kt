@@ -18,6 +18,8 @@ import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.extensions.replaceFragment
+import me.rei_m.hbfavkotlin.extensions.setFragment
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 
 public class BookmarkActivity : AppCompatActivity(),
@@ -73,19 +75,19 @@ public class BookmarkActivity : AppCompatActivity(),
         // Handle navigation view item clicks here.
         val id = item.itemId
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+//        if (id == R.id.nav_camara) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
