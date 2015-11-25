@@ -3,24 +3,19 @@ package me.rei_m.hbfavkotlin.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.view.View
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
-import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.extensions.replaceFragment
 import me.rei_m.hbfavkotlin.extensions.setFragment
-import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
+import me.rei_m.hbfavkotlin.fragments.BookmarkWebViewFragment
 
 public class BookmarkActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener,
@@ -61,12 +56,12 @@ public class BookmarkActivity : AppCompatActivity(),
             setFragment(BookmarkFragment.newInstance(bookmark))
         }
 
-//        val fab = findViewById(R.id.fab) as FloatingActionButton
-//        fab.setOnClickListener(object : View.OnClickListener {
-//            override fun onClick(view: View) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-//            }
-//        })
+        //        val fab = findViewById(R.id.fab) as FloatingActionButton
+        //        fab.setOnClickListener(object : View.OnClickListener {
+        //            override fun onClick(view: View) {
+        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        //            }
+        //        })
 
     }
 
@@ -75,19 +70,19 @@ public class BookmarkActivity : AppCompatActivity(),
         // Handle navigation view item clicks here.
         val id = item.itemId
 
-//        if (id == R.id.nav_camara) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+        //        if (id == R.id.nav_camara) {
+        //            // Handle the camera action
+        //        } else if (id == R.id.nav_gallery) {
+        //
+        //        } else if (id == R.id.nav_slideshow) {
+        //
+        //        } else if (id == R.id.nav_manage) {
+        //
+        //        } else if (id == R.id.nav_share) {
+        //
+        //        } else if (id == R.id.nav_send) {
+        //
+        //        }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)

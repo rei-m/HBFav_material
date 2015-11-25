@@ -12,6 +12,7 @@ public class ModelLocator private constructor() {
             OWN,
             HOT_ENTRY,
             NEW_ENTRY,
+            USER,
         }
 
         public fun register(tag: Tag, model: Any): Unit {
