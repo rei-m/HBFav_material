@@ -4,9 +4,18 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavkotlin.entities.UserEntity
+import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.events.UserIdCheckedEvent
 import me.rei_m.hbfavkotlin.extensions.getAppPreferences
+import me.rei_m.hbfavkotlin.network.UserCheckRequest
+import rx.Observer
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 public class UserModel {
+
+    public var isBusy = false
+        private set
 
     public var userEntity: UserEntity? = null
         private set
@@ -29,12 +38,51 @@ public class UserModel {
 
     public fun checkAndSaveUserId(context: Context, id: String) {
 
+        if (isBusy) {
+            return
+        }
+
+        isBusy = true
+
         // ユーザーIDの存在を確認
+        val observer = object : Observer<Boolean> {
 
-        // 問題なければPreferenceに保存してイベント通知
+            override fun onNext(t: Boolean?) {
+                // 問題なければPreferenceに保存
+                if (t!!) {
+                    userEntity = UserEntity(id)
+                    saveUser(context)
+                }
+            }
 
-        // いなければ見つからなかったイベント通知
+            override fun onCompleted() {
+                if (userEntity != null) {
+                    EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
+                } else {
+                    EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.NG))
+                }
+            }
 
+            override fun onError(e: Throwable?) {
+                EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.ERROR))
+            }
+        }
+
+        UserCheckRequest.request(id)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .finallyDo({
+                    isBusy = false
+                })
+                .subscribe(observer)
+    }
+
+    private fun saveUser(context: Context) {
+        getPreferences(context)
+                .edit()
+                .putString(KEY_PREF_USER, Gson().toJson(userEntity))
+                .apply()
     }
 
     public fun deleteUser(context: Context) {

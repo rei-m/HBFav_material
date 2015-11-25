@@ -1,5 +1,7 @@
 package me.rei_m.hbfavkotlin.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -24,6 +26,12 @@ public class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
     private var mMenu: Menu? = null
+
+    companion object {
+        public fun createIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
