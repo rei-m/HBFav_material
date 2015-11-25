@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
-import com.jakewharton.rxbinding.widget.text
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.EventBusHolder

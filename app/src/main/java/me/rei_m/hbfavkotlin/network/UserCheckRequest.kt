@@ -4,6 +4,7 @@ import com.squareup.okhttp.CacheControl
 import com.squareup.okhttp.HttpUrl
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
+import me.rei_m.hbfavkotlin.exeptions.HTTPException
 import rx.Observable
 import java.net.HttpURLConnection
 
@@ -31,7 +32,7 @@ public class UserCheckRequest private constructor() {
                 } else if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                     t.onNext(false)
                 } else {
-                    t.onError(Throwable())
+                    t.onError(HTTPException(response.code()))
                 }
 
                 t.onCompleted()
