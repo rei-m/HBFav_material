@@ -6,6 +6,7 @@ import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.exeptions.HTTPException
 import me.rei_m.hbfavkotlin.utils.RssXmlUtils
 import rx.Observable
 import java.net.HttpURLConnection
@@ -36,7 +37,7 @@ public abstract class AbsBookmarkRss {
                 }
 
             } else {
-                t.onError(Throwable(response.code().toString()))
+                t.onError(HTTPException(response.code()))
             }
 
             t.onCompleted()

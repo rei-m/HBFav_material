@@ -1,5 +1,7 @@
-package me.rei_m.hbfavkotlin
+package me.rei_m.hbfavkotlin.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -10,7 +12,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavkotlin.activities.BookmarkActivity
+import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
 import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
@@ -18,12 +20,18 @@ import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavkotlin.views.widgets.manager.BookmarkViewPager
-import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent.Companion.Kind as pageKind
+import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent.Companion.Kind as PageKind
 
 public class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
     private var mMenu: Menu? = null
+
+    companion object {
+        public fun createIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,19 +149,19 @@ public class MainActivity : AppCompatActivity(),
         supportActionBar.title = pager.getCurrentPageTitle()
 
         when (event.kind) {
-            pageKind.BOOKMARK_FAVORITE -> {
+            PageKind.BOOKMARK_FAVORITE -> {
                 mMenu?.hide()
                 navigationView.setCheckedItem(R.id.nav_bookmark_favorite)
             }
-            pageKind.BOOKMARK_OWN -> {
+            PageKind.BOOKMARK_OWN -> {
                 mMenu?.hide()
                 navigationView.setCheckedItem(R.id.nav_bookmark_own)
             }
-            pageKind.HOT_ENTRY -> {
+            PageKind.HOT_ENTRY -> {
                 mMenu?.show()
                 navigationView.setCheckedItem(R.id.nav_hot_entry)
             }
-            pageKind.NEW_ENTRY -> {
+            PageKind.NEW_ENTRY -> {
                 mMenu?.show()
                 navigationView.setCheckedItem(R.id.nav_new_entry)
             }
