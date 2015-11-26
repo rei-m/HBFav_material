@@ -1,5 +1,6 @@
 package me.rei_m.hbfavkotlin.fragments
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatButton
@@ -17,7 +18,9 @@ import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.UserModel
 import rx.Subscription
 
-public class SplashFragment private constructor() : Fragment() {
+public class SplashFragment private constructor() : Fragment(), ProgressDialogI {
+
+    override var mProgressDialog: ProgressDialog? = null
 
     private var mSubscription: Subscription? = null
 
@@ -47,6 +50,7 @@ public class SplashFragment private constructor() : Fragment() {
         buttonSetId.setOnClickListener({ v ->
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
+            showProgressDialog(activity)
         })
 
         return view
@@ -74,6 +78,9 @@ public class SplashFragment private constructor() : Fragment() {
     @Subscribe
     @SuppressWarnings("unused")
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
+
+        closeProgressDialog()
+
         when (event.type) {
             UserIdCheckedEvent.Companion.Type.OK -> {
                 // 何もしない。Activity側に処理を委ねる
