@@ -30,12 +30,6 @@ public class SplashFragment private constructor() : Fragment(), ProgressDialogI 
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // IDチェック
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
 
@@ -66,6 +60,12 @@ public class SplashFragment private constructor() : Fragment(), ProgressDialogI 
 
         // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
+
+        // ユーザー情報が設定済かチェックする
+        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
+        if (userModel.isSetUserSetting()) {
+            EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
+        }
     }
 
     override fun onPause() {

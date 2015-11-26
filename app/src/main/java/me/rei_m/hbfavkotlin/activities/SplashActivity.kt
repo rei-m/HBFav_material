@@ -1,5 +1,6 @@
 package me.rei_m.hbfavkotlin.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -41,7 +42,10 @@ public class SplashActivity : AppCompatActivity() {
     @SuppressWarnings("unused")
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
-            startActivity(MainActivity.createIntent(this))
+            val intent = MainActivity.createIntent(applicationContext)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
         }
     }
 }
