@@ -85,10 +85,10 @@ public class NewEntryFragment : Fragment(), FragmentAnimationI {
     }
 
     override fun onPause() {
-        super.onPause()
-
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+
+        super.onPause()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

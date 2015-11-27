@@ -11,7 +11,7 @@ import android.webkit.WebView
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 
-public class BookmarkWebViewFragment private constructor() : Fragment() {
+public class BookmarkWebViewFragment : Fragment() {
 
     private var mBookmarkEntity: BookmarkEntity? = null
 
