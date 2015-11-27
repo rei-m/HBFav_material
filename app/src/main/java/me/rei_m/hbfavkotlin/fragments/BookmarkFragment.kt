@@ -14,7 +14,7 @@ import me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkHeaderLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
 
-public class BookmarkFragment private constructor() : Fragment(), FragmentAnimationI {
+public class BookmarkFragment : Fragment(), FragmentAnimationI {
 
     private var mListener: OnFragmentInteractionListener? = null
 

@@ -18,7 +18,7 @@ import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.UserModel
 import rx.Subscription
 
-public class SplashFragment private constructor() : Fragment(), ProgressDialogI {
+public class SplashFragment : Fragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
 
@@ -69,10 +69,10 @@ public class SplashFragment private constructor() : Fragment(), ProgressDialogI 
     }
 
     override fun onPause() {
-        super.onPause()
-
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+
+        super.onPause()
     }
 
     @Subscribe

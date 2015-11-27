@@ -53,10 +53,8 @@ public class MainActivity : AppCompatActivity(),
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
-        if (savedInstanceState == null) {
-            val pager = findViewById(R.id.pager) as BookmarkViewPager
-            pager.init(supportFragmentManager, this)
-        }
+        val pager = findViewById(R.id.pager) as BookmarkViewPager
+        pager.init(supportFragmentManager, this)
     }
 
     override fun onResume() {
@@ -67,10 +65,10 @@ public class MainActivity : AppCompatActivity(),
     }
 
     override fun onPause() {
-        super.onPause()
-
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+
+        super.onPause()
     }
 
     override fun onBackPressed() {
