@@ -3,13 +3,12 @@ package me.rei_m.hbfavkotlin.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.AnimationUtils
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.entities.EntryEntity
@@ -19,7 +18,6 @@ import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.EntryWebViewFragment
 
 public class BookmarkActivity : AppCompatActivity(),
-        NavigationView.OnNavigationItemSelectedListener,
         BookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
@@ -45,19 +43,8 @@ public class BookmarkActivity : AppCompatActivity(),
         setContentView(R.layout.activity)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        val toggle = ActionBarDrawerToggle(this,
-                drawer,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-
-        drawer.setDrawerListener(toggle)
-        toggle.syncState()
-
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
-        navigationView.setNavigationItemSelectedListener(this)
+        supportActionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar.setHomeButtonEnabled(true)
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
@@ -69,36 +56,28 @@ public class BookmarkActivity : AppCompatActivity(),
             }
         }
 
-        //        val fab = findViewById(R.id.fab) as FloatingActionButton
-        //        fab.setOnClickListener(object : View.OnClickListener {
-        //            override fun onClick(view: View) {
-        //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-        //            }
-        //        })
+        val fab = findViewById(R.id.fab) as FloatingActionButton
+
+        val fab2 = findViewById(R.id.fab2) as FloatingActionButton
+
+        fab.setOnClickListener({
+            val hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump)
+            fab2.startAnimation(hyperspaceJumpAnimation)
+        })
 
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        val id = item.itemId
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        //        if (id == R.id.nav_camara) {
-        //            // Handle the camera action
-        //        } else if (id == R.id.nav_gallery) {
-        //
-        //        } else if (id == R.id.nav_slideshow) {
-        //
-        //        } else if (id == R.id.nav_manage) {
-        //
-        //        } else if (id == R.id.nav_share) {
-        //
-        //        } else if (id == R.id.nav_send) {
-        //
-        //        }
+        val id = item?.itemId;
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        drawer.closeDrawer(GravityCompat.START)
+        when (id) {
+            android.R.id.home ->
+                finish();
+            else ->
+                return super.onOptionsItemSelected(item);
+        }
+
         return true
     }
 
