@@ -121,6 +121,11 @@ public class BookmarkOwnFragment : Fragment() {
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
 
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        if (swipeRefreshLayout.isRefreshing) {
+            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
+        }
+
         super.onPause()
     }
 
