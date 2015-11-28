@@ -25,16 +25,19 @@ public class BookmarkFavoriteModel {
 
         isBusy = true
 
-        if (startIndex === 0) {
-            bookmarkList.clear()
-        }
+        val listFromRss = ArrayList<BookmarkEntity>()
 
         val observer = object : Observer<BookmarkEntity> {
             override fun onNext(t: BookmarkEntity?) {
-                bookmarkList.add(t!!)
+                listFromRss.add(t!!)
             }
 
             override fun onCompleted() {
+                if (startIndex === 0) {
+                    bookmarkList.clear()
+                }
+                bookmarkList.addAll(listFromRss)
+
                 EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(EventType.COMPLETE))
             }
 

@@ -5,12 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".fragments.*">
 
-    <ListView
-        android:id="@+id/list_bookmark"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <TextView android:id="@android:id/empty"
+        <ListView
+            android:id="@+id/list_bookmark"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" />

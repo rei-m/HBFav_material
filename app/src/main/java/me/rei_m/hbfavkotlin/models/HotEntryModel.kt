@@ -1,8 +1,8 @@
 package me.rei_m.hbfavkotlin.models
 
 import me.rei_m.hbfavkotlin.entities.EntryEntity
-import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.network.HotEntryRss
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
@@ -25,14 +25,16 @@ public class HotEntryModel {
 
         isBusy = true
 
-        entryList.clear()
+        val listFromRss = ArrayList<EntryEntity>()
 
         val observer = object : Observer<EntryEntity> {
             override fun onNext(t: EntryEntity?) {
-                entryList.add(t!!)
+                listFromRss.add(t!!)
             }
 
             override fun onCompleted() {
+                entryList.clear()
+                entryList.addAll(listFromRss)
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.COMPLETE))
             }
 

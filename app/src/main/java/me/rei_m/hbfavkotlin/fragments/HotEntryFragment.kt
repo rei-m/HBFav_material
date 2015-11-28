@@ -2,12 +2,13 @@ package me.rei_m.hbfavkotlin.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.widget.AdapterView
 import android.widget.ListView
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.EventBusHolder
@@ -15,14 +16,15 @@ import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.HotEntryModel
 import me.rei_m.hbfavkotlin.views.adapters.EntryListAdapter
+import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
-public class HotEntryFragment : Fragment(), FragmentAnimationI {
+public class HotEntryFragment : Fragment() {
 
     private var mListAdapter: EntryListAdapter? = null
 
-    override var mContainerWidth: Float = 0.0f
+    private var mCompositeSubscription: CompositeSubscription? = null
 
     companion object {
         fun newInstance(): HotEntryFragment {
@@ -38,6 +40,7 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
     override fun onDestroy() {
         super.onDestroy()
         mListAdapter = null
+        mCompositeSubscription = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,15 +48,13 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
         val view = inflater!!.inflate(R.layout.fragment_bookmark_list, container, false)
 
         val listView = view.findViewById(R.id.list_bookmark) as ListView
-        
+
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
             //            EventBusHolder.EVENT_BUS.post(BookmarkListClickEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter
-
-        setContainer(container!!)
 
         return view
     }
@@ -82,18 +83,21 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
             hotEntryModel.fetch()
         }
+
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+
+        mCompositeSubscription = CompositeSubscription()
+        mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+            hotEntryModel.fetch()
+        }))
     }
 
     override fun onPause() {
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+        mCompositeSubscription?.unsubscribe()
 
         super.onPause()
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
-        return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     @Subscribe
@@ -109,6 +113,11 @@ public class HotEntryFragment : Fragment(), FragmentAnimationI {
             HotEntryLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
+        }
+
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        if (swipeRefreshLayout.isRefreshing) {
+            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
     }
 }

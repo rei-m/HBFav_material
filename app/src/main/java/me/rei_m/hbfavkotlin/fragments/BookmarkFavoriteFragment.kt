@@ -2,13 +2,14 @@ package me.rei_m.hbfavkotlin.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
@@ -18,14 +19,15 @@ import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkListAdapter
+import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
-public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
+public class BookmarkFavoriteFragment : Fragment() {
 
     private var mListAdapter: BookmarkListAdapter? = null
 
-    override var mContainerWidth: Float = 0.0f
+    private var mCompositeSubscription: CompositeSubscription? = null
 
     companion object {
         fun newInstance(): BookmarkFavoriteFragment {
@@ -41,6 +43,7 @@ public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
     override fun onDestroy() {
         super.onDestroy()
         mListAdapter = null
+        mCompositeSubscription = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -59,7 +62,7 @@ public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
                     if (!favoriteModel.isBusy) {
-                        favoriteModel.fetch(mListAdapter!!.nextIndex)
+                        favoriteModel.fetch(mListAdapter?.nextIndex!!)
                     }
                 }
             }
@@ -75,8 +78,6 @@ public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
         }
 
         listView.adapter = mListAdapter
-
-        setContainer(container!!)
 
         return view
     }
@@ -105,18 +106,21 @@ public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
             bookmarkFavoriteModel.fetch()
         }
+
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+
+        mCompositeSubscription = CompositeSubscription()
+        mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+            bookmarkFavoriteModel.fetch()
+        }))
     }
 
     override fun onPause() {
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+        mCompositeSubscription?.unsubscribe()
 
         super.onPause()
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
-        return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     @Subscribe
@@ -132,6 +136,10 @@ public class BookmarkFavoriteFragment : Fragment(), FragmentAnimationI {
             BookmarkFavoriteLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
+        }
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        if (swipeRefreshLayout.isRefreshing) {
+            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
     }
 }
