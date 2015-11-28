@@ -13,7 +13,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
+import me.rei_m.hbfavkotlin.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavkotlin.events.BookmarkOwnLoadedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.extensions.hide
@@ -72,7 +72,7 @@ public class BookmarkOwnFragment : Fragment() {
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            EventBusHolder.EVENT_BUS.post(BookmarkListClickEvent(bookmarkEntity))
+            EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter

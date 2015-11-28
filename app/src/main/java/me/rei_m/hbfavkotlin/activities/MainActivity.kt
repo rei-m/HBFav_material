@@ -13,8 +13,9 @@ import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
+import me.rei_m.hbfavkotlin.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent
+import me.rei_m.hbfavkotlin.events.EntryListItemClickedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
@@ -132,8 +133,15 @@ public class MainActivity : AppCompatActivity(),
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onBookmarkListClick(event: BookmarkListClickEvent) {
+    public fun onBookmarkListItemClicked(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onEntryListItemClicked(event: EntryListItemClickedEvent) {
+
+        startActivity(BookmarkActivity.createIntent(this, event.entryEntity))
     }
 
     @Subscribe

@@ -15,6 +15,8 @@ import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
 class EntryItemLayout : RelativeLayout {
 
+    private var mMarginTitleRight: Int = 0
+
     companion object {
         private class ViewHolder(val bodyImage: AppCompatImageView,
                                  val title: AppCompatTextView,
@@ -38,21 +40,27 @@ class EntryItemLayout : RelativeLayout {
                 findViewById(R.id.image_article_icon) as AppCompatImageView,
                 findViewById(R.id.text_article_url) as AppCompatTextView,
                 findViewById(R.id.text_entry_footer) as AppCompatTextView)
+
+        mMarginTitleRight = resources.getDimensionPixelSize(R.dimen.margin_outline)
     }
 
     fun bindView(entryEntity: EntryEntity) {
         val holder = tag as ViewHolder
 
+        holder.title.text = entryEntity.title
+
+        val mlp = holder.title.layoutParams as MarginLayoutParams
+
         if (entryEntity.articleImageUrl.isEmpty()) {
             holder.bodyImage.visibility = GONE
+            mlp.rightMargin = mMarginTitleRight
         } else {
             holder.bodyImage.visibility = VISIBLE
+            mlp.rightMargin = 0
             Picasso.with(context)
                     .load(entryEntity.articleImageUrl)
                     .into(holder.bodyImage)
         }
-
-        holder.title.text = entryEntity.title
 
         Picasso.with(context)
                 .load(entryEntity.articleIconUrl)
