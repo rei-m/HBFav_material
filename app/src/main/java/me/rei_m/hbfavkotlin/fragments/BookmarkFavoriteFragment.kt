@@ -16,6 +16,8 @@ import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent
 import me.rei_m.hbfavkotlin.events.BookmarkListClickEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.extensions.hide
+import me.rei_m.hbfavkotlin.extensions.show
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkListAdapter
@@ -51,10 +53,6 @@ public class BookmarkFavoriteFragment : Fragment() {
         val view = inflater!!.inflate(R.layout.fragment_bookmark_list, container, false)
 
         val listView = view.findViewById(R.id.list_bookmark) as ListView
-
-        val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-
-        listView.addFooterView(footerView, null, false)
 
         listView.setOnScrollListener(object : AbsListView.OnScrollListener {
 
@@ -92,6 +90,8 @@ public class BookmarkFavoriteFragment : Fragment() {
         // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
+        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+
         val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
 
         val displayedCount = mListAdapter?.count!!
@@ -102,12 +102,13 @@ public class BookmarkFavoriteFragment : Fragment() {
             mListAdapter?.clear()
             mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
             mListAdapter?.notifyDataSetChanged()
+            view.findViewById(R.id.progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
             bookmarkFavoriteModel.fetch()
+            view.findViewById(R.id.progress_list).show()
+            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
-
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
@@ -126,17 +127,28 @@ public class BookmarkFavoriteFragment : Fragment() {
     @Subscribe
     @SuppressWarnings("unused")
     public fun onBookmarkFavoriteLoaded(event: BookmarkFavoriteLoadedEvent) {
+
         when (event.type) {
             BookmarkFavoriteLoadedEvent.Companion.Type.COMPLETE -> {
+
                 val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
                 mListAdapter?.clear()
                 mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
                 mListAdapter?.notifyDataSetChanged()
+
+                val listView = view.findViewById(R.id.list_bookmark) as ListView
+                if (listView.footerViewsCount === 0) {
+                    val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
+                    listView.addFooterView(footerView, null, false)
+                }
             }
             BookmarkFavoriteLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
         }
+
+        view.findViewById(R.id.progress_list).hide()
+
         val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)

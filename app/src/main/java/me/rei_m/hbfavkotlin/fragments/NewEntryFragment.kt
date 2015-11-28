@@ -13,6 +13,8 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.events.NewEntryLoadedEvent
+import me.rei_m.hbfavkotlin.extensions.hide
+import me.rei_m.hbfavkotlin.extensions.show
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.NewEntryModel
 import me.rei_m.hbfavkotlin.views.adapters.EntryListAdapter
@@ -79,9 +81,11 @@ public class NewEntryFragment : Fragment() {
             mListAdapter?.clear()
             mListAdapter?.addAll(newEntryModel.entryList)
             mListAdapter?.notifyDataSetChanged()
+            view.findViewById(R.id.progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
             newEntryModel.fetch()
+            view.findViewById(R.id.progress_list).show()
         }
 
         val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
@@ -114,6 +118,8 @@ public class NewEntryFragment : Fragment() {
                 // TODO エラー表示
             }
         }
+
+        view.findViewById(R.id.progress_list).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
