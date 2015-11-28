@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.ArticleLayout
+import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkHeaderLayout
 import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
 
@@ -48,7 +48,9 @@ public class BookmarkFragment : Fragment(), FragmentAnimationI {
 
         val bookmarkLayout = view.findViewById(R.id.layout_bookmark) as BookmarkLayout
         bookmarkLayout.bindView(mBookmarkEntity!!)
-        bookmarkLayout.setOnClickListener { v ->
+
+        val bookmarkContents = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
+        bookmarkContents.setOnClickListener { v ->
             mListener?.onClickBookmark(mBookmarkEntity!!)
         }
 
@@ -71,6 +73,7 @@ public class BookmarkFragment : Fragment(), FragmentAnimationI {
     override fun onDetach() {
         super.onDetach()
         mListener = null
+        mBookmarkEntity = null
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
