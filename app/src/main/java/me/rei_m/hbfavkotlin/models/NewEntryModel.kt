@@ -25,14 +25,16 @@ public class NewEntryModel {
 
         isBusy = true
 
-        entryList.clear()
+        val listFromRss = ArrayList<EntryEntity>()
 
         val observer = object : Observer<EntryEntity> {
             override fun onNext(t: EntryEntity?) {
-                entryList.add(t!!)
+                listFromRss.add(t!!)
             }
 
             override fun onCompleted() {
+                entryList.clear()
+                entryList.addAll(listFromRss)
                 EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(EventType.COMPLETE))
             }
 
