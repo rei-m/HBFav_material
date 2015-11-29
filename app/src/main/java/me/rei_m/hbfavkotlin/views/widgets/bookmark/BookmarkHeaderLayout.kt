@@ -6,9 +6,10 @@ import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
-
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.events.BookmarkUserClickedEvent
+import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
 class BookmarkHeaderLayout : RelativeLayout {
@@ -39,5 +40,9 @@ class BookmarkHeaderLayout : RelativeLayout {
                 .load(bookmarkEntity.bookmarkIconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
+
+        setOnClickListener({
+            EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(bookmarkEntity.creator))
+        })
     }
 }

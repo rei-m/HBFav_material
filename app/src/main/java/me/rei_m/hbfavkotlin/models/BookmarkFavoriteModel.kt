@@ -12,15 +12,26 @@ import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent.Companion.Type as
 
 public class BookmarkFavoriteModel {
 
+    private var userId = ""
+
     public var isBusy = false
         private set
 
     public val bookmarkList = ArrayList<BookmarkEntity>()
 
-    public fun fetch(startIndex: Int = 0) {
+    public fun fetch(userId: String, startIndex: Int = 0) {
 
         if (isBusy) {
             return
+        }
+
+        val requestIndex: Int
+        if (this.userId != userId) {
+            this.userId = userId
+            bookmarkList.clear()
+            requestIndex = 0
+        } else {
+            requestIndex = startIndex
         }
 
         isBusy = true
@@ -33,7 +44,7 @@ public class BookmarkFavoriteModel {
             }
 
             override fun onCompleted() {
-                if (startIndex === 0) {
+                if (requestIndex === 0) {
                     bookmarkList.clear()
                 }
                 bookmarkList.addAll(listFromRss)
@@ -46,7 +57,7 @@ public class BookmarkFavoriteModel {
             }
         }
 
-        BookmarkFavoriteRss().request(startIndex)
+        BookmarkFavoriteRss().request(userId, requestIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

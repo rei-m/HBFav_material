@@ -27,19 +27,29 @@ import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
 public class BookmarkFavoriteFragment : Fragment() {
 
+    private var mUserId: String = ""
+
     private var mListAdapter: BookmarkListAdapter? = null
 
     private var mCompositeSubscription: CompositeSubscription? = null
 
     companion object {
+
+        private val ARG_USER_ID = "ARG_USER_ID"
+
         fun newInstance(): BookmarkFavoriteFragment {
-            return BookmarkFavoriteFragment()
+            val fragment = BookmarkFavoriteFragment()
+            val args = Bundle()
+            args.putString(ARG_USER_ID, "Rei19")
+            fragment.arguments = args
+            return fragment
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
+        mUserId = arguments.getString(ARG_USER_ID)
     }
 
     override fun onDestroy() {
@@ -60,7 +70,7 @@ public class BookmarkFavoriteFragment : Fragment() {
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
                     if (!favoriteModel.isBusy) {
-                        favoriteModel.fetch(mListAdapter?.nextIndex!!)
+                        favoriteModel.fetch(mUserId, mListAdapter?.nextIndex!!)
                     }
                 }
             }
@@ -105,14 +115,14 @@ public class BookmarkFavoriteFragment : Fragment() {
             view.findViewById(R.id.progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
-            bookmarkFavoriteModel.fetch()
+            bookmarkFavoriteModel.fetch(mUserId)
             view.findViewById(R.id.progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
-            bookmarkFavoriteModel.fetch()
+            bookmarkFavoriteModel.fetch(mUserId)
         }))
     }
 

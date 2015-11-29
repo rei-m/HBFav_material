@@ -9,7 +9,8 @@
         android:id="@+id/layout_bookmark_header"
         layout="@layout/layout_bookmark_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_layout_pressed" />
 
     <me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkContentsLayout
         android:id="@+id/layout_bookmark_contents"
