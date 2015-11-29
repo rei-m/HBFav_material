@@ -6,11 +6,11 @@ import rx.Observable
 
 public final class BookmarkFavoriteRss : AbsBookmarkRss() {
 
-    public fun request(startIndex: Int = 0): Observable<BookmarkEntity> {
+    public fun request(userId: String, startIndex: Int = 0): Observable<BookmarkEntity> {
         val url = HttpUrl.Builder()
                 .scheme("http")
                 .host("b.hatena.ne.jp")
-                .addPathSegment("Rei19")
+                .addPathSegment(userId)
                 .addPathSegment("favorite.rss")
                 .addQueryParameter("of", startIndex.toString())
                 .build()

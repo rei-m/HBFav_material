@@ -14,9 +14,10 @@ public class App : Application() {
 
         // ModelLocatorにModelの参照を登録
         ModelLocator.register(ModelTag.FAVORITE, BookmarkFavoriteModel());
-        ModelLocator.register(ModelTag.OWN, BookmarkOwnModel());
+        ModelLocator.register(ModelTag.OWN_BOOKMARK, BookmarkUserModel());
         ModelLocator.register(ModelTag.HOT_ENTRY, HotEntryModel());
         ModelLocator.register(ModelTag.NEW_ENTRY, NewEntryModel());
         ModelLocator.register(ModelTag.USER, UserModel(applicationContext));
+        ModelLocator.register(ModelTag.OTHERS_BOOKMARK, BookmarkUserModel());
     }
 }

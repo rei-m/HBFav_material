@@ -17,7 +17,7 @@ public class BookmarkFavoriteModel {
 
     public val bookmarkList = ArrayList<BookmarkEntity>()
 
-    public fun fetch(startIndex: Int = 0) {
+    public fun fetch(userId: String, startIndex: Int = 0) {
 
         if (isBusy) {
             return
@@ -46,7 +46,7 @@ public class BookmarkFavoriteModel {
             }
         }
 
-        BookmarkFavoriteRss().request(startIndex)
+        BookmarkFavoriteRss().request(userId, startIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.fragments.BookmarkFavoriteFragment
-import me.rei_m.hbfavkotlin.fragments.BookmarkOwnFragment
+import me.rei_m.hbfavkotlin.fragments.BookmarkUserFragment
 import me.rei_m.hbfavkotlin.fragments.HotEntryFragment
 import me.rei_m.hbfavkotlin.fragments.NewEntryFragment
 import java.util.*
@@ -40,7 +40,7 @@ class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
             INDEX_PAGER_BOOKMARK_FAVORITE ->
                 BookmarkFavoriteFragment.newInstance()
             INDEX_PAGER_BOOKMARK_OWN ->
-                BookmarkOwnFragment.newInstance()
+                BookmarkUserFragment.newInstance()
             INDEX_PAGER_HOT_ENTRY ->
                 HotEntryFragment.newInstance()
             INDEX_PAGER_NEW_ENTRY ->
