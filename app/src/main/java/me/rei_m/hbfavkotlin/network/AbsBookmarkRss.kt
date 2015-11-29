@@ -7,7 +7,7 @@ import com.squareup.okhttp.Request
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.exeptions.HTTPException
-import me.rei_m.hbfavkotlin.utils.RssXmlUtils
+import me.rei_m.hbfavkotlin.utils.RssXmlUtil
 import rx.Observable
 import java.net.HttpURLConnection
 
@@ -33,7 +33,7 @@ public abstract class AbsBookmarkRss {
                 val feedCount = feeds.length
 
                 for (i_feed in 0..feedCount - 1) {
-                    t.onNext(RssXmlUtils.createBookmarkFromFeed(feeds.item(i_feed)))
+                    t.onNext(RssXmlUtil.createBookmarkFromFeed(feeds.item(i_feed)))
                 }
 
             } else {

@@ -3,6 +3,7 @@
     <words>
       <w>gson</w>
       <w>hatena</w>
+      <w>jsonlite</w>
     </words>
   </dictionary>
 </component>

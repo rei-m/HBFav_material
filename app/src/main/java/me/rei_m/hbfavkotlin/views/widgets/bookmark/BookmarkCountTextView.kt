@@ -21,7 +21,7 @@ class BookmarkCountTextView : AppCompatTextView {constructor(context: Context?) 
         text = bookmarkEntity.bookmarkCount.toString() + " users"
 
         setOnClickListener({
-            EventBusHolder.EVENT_BUS.post(BookmarkCountClickedEvent(bookmarkEntity.link))
+            EventBusHolder.EVENT_BUS.post(BookmarkCountClickedEvent(bookmarkEntity))
         })
     }
 }

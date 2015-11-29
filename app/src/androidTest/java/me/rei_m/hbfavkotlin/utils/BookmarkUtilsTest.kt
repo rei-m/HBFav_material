@@ -21,7 +21,7 @@ public class BookmarkUtilsTest {
         cal.timeZone = TimeZone.getTimeZone("Asia/Tokyo")
         cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 58)
 
-        assertEquals(RssUtils.getPastTimeString(cal.time, now.time), "2秒前")
+        assertEquals(BookmarkUtil.getPastTimeString(cal.time, now.time), "2秒前")
     }
 
 }

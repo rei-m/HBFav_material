@@ -5,22 +5,19 @@ import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.widget.RelativeLayout
-
 import com.squareup.picasso.Picasso
-
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.utils.RssUtils
-import me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkLayout
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil
 import me.rei_m.hbfavkotlin.views.widgets.graphics.RoundedTransformation
 
-class FavoriteItemLayout : RelativeLayout {
+class UserItemLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,
                                  val iconImage: AppCompatImageView,
-                                 val bookmarkLayout: BookmarkLayout,
-                                 val timing: AppCompatTextView)
+                                 val timing: AppCompatTextView,
+                                 val description: AppCompatTextView)
     }
 
     constructor(context: Context?) : super(context)
@@ -36,18 +33,21 @@ class FavoriteItemLayout : RelativeLayout {
         tag = ViewHolder(
                 findViewById(R.id.text_user_name) as AppCompatTextView,
                 findViewById(R.id.image_user_icon) as AppCompatImageView,
-                findViewById(R.id.layout_bookmark) as BookmarkLayout,
-                findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView)
+                findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView,
+                findViewById(R.id.text_bookmark_description) as AppCompatTextView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
+
         holder.name.text = bookmarkEntity.creator
+        holder.timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+
         Picasso.with(context)
-                .load(bookmarkEntity.bookmarkIconUrl)
+                .load(BookmarkUtil.getIconImageUrlFromId(bookmarkEntity.creator))
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
-        holder.bookmarkLayout.bindView(bookmarkEntity)
-        holder.timing.text = RssUtils.getPastTimeString(bookmarkEntity.date)
+
+        holder.description.text = bookmarkEntity.description
     }
 }

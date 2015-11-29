@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<me.rei_m.hbfavkotlin.views.widgets.list.BookmarkItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.rei_m.hbfavkotlin.views.widgets.list.UserItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -31,16 +31,16 @@
         android:layout_marginTop="@dimen/margin_outline"
         android:textSize="@dimen/text_size_caption" />
 
-    <include
-        android:id="@+id/layout_bookmark"
-        layout="@layout/layout_bookmark"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_bookmark_description"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_user_name"
         android:layout_marginBottom="@dimen/margin_outline"
         android:layout_marginEnd="@dimen/margin_outline"
         android:layout_marginLeft="@dimen/margin_content_from_screen"
         android:layout_marginRight="@dimen/margin_outline"
-        android:layout_marginStart="@dimen/margin_content_from_screen" />
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:layout_marginTop="@dimen/margin" />
 
-</me.rei_m.hbfavkotlin.views.widgets.list.BookmarkItemLayout>
+</me.rei_m.hbfavkotlin.views.widgets.list.UserItemLayout>
