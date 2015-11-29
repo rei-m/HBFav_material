@@ -11,4 +11,4 @@ public data class EntryEntity(val title: String,
                               val subject: String,
                               val articleIconUrl: String,
                               val articleBody: String,
-                              val articleImageUrl: String): Serializable
+                              val articleImageUrl: String) : Serializable
