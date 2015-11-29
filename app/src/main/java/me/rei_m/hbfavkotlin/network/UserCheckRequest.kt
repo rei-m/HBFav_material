@@ -10,12 +10,12 @@ import java.net.HttpURLConnection
 
 public class UserCheckRequest private constructor() {
     companion object {
-        public fun request(id: String): Observable<Boolean> {
+        public fun request(userId: String): Observable<Boolean> {
 
             val url = HttpUrl.Builder()
                     .scheme("http")
                     .host("b.hatena.ne.jp")
-                    .addPathSegment(id)
+                    .addPathSegment(userId)
                     .build()
 
             return Observable.create({ t ->

@@ -4,6 +4,7 @@ import me.rei_m.hbfavkotlin.entities.EntryEntity
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
 import me.rei_m.hbfavkotlin.network.HotEntryRss
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -17,7 +18,10 @@ public class HotEntryModel {
 
     public val entryList = ArrayList<EntryEntity>()
 
-    public fun fetch() {
+    public var entryType = EntryType.ALL
+        private set
+
+    public fun fetch(entryType: EntryType) {
 
         if (isBusy) {
             return
@@ -35,6 +39,7 @@ public class HotEntryModel {
             override fun onCompleted() {
                 entryList.clear()
                 entryList.addAll(listFromRss)
+                this@HotEntryModel.entryType = entryType
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.COMPLETE))
             }
 
@@ -43,7 +48,7 @@ public class HotEntryModel {
             }
         }
 
-        HotEntryRss().request()
+        HotEntryRss().request(entryType)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -13,4 +13,14 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+
+    <string name="category_title_all">総合</string>
+    <string name="category_title_world">世の中</string>
+    <string name="category_title_politics_and_economy">政治と経済</string>
+    <string name="category_title_life">暮らし</string>
+    <string name="category_title_entertainment">エンタメ</string>
+    <string name="category_title_study">学び</string>
+    <string name="category_title_technology">テクノロジー</string>
+    <string name="category_title_animation_and_game">アニメとゲーム</string>
+    <string name="category_title_comedy">おもしろ</string>
 </resources>

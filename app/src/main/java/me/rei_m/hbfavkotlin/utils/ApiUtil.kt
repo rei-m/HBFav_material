@@ -1,10 +1,6 @@
 package me.rei_m.hbfavkotlin.utils
 
-import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.entities.EntryEntity
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.w3c.dom.Node
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil.Companion.EntryType
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,5 +13,26 @@ class ApiUtil private constructor() {
         public fun parseStringToDate(dateString: String): Date {
             return dateFormat.parse(dateString)
         }
-   }
+
+        public fun getEntryTypeRss(entryType: EntryType): String = when (entryType) {
+            EntryType.WORLD ->
+                "social.rss"
+            EntryType.POLITICS_AND_ECONOMY ->
+                "economics.rss"
+            EntryType.LIFE ->
+                "life.rss"
+            EntryType.ENTERTAINMENT ->
+                "entertainment.rss"
+            EntryType.STUDY ->
+                "knowledge.rss"
+            EntryType.TECHNOLOGY ->
+                "it.rss"
+            EntryType.ANIMATION_AND_GAME ->
+                "game.rss"
+            EntryType.COMEDY ->
+                "fun.rss"
+            else ->
+                ""
+        }
+    }
 }

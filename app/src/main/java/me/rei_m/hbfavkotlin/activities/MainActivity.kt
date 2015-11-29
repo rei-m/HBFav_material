@@ -13,12 +13,14 @@ import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
-import me.rei_m.hbfavkotlin.events.BookmarkListItemClickedEvent
-import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent
-import me.rei_m.hbfavkotlin.events.EntryListItemClickedEvent
-import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.events.*
 import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
+import me.rei_m.hbfavkotlin.managers.ModelLocator
+import me.rei_m.hbfavkotlin.models.HotEntryModel
+import me.rei_m.hbfavkotlin.models.NewEntryModel
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavkotlin.views.widgets.manager.BookmarkViewPager
 import me.rei_m.hbfavkotlin.events.BookmarkPageDisplayEvent.Companion.Kind as PageKind
@@ -93,18 +95,59 @@ public class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        //noinspection SimplifiableIfStatement
-        //        if (id == R.id.action_settings) {
-        //            return true
-        //        }
+        val id = item?.itemId;
 
-        return super.onOptionsItemSelected(item)
+        val entryType: EntryType
+
+        when (id) {
+            R.id.menu_category_all -> {
+                entryType = EntryType.ALL
+            }
+            R.id.menu_category_world -> {
+                entryType = EntryType.WORLD
+            }
+            R.id.menu_category_politics_and_economy -> {
+                entryType = EntryType.POLITICS_AND_ECONOMY
+            }
+            R.id.menu_category_life -> {
+                entryType = EntryType.LIFE
+            }
+            R.id.menu_category_entertainment -> {
+                entryType = EntryType.ENTERTAINMENT
+            }
+            R.id.menu_category_study -> {
+                entryType = EntryType.STUDY
+            }
+            R.id.menu_category_technology -> {
+                entryType = EntryType.TECHNOLOGY
+            }
+            R.id.menu_category_animation_and_game -> {
+                entryType = EntryType.ANIMATION_AND_GAME
+            }
+            R.id.menu_category_comedy -> {
+                entryType = EntryType.COMEDY
+            }
+            else ->
+                return super.onOptionsItemSelected(item);
+        }
+
+        val viewPager = findViewById(R.id.pager) as BookmarkViewPager
+
+        val target =
+                if (viewPager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
+                    EntryCategoryChangedEvent.Companion.Target.HOT
+                else
+                    EntryCategoryChangedEvent.Companion.Target.NEW
+
+        EventBusHolder.EVENT_BUS.post(EntryCategoryChangedEvent(entryType, target))
+
+        val currentPageTitle = viewPager.getCurrentPageTitle().toString()
+        val entryTypeString = BookmarkUtil.getEntryTypeString(applicationContext, entryType)
+        supportActionBar.title = "$currentPageTitle - $entryTypeString"
+
+        return true
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -128,6 +171,7 @@ public class MainActivity : AppCompatActivity(),
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
 
         drawer.closeDrawer(GravityCompat.START)
+
         return true
     }
 
@@ -140,7 +184,6 @@ public class MainActivity : AppCompatActivity(),
     @Subscribe
     @SuppressWarnings("unused")
     public fun onEntryListItemClicked(event: EntryListItemClickedEvent) {
-
         startActivity(BookmarkActivity.createIntent(this, event.entryEntity))
     }
 
@@ -152,25 +195,41 @@ public class MainActivity : AppCompatActivity(),
 
         val navigationView = findViewById(R.id.nav_view) as NavigationView
 
-        supportActionBar.title = pager.getCurrentPageTitle()
+        val title: String
+        val navItemId: Int
 
         when (event.kind) {
             PageKind.BOOKMARK_FAVORITE -> {
                 mMenu?.hide()
-                navigationView.setCheckedItem(R.id.nav_bookmark_favorite)
+                title = pager.getCurrentPageTitle().toString()
+                navItemId = R.id.nav_bookmark_favorite
             }
             PageKind.BOOKMARK_OWN -> {
                 mMenu?.hide()
-                navigationView.setCheckedItem(R.id.nav_bookmark_own)
+                title = pager.getCurrentPageTitle().toString()
+                navItemId = R.id.nav_bookmark_own
             }
             PageKind.HOT_ENTRY -> {
                 mMenu?.show()
-                navigationView.setCheckedItem(R.id.nav_hot_entry)
+                val mainTitle = pager.getCurrentPageTitle().toString()
+                val hotEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.HOT_ENTRY) as HotEntryModel
+                val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
+                title = "$mainTitle - $subTitle"
+                navItemId = R.id.nav_hot_entry
             }
             PageKind.NEW_ENTRY -> {
                 mMenu?.show()
-                navigationView.setCheckedItem(R.id.nav_new_entry)
+                val mainTitle = pager.getCurrentPageTitle().toString()
+                val newEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.NEW_ENTRY) as NewEntryModel
+                val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
+                title = "$mainTitle - $subTitle"
+                navItemId = R.id.nav_new_entry
             }
+            else ->
+                return
         }
+
+        supportActionBar.title = title
+        navigationView.setCheckedItem(navItemId)
     }
 }
