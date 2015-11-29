@@ -6,41 +6,39 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
-import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent
-import me.rei_m.hbfavkotlin.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
+import me.rei_m.hbfavkotlin.events.UserRegisterBookmarkLoadedEvent
 import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
 import me.rei_m.hbfavkotlin.managers.ModelLocator
-import me.rei_m.hbfavkotlin.models.BookmarkFavoriteModel
-import me.rei_m.hbfavkotlin.views.adapters.BookmarkListAdapter
+import me.rei_m.hbfavkotlin.models.UserRegisterBookmarkModel
+import me.rei_m.hbfavkotlin.views.adapters.UserListAdapter
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavkotlin.events.BookmarkFavoriteLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavkotlin.managers.ModelLocator.Companion.Tag as ModelTag
 
-public class BookmarkFavoriteFragment : Fragment() {
+public class BookmarkUsersFragment : Fragment() {
 
-    private var mUserId: String = ""
+    private var mBookmarkEntity: BookmarkEntity? = null
 
-    private var mListAdapter: BookmarkListAdapter? = null
+    private var mListAdapter: UserListAdapter? = null
 
     private var mCompositeSubscription: CompositeSubscription? = null
 
     companion object {
 
-        private val ARG_USER_ID = "ARG_USER_ID"
+        private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        fun newInstance(): BookmarkFavoriteFragment {
-            val fragment = BookmarkFavoriteFragment()
+        fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkUsersFragment {
+            val fragment = BookmarkUsersFragment()
             val args = Bundle()
-            args.putString(ARG_USER_ID, "Rei19")
+            args.putSerializable(ARG_BOOKMARK, bookmarkEntity)
             fragment.arguments = args
             return fragment
         }
@@ -48,14 +46,14 @@ public class BookmarkFavoriteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
-        mUserId = arguments.getString(ARG_USER_ID)
+        mListAdapter = UserListAdapter(activity, R.layout.list_item_user)
+        mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mListAdapter = null
-        mCompositeSubscription = null
+        mBookmarkEntity = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,25 +62,9 @@ public class BookmarkFavoriteFragment : Fragment() {
 
         val listView = view.findViewById(R.id.list) as ListView
 
-        listView.setOnScrollListener(object : AbsListView.OnScrollListener {
-
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
-                    if (!favoriteModel.isBusy) {
-                        favoriteModel.fetch(mUserId, mListAdapter?.nextIndex!!)
-                    }
-                }
-            }
-
-            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
-
-            }
-        })
-
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
+            //            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
+            //            EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter
@@ -102,27 +84,32 @@ public class BookmarkFavoriteFragment : Fragment() {
 
         val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
 
-        val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+        val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
-        val displayedCount = mListAdapter?.count!!
-
-        if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
-            // 表示済の件数とModel内で保持している件数をチェックし、
-            // 差分があれば未表示のブックマークがあるのでリストに表示する
-            mListAdapter?.clear()
-            mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
-            mListAdapter?.notifyDataSetChanged()
-            view.findViewById(R.id.progress_list).hide()
-        } else if (displayedCount === 0) {
-            // 1件も表示していなければお気に入りのブックマーク情報を取得する
-            bookmarkFavoriteModel.fetch(mUserId)
+        if (userRegisterBookmarkModel.isSameUrl(mBookmarkEntity?.link!!)) {
+            val displayedCount = mListAdapter?.count!!
+            if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
+                // 表示済の件数とModel内で保持している件数をチェックし、
+                // 差分があれば未表示のブックマークがあるのでリストに表示する
+                mListAdapter?.clear()
+                mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
+                mListAdapter?.notifyDataSetChanged()
+                view.findViewById(R.id.progress_list).hide()
+            } else if (displayedCount === 0) {
+                // 1件も表示していなければお気に入りのブックマーク情報を取得する
+                userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
+                view.findViewById(R.id.progress_list).show()
+                RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
+            }
+        } else {
+            userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
             view.findViewById(R.id.progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
-            bookmarkFavoriteModel.fetch(mUserId)
+            userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
         }))
     }
 
@@ -141,23 +128,17 @@ public class BookmarkFavoriteFragment : Fragment() {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onBookmarkFavoriteLoaded(event: BookmarkFavoriteLoadedEvent) {
+    public fun onUserRegisterBookmarkLoaded(event: UserRegisterBookmarkLoadedEvent) {
 
         when (event.type) {
-            BookmarkFavoriteLoadedEvent.Companion.Type.COMPLETE -> {
+            UserRegisterBookmarkLoadedEvent.Companion.Type.COMPLETE -> {
 
-                val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+                val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
                 mListAdapter?.clear()
-                mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
+                mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
                 mListAdapter?.notifyDataSetChanged()
-
-                val listView = view.findViewById(R.id.list) as ListView
-                if (listView.footerViewsCount === 0) {
-                    val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-                    listView.addFooterView(footerView, null, false)
-                }
             }
-            BookmarkFavoriteLoadedEvent.Companion.Type.ERROR -> {
+            UserRegisterBookmarkLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
             }
         }

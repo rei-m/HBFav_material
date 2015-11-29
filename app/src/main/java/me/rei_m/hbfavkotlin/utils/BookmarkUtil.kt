@@ -2,8 +2,13 @@ package me.rei_m.hbfavkotlin.utils
 
 import java.util.*
 
-class RssUtils private constructor() {
+class BookmarkUtil private constructor() {
     companion object {
+
+        fun getIconImageUrlFromId(userId: String): String {
+            return "http://cdn1.www.st-hatena.com/users/${userId.take(2)}/$userId/profile.gif"
+        }
+
         fun getPastTimeString(bookmarkAddedDatetime: Date,
                               cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time
         ): String {

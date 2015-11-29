@@ -14,6 +14,7 @@ import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.entities.EntryEntity
 import me.rei_m.hbfavkotlin.events.BookmarkClickedEvent
+import me.rei_m.hbfavkotlin.events.BookmarkCountClickedEvent
 import me.rei_m.hbfavkotlin.events.BookmarkUserClickedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.extensions.replaceFragment
@@ -144,5 +145,11 @@ public class BookmarkActivity : AppCompatActivity() {
     @SuppressWarnings("unused")
     public fun onBookmarkClicked(event: BookmarkClickedEvent) {
         replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkCountClicked(event: BookmarkCountClickedEvent) {
+        startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
     }
 }
