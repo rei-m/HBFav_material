@@ -2,20 +2,27 @@ package me.rei_m.hbfavkotlin.network
 
 import com.squareup.okhttp.HttpUrl
 import me.rei_m.hbfavkotlin.entities.EntryEntity
+import me.rei_m.hbfavkotlin.utils.ApiUtil
+import me.rei_m.hbfavkotlin.utils.BookmarkUtil.Companion.EntryType
 import rx.Observable
 
 public final class HotEntryRss : AbsEntryRss() {
 
-    public fun request(): Observable<EntryEntity> {
+    public fun request(entryType: EntryType): Observable<EntryEntity> {
 
-        val url = HttpUrl.Builder()
-                .scheme("http")
-                .host("feeds.feedburner.com")
-                .addPathSegment("hatena")
-                .addPathSegment("b")
-                .addPathSegment("hotentry")
-                .build()
+        val builder = HttpUrl.Builder().scheme("http")
 
-        return super.request(url)
+        if (entryType == EntryType.ALL) {
+            builder.host("feeds.feedburner.com")
+                    .addPathSegment("hatena")
+                    .addPathSegment("b")
+                    .addPathSegment("hotentry")
+        } else {
+            builder.host("b.hatena.ne.jp")
+                    .addPathSegment("hotentry")
+                    .addPathSegment(ApiUtil.getEntryTypeRss(entryType))
+        }
+
+        return super.request(builder.build())
     }
 }

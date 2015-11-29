@@ -20,6 +20,7 @@ import me.rei_m.hbfavkotlin.extensions.hide
 import me.rei_m.hbfavkotlin.extensions.show
 import me.rei_m.hbfavkotlin.managers.ModelLocator
 import me.rei_m.hbfavkotlin.models.BookmarkUserModel
+import me.rei_m.hbfavkotlin.models.UserModel
 import me.rei_m.hbfavkotlin.views.adapters.BookmarkListAdapter
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavkotlin.events.BookmarkUserLoadedEvent.Companion.Type as EventType
@@ -40,10 +41,13 @@ public class BookmarkUserFragment : Fragment() {
         private val ARG_OWNER_FLAG = "ARG_OWNER_FLAG"
 
         fun newInstance(): BookmarkUserFragment {
-            val fragment = BookmarkUserFragment()
+
+            val userModel = ModelLocator.get(ModelTag.USER) as UserModel
             val args = Bundle()
-            args.putString(ARG_USER_ID, "Rei19")
+            args.putString(ARG_USER_ID, userModel.userEntity?.id)
             args.putBoolean(ARG_OWNER_FLAG, true)
+
+            val fragment = BookmarkUserFragment()
             fragment.arguments = args
             return fragment
         }

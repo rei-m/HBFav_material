@@ -1,9 +1,41 @@
 package me.rei_m.hbfavkotlin.utils
 
+import android.content.Context
+import me.rei_m.hbfavkotlin.R
 import java.util.*
 
 class BookmarkUtil private constructor() {
+
     companion object {
+
+        enum class EntryType {
+            ALL,
+            WORLD,
+            POLITICS_AND_ECONOMY,
+            LIFE,
+            ENTERTAINMENT,
+            STUDY,
+            TECHNOLOGY,
+            ANIMATION_AND_GAME,
+            COMEDY
+        }
+
+        fun getEntryTypeString(context: Context, entryType: EntryType): String {
+
+            val id = when (entryType) {
+                EntryType.ALL -> R.string.category_title_all
+                EntryType.WORLD -> R.string.category_title_world
+                EntryType.POLITICS_AND_ECONOMY -> R.string.category_title_politics_and_economy
+                EntryType.LIFE -> R.string.category_title_life
+                EntryType.ENTERTAINMENT -> R.string.category_title_entertainment
+                EntryType.STUDY -> R.string.category_title_study
+                EntryType.TECHNOLOGY -> R.string.category_title_technology
+                EntryType.ANIMATION_AND_GAME -> R.string.category_title_animation_and_game
+                EntryType.COMEDY -> R.string.category_title_comedy
+            }
+
+            return context.getString(id)
+        }
 
         fun getIconImageUrlFromId(userId: String): String {
             return "http://cdn1.www.st-hatena.com/users/${userId.take(2)}/$userId/profile.gif"

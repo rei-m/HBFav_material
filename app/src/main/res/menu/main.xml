@@ -1,20 +1,32 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.MainActivity">
     <item
         android:id="@+id/menu_category_all"
-        android:orderInCategory="100"
-        android:title="総合"
-        app:showAsAction="never" />
+        android:title="@string/category_title_all" />
     <item
         android:id="@+id/menu_category_world"
-        android:orderInCategory="100"
-        android:title="世の中"
-        app:showAsAction="never" />
+        android:title="@string/category_title_world" />
     <item
-        android:id="@+id/menu_category_politics"
-        android:orderInCategory="100"
-        android:title="政治と経済"
-        app:showAsAction="never" />
+        android:id="@+id/menu_category_politics_and_economy"
+        android:title="@string/category_title_politics_and_economy" />
+    <item
+        android:id="@+id/menu_category_life"
+        android:title="@string/category_title_life" />
+    <item
+        android:id="@+id/menu_category_entertainment"
+        android:title="@string/category_title_entertainment" />
+    <item
+        android:id="@+id/menu_category_study"
+        android:title="@string/category_title_study" />
+    <item
+        android:id="@+id/menu_category_technology"
+        android:title="@string/category_title_technology" />
+    <item
+        android:id="@+id/menu_category_animation_and_game"
+        android:title="@string/category_title_animation_and_game" />
+    <item
+        android:id="@+id/menu_category_comedy"
+        android:title="@string/category_title_comedy" />
+
 </menu>

@@ -12,6 +12,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.EntryEntity
+import me.rei_m.hbfavkotlin.events.EntryCategoryChangedEvent
 import me.rei_m.hbfavkotlin.events.EntryListItemClickedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.events.HotEntryLoadedEvent
@@ -86,7 +87,7 @@ public class HotEntryFragment : Fragment() {
             view.findViewById(R.id.progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければお気に入りのブックマーク情報を取得する
-            hotEntryModel.fetch()
+            hotEntryModel.fetch(hotEntryModel.entryType)
             view.findViewById(R.id.progress_list).show()
         }
 
@@ -94,7 +95,7 @@ public class HotEntryFragment : Fragment() {
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
-            hotEntryModel.fetch()
+            hotEntryModel.fetch(hotEntryModel.entryType)
         }))
     }
 
@@ -104,6 +105,15 @@ public class HotEntryFragment : Fragment() {
         mCompositeSubscription?.unsubscribe()
 
         super.onPause()
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onEntryCategoryChangedEvent(event: EntryCategoryChangedEvent) {
+        if (event.target == EntryCategoryChangedEvent.Companion.Target.HOT) {
+            val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+            hotEntryModel.fetch(event.type)
+        }
     }
 
     @Subscribe

@@ -11,11 +11,8 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.events.BookmarkClickedEvent
 import me.rei_m.hbfavkotlin.events.EventBusHolder
-import me.rei_m.hbfavkotlin.extensions.replaceFragment
 import me.rei_m.hbfavkotlin.extensions.setFragment
-import me.rei_m.hbfavkotlin.fragments.BookmarkFavoriteFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkUserFragment
-import me.rei_m.hbfavkotlin.fragments.EntryWebViewFragment
 
 public class OthersBookmarkActivity : AppCompatActivity() {
 
@@ -80,6 +77,6 @@ public class OthersBookmarkActivity : AppCompatActivity() {
     @Subscribe
     @SuppressWarnings("unused")
     public fun onBookmarkClicked(event: BookmarkClickedEvent) {
-//        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
+        //        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
     }
 }
