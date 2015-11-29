@@ -9,16 +9,18 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavkotlin.R
 import me.rei_m.hbfavkotlin.entities.BookmarkEntity
 import me.rei_m.hbfavkotlin.entities.EntryEntity
+import me.rei_m.hbfavkotlin.events.BookmarkClickedEvent
+import me.rei_m.hbfavkotlin.events.EventBusHolder
 import me.rei_m.hbfavkotlin.extensions.replaceFragment
 import me.rei_m.hbfavkotlin.extensions.setFragment
 import me.rei_m.hbfavkotlin.fragments.BookmarkFragment
 import me.rei_m.hbfavkotlin.fragments.EntryWebViewFragment
 
-public class BookmarkActivity : AppCompatActivity(),
-        BookmarkFragment.OnFragmentInteractionListener {
+public class BookmarkActivity : AppCompatActivity() {
 
     private var mEntryTitle: String = ""
     private var mEntryLink: String = ""
@@ -70,10 +72,25 @@ public class BookmarkActivity : AppCompatActivity(),
         val fab = findViewById(R.id.fab) as FloatingActionButton
 
         fab.setOnClickListener({
+            // はてぶ投稿ボタンとして
             //            val hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump)
             //            fab2.startAnimation(hyperspaceJumpAnimation)
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // EventBus登録
+        EventBusHolder.EVENT_BUS.register(this)
+    }
+
+    override fun onPause() {
+        // EventBus登録解除
+        EventBusHolder.EVENT_BUS.unregister(this)
+
+        super.onPause()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -116,7 +133,9 @@ public class BookmarkActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
-        replaceFragment(EntryWebViewFragment.newInstance(bookmarkEntity.link))
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkClicked(event: BookmarkClickedEvent) {
+        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
     }
 }

@@ -16,24 +16,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_bookmark_header"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:background="@drawable/bg_layout_pressed"
         android:orientation="vertical">
 
         <include
             android:id="@+id/layout_bookmark"
             layout="@layout/layout_bookmark"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginRight="@dimen/margin_outline" />
+            android:layout_height="wrap_content" />
 
         <include
             android:id="@+id/layout_article"
             layout="@layout/layout_article"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginRight="@dimen/margin_outline" />
+            android:layout_height="wrap_content" />
 
     </me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkContentsLayout>
+
+    <me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkCountTextView
+        android:id="@+id/text_bookmark_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_bookmark_contents"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin"
+        android:background="@drawable/bg_layout_pressed"
+        android:paddingBottom="@dimen/margin"
+        android:paddingTop="@dimen/margin" />
 
 </RelativeLayout>

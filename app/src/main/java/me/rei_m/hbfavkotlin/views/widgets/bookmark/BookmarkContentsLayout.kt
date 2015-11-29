@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import me.rei_m.hbfavkotlin.R
+import me.rei_m.hbfavkotlin.entities.BookmarkEntity
+import me.rei_m.hbfavkotlin.events.BookmarkClickedEvent
+import me.rei_m.hbfavkotlin.events.EventBusHolder
 
 class BookmarkContentsLayout : LinearLayout {
 
@@ -15,8 +18,15 @@ class BookmarkContentsLayout : LinearLayout {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
-        setBackgroundResource(R.drawable.bg_layout_pressed)
+    public fun bindView(bookmarkEntity: BookmarkEntity) {
+        val bookmarkLayout = findViewById(R.id.layout_bookmark) as BookmarkLayout
+        bookmarkLayout.bindView(bookmarkEntity)
+
+        val articleLayout = findViewById(R.id.layout_article) as ArticleLayout
+        articleLayout.bindView(bookmarkEntity)
+
+        setOnClickListener {
+            EventBusHolder.EVENT_BUS.post(BookmarkClickedEvent(bookmarkEntity))
+        }
     }
 }

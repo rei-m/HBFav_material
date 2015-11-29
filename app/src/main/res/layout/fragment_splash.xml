@@ -13,6 +13,8 @@
         android:layout_marginStart="@dimen/margin_outline"
         android:src="@android:drawable/ic_menu_manage" />
 
+    <!-- http://tech.cookbiz.co.jp/android-663 -->
+
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/edit_hatena_id"
         android:layout_width="match_parent"

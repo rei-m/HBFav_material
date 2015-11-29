@@ -1,6 +1,6 @@
 package me.rei_m.hbfavkotlin.managers
 
-import java.util.HashMap
+import java.util.*
 
 public class ModelLocator private constructor() {
 
