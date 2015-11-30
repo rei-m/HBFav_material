@@ -7,9 +7,11 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 
@@ -71,5 +73,11 @@ public class BookmarkUsersActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onUserListItemClicked(event: UserListItemClickedEvent) {
+        startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
     }
 }

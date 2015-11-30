@@ -13,6 +13,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
@@ -63,8 +64,8 @@ public class BookmarkUsersFragment : Fragment() {
         val listView = view.findViewById(R.id.list) as ListView
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            //            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            //            EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
+            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
+            EventBusHolder.EVENT_BUS.post(UserListItemClickedEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter

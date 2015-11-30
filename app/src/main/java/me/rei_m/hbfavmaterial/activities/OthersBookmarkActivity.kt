@@ -76,7 +76,7 @@ public class OthersBookmarkActivity : AppCompatActivity() {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onBookmarkClicked(event: BookmarkListItemClickedEvent) {
+    public fun onBookmarkListItemClicked(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }
