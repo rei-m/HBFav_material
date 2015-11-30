@@ -89,10 +89,10 @@ public class BookmarkActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
+
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
-
-        super.onPause()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
