@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<me.rei_m.hbfavkotlin.views.widgets.list.UserItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.rei_m.hbfavmaterial.views.widgets.list.UserItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -43,4 +43,4 @@
         android:layout_marginStart="@dimen/margin_content_from_screen"
         android:layout_marginTop="@dimen/margin" />
 
-</me.rei_m.hbfavkotlin.views.widgets.list.UserItemLayout>
+</me.rei_m.hbfavmaterial.views.widgets.list.UserItemLayout>
