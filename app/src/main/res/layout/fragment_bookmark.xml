@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkContentsLayout
+    <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
         android:id="@+id/layout_bookmark_contents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,9 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkContentsLayout>
+    </me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout>
 
-    <me.rei_m.hbfavkotlin.views.widgets.bookmark.BookmarkCountTextView
+    <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
         android:id="@+id/text_bookmark_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

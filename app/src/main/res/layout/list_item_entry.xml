@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<me.rei_m.hbfavkotlin.views.widgets.list.EntryItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -61,4 +61,4 @@
         android:layout_toEndOf="@id/image_article_icon"
         android:layout_toRightOf="@id/image_article_icon" />
 
-</me.rei_m.hbfavkotlin.views.widgets.list.EntryItemLayout>
+</me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout>

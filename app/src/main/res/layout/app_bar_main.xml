@@ -21,7 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <me.rei_m.hbfavkotlin.views.widgets.manager.BookmarkViewPager
+    <me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

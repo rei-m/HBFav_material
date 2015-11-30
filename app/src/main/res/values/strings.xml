@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HBFavKotlin</string>
+    <string name="app_name">HBFav Material</string>
 
     <string name="fragment_title_bookmark_favorite">タイムライン</string>
     <string name="fragment_title_bookmark_own">ブックマーク</string>

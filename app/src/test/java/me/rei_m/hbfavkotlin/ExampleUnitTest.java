@@ -1,4 +1,4 @@
-package me.rei_m.hbfavkotlin;
+package me.rei_m.hbfavmaterial;
 
 import org.junit.Test;
 
