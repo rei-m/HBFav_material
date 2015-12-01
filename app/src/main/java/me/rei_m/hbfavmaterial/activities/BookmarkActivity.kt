@@ -120,14 +120,13 @@ public class BookmarkActivity : AppCompatActivity() {
         when (id) {
             android.R.id.home ->
                 finish();
-            R.id.menu_share -> {
+            R.id.menu_share ->
                 ShareCompat.IntentBuilder.from(this)
                         .setChooserTitle("記事をシェアします")
                         .setSubject(mEntryTitle)
                         .setText(mEntryLink)
                         .setType("text/plain")
                         .startChooser()
-            }
             else ->
                 return super.onOptionsItemSelected(item);
         }

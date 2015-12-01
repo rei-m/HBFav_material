@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_filter_users_all"
+        android:orderInCategory="200"
+        android:title="@string/filter_bookmark_users_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_filter_users_comment"
+        android:orderInCategory="201"
+        android:title="@string/filter_bookmark_users_comment"
+        app:showAsAction="never" />
+</menu>

@@ -11,8 +11,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="share">シェア</string>
 
     <string name="category_title_all">総合</string>
     <string name="category_title_world">世の中</string>
@@ -23,4 +22,8 @@
     <string name="category_title_technology">テクノロジー</string>
     <string name="category_title_animation_and_game">アニメとゲーム</string>
     <string name="category_title_comedy">おもしろ</string>
+
+    <string name="filter_bookmark_users_all">全て表示</string>
+    <string name="filter_bookmark_users_comment">コメントのみ表示</string>
+
 </resources>

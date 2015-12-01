@@ -12,6 +12,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.events.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
@@ -19,9 +20,10 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserRegisterBookmarkModel
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 import me.rei_m.hbfavmaterial.views.adapters.UserListAdapter
+import rx.Observable
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.events.BookmarkFavoriteLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
 public class BookmarkUsersFragment : Fragment() {
@@ -31,6 +33,8 @@ public class BookmarkUsersFragment : Fragment() {
     private var mListAdapter: UserListAdapter? = null
 
     private var mCompositeSubscription: CompositeSubscription? = null
+
+    private var mFilterType: FilterType? = null
 
     companion object {
 
@@ -49,12 +53,14 @@ public class BookmarkUsersFragment : Fragment() {
         super.onCreate(savedInstanceState)
         mListAdapter = UserListAdapter(activity, R.layout.list_item_user)
         mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+        mFilterType = FilterType.ALL
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mListAdapter = null
         mBookmarkEntity = null
+        mFilterType = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,9 +98,7 @@ public class BookmarkUsersFragment : Fragment() {
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
                 // 表示済の件数とModel内で保持している件数をチェックし、
                 // 差分があれば未表示のブックマークがあるのでリストに表示する
-                mListAdapter?.clear()
-                mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
-                mListAdapter?.notifyDataSetChanged()
+                displayBookmarkUsers()
                 view.findViewById(R.id.progress_list).hide()
             } else if (displayedCount === 0) {
                 // 1件も表示していなければお気に入りのブックマーク情報を取得する
@@ -133,11 +137,7 @@ public class BookmarkUsersFragment : Fragment() {
 
         when (event.type) {
             UserRegisterBookmarkLoadedEvent.Companion.Type.COMPLETE -> {
-
-                val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
-                mListAdapter?.clear()
-                mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
-                mListAdapter?.notifyDataSetChanged()
+                displayBookmarkUsers()
             }
             UserRegisterBookmarkLoadedEvent.Companion.Type.ERROR -> {
                 // TODO エラー表示
@@ -151,4 +151,27 @@ public class BookmarkUsersFragment : Fragment() {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
     }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onBookmarkUsersFiltered(event: BookmarkUsersFilteredEvent) {
+        mFilterType = event.filterType
+        displayBookmarkUsers()
+    }
+
+    private fun displayBookmarkUsers() {
+        val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
+        mListAdapter?.clear()
+        if (mFilterType == FilterType.COMMENT) {
+            Observable.from(userRegisterBookmarkModel.bookmarkList).filter({ bookmark ->
+                bookmark.description != ""
+            }).subscribe({ bookmark ->
+                mListAdapter?.add(bookmark)
+            })
+        } else {
+            mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
+        }
+        mListAdapter?.notifyDataSetChanged()
+    }
+
 }
