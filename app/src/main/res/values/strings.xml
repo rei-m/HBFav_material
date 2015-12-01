@@ -23,7 +23,7 @@
     <string name="category_title_animation_and_game">アニメとゲーム</string>
     <string name="category_title_comedy">おもしろ</string>
 
-    <string name="filter_bookmark_users_all">全て表示</string>
-    <string name="filter_bookmark_users_comment">コメントのみ表示</string>
+    <string name="filter_bookmark_users_all">全て</string>
+    <string name="filter_bookmark_users_comment">コメントのみ</string>
 
 </resources>
