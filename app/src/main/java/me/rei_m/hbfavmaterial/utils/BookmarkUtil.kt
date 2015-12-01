@@ -8,6 +8,11 @@ class BookmarkUtil private constructor() {
 
     companion object {
 
+        enum class FilterType {
+            ALL,
+            COMMENT
+        }
+
         enum class EntryType {
             ALL,
             WORLD,
@@ -18,6 +23,16 @@ class BookmarkUtil private constructor() {
             TECHNOLOGY,
             ANIMATION_AND_GAME,
             COMEDY
+        }
+
+        fun getFilterTypeString(context: Context, filterType: FilterType): String {
+
+            val id = when (filterType) {
+                FilterType.ALL -> R.string.filter_bookmark_users_all
+                FilterType.COMMENT -> R.string.filter_bookmark_users_comment
+            }
+
+            return context.getString(id)
         }
 
         fun getEntryTypeString(context: Context, entryType: EntryType): String {

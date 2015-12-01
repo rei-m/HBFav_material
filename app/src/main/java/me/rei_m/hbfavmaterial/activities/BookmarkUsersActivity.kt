@@ -6,18 +6,30 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.events.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
 public class BookmarkUsersActivity : AppCompatActivity() {
+
+    private var mBookmarkEntity: BookmarkEntity? = null
+
+    private var mFilterType: FilterType? = null
 
     companion object {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
+
+        private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             val intent = Intent(context, BookmarkUsersActivity::class.java)
@@ -34,12 +46,16 @@ public class BookmarkUsersActivity : AppCompatActivity() {
         supportActionBar.setDisplayHomeAsUpEnabled(true)
         supportActionBar.setHomeButtonEnabled(true)
 
-        val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-        supportActionBar.title = bookmarkEntity.bookmarkCount.toString() + " users"
+        mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkUsersFragment.newInstance(bookmarkEntity))
+            mFilterType = FilterType.ALL
+            setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity!!))
+        } else {
+            mFilterType = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as FilterType
         }
+
+        displayTitle(mFilterType!!)
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.hide()
@@ -53,10 +69,26 @@ public class BookmarkUsersActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
+
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+    }
 
-        super.onPause()
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        outState?.putSerializable(KEY_FILTER_TYPE, mFilterType)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        mFilterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE) as FilterType
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.bookmark_users, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -64,12 +96,34 @@ public class BookmarkUsersActivity : AppCompatActivity() {
         val id = item?.itemId;
 
         when (id) {
-            android.R.id.home ->
-                finish();
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+            R.id.menu_filter_users_all ->
+                mFilterType = FilterType.ALL
+            R.id.menu_filter_users_comment ->
+                mFilterType = FilterType.COMMENT
             else ->
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item)
         }
 
+        EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mFilterType!!))
+
+        displayTitle(mFilterType!!)
+
         return true
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onUserListItemClicked(event: UserListItemClickedEvent) {
+        startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
+    }
+
+    private fun displayTitle(filterType: FilterType) {
+        val bookmarkCountString = mBookmarkEntity?.bookmarkCount.toString()
+        val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
+        supportActionBar.title = "$bookmarkCountString users - $filterTypeString"
     }
 }

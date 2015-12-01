@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.BookmarkClickedEvent
+import me.rei_m.hbfavmaterial.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
@@ -54,10 +54,10 @@ public class OthersBookmarkActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
+
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
-
-        super.onPause()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -76,7 +76,7 @@ public class OthersBookmarkActivity : AppCompatActivity() {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public fun onBookmarkClicked(event: BookmarkClickedEvent) {
-        //        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
+    public fun onBookmarkListItemClicked(event: BookmarkListItemClickedEvent) {
+        startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }

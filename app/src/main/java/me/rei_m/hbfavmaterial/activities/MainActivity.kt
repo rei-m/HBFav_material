@@ -69,35 +69,26 @@ public class MainActivity : BaseActivityWithDrawer() {
         val entryType: EntryType
 
         when (id) {
-            R.id.menu_category_all -> {
+            R.id.menu_category_all ->
                 entryType = EntryType.ALL
-            }
-            R.id.menu_category_world -> {
+            R.id.menu_category_world ->
                 entryType = EntryType.WORLD
-            }
-            R.id.menu_category_politics_and_economy -> {
+            R.id.menu_category_politics_and_economy ->
                 entryType = EntryType.POLITICS_AND_ECONOMY
-            }
-            R.id.menu_category_life -> {
+            R.id.menu_category_life ->
                 entryType = EntryType.LIFE
-            }
-            R.id.menu_category_entertainment -> {
+            R.id.menu_category_entertainment ->
                 entryType = EntryType.ENTERTAINMENT
-            }
-            R.id.menu_category_study -> {
+            R.id.menu_category_study ->
                 entryType = EntryType.STUDY
-            }
-            R.id.menu_category_technology -> {
+            R.id.menu_category_technology ->
                 entryType = EntryType.TECHNOLOGY
-            }
-            R.id.menu_category_animation_and_game -> {
+            R.id.menu_category_animation_and_game ->
                 entryType = EntryType.ANIMATION_AND_GAME
-            }
-            R.id.menu_category_comedy -> {
+            R.id.menu_category_comedy ->
                 entryType = EntryType.COMEDY
-            }
             else ->
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item)
         }
 
         val viewPager = findViewById(R.id.pager) as BookmarkViewPager
