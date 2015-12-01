@@ -11,6 +11,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
+import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
@@ -25,8 +26,20 @@ public class MainActivity : BaseActivityWithDrawer() {
     private var mMenu: Menu? = null
 
     companion object {
+
+        private val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
+
         public fun createIntent(context: Context): Intent {
-            return Intent(context, MainActivity::class.java)
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
+            return intent
+        }
+
+        public fun createIntent(context: Context,
+                                index: Int): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(ARG_PAGER_INDEX, index)
+            return intent
         }
     }
 
@@ -34,6 +47,7 @@ public class MainActivity : BaseActivityWithDrawer() {
         super.onCreate(savedInstanceState)
         val pager = findViewById(R.id.pager) as BookmarkViewPager
         pager.init(supportFragmentManager, this)
+        pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -118,7 +132,7 @@ public class MainActivity : BaseActivityWithDrawer() {
             R.id.nav_new_entry ->
                 viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
             R.id.nav_setting ->
-                startActivity(SettingActivity.createIntent(this))
+                startActivityWithClearTop(SettingActivity.createIntent(this))
             else ->
                 viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
         }
