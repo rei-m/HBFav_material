@@ -4,11 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
@@ -16,6 +11,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
+import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
@@ -25,62 +21,33 @@ import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 import me.rei_m.hbfavmaterial.events.BookmarkPageDisplayEvent.Companion.Kind as PageKind
 
-public class MainActivity : AppCompatActivity(),
-        NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity : BaseActivityWithDrawer() {
 
     private var mMenu: Menu? = null
 
     companion object {
+
+        private val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
+
         public fun createIntent(context: Context): Intent {
-            return Intent(context, MainActivity::class.java)
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
+            return intent
+        }
+
+        public fun createIntent(context: Context,
+                                index: Int): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(ARG_PAGER_INDEX, index)
+            return intent
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-
-        val toggle = ActionBarDrawerToggle(this,
-                drawer,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-
-        drawer.setDrawerListener(toggle)
-        toggle.syncState()
-
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
-        navigationView.setNavigationItemSelectedListener(this)
-
         val pager = findViewById(R.id.pager) as BookmarkViewPager
         pager.init(supportFragmentManager, this)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        // EventBus登録
-        EventBusHolder.EVENT_BUS.register(this)
-    }
-
-    override fun onPause() {
-        // EventBus登録解除
-        EventBusHolder.EVENT_BUS.unregister(this)
-
-        super.onPause()
-    }
-
-    override fun onBackPressed() {
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+        pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -155,24 +122,22 @@ public class MainActivity : AppCompatActivity(),
 
         val viewPager = findViewById(R.id.pager) as BookmarkViewPager
 
-        viewPager.currentItem = when (item.itemId) {
+        when (item.itemId) {
             R.id.nav_bookmark_favorite ->
-                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
+                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
             R.id.nav_bookmark_own ->
-                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN
+                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN
             R.id.nav_hot_entry ->
-                BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY
+                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY
             R.id.nav_new_entry ->
-                BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
+                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
+            R.id.nav_setting ->
+                startActivityWithClearTop(SettingActivity.createIntent(this))
             else ->
-                BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
+                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
         }
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
-
-        drawer.closeDrawer(GravityCompat.START)
-
-        return true
+        return super.onNavigationItemSelected(item)
     }
 
     @Subscribe
