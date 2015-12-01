@@ -93,11 +93,10 @@ public class MainActivity : BaseActivityWithDrawer() {
 
         val viewPager = findViewById(R.id.pager) as BookmarkViewPager
 
-        val target =
-                if (viewPager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
-                    EntryCategoryChangedEvent.Companion.Target.HOT
-                else
-                    EntryCategoryChangedEvent.Companion.Target.NEW
+        val target = if (viewPager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
+            EntryCategoryChangedEvent.Companion.Target.HOT
+        else
+            EntryCategoryChangedEvent.Companion.Target.NEW
 
         EventBusHolder.EVENT_BUS.post(EntryCategoryChangedEvent(entryType, target))
 
@@ -124,8 +123,11 @@ public class MainActivity : BaseActivityWithDrawer() {
                 viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
             R.id.nav_setting ->
                 startActivityWithClearTop(SettingActivity.createIntent(this))
-            else ->
-                viewPager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
+            R.id.nav_explain_app ->
+                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
+            else -> {
+
+            }
         }
 
         return super.onNavigationItemSelected(item)

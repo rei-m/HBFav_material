@@ -22,7 +22,7 @@
             android:icon="@android:drawable/ic_menu_share"
             android:title="@string/fragment_title_setting" />
         <item
-            android:id="@+id/nav_about_app"
+            android:id="@+id/nav_explain_app"
             android:icon="@android:drawable/ic_menu_send"
             android:title="@string/fragment_title_about_app" />
     </group>

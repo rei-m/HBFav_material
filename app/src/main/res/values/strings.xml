@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">HBFav Material</string>
 
+    <string name="activity_title_bookmark">ブックマーク</string>
+    <string name="activity_title_setting">ユーザー設定</string>
+    <string name="activity_title_explain_app">このアプリについて</string>
+
     <string name="fragment_title_bookmark_favorite">タイムライン</string>
     <string name="fragment_title_bookmark_own">ブックマーク</string>
     <string name="fragment_title_hot_entry">人気エントリー</string>
