@@ -14,10 +14,10 @@
         <activity
             android:name=".activities.SplashActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,19 +27,23 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.BookmarkActivity"
-            android:label="@string/app_name"
+            android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.OthersBookmarkActivity"
-            android:label="@string/app_name"
+            android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.BookmarkUsersActivity"
-            android:label="@string/app_name"
+            android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.SettingActivity"
-            android:label="@string/app_name"
+            android:label="@string/activity_title_setting"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.ExplainAppActivity"
+            android:label="@string/activity_title_explain_app"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

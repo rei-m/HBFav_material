@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
@@ -19,7 +17,7 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
-public class BookmarkUsersActivity : AppCompatActivity() {
+public class BookmarkUsersActivity : BaseActivity() {
 
     private var mBookmarkEntity: BookmarkEntity? = null
 
@@ -40,11 +38,6 @@ public class BookmarkUsersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
-        supportActionBar.setHomeButtonEnabled(true)
 
         mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
 
@@ -61,29 +54,14 @@ public class BookmarkUsersActivity : AppCompatActivity() {
         fab.hide()
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // EventBus登録
-        EventBusHolder.EVENT_BUS.register(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        // EventBus登録解除
-        EventBusHolder.EVENT_BUS.unregister(this)
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        mFilterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE) as FilterType
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-
         outState?.putSerializable(KEY_FILTER_TYPE, mFilterType)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        mFilterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE) as FilterType
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -96,10 +74,6 @@ public class BookmarkUsersActivity : AppCompatActivity() {
         val id = item?.itemId;
 
         when (id) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
             R.id.menu_filter_users_all ->
                 mFilterType = FilterType.ALL
             R.id.menu_filter_users_comment ->

@@ -8,11 +8,11 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
-public class SettingActivity : BaseActivityWithDrawer() {
+public class ExplainAppActivity : BaseActivityWithDrawer() {
 
     companion object {
         public fun createIntent(context: Context): Intent {
-            return Intent(context, SettingActivity::class.java)
+            return Intent(context, ExplainAppActivity::class.java)
         }
     }
 
@@ -33,8 +33,8 @@ public class SettingActivity : BaseActivityWithDrawer() {
                 startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY))
             R.id.nav_new_entry ->
                 startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY))
-            R.id.nav_explain_app ->
-                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
+            R.id.nav_setting ->
+                startActivityWithClearTop(SettingActivity.createIntent(this))
             else -> {
             }
         }
