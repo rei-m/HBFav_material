@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/layout_icon_hatena_id"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_item">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_icon_hatena_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/margin_outline"
+            android:layout_marginStart="@dimen/margin_outline"
+            android:src="@android:drawable/ic_menu_manage" />
+    </FrameLayout>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/layout_text_hatena_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="0dp"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="0dp">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text_title_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="はてなアカウント" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:id="@+id/layout_icon_hatena_oauth"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_item"
+        android:layout_below="@id/layout_icon_hatena_id">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_icon_hatena_oauth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/margin_outline"
+            android:layout_marginStart="@dimen/margin_outline"
+            android:src="@android:drawable/ic_menu_manage" />
+    </FrameLayout>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/layout_text_hatena_oauth"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item"
+        android:layout_below="@id/layout_text_hatena_id"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="0dp"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="0dp">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text_title_user_oauth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="はてなブックマーク連携" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text_user_oauth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+</RelativeLayout>

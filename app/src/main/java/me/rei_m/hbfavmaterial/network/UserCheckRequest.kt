@@ -28,7 +28,11 @@ public class UserCheckRequest private constructor() {
                 val response = OkHttpClient().newCall(request).execute()
 
                 if (response.code() == HttpURLConnection.HTTP_OK) {
-                    t.onNext(true)
+                    // 原因はわからないがカンマ等の記号が入っている場合にTopページを取得しているケースがある
+                    // 基本的には入力時に弾く予定だが、Modelの仕様としては考慮してトップページが返ってきたら
+                    // 存在しないユーザー = 404として扱う
+                    val isFetchedTop = response.body().string().contains("<title>はてなブックマーク</title>")
+                    t.onNext(!isFetchedTop)
                 } else if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                     t.onNext(false)
                 } else {

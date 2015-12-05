@@ -1,0 +1,6 @@
+<resources>
+    <string name="message_error_input_user_id">
+        有効なIDを確認できませんでした。※プライベートモードのユーザーはアプリを利用できませんのでご確認ください。
+    </string>
+    <string name="message_error_network">通信に失敗しました。通信状態をご確認の上、再度お試しください。</string>
+</resources>
