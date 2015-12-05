@@ -2,10 +2,19 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.AppCompatTextView
+import android.support.v7.widget.LinearLayoutCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.extensions.getAppContext
+import me.rei_m.hbfavmaterial.managers.ModelLocator
+import me.rei_m.hbfavmaterial.models.UserModel
 
 public class SettingFragment : Fragment() {
     companion object {
@@ -16,8 +25,45 @@ public class SettingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
+        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
+
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
 
+        val textUserId = view.findViewById(R.id.text_user_id) as AppCompatTextView
+        textUserId.text = userModel.userEntity?.id
+
+        val dialog = EditUserIdDialogFragment()
+
+        val layoutUserId = view.findViewById(R.id.layout_text_hatena_id) as LinearLayoutCompat
+        layoutUserId.setOnClickListener({ v ->
+            dialog.show(childFragmentManager, "hoge")
+        })
+
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // EventBus登録
+        EventBusHolder.EVENT_BUS.register(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // EventBus登録解除
+        EventBusHolder.EVENT_BUS.unregister(this)
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public fun onUserIdChecked(event: UserIdCheckedEvent) {
+        if ( event.type == UserIdCheckedEvent.Companion.Type.OK) {
+            val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
+            val textUserId = view.findViewById(R.id.text_user_id) as AppCompatTextView
+            textUserId.text = userModel.userEntity?.id
+            (getAppContext() as App).resetBookmarks()
+        }
     }
 }

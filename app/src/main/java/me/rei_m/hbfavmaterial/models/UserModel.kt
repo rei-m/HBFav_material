@@ -44,6 +44,8 @@ public class UserModel {
 
         isBusy = true
 
+        var isSuccess = false
+
         // ユーザーIDの存在を確認
         val observer = object : Observer<Boolean> {
 
@@ -52,11 +54,12 @@ public class UserModel {
                 if (t!!) {
                     userEntity = UserEntity(id)
                     saveUser(context)
+                    isSuccess = true
                 }
             }
 
             override fun onCompleted() {
-                if (userEntity != null) {
+                if (isSuccess) {
                     EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
                 } else {
                     EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.NG))

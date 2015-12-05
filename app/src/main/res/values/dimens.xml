@@ -21,7 +21,15 @@
     <dimen name="margin_half">4dp</dimen>
     <dimen name="margin">8dp</dimen>
     <dimen name="margin_outline">16dp</dimen>
+    <dimen name="margin_outline_dialog">24dp</dimen>
+    <dimen name="margin_outline_dialog_buttons">12dp</dimen>
     <dimen name="margin_content_from_screen">72dp</dimen>
+    <dimen name="margin_dialog_button">6dp</dimen>
+
+    <dimen name="height_item">72dp</dimen>
+
+    <dimen name="height_dialog_button">48dp</dimen>
+    <dimen name="height_dialog_layout_buttons">60dp</dimen>
 
     <dimen name="icon_size_list">40dp</dimen>
     <dimen name="icon_size_article">15dp</dimen>

@@ -21,4 +21,17 @@ public class App : Application() {
         ModelLocator.register(ModelTag.OTHERS_BOOKMARK, BookmarkUserModel())
         ModelLocator.register(ModelTag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel());
     }
+
+    public fun resetBookmarks() {
+
+        val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+        val ownModel = ModelLocator.get(ModelTag.OWN_BOOKMARK) as BookmarkUserModel
+        val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+        val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
+
+        favoriteModel.bookmarkList.clear()
+        ownModel.bookmarkList.clear()
+        hotEntryModel.entryList.clear()
+        newEntryModel.entryList.clear()
+    }
 }
