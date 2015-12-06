@@ -60,6 +60,9 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
             ClickedEvent.Companion.Type.FROM_DEVELOPER -> {
                 startActivity(FrameActivity.createIntent(this, FragmentUtil.Companion.Tag.FROM_DEVELOPER))
             }
+            ClickedEvent.Companion.Type.CREDIT -> {
+                startActivity(FrameActivity.createIntent(this, FragmentUtil.Companion.Tag.CREDIT))
+            }
             else -> {
             }
 

@@ -33,6 +33,10 @@ public class ExplainAppFragment : Fragment() {
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.FROM_DEVELOPER))
         })
 
+        val layoutCredit = view.findViewById(R.id.fragment_explain_app_layout_credit) as LinearLayout
+        layoutCredit.setOnClickListener({ v ->
+            EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
+        })
 
         return view
     }
