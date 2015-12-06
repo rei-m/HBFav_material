@@ -11,6 +11,8 @@
     <string name="fragment_title_new_entry">新着エントリー</string>
     <string name="fragment_title_setting">設定</string>
     <string name="fragment_title_about_app">このアプリについて</string>
+    <string name="fragment_title_from_developer">開発者より</string>
+    <string name="fragment_title_credit">クレジット</string>
 
     <string name="dialog_title_set_user">はてなアカウントの設定</string>
 
@@ -33,6 +35,9 @@
     <string name="filter_bookmark_users_comment">コメントのみ</string>
 
     <string name="text_hatena_account">はてなアカウント</string>
+    <string name="text_opinion">ご意見・ご要望 - GitHub</string>
+    <string name="text_version">バージョン</string>
+
     <string name="button_setting">　 設定 　</string>
     <string name="button_cancel">キャンセル</string>
 

@@ -3,4 +3,11 @@
     <style name="ActionButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/app_accent_color</item>
     </style>
+    <style name="LinearLayoutRow">
+        <item name="android:background">@drawable/bg_border_bottom</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">@dimen/margin_outline</item>
+        <item name="android:paddingRight">@dimen/margin_outline</item>
+    </style>
 </resources>
