@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_app_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="@dimen/margin_outline"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="@dimen/margin_outline">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_app_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_opinion"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="@dimen/margin_outline"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="@dimen/margin_outline">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_opinion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ご意見・ご要望 ー GitHub" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_from_developer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="@dimen/margin_outline"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="@dimen/margin_outline">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_from_developer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="開発者より" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_credit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="@dimen/margin_outline"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="@dimen/margin_outline">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_credit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="クレジット" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_version"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column"
+        android:background="@drawable/bg_border_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/margin_outline"
+        android:paddingLeft="@dimen/margin_outline"
+        android:paddingRight="@dimen/margin_outline"
+        android:paddingStart="@dimen/margin_outline">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="バージョン" />
+
+    </LinearLayout>
+
+</LinearLayout>

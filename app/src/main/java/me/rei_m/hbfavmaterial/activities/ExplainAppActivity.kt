@@ -5,7 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.setFragment
+import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
+import me.rei_m.hbfavmaterial.fragments.ExplainAppFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
 public class ExplainAppActivity : BaseActivityWithDrawer() {
@@ -18,7 +22,11 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO Fragmentを作成
+        findViewById(R.id.pager).hide()
+        findViewById(R.id.content).show()
+        if (savedInstanceState == null) {
+            setFragment(ExplainAppFragment.newInstance())
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
