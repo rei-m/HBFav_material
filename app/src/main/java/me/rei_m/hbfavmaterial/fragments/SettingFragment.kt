@@ -3,10 +3,10 @@ package me.rei_m.hbfavmaterial.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatTextView
-import android.support.v7.widget.LinearLayoutCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
@@ -32,11 +32,11 @@ public class SettingFragment : Fragment() {
         val textUserId = view.findViewById(R.id.text_user_id) as AppCompatTextView
         textUserId.text = userModel.userEntity?.id
 
-        val dialog = EditUserIdDialogFragment()
+        val dialog = EditUserIdDialogFragment.newInstance()
 
-        val layoutUserId = view.findViewById(R.id.layout_text_hatena_id) as LinearLayoutCompat
+        val layoutUserId = view.findViewById(R.id.layout_text_hatena_id) as LinearLayout
         layoutUserId.setOnClickListener({ v ->
-            dialog.show(childFragmentManager, "hoge")
+            dialog.show(childFragmentManager, EditUserIdDialogFragment.TAG)
         })
 
         return view

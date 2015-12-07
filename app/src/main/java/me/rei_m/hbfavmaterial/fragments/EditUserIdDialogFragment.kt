@@ -30,6 +30,8 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
     companion object {
 
+        public final val TAG = "EditUserIdDialogFragment"
+
         public fun newInstance(): EditUserIdDialogFragment {
             return EditUserIdDialogFragment()
         }

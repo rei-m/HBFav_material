@@ -26,7 +26,8 @@
     <dimen name="margin_content_from_screen">72dp</dimen>
     <dimen name="margin_dialog_button">6dp</dimen>
 
-    <dimen name="height_item">72dp</dimen>
+    <dimen name="height_item_one_column">48dp</dimen>
+    <dimen name="height_item_two_column">72dp</dimen>
 
     <dimen name="height_dialog_button">48dp</dimen>
     <dimen name="height_dialog_layout_buttons">60dp</dimen>
