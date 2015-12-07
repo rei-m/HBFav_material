@@ -33,7 +33,7 @@
             android:id="@+id/dialog_fragment_edit_user_id_button_cancel"
             style="@style/ActionButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_dialog_button"
+            android:layout_height="@dimen/height_button"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/margin_half"
             android:layout_marginRight="@dimen/margin_half"
@@ -44,7 +44,7 @@
             android:id="@+id/dialog_fragment_edit_user_id_button_ok"
             style="@style/ActionButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_dialog_button"
+            android:layout_height="@dimen/height_button"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/margin_dialog_button"
             android:text="@string/button_setting" />
