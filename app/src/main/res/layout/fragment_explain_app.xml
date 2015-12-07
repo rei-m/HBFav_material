@@ -18,6 +18,11 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin"
+        android:background="@color/border" />
+
     <LinearLayout
         android:id="@+id/fragment_explain_app_layout_opinion"
         style="@style/LinearLayoutRow"
@@ -59,6 +64,11 @@
             android:text="@string/fragment_title_credit" />
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin"
+        android:background="@color/border" />
 
     <LinearLayout
         android:id="@+id/fragment_explain_app_layout_version"

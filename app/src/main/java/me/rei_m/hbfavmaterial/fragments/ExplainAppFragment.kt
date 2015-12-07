@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.extensions.openUrl
+import me.rei_m.hbfavmaterial.utils.AppUtil
 
 public class ExplainAppFragment : Fragment() {
 
@@ -37,6 +39,10 @@ public class ExplainAppFragment : Fragment() {
         layoutCredit.setOnClickListener({ v ->
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
         })
+
+        val textVersion = view.findViewById(R.id.fragment_explain_app_text_version) as AppCompatTextView
+        val versionName = AppUtil.getVersionName(activity.applicationContext)
+        textVersion.text = "${getString(R.string.text_version)} : $versionName"
 
         return view
     }
