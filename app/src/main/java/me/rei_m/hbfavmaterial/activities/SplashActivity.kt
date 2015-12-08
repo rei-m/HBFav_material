@@ -9,8 +9,11 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
-import me.rei_m.hbfavmaterial.fragments.SplashFragment
+import me.rei_m.hbfavmaterial.fragments.InitializeFragment
 
+/**
+ * 最初に起動するActivity.
+ */
 public class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +23,7 @@ public class SplashActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         if (savedInstanceState == null) {
-            setFragment(SplashFragment.newInstance())
+            setFragment(InitializeFragment.newInstance())
         }
     }
 
@@ -38,10 +41,13 @@ public class SplashActivity : AppCompatActivity() {
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 
+    /**
+     * ユーザーIDチェック完了時のイベント
+     */
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
+            // IDチェックが問題なければ次の画面に進む.
             startActivityWithClearTop(MainActivity.createIntent(applicationContext))
         }
     }

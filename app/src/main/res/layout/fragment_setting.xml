@@ -9,7 +9,7 @@
         android:layout_height="@dimen/height_item_two_column">
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/image_icon_hatena_id"
+            android:id="@+id/fragment_initialize_image_icon_hatena_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

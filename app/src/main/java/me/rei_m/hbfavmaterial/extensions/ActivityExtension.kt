@@ -1,9 +1,13 @@
 package me.rei_m.hbfavmaterial.extensions
 
+import android.content.Context
 import android.content.Intent
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import me.rei_m.hbfavmaterial.R
 
 fun AppCompatActivity.startActivityWithClearTop(intent: Intent) {
@@ -28,4 +32,13 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment,
             .replace(containerId, fragment)
             .addToBackStack(null)
             .commit();
+}
+
+fun AppCompatActivity.hideKeyBoard(view: View) {
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+}
+
+fun AppCompatActivity.showSnackbarNetworkError(view: View) {
+    Snackbar.make(view, getString(R.string.message_error_network), Snackbar.LENGTH_LONG).setAction("Action", null).show()
 }

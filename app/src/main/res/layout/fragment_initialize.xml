@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_initialize_text_about_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_half"
+            android:layout_marginLeft="@dimen/margin_outline"
+            android:layout_marginRight="@dimen/margin_outline"
+            android:layout_marginTop="@dimen/margin_outline"
+            android:text="@string/message_text_about_app"
+            android:textSize="@dimen/text_size_body_1" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_initialize_text_before_use_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fragment_initialize_text_about_app"
+            android:layout_marginBottom="@dimen/margin_outline"
+            android:layout_marginLeft="@dimen/margin_outline"
+            android:layout_marginRight="@dimen/margin_outline"
+            android:text="@string/message_text_before_use_app"
+            android:textSize="@dimen/text_size_caption" />
+
+        <FrameLayout
+            android:id="@+id/fragment_initialize_layout_icon_hatena_id"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_below="@id/fragment_initialize_text_before_use_app">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/fragment_initialize_image_icon_hatena_id"
+                android:layout_width="@dimen/icon_size_row"
+                android:layout_height="@dimen/icon_size_row"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_outline"
+                android:layout_marginStart="@dimen/margin_outline"
+                android:src="@drawable/ic_person_add_36dp" />
+
+        </FrameLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/fragment_initialize_layout_hatena_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fragment_initialize_text_before_use_app"
+            android:layout_marginBottom="@dimen/margin_outline"
+            android:layout_marginEnd="@dimen/margin_outline"
+            android:layout_marginLeft="@dimen/margin_content_from_screen"
+            android:layout_marginRight="@dimen/margin_outline"
+            android:layout_marginStart="@dimen/margin_content_from_screen"
+            android:textColorHint="@color/app_accent_color">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/fragment_initialize_edit_hatena_id"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_item_two_column"
+                android:hint="@string/text_hatena_account"
+                android:inputType="text"
+                android:lines="1"
+                android:textColorHint="@color/app_accent_color"
+                android:textSize="@dimen/text_size_headline" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/fragment_initialize_button_set_hatena_id"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_button"
+            android:layout_below="@id/fragment_initialize_layout_hatena_id"
+            android:layout_centerHorizontal="true"
+            android:text="@string/button_setting" />
+
+    </RelativeLayout>
+</ScrollView>
+
