@@ -73,7 +73,7 @@ public class BookmarkUsersFragment : Fragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
-        val listView = view.findViewById(R.id.list) as ListView
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
@@ -95,7 +95,7 @@ public class BookmarkUsersFragment : Fragment() {
         // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
 
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
@@ -103,20 +103,20 @@ public class BookmarkUsersFragment : Fragment() {
             val displayedCount = mListAdapter?.count!!
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
                 displayBookmarkUsers()
-                view.findViewById(R.id.progress_list).hide()
+                view.findViewById(R.id.fragment_list_progress_list).hide()
             } else if (displayedCount === 0) {
                 userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
-                view.findViewById(R.id.progress_list).show()
+                view.findViewById(R.id.fragment_list_progress_list).show()
                 RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
             userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
-            view.findViewById(R.id.progress_list).show()
+            view.findViewById(R.id.fragment_list_progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
 
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
             userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
         }))
     }
@@ -128,7 +128,7 @@ public class BookmarkUsersFragment : Fragment() {
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
 
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
@@ -152,9 +152,9 @@ public class BookmarkUsersFragment : Fragment() {
             }
         }
 
-        view.findViewById(R.id.progress_list).hide()
+        view.findViewById(R.id.fragment_list_progress_list).hide()
 
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }

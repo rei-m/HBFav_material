@@ -4,10 +4,10 @@ import android.content.Context
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import me.rei_m.hbfavmaterial.events.BookmarkPageDisplayEvent
+import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.events.BookmarkPageDisplayEvent.Companion.Kind as pageKind
+import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent.Companion.Kind as pageKind
 
 class BookmarkViewPager : ViewPager {
 
@@ -43,13 +43,13 @@ class BookmarkViewPager : ViewPager {
     private fun postPageDisplayEvent(position: Int) {
         when (position) {
             BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE ->
-                EventBusHolder.EVENT_BUS.post(BookmarkPageDisplayEvent(pageKind.BOOKMARK_FAVORITE))
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.BOOKMARK_FAVORITE))
             BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN ->
-                EventBusHolder.EVENT_BUS.post(BookmarkPageDisplayEvent(pageKind.BOOKMARK_OWN))
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.BOOKMARK_OWN))
             BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY ->
-                EventBusHolder.EVENT_BUS.post(BookmarkPageDisplayEvent(pageKind.HOT_ENTRY))
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.HOT_ENTRY))
             BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY ->
-                EventBusHolder.EVENT_BUS.post(BookmarkPageDisplayEvent(pageKind.NEW_ENTRY))
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.NEW_ENTRY))
         }
     }
 }
