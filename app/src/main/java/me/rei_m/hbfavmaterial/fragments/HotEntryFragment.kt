@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -63,6 +64,10 @@ public class HotEntryFragment : Fragment() {
 
         listView.adapter = mListAdapter
 
+        val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
+        emptyView.text = getString(R.string.message_text_empty_entry)
+        listView.emptyView = emptyView
+
         return view
     }
 
@@ -86,6 +91,7 @@ public class HotEntryFragment : Fragment() {
         } else if (displayedCount === 0) {
             // 1件も表示していなければエントリ情報を取得する
             hotEntryModel.fetch(hotEntryModel.entryType)
+            view.findViewById(R.id.fragment_list_view_empty).hide()
             view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
@@ -127,6 +133,8 @@ public class HotEntryFragment : Fragment() {
                 thisActivity.showSnackbarNetworkError(view)
             }
         }
+
+        view.findViewById(R.id.fragment_list_view_empty).show()
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 

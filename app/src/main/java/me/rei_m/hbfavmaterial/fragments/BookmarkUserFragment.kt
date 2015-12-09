@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -118,6 +119,10 @@ public class BookmarkUserFragment : Fragment() {
 
         listView.adapter = mListAdapter
 
+        val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
+        emptyView.text = getString(R.string.message_text_empty_bookmark_user)
+        listView.emptyView = emptyView
+
         return view
     }
 
@@ -147,6 +152,7 @@ public class BookmarkUserFragment : Fragment() {
             } else if (displayedCount === 0) {
                 // 1件も表示していなければブックマーク情報をRSSから取得する
                 bookmarkUserModel.fetch(mUserId)
+                view.findViewById(R.id.fragment_list_view_empty).hide()
                 view.findViewById(R.id.fragment_list_progress_list).show()
                 RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
@@ -185,8 +191,6 @@ public class BookmarkUserFragment : Fragment() {
 
         when (event.type) {
             BookmarkUserLoadedEvent.Companion.Type.COMPLETE -> {
-                // TODO 0件だった場合
-
                 // 正常に完了した場合、リストに追加して表示を更新
                 val bookmarkUserModel = getBookmarkModel()
                 mListAdapter?.clear()
@@ -206,6 +210,9 @@ public class BookmarkUserFragment : Fragment() {
                 thisActivity.showSnackbarNetworkError(view)
             }
         }
+
+        // EmptyViewを再表示する（リストがからの場合のみ表示）
+        view.findViewById(R.id.fragment_list_view_empty).show()
 
         // プログレスを非表示にする
         view.findViewById(R.id.fragment_list_progress_list).hide()
