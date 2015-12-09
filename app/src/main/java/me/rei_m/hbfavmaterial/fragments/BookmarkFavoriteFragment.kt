@@ -171,7 +171,7 @@ public class BookmarkFavoriteFragment : Fragment() {
 
                 // フッターViewが追加されていなかった場合は追加する
                 val listView = view.findViewById(R.id.fragment_list_list) as ListView
-                if (listView.footerViewsCount === 0 && 0 < mListAdapter?.count!!) {
+                if (listView.footerViewsCount === 0) {
                     val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
                     listView.addFooterView(footerView, null, false)
                 }
