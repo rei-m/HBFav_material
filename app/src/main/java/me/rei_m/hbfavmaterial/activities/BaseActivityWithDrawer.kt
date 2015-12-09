@@ -11,6 +11,9 @@ import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
+/**
+ * Drawer付きActivityの基底クラス.
+ */
 public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
@@ -20,7 +23,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
 
         val toggle = ActionBarDrawerToggle(this,
                 drawer,
@@ -31,7 +34,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         drawer.setDrawerListener(toggle)
         toggle.syncState()
 
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
+        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
     }
 
@@ -50,7 +53,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
@@ -61,7 +64,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
     @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
 
         drawer.closeDrawer(GravityCompat.START)
 

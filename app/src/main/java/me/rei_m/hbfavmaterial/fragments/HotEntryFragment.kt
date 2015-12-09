@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.HotEntryLoadedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
@@ -52,7 +54,7 @@ public class HotEntryFragment : Fragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
-        val listView = view.findViewById(R.id.list) as ListView
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
@@ -62,10 +64,6 @@ public class HotEntryFragment : Fragment() {
         listView.adapter = mListAdapter
 
         return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     override fun onResume() {
@@ -80,35 +78,34 @@ public class HotEntryFragment : Fragment() {
 
         if (displayedCount != hotEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
-            // 差分があれば未表示のブックマークがあるのでリストに表示する
+            // 差分があれば未表示のエントリがあるのでリストに表示する
             mListAdapter?.clear()
             mListAdapter?.addAll(hotEntryModel.entryList)
             mListAdapter?.notifyDataSetChanged()
-            view.findViewById(R.id.progress_list).hide()
+            view.findViewById(R.id.fragment_list_progress_list).hide()
         } else if (displayedCount === 0) {
-            // 1件も表示していなければお気に入りのブックマーク情報を取得する
+            // 1件も表示していなければエントリ情報を取得する
             hotEntryModel.fetch(hotEntryModel.entryType)
-            view.findViewById(R.id.progress_list).show()
+            view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
 
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
             hotEntryModel.fetch(hotEntryModel.entryType)
         }))
     }
 
     override fun onPause() {
+        super.onPause()
+
         // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
-
-        super.onPause()
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onEntryCategoryChangedEvent(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.HOT) {
             val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
@@ -117,7 +114,6 @@ public class HotEntryFragment : Fragment() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onHotEntryLoadedEvent(event: HotEntryLoadedEvent) {
         when (event.type) {
             HotEntryLoadedEvent.Companion.Type.COMPLETE -> {
@@ -127,13 +123,14 @@ public class HotEntryFragment : Fragment() {
                 mListAdapter?.notifyDataSetChanged()
             }
             HotEntryLoadedEvent.Companion.Type.ERROR -> {
-                // TODO エラー表示
+                val thisActivity = activity as AppCompatActivity
+                thisActivity.showSnackbarNetworkError(view)
             }
         }
 
-        view.findViewById(R.id.progress_list).hide()
+        view.findViewById(R.id.fragment_list_progress_list).hide()
 
-        val swipeRefreshLayout = view.findViewById(R.id.refresh) as SwipeRefreshLayout
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
