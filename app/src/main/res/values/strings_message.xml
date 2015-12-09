@@ -8,6 +8,18 @@
         ※アプリを使う前にはてなブックマーク上で気に入ったユーザーを「お気に入り」に追加しておいてください。
     </string>
 
+    <string name="message_text_empty_favorite">
+        お気に入りユーザーのブックマークが見つかりませんでした。お気に入りユーザーを追加した後、再度お試しください。
+    </string>
+
+    <string name="message_text_empty_bookmark_user">
+        あなたのブックマークはまだ登録されていません。
+    </string>
+
+    <string name="message_text_empty_entry">
+        表示できるエントリはありません。
+    </string>
+
     <string name="message_error_input_user_id">
         有効なはてなアカウントを確認できませんでした。※プライベートモードのユーザーはアプリを利用できませんのでご確認ください。
     </string>

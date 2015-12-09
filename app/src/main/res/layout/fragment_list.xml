@@ -15,10 +15,11 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
-        android:id="@android:id/empty"
+        android:id="@+id/fragment_list_view_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" />
+        android:gravity="center"
+        android:padding="@dimen/margin_outline" />
 
     <ProgressBar
         android:id="@+id/fragment_list_progress_list"
