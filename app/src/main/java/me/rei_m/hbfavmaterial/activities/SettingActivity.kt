@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.hide
@@ -27,6 +28,9 @@ public class SettingActivity : BaseActivityWithDrawer() {
         if (savedInstanceState == null) {
             setFragment(SettingFragment.newInstance())
         }
+
+        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
+        navigationView.setCheckedItem(R.id.nav_setting)
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

@@ -22,20 +22,23 @@
         android:layout_marginTop="@dimen/margin"
         android:layout_toLeftOf="@id/image_article_body_image"
         android:layout_toStartOf="@id/image_article_body_image"
-        android:minHeight="@dimen/image_size_article" />
+        android:minHeight="@dimen/image_size_article"
+        android:textSize="@dimen/text_size_caption" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text_article_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_article_body"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_marginTop="@dimen/margin"
+        android:textSize="@dimen/text_size_caption" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text_add_bookmark_timing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_article_url"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_marginTop="@dimen/margin"
+        android:textSize="@dimen/text_size_caption" />
 
 </me.rei_m.hbfavmaterial.views.widgets.bookmark.ArticleLayout>

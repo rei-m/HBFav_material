@@ -90,7 +90,6 @@ public class BookmarkUsersActivity : BaseActivity() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onUserListItemClicked(event: UserListItemClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
     }

@@ -145,7 +145,6 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onUserRegisterBookmarkLoaded(event: UserRegisterBookmarkLoadedEvent) {
 
         when (event.type) {
@@ -173,7 +172,6 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onBookmarkUsersFiltered(event: BookmarkUsersFilteredEvent) {
         mFilterType = event.filterType
         displayBookmarkUsers()

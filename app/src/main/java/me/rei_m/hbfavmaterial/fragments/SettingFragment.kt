@@ -57,7 +57,6 @@ public class SettingFragment : Fragment() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
         if ( event.type == UserIdCheckedEvent.Companion.Type.OK) {
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
