@@ -3,27 +3,27 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_bookmark_favorite"
-            android:icon="@android:drawable/ic_menu_camera"
+            android:icon="@drawable/ic_star_white_24dp"
             android:title="@string/fragment_title_bookmark_favorite" />
         <item
             android:id="@+id/nav_bookmark_own"
-            android:icon="@android:drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_my_library_books_white_24dp"
             android:title="@string/fragment_title_bookmark_own" />
         <item
             android:id="@+id/nav_hot_entry"
-            android:icon="@android:drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_whatshot_white_24dp"
             android:title="@string/fragment_title_hot_entry" />
         <item
             android:id="@+id/nav_new_entry"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_book_white_24dp"
             android:title="@string/fragment_title_new_entry" />
         <item
             android:id="@+id/nav_setting"
-            android:icon="@android:drawable/ic_menu_share"
+            android:icon="@drawable/ic_settings_applications_white_24dp"
             android:title="@string/fragment_title_setting" />
         <item
             android:id="@+id/nav_explain_app"
-            android:icon="@android:drawable/ic_menu_send"
+            android:icon="@drawable/ic_question_answer_white_24dp"
             android:title="@string/fragment_title_about_app" />
     </group>
 </menu>
