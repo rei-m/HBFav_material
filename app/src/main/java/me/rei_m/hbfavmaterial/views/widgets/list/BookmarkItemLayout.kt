@@ -34,10 +34,10 @@ class BookmarkItemLayout : RelativeLayout {
     override fun onFinishInflate() {
         super.onFinishInflate()
         tag = ViewHolder(
-                findViewById(R.id.text_user_name) as AppCompatTextView,
-                findViewById(R.id.image_user_icon) as AppCompatImageView,
-                findViewById(R.id.layout_bookmark) as BookmarkLayout,
-                findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView)
+                findViewById(R.id.list_item_bookmark_text_user_name) as AppCompatTextView,
+                findViewById(R.id.list_item_bookmark_image_user_icon) as AppCompatImageView,
+                findViewById(R.id.list_item_bookmark_layout_bookmark) as BookmarkLayout,
+                findViewById(R.id.list_item_bookmark_text_add_bookmark_timing) as AppCompatTextView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {

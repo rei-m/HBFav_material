@@ -66,7 +66,6 @@ public class HotEntryFragment : Fragment() {
 
         val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
         emptyView.text = getString(R.string.message_text_empty_entry)
-        listView.emptyView = emptyView
 
         return view
     }
@@ -91,11 +90,13 @@ public class HotEntryFragment : Fragment() {
         } else if (displayedCount === 0) {
             // 1件も表示していなければエントリ情報を取得する
             hotEntryModel.fetch(hotEntryModel.entryType)
-            view.findViewById(R.id.fragment_list_view_empty).hide()
             view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
+        view.findViewById(R.id.fragment_list_view_empty).hide()
+
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
@@ -134,7 +135,10 @@ public class HotEntryFragment : Fragment() {
             }
         }
 
-        view.findViewById(R.id.fragment_list_view_empty).show()
+        // リストが空の場合はEmptyViewを表示する
+        if (mListAdapter?.isEmpty!!) {
+            view.findViewById(R.id.fragment_list_view_empty).show()
+        }
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 

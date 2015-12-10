@@ -15,7 +15,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/margin_outline"
             android:layout_marginStart="@dimen/margin_outline"
-            android:src="@android:drawable/ic_menu_manage" />
+            android:src="@drawable/ic_person_grey_500_36dp" />
     </FrameLayout>
 
     <LinearLayout
@@ -36,12 +36,14 @@
             android:id="@+id/text_title_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_hatena_account" />
+            android:text="@string/text_hatena_account"
+            android:textSize="@dimen/text_size_caption" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/text_user_id"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_title" />
 
     </LinearLayout>
 
@@ -58,7 +60,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/margin_outline"
             android:layout_marginStart="@dimen/margin_outline"
-            android:src="@android:drawable/ic_menu_manage" />
+            android:src="@drawable/ic_sync_grey_500_36dp" />
     </FrameLayout>
 
     <LinearLayout
@@ -80,12 +82,15 @@
             android:id="@+id/text_title_user_oauth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="はてなブックマーク連携" />
+            android:text="はてなブックマーク連携"
+
+            android:textSize="@dimen/text_size_caption" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/text_user_oauth"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_title" />
 
     </LinearLayout>
 

@@ -7,7 +7,8 @@
         android:id="@+id/text_bookmark_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_marginTop="@dimen/margin"
+        android:textColor="@color/text_color_strong" />
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/image_article_icon"
