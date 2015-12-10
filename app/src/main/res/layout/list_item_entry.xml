@@ -47,7 +47,8 @@
         android:layout_marginRight="@dimen/margin_outline"
         android:layout_marginTop="@dimen/margin"
         android:layout_toEndOf="@id/image_article_icon"
-        android:layout_toRightOf="@id/image_article_icon" />
+        android:layout_toRightOf="@id/image_article_icon"
+        android:textSize="@dimen/text_size_caption" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text_entry_footer"
@@ -59,6 +60,7 @@
         android:layout_marginRight="@dimen/margin_outline"
         android:layout_marginTop="@dimen/margin_half"
         android:layout_toEndOf="@id/image_article_icon"
-        android:layout_toRightOf="@id/image_article_icon" />
+        android:layout_toRightOf="@id/image_article_icon"
+        android:textSize="@dimen/text_size_caption" />
 
 </me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout>

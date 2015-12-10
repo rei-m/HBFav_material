@@ -111,19 +111,16 @@ public class BookmarkActivity : BaseActivity() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onBookmarkUserClicked(event: BookmarkUserClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onBookmarkClicked(event: BookmarkClickedEvent) {
         replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onBookmarkCountClicked(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
     }

@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -30,6 +31,9 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
         if (savedInstanceState == null) {
             setFragment(ExplainAppFragment.newInstance())
         }
+
+        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
+        navigationView.setCheckedItem(R.id.nav_explain_app)
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -54,7 +58,6 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onClicked(event: ClickedEvent) {
         when (event.type) {
             ClickedEvent.Companion.Type.FROM_DEVELOPER -> {
@@ -65,8 +68,6 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
             }
             else -> {
             }
-
         }
-        //        startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }

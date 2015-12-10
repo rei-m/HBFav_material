@@ -96,7 +96,6 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    @SuppressWarnings("unused")
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
 
         closeProgressDialog()
