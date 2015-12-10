@@ -32,6 +32,8 @@
     <dimen name="height_button">48dp</dimen>
     <dimen name="height_dialog_layout_buttons">60dp</dimen>
 
+    <dimen name="icon_size_nav_crop">40dp</dimen>
+    <dimen name="icon_size_nav">72dp</dimen>
     <dimen name="icon_size_list">40dp</dimen>
     <dimen name="icon_size_row">32dp</dimen>
     <dimen name="icon_size_article">15dp</dimen>

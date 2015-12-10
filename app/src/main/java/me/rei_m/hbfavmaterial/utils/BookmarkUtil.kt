@@ -56,6 +56,10 @@ class BookmarkUtil private constructor() {
             return "http://cdn1.www.st-hatena.com/users/${userId.take(2)}/$userId/profile.gif"
         }
 
+        fun getLargeIconImageUrlFromId(userId: String): String {
+            return "http://cdn1.www.st-hatena.com/users/${userId.take(2)}/$userId/user.jpg"
+        }
+
         fun getPastTimeString(bookmarkAddedDatetime: Date,
                               cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time
         ): String {
