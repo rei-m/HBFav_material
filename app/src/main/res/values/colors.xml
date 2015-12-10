@@ -7,4 +7,10 @@
     <color name="button_disable">#b6b9ba</color>
     <color name="border">#cccccc</color>
 
+    <color name="text_color_strong">#555555</color>
+    <color name="text_color_thin">#b6b9ba</color>
+
+    <color name="pull_to_refresh_1">#B0C4DE</color>
+    <color name="pull_to_refresh_2">#1E90FF</color>
+    <color name="pull_to_refresh_3">#1b69c6</color>
 </resources>

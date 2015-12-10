@@ -20,6 +20,10 @@
         表示できるエントリはありません。
     </string>
 
+    <string name="message_text_empty_user">
+        この記事をブックマークしているユーザーはいません。
+    </string>
+
     <string name="message_error_input_user_id">
         有効なはてなアカウントを確認できませんでした。※プライベートモードのユーザーはアプリを利用できませんのでご確認ください。
     </string>

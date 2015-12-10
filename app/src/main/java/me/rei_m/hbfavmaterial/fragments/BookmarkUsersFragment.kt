@@ -3,11 +3,13 @@ package me.rei_m.hbfavmaterial.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -18,6 +20,7 @@ import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserRegisterBookmarkModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
@@ -82,11 +85,10 @@ public class BookmarkUsersFragment : Fragment() {
 
         listView.adapter = mListAdapter
 
-        return view
-    }
+        val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
+        emptyView.text = getString(R.string.message_text_empty_user)
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+        return view
     }
 
     override fun onResume() {
@@ -96,6 +98,7 @@ public class BookmarkUsersFragment : Fragment() {
         EventBusHolder.EVENT_BUS.register(this)
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
@@ -114,6 +117,8 @@ public class BookmarkUsersFragment : Fragment() {
             view.findViewById(R.id.fragment_list_progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
+
+        view.findViewById(R.id.fragment_list_view_empty).hide()
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
@@ -148,8 +153,15 @@ public class BookmarkUsersFragment : Fragment() {
                 displayBookmarkUsers()
             }
             UserRegisterBookmarkLoadedEvent.Companion.Type.ERROR -> {
-                // TODO エラー表示
+                // 読み込み出来なかった場合はSnackbarで通知する
+                val thisActivity = activity as AppCompatActivity
+                thisActivity.showSnackbarNetworkError(view)
             }
+        }
+
+        // リストが空の場合はEmptyViewを表示する
+        if (mListAdapter?.isEmpty!!) {
+            view.findViewById(R.id.fragment_list_view_empty).show()
         }
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
