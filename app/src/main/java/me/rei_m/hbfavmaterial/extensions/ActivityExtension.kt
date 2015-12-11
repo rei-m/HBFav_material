@@ -34,6 +34,26 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment,
             .commit();
 }
 
+fun AppCompatActivity.setFragment(fragment: Fragment,
+                                  tag: String,
+                                  containerId: Int = R.id.content) {
+    supportFragmentManager
+            .beginTransaction()
+            .add(containerId, fragment, tag)
+            .commit();
+}
+
+fun AppCompatActivity.replaceFragment(fragment: Fragment,
+                                      tag: String,
+                                      containerId: Int = R.id.content) {
+    supportFragmentManager
+            .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .replace(containerId, fragment, tag)
+            .addToBackStack(null)
+            .commit();
+}
+
 fun AppCompatActivity.hideKeyBoard(view: View) {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)

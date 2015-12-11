@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HBFavMaterial.iml" filepath="$PROJECT_DIR$/HBFavMaterial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HBFav_material.iml" filepath="$PROJECT_DIR$/HBFav_material.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
