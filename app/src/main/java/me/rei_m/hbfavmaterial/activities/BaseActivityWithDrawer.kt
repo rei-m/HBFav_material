@@ -44,21 +44,10 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
-        val headerView = navigationView.getHeaderView(0)
-
         val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
         val userEntity = userModel.userEntity
 
-        val imageOwnerIcon = headerView.findViewById(R.id.image_owner_icon) as AppCompatImageView
-
-        Picasso.with(this)
-                .load(BookmarkUtil.getLargeIconImageUrlFromId(userEntity?.id!!))
-                .resizeDimen(R.dimen.icon_size_nav_crop, R.dimen.icon_size_nav_crop).centerCrop()
-                .transform(RoundedTransformation())
-                .into(imageOwnerIcon)
-
-        val textOwnerId = headerView.findViewById(R.id.text_owner_name) as AppCompatTextView
-        textOwnerId.text = userEntity?.id
+        displayUserIconAndName(userEntity?.id!!)
     }
 
     override fun onResume() {
@@ -92,5 +81,21 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    protected fun displayUserIconAndName(id: String) {
+        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
+
+        val headerView = navigationView.getHeaderView(0)
+        val imageOwnerIcon = headerView.findViewById(R.id.image_owner_icon) as AppCompatImageView
+
+        Picasso.with(this)
+                .load(BookmarkUtil.getLargeIconImageUrlFromId(id))
+                .resizeDimen(R.dimen.icon_size_nav_crop, R.dimen.icon_size_nav_crop).centerCrop()
+                .transform(RoundedTransformation())
+                .into(imageOwnerIcon)
+
+        val textOwnerId = headerView.findViewById(R.id.text_owner_name) as AppCompatTextView
+        textOwnerId.text = id
     }
 }

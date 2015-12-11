@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.events.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.show
@@ -52,5 +54,10 @@ public class SettingActivity : BaseActivityWithDrawer() {
         }
 
         return super.onNavigationItemSelected(item)
+    }
+
+    @Subscribe
+    public fun onUserIdChanged(event: UserIdChangedEvent) {
+        displayUserIconAndName(event.newId)
     }
 }

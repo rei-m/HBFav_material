@@ -11,6 +11,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.managers.ModelLocator
@@ -58,11 +59,12 @@ public class SettingFragment : Fragment() {
 
     @Subscribe
     public fun onUserIdChecked(event: UserIdCheckedEvent) {
-        if ( event.type == UserIdCheckedEvent.Companion.Type.OK) {
+        if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             val textUserId = view.findViewById(R.id.text_user_id) as AppCompatTextView
             textUserId.text = userModel.userEntity?.id
             (getAppContext() as App).resetBookmarks()
+            EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(userModel.userEntity?.id!!))
         }
     }
 }
