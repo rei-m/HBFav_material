@@ -110,6 +110,16 @@ public class BookmarkActivity : BaseActivity() {
         return true
     }
 
+    override fun onBackPressed() {
+        var fragment = supportFragmentManager.findFragmentByTag(EntryWebViewFragment.TAG)
+        if (fragment != null) {
+            if (!(fragment as EntryWebViewFragment).backHistory()) {
+                return
+            }
+        }
+        super.onBackPressed()
+    }
+
     @Subscribe
     public fun onBookmarkUserClicked(event: BookmarkUserClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
@@ -117,7 +127,7 @@ public class BookmarkActivity : BaseActivity() {
 
     @Subscribe
     public fun onBookmarkClicked(event: BookmarkClickedEvent) {
-        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link))
+        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link), EntryWebViewFragment.TAG)
     }
 
     @Subscribe

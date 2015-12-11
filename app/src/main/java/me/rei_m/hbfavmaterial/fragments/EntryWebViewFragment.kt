@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import me.rei_m.hbfavmaterial.R
 
 public class EntryWebViewFragment : Fragment() {
@@ -14,6 +15,8 @@ public class EntryWebViewFragment : Fragment() {
     private var mEntryUrl: String? = null
 
     companion object {
+
+        public final val TAG = EntryWebViewFragment::class.java.simpleName
 
         private val ARG_ENTRY_URL = "ARG_ENTRY_URL"
 
@@ -36,8 +39,15 @@ public class EntryWebViewFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_bookmark_webview, container, false)
 
         val webView = view.findViewById(R.id.view_bookmark_web) as WebView
-        webView.setWebChromeClient(WebChromeClient())
         webView.settings.javaScriptEnabled = true
+        webView.settings.setGeolocationEnabled(true)
+        webView.settings.setSupportMultipleWindows(true)
+        webView.setWebChromeClient(WebChromeClient())
+        webView.setWebViewClient(object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+        })
         webView.loadUrl(mEntryUrl)
 
         return view
@@ -46,5 +56,15 @@ public class EntryWebViewFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mEntryUrl = null
+    }
+
+    public fun backHistory(): Boolean {
+        val webView = view.findViewById(R.id.view_bookmark_web) as WebView
+        if (webView.canGoBack() ) {
+            webView.goBack()
+            return false
+        } else {
+            return true
+        }
     }
 }
