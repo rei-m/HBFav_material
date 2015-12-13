@@ -55,7 +55,7 @@ public class SettingActivity : BaseActivityWithDrawer() {
 
         return super.onNavigationItemSelected(item)
     }
-
+    
     @Subscribe
     public fun onUserIdChanged(event: UserIdChangedEvent) {
         displayUserIconAndName(event.newId)

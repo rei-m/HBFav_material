@@ -18,6 +18,8 @@ import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
+import me.rei_m.hbfavmaterial.managers.ModelLocator
+import me.rei_m.hbfavmaterial.models.HatenaModel
 
 public class BookmarkActivity : BaseActivity() {
 
@@ -66,11 +68,15 @@ public class BookmarkActivity : BaseActivity() {
         val fab = findViewById(R.id.fab) as FloatingActionButton
 
         fab.setOnClickListener({
-            // はてぶ投稿ボタンとして
-            //            val hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.hyperspace_jump)
-            //            fab2.startAnimation(hyperspaceJumpAnimation)
-        })
+            // はてぶ投稿ボタン
+            val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
+            if (!hatenaModel.isAuthorised()) {
+                startActivity(OAuthActivity.createIntent(this))
+            } else {
+                hatenaModel.fetchBookmark(mEntryLink)
+            }
+        })
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

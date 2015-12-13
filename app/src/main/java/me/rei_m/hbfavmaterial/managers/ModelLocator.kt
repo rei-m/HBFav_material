@@ -15,6 +15,7 @@ public class ModelLocator private constructor() {
             USER,
             OTHERS_BOOKMARK,
             USER_REGISTER_BOOKMARK,
+            HATENA,
         }
 
         public fun register(tag: Tag, model: Any): Unit {
