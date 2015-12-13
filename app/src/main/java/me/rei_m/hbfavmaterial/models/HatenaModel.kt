@@ -3,17 +3,17 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import me.rei_m.hbfavmaterial.entities.HatenaGetBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.HatenaOAuthAccessTokenLoadedEvent
-import me.rei_m.hbfavmaterial.events.HatenaOAuthRequestTokenLoadedEvent
-import me.rei_m.hbfavmaterial.events.LoadedEventResult
+import me.rei_m.hbfavmaterial.events.*
+import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.net.HttpURLConnection
 
 public class HatenaModel {
 
@@ -41,7 +41,6 @@ public class HatenaModel {
     }
 
     public fun isAuthorised(): Boolean {
-        println(oauthTokenEntity)
         return (!(oauthTokenEntity?.token.isNullOrEmpty() || oauthTokenEntity?.secretToken.isNullOrEmpty()))
     }
 
@@ -56,11 +55,11 @@ public class HatenaModel {
             }
 
             override fun onCompleted() {
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventResult.COMPLETE, requestUrl))
+                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.OK, requestUrl))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventResult.ERROR))
+                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
@@ -83,11 +82,11 @@ public class HatenaModel {
 
             override fun onCompleted() {
                 saveToken(context)
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventResult.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventResult.ERROR))
+                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
@@ -102,17 +101,26 @@ public class HatenaModel {
     }
 
     public fun fetchBookmark(url: String) {
-        val observer = object : Observer<String> {
 
-            override fun onNext(t: String?) {
+        var response: HatenaGetBookmarkResponse? = null
 
+        val observer = object : Observer<HatenaGetBookmarkResponse> {
+
+            override fun onNext(t: HatenaGetBookmarkResponse?) {
+                response = t
             }
 
             override fun onCompleted() {
-
+                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(response, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                val error = e as HTTPException
+                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
+                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
+                } else {
+                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
+                }
             }
         }
 

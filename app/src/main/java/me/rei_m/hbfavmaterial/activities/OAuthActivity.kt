@@ -14,7 +14,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.HatenaOAuthAccessTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.HatenaOAuthRequestTokenLoadedEvent
-import me.rei_m.hbfavmaterial.events.LoadedEventResult
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
@@ -73,8 +73,8 @@ public class OAuthActivity : BaseActivity() {
 
     @Subscribe
     public fun onHatenaOAuthRequestTokenLoaded(event: HatenaOAuthRequestTokenLoadedEvent) {
-        when (event.result) {
-            LoadedEventResult.COMPLETE -> {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
                 mWebView?.loadUrl(event.authUrl)
             }
             else -> {
@@ -85,8 +85,8 @@ public class OAuthActivity : BaseActivity() {
 
     @Subscribe
     public fun onHatenaOAuthAccessTokenLoaded(event: HatenaOAuthAccessTokenLoadedEvent) {
-        when (event.result) {
-            LoadedEventResult.COMPLETE -> {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
 
             }
             else -> {

@@ -11,11 +11,10 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.BookmarkClickedEvent
-import me.rei_m.hbfavmaterial.events.BookmarkCountClickedEvent
-import me.rei_m.hbfavmaterial.events.BookmarkUserClickedEvent
+import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.managers.ModelLocator
@@ -139,5 +138,22 @@ public class BookmarkActivity : BaseActivity() {
     @Subscribe
     public fun onBookmarkCountClicked(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
+    }
+
+    @Subscribe
+    public fun onHatenaGetBookmarkLoaded(event: HatenaGetBookmarkLoadedEvent) {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
+                // 更新用ダイアログを表示
+                println("ok")
+            }
+            LoadedEventStatus.NOT_FOUND -> {
+                // 新規用ダイアログを表示
+                println("new")
+            }
+            LoadedEventStatus.ERROR -> {
+                showSnackbarNetworkError(findViewById(R.id.content))
+            }
+        }
     }
 }
