@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.extensions
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -61,4 +62,9 @@ fun AppCompatActivity.hideKeyBoard(view: View) {
 
 fun AppCompatActivity.showSnackbarNetworkError(view: View) {
     Snackbar.make(view, getString(R.string.message_error_network), Snackbar.LENGTH_LONG).setAction("Action", null).show()
+}
+
+fun AppCompatActivity.openUrl(url: String) {
+    val intent = android.content.Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    startActivity(intent)
 }
