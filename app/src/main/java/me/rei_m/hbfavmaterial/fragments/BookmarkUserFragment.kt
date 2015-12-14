@@ -18,6 +18,7 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.events.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -26,7 +27,6 @@ import me.rei_m.hbfavmaterial.models.BookmarkUserModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.events.BookmarkUserLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
 public class BookmarkUserFragment : Fragment() {
@@ -190,8 +190,8 @@ public class BookmarkUserFragment : Fragment() {
     @Subscribe
     public fun onBookmarkOwnLoaded(event: BookmarkUserLoadedEvent) {
 
-        when (event.type) {
-            BookmarkUserLoadedEvent.Companion.Type.COMPLETE -> {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
                 val bookmarkUserModel = getBookmarkModel()
                 mListAdapter?.clear()
@@ -205,10 +205,13 @@ public class BookmarkUserFragment : Fragment() {
                     listView.addFooterView(footerView, null, false)
                 }
             }
-            BookmarkUserLoadedEvent.Companion.Type.ERROR -> {
+            LoadedEventStatus.ERROR -> {
                 // 読み込み出来なかった場合はSnackbarで通知する
                 val thisActivity = activity as AppCompatActivity
                 thisActivity.showSnackbarNetworkError(view)
+            }
+            else -> {
+
             }
         }
 
