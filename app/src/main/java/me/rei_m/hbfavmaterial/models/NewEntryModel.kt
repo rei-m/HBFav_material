@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.NewEntryLoadedEvent
 import me.rei_m.hbfavmaterial.network.NewEntryRss
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
@@ -9,7 +10,6 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
-import me.rei_m.hbfavmaterial.events.NewEntryLoadedEvent.Companion.Type as EventType
 
 public class NewEntryModel {
 
@@ -40,11 +40,11 @@ public class NewEntryModel {
                 entryList.clear()
                 entryList.addAll(listFromRss)
                 this@NewEntryModel.entryType = entryType
-                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(EventType.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(EventType.ERROR))
+                EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 

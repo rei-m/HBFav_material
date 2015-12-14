@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.network.EntryApi
 import rx.Observer
@@ -44,11 +45,11 @@ public class UserRegisterBookmarkModel {
             override fun onCompleted() {
                 bookmarkList.clear()
                 bookmarkList.addAll(listFromApi)
-                EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(UserRegisterBookmarkLoadedEvent.Companion.Type.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(UserRegisterBookmarkLoadedEvent.Companion.Type.ERROR))
+                EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 

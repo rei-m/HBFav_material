@@ -1,3 +1,3 @@
 package me.rei_m.hbfavmaterial.events
 
-public class HatenaOAuthAccessTokenLoadedEvent(val result: LoadedEventResult)
+public class HatenaOAuthAccessTokenLoadedEvent(val status: LoadedEventStatus)

@@ -3,12 +3,12 @@ package me.rei_m.hbfavmaterial.models
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
-import me.rei_m.hbfavmaterial.events.BookmarkUserLoadedEvent.Companion.Type as EventType
 
 public class BookmarkUserModel {
 
@@ -51,11 +51,11 @@ public class BookmarkUserModel {
                     bookmarkList.clear()
                 }
                 bookmarkList.addAll(listFromRss)
-                EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(EventType.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(EventType.ERROR))
+                EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 

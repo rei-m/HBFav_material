@@ -3,13 +3,13 @@ package me.rei_m.hbfavmaterial.models
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.HotEntryLoadedEvent
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.network.HotEntryRss
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
-import me.rei_m.hbfavmaterial.events.HotEntryLoadedEvent.Companion.Type as EventType
 
 public class HotEntryModel {
 
@@ -40,11 +40,11 @@ public class HotEntryModel {
                 entryList.clear()
                 entryList.addAll(listFromRss)
                 this@HotEntryModel.entryType = entryType
-                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.COMPLETE))
+                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
-                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(EventType.ERROR))
+                EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 

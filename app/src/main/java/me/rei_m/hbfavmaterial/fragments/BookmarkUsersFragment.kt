@@ -14,10 +14,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.BookmarkUsersFilteredEvent
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.UserListItemClickedEvent
-import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -147,14 +144,17 @@ public class BookmarkUsersFragment : Fragment() {
     @Subscribe
     public fun onUserRegisterBookmarkLoaded(event: UserRegisterBookmarkLoadedEvent) {
 
-        when (event.type) {
-            UserRegisterBookmarkLoadedEvent.Companion.Type.COMPLETE -> {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
                 displayBookmarkUsers()
             }
-            UserRegisterBookmarkLoadedEvent.Companion.Type.ERROR -> {
+            LoadedEventStatus.ERROR -> {
                 // 読み込み出来なかった場合はSnackbarで通知する
                 val thisActivity = activity as AppCompatActivity
                 thisActivity.showSnackbarNetworkError(view)
+            }
+            else -> {
+
             }
         }
 

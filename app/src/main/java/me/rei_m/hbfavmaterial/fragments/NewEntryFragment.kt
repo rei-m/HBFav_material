@@ -14,10 +14,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.EntryCategoryChangedEvent
-import me.rei_m.hbfavmaterial.events.EntryListItemClickedEvent
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.NewEntryLoadedEvent
+import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -25,7 +22,6 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.events.HotEntryLoadedEvent.Companion.Type as EventType
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
 public class NewEntryFragment : Fragment() {
@@ -122,16 +118,19 @@ public class NewEntryFragment : Fragment() {
 
     @Subscribe
     public fun onNewEntryLoadedEvent(event: NewEntryLoadedEvent) {
-        when (event.type) {
-            NewEntryLoadedEvent.Companion.Type.COMPLETE -> {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
                 val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
                 mListAdapter?.clear()
                 mListAdapter?.addAll(newEntryModel.entryList)
                 mListAdapter?.notifyDataSetChanged()
             }
-            NewEntryLoadedEvent.Companion.Type.ERROR -> {
+            LoadedEventStatus.ERROR -> {
                 val thisActivity = activity as AppCompatActivity
                 thisActivity.showSnackbarNetworkError(view)
+            }
+            else -> {
+
             }
         }
 

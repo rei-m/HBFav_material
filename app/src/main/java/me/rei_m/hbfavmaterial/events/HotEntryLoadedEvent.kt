@@ -1,10 +1,3 @@
 package me.rei_m.hbfavmaterial.events
 
-public class HotEntryLoadedEvent(val type: HotEntryLoadedEvent.Companion.Type) {
-    companion object {
-        public enum class Type {
-            COMPLETE,
-            ERROR
-        }
-    }
-}
+public class HotEntryLoadedEvent(val status: LoadedEventStatus)

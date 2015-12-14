@@ -11,15 +11,15 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.BookmarkClickedEvent
-import me.rei_m.hbfavmaterial.events.BookmarkCountClickedEvent
-import me.rei_m.hbfavmaterial.events.BookmarkUserClickedEvent
+import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
 public class BookmarkActivity : BaseActivity() {
 
@@ -72,7 +72,7 @@ public class BookmarkActivity : BaseActivity() {
             val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
             if (!hatenaModel.isAuthorised()) {
-                startActivity(OAuthActivity.createIntent(this))
+                startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
             } else {
                 hatenaModel.fetchBookmark(mEntryLink)
             }
@@ -126,6 +126,29 @@ public class BookmarkActivity : BaseActivity() {
         super.onBackPressed()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
+            return
+        }
+
+        when (resultCode) {
+            RESULT_OK -> {
+                if (data!!.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
+                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+                    hatenaModel.fetchBookmark(mEntryLink)
+                }
+            }
+            RESULT_CANCELED -> {
+                showSnackbarNetworkError(findViewById(R.id.activity_layout))
+            }
+            else -> {
+
+            }
+        }
+    }
+
     @Subscribe
     public fun onBookmarkUserClicked(event: BookmarkUserClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
@@ -139,5 +162,22 @@ public class BookmarkActivity : BaseActivity() {
     @Subscribe
     public fun onBookmarkCountClicked(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
+    }
+
+    @Subscribe
+    public fun onHatenaGetBookmarkLoaded(event: HatenaGetBookmarkLoadedEvent) {
+        when (event.status) {
+            LoadedEventStatus.OK -> {
+                // 更新用ダイアログを表示
+                println("ok")
+            }
+            LoadedEventStatus.NOT_FOUND -> {
+                // 新規用ダイアログを表示
+                println("new")
+            }
+            LoadedEventStatus.ERROR -> {
+                showSnackbarNetworkError(findViewById(R.id.content))
+            }
+        }
     }
 }
