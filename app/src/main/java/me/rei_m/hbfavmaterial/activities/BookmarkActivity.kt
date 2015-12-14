@@ -19,6 +19,7 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
 public class BookmarkActivity : BaseActivity() {
 
@@ -71,7 +72,7 @@ public class BookmarkActivity : BaseActivity() {
             val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
             if (!hatenaModel.isAuthorised()) {
-                startActivity(OAuthActivity.createIntent(this))
+                startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
             } else {
                 hatenaModel.fetchBookmark(mEntryLink)
             }
@@ -123,6 +124,29 @@ public class BookmarkActivity : BaseActivity() {
             }
         }
         super.onBackPressed()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
+            return
+        }
+
+        when (resultCode) {
+            RESULT_OK -> {
+                if (data!!.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
+                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+                    hatenaModel.fetchBookmark(mEntryLink)
+                }
+            }
+            RESULT_CANCELED -> {
+                showSnackbarNetworkError(findViewById(R.id.activity_layout))
+            }
+            else -> {
+
+            }
+        }
     }
 
     @Subscribe

@@ -27,6 +27,8 @@ public class OAuthActivity : BaseActivity() {
 
     companion object {
 
+        public final val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
+
         public fun createIntent(context: Context): Intent {
             return Intent(context, OAuthActivity::class.java)
         }
@@ -48,6 +50,10 @@ public class OAuthActivity : BaseActivity() {
                     val uri = Uri.parse(url)
                     val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
                     hatenaModel.fetchAccessToken(applicationContext, uri.getQueryParameter("oauth_verifier"))
+                } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL)!!) {
+                    mWebView!!.stopLoading()
+                    setAuthorizeResult(false)
+                    finish()
                 } else {
                     super.onPageStarted(view, url, favicon)
                 }
@@ -87,11 +93,21 @@ public class OAuthActivity : BaseActivity() {
     public fun onHatenaOAuthAccessTokenLoaded(event: HatenaOAuthAccessTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
-
+                setAuthorizeResult(true)
             }
             else -> {
-                showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                setResult(RESULT_CANCELED)
             }
         }
+        finish()
+    }
+
+    private fun setAuthorizeResult(isAuthorize: Boolean) {
+        val intent = Intent()
+        val bundle = Bundle()
+        bundle.putBoolean(ARG_AUTHORIZE_STATUS, isAuthorize)
+        intent.putExtras(bundle)
+
+        setResult(RESULT_OK, intent)
     }
 }

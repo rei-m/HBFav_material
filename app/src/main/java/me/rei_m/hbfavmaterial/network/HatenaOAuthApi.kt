@@ -32,6 +32,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         private final val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
 
         private final val BOOKMARK_ENDPOINT_URL = "http://api.b.hatena.ne.jp/1/my/bookmark"
+
+        public final val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
     }
 
     public fun requestRequestToken(): Observable<String> {
@@ -43,7 +45,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             if (authUrl != null) {
                 t.onNext(authUrl)
             } else {
-                t.onError(HTTPException(HttpURLConnection.HTTP_BAD_REQUEST))
+                t.onError(HTTPException(HttpURLConnection.HTTP_NOT_AUTHORITATIVE))
             }
 
             t.onCompleted()
@@ -60,7 +62,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             if (mOAuthConsumer.token != null && mOAuthConsumer.tokenSecret != null) {
                 t.onNext(OAuthTokenEntity(mOAuthConsumer.token, mOAuthConsumer.tokenSecret))
             } else {
-                t.onError(HTTPException(HttpURLConnection.HTTP_BAD_REQUEST))
+                t.onError(HTTPException(HttpURLConnection.HTTP_NOT_AUTHORITATIVE))
             }
 
             t.onCompleted()
@@ -87,13 +89,9 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
                     request.disconnect()
                     t.onNext(response)
                 }
-                HttpURLConnection.HTTP_NOT_FOUND -> {
-                    request.disconnect()
-                    t.onError(HTTPException(HttpURLConnection.HTTP_NOT_FOUND))
-                }
                 else -> {
                     request.disconnect()
-                    t.onError(HTTPException(HttpURLConnection.HTTP_BAD_REQUEST))
+                    t.onError(HTTPException(request.responseCode))
                 }
             }
 
