@@ -15,6 +15,7 @@
     <string name="fragment_title_credit">クレジット</string>
 
     <string name="dialog_title_set_user">はてなアカウントの設定</string>
+    <string name="dialog_title_set_bookmark">ブックマークの設定</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

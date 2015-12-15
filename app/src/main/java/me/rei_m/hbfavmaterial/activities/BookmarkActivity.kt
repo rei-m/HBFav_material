@@ -16,6 +16,7 @@ import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
+import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
@@ -173,7 +174,8 @@ public class BookmarkActivity : BaseActivity() {
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 新規用ダイアログを表示
-                println("new")
+                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle)
+                dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.ERROR -> {
                 showSnackbarNetworkError(findViewById(R.id.content))
