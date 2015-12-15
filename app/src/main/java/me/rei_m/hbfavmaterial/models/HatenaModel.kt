@@ -46,6 +46,12 @@ public class HatenaModel {
 
     public fun fetchRequestToken() {
 
+        if (isBusy) {
+            return
+        }
+
+        isBusy = true
+
         var requestUrl: String = ""
 
         val observer = object : Observer<String> {
@@ -74,6 +80,13 @@ public class HatenaModel {
     }
 
     public fun fetchAccessToken(context: Context, requestToken: String) {
+
+        if (isBusy) {
+            return
+        }
+
+        isBusy = true
+
         val observer = object : Observer<OAuthTokenEntity> {
 
             override fun onNext(t: OAuthTokenEntity?) {
@@ -101,6 +114,12 @@ public class HatenaModel {
     }
 
     public fun fetchBookmark(url: String) {
+
+        if (isBusy) {
+            return
+        }
+
+        isBusy = true
 
         var response: HatenaGetBookmarkResponse? = null
 
