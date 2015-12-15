@@ -24,21 +24,21 @@
             android:id="@+id/dialog_fragment_edit_bookmark_edit_bookmark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="コメントを追加"
+            android:hint="@string/text_add_comment"
             android:inputType="textMultiLine"
             android:maxLines="5"
             android:textColorHint="@color/app_accent_color" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/dialog_fragment_edit_bookmark_text_comment_char_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_outline"
         android:layout_marginLeft="@dimen/margin_outline_dialog"
         android:layout_marginRight="@dimen/margin_outline_dialog"
         android:gravity="end"
-        android:textColor="@color/text_color_thin"
-        android:text="100" />
+        android:textColor="@color/text_color_thin" />
 
     <LinearLayout
         android:layout_width="match_parent"

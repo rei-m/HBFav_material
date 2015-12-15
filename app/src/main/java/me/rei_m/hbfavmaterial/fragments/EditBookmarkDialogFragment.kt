@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
@@ -9,8 +10,12 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
+import android.widget.EditText
+import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.extensions.disable
+import me.rei_m.hbfavmaterial.extensions.enable
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import rx.Subscription
@@ -19,7 +24,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
 
-    private var mLayoutUserId: TextInputLayout? = null
+    private var mLayoutBookmark: TextInputLayout? = null
 
     private var mSubscription: Subscription? = null
 
@@ -49,11 +54,11 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         val textTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_title) as AppCompatTextView
         textTitle.text = arguments.getString(ARG_BOOKMARK_TITLE)
 
-        //
-        //        val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
+
+        val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
         //        editUserId.setText(userModel.userEntity?.id)
 
-        //        mLayoutUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user) as TextInputLayout
+        mLayoutBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_layout_edit_bookmark) as TextInputLayout
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
         buttonCancel.setOnClickListener({ v ->
@@ -71,10 +76,25 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             //            }
         })
 
-        //        val editUserIdStream = RxTextView.textChanges(editUserId)
-        //        mSubscription = editUserIdStream
-        //                .map({ v -> 0 < v.length })
-        //                .subscribe({ isEnabled -> buttonOk.toggle(isEnabled) })
+        val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
+
+        val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
+
+        val editBookmarkStream = RxTextView.textChanges(editBookmark)
+        mSubscription = editBookmarkStream
+                .map({ v ->
+                    Math.ceil(v.toString().toByteArray().size / 3.0).toInt()
+                })
+                .subscribe({ size ->
+                    textCommentCount.text = "$size / $commentLength"
+                    if (commentLength < size) {
+                        textCommentCount.setTextColor(Color.RED)
+                        buttonOk.disable()
+                    } else {
+                        textCommentCount.setTextColor(R.color.text_color_thin)
+                        buttonOk.enable()
+                    }
+                })
 
         val builder = AlertDialog.Builder(activity)
                 .setTitle(getString(R.string.dialog_title_set_bookmark))
