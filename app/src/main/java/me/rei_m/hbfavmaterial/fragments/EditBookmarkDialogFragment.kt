@@ -32,13 +32,16 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         public final val TAG = EditBookmarkDialogFragment::class.java.simpleName
 
+        private final val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
+
         private final val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
 
-        public fun newInstance(title: String): EditBookmarkDialogFragment {
+        public fun newInstance(title: String, url: String): EditBookmarkDialogFragment {
 
             val fragment = EditBookmarkDialogFragment()
             val args = Bundle()
             args.putString(ARG_BOOKMARK_TITLE, title)
+            args.putString(ARG_BOOKMARK_URL, url)
             fragment.arguments = args
 
             return fragment
@@ -49,11 +52,12 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
+        val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
+
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
 
         val textTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_title) as AppCompatTextView
         textTitle.text = arguments.getString(ARG_BOOKMARK_TITLE)
-
 
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
         //        editUserId.setText(userModel.userEntity?.id)
@@ -67,6 +71,8 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
         buttonOk.setOnClickListener({ v ->
+            val inputtedComment = editBookmark.editableText.toString()
+            hatenaModel.registerBookmark(bookmarkUrl, inputtedComment)
             //            val inputtedUserId = editUserId.editableText.toString()
             //            if (inputtedUserId != userModel.userEntity?.id) {
             //                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())

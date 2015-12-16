@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.entities
 
 import java.io.Serializable
 
-public data class HatenaGetBookmarkResponse(val comment_raw: String,
+public data class HatenaRestApiBookmarkResponse(val comment_raw: String,
                                             val private: Boolean,
                                             val eid: Int,
                                             val created_epoch: Int,
