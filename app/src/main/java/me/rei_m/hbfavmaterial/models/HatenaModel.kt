@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entities.HatenaGetBookmarkResponse
+import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
@@ -121,11 +121,11 @@ public class HatenaModel {
 
         isBusy = true
 
-        var response: HatenaGetBookmarkResponse? = null
+        var response: HatenaRestApiBookmarkResponse? = null
 
-        val observer = object : Observer<HatenaGetBookmarkResponse> {
+        val observer = object : Observer<HatenaRestApiBookmarkResponse> {
 
-            override fun onNext(t: HatenaGetBookmarkResponse?) {
+            override fun onNext(t: HatenaRestApiBookmarkResponse?) {
                 response = t
             }
 
@@ -161,22 +161,24 @@ public class HatenaModel {
 
         isBusy = true
 
-        val observer = object : Observer<String> {
+        var response: HatenaRestApiBookmarkResponse? = null
 
-            override fun onNext(t: String?) {
-                //response = t
+        val observer = object : Observer<HatenaRestApiBookmarkResponse> {
+
+            override fun onNext(t: HatenaRestApiBookmarkResponse?) {
+                response = t
             }
 
             override fun onCompleted() {
-                //EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(response, LoadedEventStatus.OK))
+                EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(response, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
                 val error = e as HTTPException
                 if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
+                    EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
                 } else {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
+                    EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
                 }
             }
         }

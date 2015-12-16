@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.network
 
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entities.HatenaGetBookmarkResponse
+import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import oauth.signpost.basic.DefaultOAuthConsumer
@@ -77,7 +77,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     }
 
-    public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String): Observable<HatenaGetBookmarkResponse> {
+    public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String): Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -92,7 +92,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             when (request.responseCode) {
                 HttpURLConnection.HTTP_OK -> {
-                    val response = Gson().fromJson(readStream(request.inputStream), HatenaGetBookmarkResponse::class.java)
+                    val response = Gson().fromJson(readStream(request.inputStream), HatenaRestApiBookmarkResponse::class.java)
                     request.disconnect()
                     t.onNext(response)
                 }
@@ -106,7 +106,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         })
     }
 
-    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String): Observable<String> {
+    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String): Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -138,26 +138,17 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             os.flush()
             os.close()
 
-            val iResponseCode = connection.responseCode
-
-            println(iResponseCode)
-
-            when (iResponseCode) {
+            when (connection.responseCode) {
                 HttpURLConnection.HTTP_OK -> {
-                    println(readStream(connection.inputStream))
-
-                    //                    val response = Gson().fromJson(readStream(request.inputStream), HatenaGetBookmarkResponse::class.java)
-                    //                    request.disconnect()
-                    //                    t.onNext(response)
+                    val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                    connection.disconnect()
+                    t.onNext(response)
                 }
                 else -> {
-                    println(readStream(connection.errorStream))
-                    //                    request.disconnect()
-                    //                    t.onError(HTTPException(request.responseCode))
+                    connection.disconnect()
+                    t.onError(HTTPException(connection.responseCode))
                 }
             }
-
-            connection.disconnect()
 
             t.onCompleted()
         })
