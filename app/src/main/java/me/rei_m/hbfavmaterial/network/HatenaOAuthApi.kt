@@ -8,10 +8,12 @@ import oauth.signpost.basic.DefaultOAuthConsumer
 import oauth.signpost.basic.DefaultOAuthProvider
 import rx.Observable
 import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
 
 public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
@@ -34,6 +36,11 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         private final val BOOKMARK_ENDPOINT_URL = "http://api.b.hatena.ne.jp/1/my/bookmark"
 
         public final val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+
+        private final val TWO_HYPHEN = "--"
+        private final val EOL = "\r\n"
+        private final val BOUNDARY = Random().hashCode()
+        private final val CHARSET = "UTF-8"
     }
 
     public fun requestRequestToken(): Observable<String> {
@@ -97,6 +104,94 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             t.onCompleted()
         })
+    }
+
+    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String): Observable<String> {
+
+        mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
+
+        return Observable.create({ t ->
+
+            // Content作成開始
+            val sb = StringBuilder()
+
+            sb.append(EOL)
+
+            // multipart/form-dataでパラメータ作成
+            sb.append(createFormDataParameter("url", urlString))
+
+            // RequestHeaderに設定するためPostデータのLengthを取得
+            var contentLength = sb.toString().toByteArray(CHARSET).size
+
+            // Postデータにフッタ追加
+            sb.append("$TWO_HYPHEN$BOUNDARY$TWO_HYPHEN$EOL")
+
+            // コネクション取得
+            val connection = createPostConnection(BOOKMARK_ENDPOINT_URL, contentLength)
+
+            // OAuth認証
+            mOAuthConsumer.sign(connection)
+
+            // Postデータ書き込み
+            val os = DataOutputStream(connection.outputStream)
+            os.write(sb.toString().toByteArray(CHARSET))
+            os.flush()
+            os.close()
+
+            val iResponseCode = connection.responseCode
+
+            println(iResponseCode)
+
+            when (iResponseCode) {
+                HttpURLConnection.HTTP_OK -> {
+                    println(readStream(connection.inputStream))
+
+                    //                    val response = Gson().fromJson(readStream(request.inputStream), HatenaGetBookmarkResponse::class.java)
+                    //                    request.disconnect()
+                    //                    t.onNext(response)
+                }
+                else -> {
+                    println(readStream(connection.errorStream))
+                    //                    request.disconnect()
+                    //                    t.onError(HTTPException(request.responseCode))
+                }
+            }
+
+            connection.disconnect()
+
+            t.onCompleted()
+        })
+    }
+
+    private fun createFormDataParameter(key: String, value: String): String {
+        val sb = StringBuilder()
+        sb.append("$TWO_HYPHEN$BOUNDARY$EOL")
+                .append("Content-Disposition: form-data; name=\"$key\"$EOL")
+                .append(EOL)
+                .append("$value$EOL")
+
+        return sb.toString()
+    }
+
+    private fun createPostConnection(urlString: String, contentLength: Int): HttpURLConnection {
+
+        val url = URL(urlString)
+
+        val connection = url.openConnection() as HttpURLConnection
+
+        connection.requestMethod = "POST"
+        connection.doInput = true
+        connection.doOutput = true
+        connection.readTimeout = 10 * 1000
+        connection.connectTimeout = 10 * 1000
+        connection.useCaches = false
+        connection.setChunkedStreamingMode(0)
+
+        connection.addRequestProperty("Connection", "Keep-Alive")
+        connection.addRequestProperty("Content-Type", "multipart/form-data; boundary=$BOUNDARY")
+        connection.addRequestProperty("Content-Length", contentLength.toString())
+
+        return connection
     }
 
     private fun readStream(stream: InputStream): String {

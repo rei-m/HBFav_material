@@ -153,6 +153,45 @@ public class HatenaModel {
                 .subscribe(observer)
     }
 
+    public fun registerBookmark(url: String, comment: String) {
+
+        if (isBusy) {
+            return
+        }
+
+        isBusy = true
+
+        val observer = object : Observer<String> {
+
+            override fun onNext(t: String?) {
+                //response = t
+            }
+
+            override fun onCompleted() {
+                //EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(response, LoadedEventStatus.OK))
+            }
+
+            override fun onError(e: Throwable?) {
+                val error = e as HTTPException
+                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
+                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
+                } else {
+                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
+                }
+            }
+        }
+
+        mHatenaOAuthApi!!.postBookmark(oauthTokenEntity!!, url, comment)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .finallyDo({
+                    isBusy = false
+                })
+                .subscribe(observer)
+
+    }
+
     private fun saveToken(context: Context) {
         getPreferences(context)
                 .edit()
