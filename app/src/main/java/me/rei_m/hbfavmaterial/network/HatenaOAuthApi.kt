@@ -77,7 +77,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     }
 
-    public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String): Observable<HatenaRestApiBookmarkResponse> {
+    public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String):
+            Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -106,7 +107,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         })
     }
 
-    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String): Observable<HatenaRestApiBookmarkResponse> {
+    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean):
+            Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -119,6 +121,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             // multipart/form-dataでパラメータ作成
             sb.append(createFormDataParameter("url", urlString))
+            sb.append(createFormDataParameter("comment", comment))
+            sb.append(createFormDataParameter("private", if (isOpen) "0" else "1"))
 
             // RequestHeaderに設定するためPostデータのLengthを取得
             var contentLength = sb.toString().toByteArray(CHARSET).size

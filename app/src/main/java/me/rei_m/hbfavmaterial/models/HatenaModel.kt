@@ -153,7 +153,7 @@ public class HatenaModel {
                 .subscribe(observer)
     }
 
-    public fun registerBookmark(url: String, comment: String) {
+    public fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
 
         if (isBusy) {
             return
@@ -174,16 +174,11 @@ public class HatenaModel {
             }
 
             override fun onError(e: Throwable?) {
-                val error = e as HTTPException
-                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                    EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
-                } else {
-                    EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
-                }
+                EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
             }
         }
 
-        mHatenaOAuthApi!!.postBookmark(oauthTokenEntity!!, url, comment)
+        mHatenaOAuthApi!!.postBookmark(oauthTokenEntity!!, url, comment, isOpen)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
