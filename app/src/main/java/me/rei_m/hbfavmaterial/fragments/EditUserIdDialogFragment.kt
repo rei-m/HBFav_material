@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
 import android.view.LayoutInflater
 import android.widget.EditText
@@ -15,6 +16,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
@@ -111,8 +113,7 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {
-                // TODO Toastにする
-                mLayoutUserId?.error = getString(R.string.message_error_network)
+                (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
         }
     }

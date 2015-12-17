@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.SwitchCompat
@@ -17,10 +18,13 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.HatenaDeleteBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.HatenaPostBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.disable
 import me.rei_m.hbfavmaterial.extensions.enable
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import rx.Subscription
@@ -92,6 +96,17 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             }
         })
 
+        val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
+        switchDelete.setOnCheckedChangeListener({ buttonView, isChecked ->
+            if (isChecked) {
+                switchOpen.isEnabled = false
+                editBookmark.isEnabled = false
+            } else {
+                switchOpen.isEnabled = true
+                editBookmark.isEnabled = true
+            }
+        })
+
         mLayoutBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_layout_edit_bookmark) as TextInputLayout
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
@@ -101,16 +116,14 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
         buttonOk.setOnClickListener({ v ->
-            val inputtedComment = editBookmark.editableText.toString()
-            hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, switchOpen.isChecked)
+            if (switchDelete.isChecked) {
+                hatenaModel.deleteBookmark(bookmarkUrl)
+            } else {
+                val inputtedComment = editBookmark.editableText.toString()
+                hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, switchOpen.isChecked)
+
+            }
             showProgressDialog(activity)
-            //            val inputtedUserId = editUserId.editableText.toString()
-            //            if (inputtedUserId != userModel.userEntity?.id) {
-            //                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
-            //                showProgressDialog(activity)
-            //            } else {
-            //                dismiss()
-            //            }
         })
 
         val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
@@ -139,6 +152,8 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             switchOpen.isChecked = !bookmark.private
             builder.setTitle(resources.getString(R.string.dialog_title_update_bookmark))
             buttonOk.text = resources.getString(R.string.button_update)
+        } else {
+            switchDelete.hide()
         }
 
         return builder.create()
@@ -173,8 +188,25 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
                 dismiss()
             }
             else -> {
-                //                mLayoutUserId?.error = getString(R.string.message_error_network)
+                (activity as AppCompatActivity).showSnackbarNetworkError(view)
+            }
+        }
+    }
 
+    @Subscribe
+    public fun onHatenaDeleteBookmarkLoaded(event: HatenaDeleteBookmarkLoadedEvent) {
+
+        closeProgressDialog()
+
+        when (event.status) {
+            LoadedEventStatus.OK -> {
+                dismiss()
+            }
+            LoadedEventStatus.NOT_FOUND -> {
+                dismiss()
+            }
+            else -> {
+                (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
         }
     }
