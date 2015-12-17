@@ -79,7 +79,7 @@
             android:layout_height="@dimen/height_button"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/margin_dialog_button"
-            android:text="@string/button_setting" />
+            android:text="@string/button_add" />
 
     </LinearLayout>
 

@@ -15,6 +15,7 @@ import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.HatenaPostBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.LoadedEventStatus
@@ -40,6 +41,8 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         private final val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
 
+        private final val ARG_BOOKMARK = "ARG_BOOKMARK"
+
         public fun newInstance(title: String, url: String): EditBookmarkDialogFragment {
 
             val fragment = EditBookmarkDialogFragment()
@@ -50,21 +53,33 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
             return fragment
         }
+
+        public fun newInstance(title: String, url: String, response: HatenaRestApiBookmarkResponse):
+                EditBookmarkDialogFragment {
+            val fragment = newInstance(title, url)
+            fragment.arguments.putSerializable(ARG_BOOKMARK, response)
+            return fragment
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+
+        val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
+
+        val builder = AlertDialog.Builder(activity)
+                .setTitle(getString(R.string.dialog_title_add_bookmark))
+                .setView(view)
 
         val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
 
-        val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
+        val isAdd = (arguments.getSerializable(ARG_BOOKMARK) == null)
 
         val textTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_title) as AppCompatTextView
         textTitle.text = arguments.getString(ARG_BOOKMARK_TITLE)
 
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
-        //        editUserId.setText(userModel.userEntity?.id)
 
         val switchOpen = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open) as SwitchCompat
         val textOpen = context.resources.getString(R.string.text_open)
@@ -118,9 +133,13 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
                     }
                 })
 
-        val builder = AlertDialog.Builder(activity)
-                .setTitle(getString(R.string.dialog_title_set_bookmark))
-                .setView(view)
+        if (!isAdd) {
+            val bookmark = arguments.getSerializable(ARG_BOOKMARK) as HatenaRestApiBookmarkResponse
+            editBookmark.setText(bookmark.comment)
+            switchOpen.isChecked = !bookmark.private
+            builder.setTitle(resources.getString(R.string.dialog_title_update_bookmark))
+            buttonOk.text = resources.getString(R.string.button_update)
+        }
 
         return builder.create()
     }
