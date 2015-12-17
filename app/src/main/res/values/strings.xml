@@ -15,7 +15,8 @@
     <string name="fragment_title_credit">クレジット</string>
 
     <string name="dialog_title_set_user">はてなアカウントの設定</string>
-    <string name="dialog_title_set_bookmark">ブックマークの設定</string>
+    <string name="dialog_title_add_bookmark">ブックマークの追加</string>
+    <string name="dialog_title_update_bookmark">ブックマークの更新</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -43,6 +44,8 @@
     <string name="text_not_open">非公開</string>
 
     <string name="button_setting">　 設定 　</string>
+    <string name="button_add">　 追加 　</string>
+    <string name="button_update">　 更新 　</string>
     <string name="button_cancel">キャンセル</string>
 
 </resources>

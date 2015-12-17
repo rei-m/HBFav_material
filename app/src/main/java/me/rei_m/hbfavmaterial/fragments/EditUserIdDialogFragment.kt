@@ -111,6 +111,7 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {
+                // TODO Toastにする
                 mLayoutUserId?.error = getString(R.string.message_error_network)
             }
         }

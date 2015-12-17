@@ -170,7 +170,8 @@ public class BookmarkActivity : BaseActivity() {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 更新用ダイアログを表示
-                println("ok")
+                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle, mEntryLink, event.response!!)
+                dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 新規用ダイアログを表示
