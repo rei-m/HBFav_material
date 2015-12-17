@@ -85,21 +85,21 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         return Observable.create({ t ->
 
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
-            val request = url.openConnection() as HttpURLConnection
+            val connection = url.openConnection() as HttpURLConnection
 
-            mOAuthConsumer.sign(request)
+            mOAuthConsumer.sign(connection)
 
-            request.connect()
+            connection.connect()
 
-            when (request.responseCode) {
+            when (connection.responseCode) {
                 HttpURLConnection.HTTP_OK -> {
-                    val response = Gson().fromJson(readStream(request.inputStream), HatenaRestApiBookmarkResponse::class.java)
-                    request.disconnect()
+                    val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                    connection.disconnect()
                     t.onNext(response)
                 }
                 else -> {
-                    request.disconnect()
-                    t.onError(HTTPException(request.responseCode))
+                    connection.disconnect()
+                    t.onError(HTTPException(connection.responseCode))
                 }
             }
 
@@ -147,6 +147,37 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
                     val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
                     connection.disconnect()
                     t.onNext(response)
+                }
+                else -> {
+                    connection.disconnect()
+                    t.onError(HTTPException(connection.responseCode))
+                }
+            }
+
+            t.onCompleted()
+        })
+    }
+
+    public fun deleteBookmark(oauthToken: OAuthTokenEntity, urlString: String):
+            Observable<String> {
+
+        mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
+
+        return Observable.create({ t ->
+
+            val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
+            val connection = url.openConnection() as HttpURLConnection
+
+            connection.requestMethod = "DELETE"
+
+            mOAuthConsumer.sign(connection)
+
+            connection.connect()
+
+            when (connection.responseCode) {
+                HttpURLConnection.HTTP_NO_CONTENT -> {
+                    connection.disconnect()
+                    t.onNext("")
                 }
                 else -> {
                     connection.disconnect()
