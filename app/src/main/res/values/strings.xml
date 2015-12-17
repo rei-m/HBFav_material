@@ -39,6 +39,8 @@
     <string name="text_opinion">ご意見・ご要望 - GitHub</string>
     <string name="text_version">バージョン</string>
     <string name="text_add_comment">コメントを追加</string>
+    <string name="text_open">公開</string>
+    <string name="text_not_open">非公開</string>
 
     <string name="button_setting">　 設定 　</string>
     <string name="button_cancel">キャンセル</string>

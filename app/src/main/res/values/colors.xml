@@ -8,6 +8,7 @@
     <color name="border">#cccccc</color>
 
     <color name="text_color_strong">#555555</color>
+    <color name="text_color_middle">#6f6f6f</color>
     <color name="text_color_thin">#b6b9ba</color>
 
     <color name="pull_to_refresh_1">#B0C4DE</color>

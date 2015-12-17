@@ -34,11 +34,24 @@
         android:id="@+id/dialog_fragment_edit_bookmark_text_comment_char_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_outline"
+        android:layout_marginBottom="@dimen/margin"
         android:layout_marginLeft="@dimen/margin_outline_dialog"
         android:layout_marginRight="@dimen/margin_outline_dialog"
         android:gravity="end"
         android:textColor="@color/text_color_thin" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/dialog_fragment_edit_bookmark_switch_open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginLeft="@dimen/margin_outline_dialog"
+        android:layout_marginRight="@dimen/margin_outline_dialog"
+        android:background="@null"
+        android:checked="true"
+        android:text="@string/text_open"
+        android:textColor="@color/text_color_middle" />
 
     <LinearLayout
         android:layout_width="match_parent"

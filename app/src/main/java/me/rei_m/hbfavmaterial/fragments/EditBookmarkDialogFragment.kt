@@ -9,11 +9,15 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatTextView
+import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
+import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.HatenaPostBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.disable
 import me.rei_m.hbfavmaterial.extensions.enable
 import me.rei_m.hbfavmaterial.managers.ModelLocator
@@ -62,6 +66,17 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
         //        editUserId.setText(userModel.userEntity?.id)
 
+        val switchOpen = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open) as SwitchCompat
+        val textOpen = context.resources.getString(R.string.text_open)
+        val textNotOpen = context.resources.getString(R.string.text_not_open)
+        switchOpen.setOnCheckedChangeListener({ buttonView, isChecked ->
+            buttonView.text = if (isChecked) {
+                textOpen
+            } else {
+                textNotOpen
+            }
+        })
+
         mLayoutBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_layout_edit_bookmark) as TextInputLayout
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
@@ -72,7 +87,8 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
         buttonOk.setOnClickListener({ v ->
             val inputtedComment = editBookmark.editableText.toString()
-            hatenaModel.registerBookmark(bookmarkUrl, inputtedComment)
+            hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, switchOpen.isChecked)
+            showProgressDialog(activity)
             //            val inputtedUserId = editUserId.editableText.toString()
             //            if (inputtedUserId != userModel.userEntity?.id) {
             //                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
@@ -128,24 +144,19 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 
-    //    @Subscribe
-    //    public fun onUserIdChecked(event: UserIdCheckedEvent) {
-    //
-    //        closeProgressDialog()
-    //
-    //        when (event.type) {
-    //            UserIdCheckedEvent.Companion.Type.OK -> {
-    //                mLayoutUserId?.isErrorEnabled = false
-    //                dismiss()
-    //            }
-    //
-    //            UserIdCheckedEvent.Companion.Type.NG -> {
-    //                mLayoutUserId?.error = getString(R.string.message_error_input_user_id)
-    //            }
-    //
-    //            UserIdCheckedEvent.Companion.Type.ERROR -> {
-    //                mLayoutUserId?.error = getString(R.string.message_error_network)
-    //            }
-    //        }
-    //    }
+    @Subscribe
+    public fun onHatenaPostBookmarkLoaded(event: HatenaPostBookmarkLoadedEvent) {
+
+        closeProgressDialog()
+
+        when (event.status) {
+            LoadedEventStatus.OK -> {
+                dismiss()
+            }
+            else -> {
+                //                mLayoutUserId?.error = getString(R.string.message_error_network)
+
+            }
+        }
+    }
 }
