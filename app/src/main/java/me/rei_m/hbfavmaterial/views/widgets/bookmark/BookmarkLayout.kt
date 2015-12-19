@@ -9,6 +9,8 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 class BookmarkLayout : RelativeLayout {
@@ -37,14 +39,14 @@ class BookmarkLayout : RelativeLayout {
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
         if (bookmarkEntity.description.isEmpty()) {
-            holder.description.visibility = GONE
+            holder.description.hide()
         } else {
-            holder.description.visibility = VISIBLE
+            holder.description.show()
             holder.description.text = bookmarkEntity.description
         }
-        holder.title.text = bookmarkEntity.title
+        holder.title.text = bookmarkEntity.articleEntity.title
         Picasso.with(context)
-                .load(bookmarkEntity.articleIconUrl)
+                .load(bookmarkEntity.articleEntity.iconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
     }

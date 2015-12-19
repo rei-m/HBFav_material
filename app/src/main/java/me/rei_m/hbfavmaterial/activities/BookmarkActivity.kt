@@ -54,14 +54,14 @@ public class BookmarkActivity : BaseActivity() {
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
                 val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-                mEntryTitle = bookmarkEntity.title
-                mEntryLink = bookmarkEntity.link
+                mEntryTitle = bookmarkEntity.articleEntity.title
+                mEntryLink = bookmarkEntity.articleEntity.url
                 setFragment(BookmarkFragment.newInstance(bookmarkEntity))
             } else {
                 val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
-                mEntryTitle = entryEntity.title
-                mEntryLink = entryEntity.link
-                setFragment(EntryWebViewFragment.newInstance(entryEntity.link))
+                mEntryTitle = entryEntity.articleEntity.title
+                mEntryLink = entryEntity.articleEntity.url
+                setFragment(EntryWebViewFragment.newInstance(mEntryLink))
             }
             supportActionBar.title = mEntryTitle
         }
@@ -157,7 +157,7 @@ public class BookmarkActivity : BaseActivity() {
 
     @Subscribe
     public fun onBookmarkClicked(event: BookmarkClickedEvent) {
-        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.link), EntryWebViewFragment.TAG)
+        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
     }
 
     @Subscribe
