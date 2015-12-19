@@ -37,6 +37,9 @@
     <string name="filter_bookmark_users_comment">コメントのみ</string>
 
     <string name="text_hatena_account">はてなアカウント</string>
+    <string name="text_hatena_account_connect">はてなブックマーク連携</string>
+    <string name="text_hatena_account_connect_ok">連携中</string>
+    <string name="text_hatena_account_connect_no">未連携</string>
     <string name="text_opinion">ご意見・ご要望 - GitHub</string>
     <string name="text_version">バージョン</string>
     <string name="text_add_comment">コメントを追加</string>
