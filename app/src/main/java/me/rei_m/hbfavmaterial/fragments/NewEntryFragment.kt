@@ -18,6 +18,7 @@ import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
@@ -135,10 +136,8 @@ public class NewEntryFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        if (mListAdapter?.isEmpty!!) {
-            view.findViewById(R.id.fragment_list_view_empty).show()
-        }
-
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
+        
         view.findViewById(R.id.fragment_list_progress_list).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout

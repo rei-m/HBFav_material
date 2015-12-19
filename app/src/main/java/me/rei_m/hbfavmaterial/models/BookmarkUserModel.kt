@@ -50,8 +50,13 @@ public class BookmarkUserModel {
                 if (requestIndex === 0) {
                     bookmarkList.clear()
                 }
-                bookmarkList.addAll(listFromRss)
-                EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.OK))
+
+                if (listFromRss.isEmpty()) {
+                    EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.NOT_FOUND))
+                } else {
+                    bookmarkList.addAll(listFromRss)
+                    EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.OK))
+                }
             }
 
             override fun onError(e: Throwable?) {

@@ -22,6 +22,7 @@ import me.rei_m.hbfavmaterial.events.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
 import me.rei_m.hbfavmaterial.models.UserModel
@@ -78,7 +79,7 @@ public class BookmarkFavoriteFragment : Fragment() {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
-                    if (!favoriteModel.isBusy) {
+                    if (!favoriteModel.isBusy && 0 < listView.footerViewsCount) {
                         favoriteModel.fetch(mUserId, mListAdapter?.nextIndex!!)
                     }
                 }
@@ -119,9 +120,8 @@ public class BookmarkFavoriteFragment : Fragment() {
         if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
             // 差分があれば未表示のブックマークがあるのでリストに表示する
-            mListAdapter?.clear()
-            mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
-            mListAdapter?.notifyDataSetChanged()
+            displayListContents()
+
             view.findViewById(R.id.fragment_list_progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければブックマーク情報をRSSから取得する
@@ -165,16 +165,15 @@ public class BookmarkFavoriteFragment : Fragment() {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
-                val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
-                mListAdapter?.clear()
-                mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
-                mListAdapter?.notifyDataSetChanged()
-
-                // フッターViewが追加されていなかった場合は追加する
+                displayListContents()
+            }
+            LoadedEventStatus.NOT_FOUND -> {
+                // 読込結果がなかった場合はFooterViewを非表示にする
                 val listView = view.findViewById(R.id.fragment_list_list) as ListView
-                if (listView.footerViewsCount === 0) {
-                    val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-                    listView.addFooterView(footerView, null, false)
+
+                if (0 < listView.footerViewsCount) {
+                    val footerView = view.findViewById(R.id.list_footer_loading_layout)
+                    listView.removeFooterView(footerView)
                 }
             }
             LoadedEventStatus.ERROR -> {
@@ -188,9 +187,7 @@ public class BookmarkFavoriteFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        if (mListAdapter?.isEmpty!!) {
-            view.findViewById(R.id.fragment_list_view_empty).show()
-        }
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
 
         // プログレスを非表示にする
         view.findViewById(R.id.fragment_list_progress_list).hide()
@@ -199,6 +196,24 @@ public class BookmarkFavoriteFragment : Fragment() {
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
+        }
+    }
+
+    /**
+     * ListViewのコンテンツを表示する
+     */
+    private fun displayListContents() {
+        val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+        mListAdapter?.clear()
+        mListAdapter?.addAll(bookmarkFavoriteModel.bookmarkList)
+        mListAdapter?.notifyDataSetChanged()
+
+        // FooterViewを表示する
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+
+        if (listView.footerViewsCount == 0) {
+            val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
+            listView.addFooterView(footerView, null, false)
         }
     }
 }
