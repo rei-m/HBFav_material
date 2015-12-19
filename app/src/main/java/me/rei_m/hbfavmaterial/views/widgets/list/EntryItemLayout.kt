@@ -10,6 +10,8 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
@@ -47,28 +49,28 @@ class EntryItemLayout : RelativeLayout {
     fun bindView(entryEntity: EntryEntity) {
         val holder = tag as ViewHolder
 
-        holder.title.text = entryEntity.title
+        holder.title.text = entryEntity.articleEntity.title
 
         val mlp = holder.title.layoutParams as MarginLayoutParams
 
-        if (entryEntity.articleImageUrl.isEmpty()) {
-            holder.bodyImage.visibility = GONE
+        if (entryEntity.articleEntity.bodyImageUrl.isEmpty()) {
+            holder.bodyImage.hide()
             mlp.rightMargin = mMarginTitleRight
         } else {
-            holder.bodyImage.visibility = VISIBLE
+            holder.bodyImage.show()
             mlp.rightMargin = 0
             Picasso.with(context)
-                    .load(entryEntity.articleImageUrl)
+                    .load(entryEntity.articleEntity.bodyImageUrl)
                     .into(holder.bodyImage)
         }
 
         Picasso.with(context)
-                .load(entryEntity.articleIconUrl)
+                .load(entryEntity.articleEntity.iconUrl)
                 .transform(RoundedTransformation())
                 .into(holder.iconImage)
 
-        holder.url.text = entryEntity.link
-        holder.footer.text = entryEntity.bookmarkCount.toString() + " users - " +
+        holder.url.text = entryEntity.articleEntity.url
+        holder.footer.text = entryEntity.articleEntity.bookmarkCount.toString() + " users - " +
                 entryEntity.subject + " - " +
                 BookmarkUtil.getPastTimeString(entryEntity.date)
     }

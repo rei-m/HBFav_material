@@ -99,18 +99,18 @@ public class BookmarkUsersFragment : Fragment() {
 
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
-        if (userRegisterBookmarkModel.isSameUrl(mBookmarkEntity?.link!!)) {
+        if (userRegisterBookmarkModel.isSameUrl(mBookmarkEntity!!.articleEntity.url)) {
             val displayedCount = mListAdapter?.count!!
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
                 displayBookmarkUsers()
                 view.findViewById(R.id.fragment_list_progress_list).hide()
             } else if (displayedCount === 0) {
-                userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
+                userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
                 view.findViewById(R.id.fragment_list_progress_list).show()
                 RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
-            userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
+            userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
             view.findViewById(R.id.fragment_list_progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
@@ -119,7 +119,7 @@ public class BookmarkUsersFragment : Fragment() {
 
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
-            userRegisterBookmarkModel.fetch(mBookmarkEntity?.link!!)
+            userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
         }))
     }
 

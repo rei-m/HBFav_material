@@ -39,16 +39,16 @@ class ArticleLayout : RelativeLayout {
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.body.text = bookmarkEntity.articleBody
-        if (bookmarkEntity.articleImageUrl.isEmpty()) {
+        holder.body.text = bookmarkEntity.articleEntity.body
+        if (bookmarkEntity.articleEntity.bodyImageUrl.isEmpty()) {
             holder.image.visibility = GONE
         } else {
             holder.image.visibility = VISIBLE
             Picasso.with(context)
-                    .load(bookmarkEntity.articleImageUrl)
+                    .load(bookmarkEntity.articleEntity.bodyImageUrl)
                     .into(holder.image)
         }
-        holder.link.text = bookmarkEntity.link
+        holder.link.text = bookmarkEntity.articleEntity.url
         holder.timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
     }
 }

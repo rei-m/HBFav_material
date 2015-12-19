@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.utils
 
+import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import org.jsoup.Jsoup
@@ -50,17 +51,20 @@ class RssXmlUtil private constructor() {
 
             val parsedContent = Jsoup.parse(content)
 
-            return BookmarkEntity(
+            val articleEntity = ArticleEntity(
                     title,
                     link,
-                    description,
-                    creator,
-                    date!!,
                     bookmarkCount,
-                    extractProfileIcon(parsedContent),
                     extractArticleIcon(parsedContent),
                     extractArticleBodyForBookmark(parsedContent),
                     extractArticleImageUrl(parsedContent))
+
+            return BookmarkEntity(
+                    articleEntity,
+                    description,
+                    creator,
+                    date!!,
+                    extractProfileIcon(parsedContent))
         }
 
         public fun createEntryFromFeed(feed: Node): EntryEntity {
@@ -95,16 +99,19 @@ class RssXmlUtil private constructor() {
 
             val parsedContent = Jsoup.parse(content)
 
-            return EntryEntity(
+            val articleEntity = ArticleEntity(
                     title,
                     link,
-                    description,
-                    date!!,
                     bookmarkCount,
-                    subject,
                     extractArticleIcon(parsedContent),
                     extractArticleBodyForEntry(parsedContent),
                     extractArticleImageUrl(parsedContent))
+
+            return EntryEntity(
+                    articleEntity,
+                    description,
+                    date!!,
+                    subject)
         }
 
         private fun extractProfileIcon(content: Document): String = content
