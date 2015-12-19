@@ -36,9 +36,13 @@ public class BookmarkFavoriteModel {
                 if (startIndex === 0) {
                     bookmarkList.clear()
                 }
-                bookmarkList.addAll(listFromRss)
 
-                EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.OK))
+                if (listFromRss.isEmpty()) {
+                    EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.NOT_FOUND))
+                } else {
+                    bookmarkList.addAll(listFromRss)
+                    EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.OK))
+                }
             }
 
             override fun onError(e: Throwable?) {
