@@ -4,12 +4,12 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/layout_icon_hatena_id"
+        android:id="@+id/fragment_setting_layout_icon_hatena_id"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/height_item_two_column">
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/fragment_initialize_image_icon_hatena_id"
+            android:id="@+id/fragment_setting_image_icon_hatena_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -19,7 +19,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/layout_text_hatena_id"
+        android:id="@+id/fragment_setting_layout_text_hatena_id"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_item_two_column"
         android:layout_marginLeft="@dimen/margin_content_from_screen"
@@ -33,14 +33,14 @@
         android:paddingStart="0dp">
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/text_title_user_id"
+            android:id="@+id/fragment_setting_text_title_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/text_hatena_account"
             android:textSize="@dimen/text_size_caption" />
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/text_user_id"
+            android:id="@+id/fragment_setting_text_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_title" />
@@ -48,13 +48,13 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/layout_icon_hatena_oauth"
+        android:id="@+id/fragment_setting_layout_icon_hatena_oauth"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/layout_icon_hatena_id">
+        android:layout_below="@id/fragment_setting_layout_icon_hatena_id">
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/image_icon_hatena_oauth"
+            android:id="@+id/fragment_setting_image_icon_hatena_oauth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -64,10 +64,10 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/layout_text_hatena_oauth"
+        android:id="@+id/fragment_setting_layout_text_hatena_oauth"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/layout_text_hatena_id"
+        android:layout_below="@id/fragment_setting_layout_text_hatena_id"
         android:layout_marginLeft="@dimen/margin_content_from_screen"
         android:layout_marginStart="@dimen/margin_content_from_screen"
         android:background="@drawable/bg_border_bottom_accent"
@@ -79,15 +79,14 @@
         android:paddingStart="0dp">
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/text_title_user_oauth"
+            android:id="@+id/fragment_setting_text_title_user_oauth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="はてなブックマーク連携"
-
+            android:text="@string/text_hatena_account_connect"
             android:textSize="@dimen/text_size_caption" />
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/text_user_oauth"
+            android:id="@+id/fragment_setting_text_user_oauth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_title" />
