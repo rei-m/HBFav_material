@@ -80,20 +80,23 @@ public class SettingFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        data ?: return
+
         if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
             return
         }
 
         when (resultCode) {
             AppCompatActivity.RESULT_OK -> {
-                val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
-                val oauthTextId = if (data!!.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
-                    R.string.text_hatena_account_connect_ok else
-                    R.string.text_hatena_account_connect_no
-                textHatenaOAuth.text = resources.getString(oauthTextId)
-            }
-            AppCompatActivity.RESULT_CANCELED -> {
-                (activity as AppCompatActivity).showSnackbarNetworkError(view)
+                if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+                    val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
+                    val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
+                        R.string.text_hatena_account_connect_ok else
+                        R.string.text_hatena_account_connect_no
+                    textHatenaOAuth.text = resources.getString(oauthTextId)
+                } else {
+                    (activity as AppCompatActivity).showSnackbarNetworkError(view)
+                }
             }
             else -> {
 

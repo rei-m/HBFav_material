@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/dialog_fragment_edit_user_id_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_dialog_title_bottom"
+        android:layout_marginLeft="@dimen/margin_outline_dialog"
+        android:layout_marginRight="@dimen/margin_outline_dialog"
+        android:layout_marginTop="@dimen/margin_outline_dialog"
+        android:textColor="@color/text_color_strong"
+        android:textSize="@dimen/text_size_title" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/dialog_fragment_edit_user_id_layout_edit_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_outline_dialog"
+        android:layout_marginBottom="@dimen/margin_outline_dialog"
+        android:layout_marginLeft="@dimen/margin_outline_dialog"
+        android:layout_marginRight="@dimen/margin_outline_dialog"
         android:textColorHint="@color/app_accent_color">
 
         <android.support.v7.widget.AppCompatEditText
@@ -23,7 +37,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_dialog_layout_buttons"
-        android:layout_below="@id/dialog_fragment_edit_user_id_layout_edit_user"
         android:layout_marginBottom="@dimen/margin_half"
         android:layout_marginLeft="@dimen/margin_outline_dialog_buttons"
         android:layout_marginRight="@dimen/margin_outline_dialog_buttons"
@@ -51,4 +64,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

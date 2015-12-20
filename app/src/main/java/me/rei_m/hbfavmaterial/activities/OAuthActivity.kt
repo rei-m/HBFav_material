@@ -28,6 +28,7 @@ public class OAuthActivity : BaseActivity() {
     companion object {
 
         public final val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
+        public final val ARG_IS_AUTHORIZE_DONE = "ARG_IS_AUTHORIZE_DONE"
 
         public fun createIntent(context: Context): Intent {
             return Intent(context, OAuthActivity::class.java)
@@ -44,15 +45,17 @@ public class OAuthActivity : BaseActivity() {
         mWebView!!.setWebViewClient(object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 
+                val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+
                 if (url?.startsWith(HatenaOAuthApi.CALLBACK)!!) {
                     mWebView!!.stopLoading()
                     mWebView!!.hide()
                     val uri = Uri.parse(url)
-                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
                     hatenaModel.fetchAccessToken(applicationContext, uri.getQueryParameter("oauth_verifier"))
                 } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL)!!) {
                     mWebView!!.stopLoading()
-                    setAuthorizeResult(false)
+                    hatenaModel.deleteAccessToken(applicationContext)
+                    setAuthorizeResult(false, true)
                     finish()
                 } else {
                     super.onPageStarted(view, url, favicon)
@@ -93,19 +96,22 @@ public class OAuthActivity : BaseActivity() {
     public fun onHatenaOAuthAccessTokenLoaded(event: HatenaOAuthAccessTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
-                setAuthorizeResult(true)
+                setAuthorizeResult(true, true)
+            }
+            LoadedEventStatus.ERROR -> {
+                setAuthorizeResult(false, false)
             }
             else -> {
-                setResult(RESULT_CANCELED)
             }
         }
         finish()
     }
 
-    private fun setAuthorizeResult(isAuthorize: Boolean) {
+    private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
         val intent = Intent()
         val bundle = Bundle()
         bundle.putBoolean(ARG_AUTHORIZE_STATUS, isAuthorize)
+        bundle.putBoolean(ARG_IS_AUTHORIZE_DONE, isDone)
         intent.putExtras(bundle)
 
         setResult(RESULT_OK, intent)

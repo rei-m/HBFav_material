@@ -113,6 +113,11 @@ public class HatenaModel {
                 .subscribe(observer)
     }
 
+    public fun deleteAccessToken(context: Context) {
+        oauthTokenEntity = OAuthTokenEntity()
+        saveToken(context)
+    }
+
     public fun fetchBookmark(url: String) {
 
         if (isBusy) {
