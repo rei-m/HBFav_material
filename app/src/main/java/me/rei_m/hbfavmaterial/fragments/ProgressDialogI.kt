@@ -9,9 +9,10 @@ interface ProgressDialogI {
 
     fun showProgressDialog(context: Context) {
         if (mProgressDialog == null) {
-            mProgressDialog = ProgressDialog(context)
-            mProgressDialog!!.setMessage("Now Loading...")
-            mProgressDialog!!.setCanceledOnTouchOutside(false)
+            mProgressDialog = ProgressDialog(context).apply {
+                setMessage("Now Loading...")
+                setCanceledOnTouchOutside(false)
+            }
         }
         if (!mProgressDialog!!.isShowing) {
             mProgressDialog!!.show()

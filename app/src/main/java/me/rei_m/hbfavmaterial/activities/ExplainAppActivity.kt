@@ -7,7 +7,7 @@ import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.ClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.show

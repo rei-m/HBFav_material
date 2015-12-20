@@ -2,8 +2,8 @@ package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.HotEntryLoadedEvent
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.network.HotEntryRss
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
@@ -11,6 +11,9 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 
+/**
+ * ホットエントリー情報を取得するModel.
+ */
 public class HotEntryModel {
 
     public var isBusy = false
@@ -52,9 +55,7 @@ public class HotEntryModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

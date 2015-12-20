@@ -7,8 +7,9 @@ import com.squareup.okhttp.Request
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import rx.Observable
 import java.net.HttpURLConnection
+import java.util.*
 
-public class UserCheckRequest private constructor() {
+public class UserCheckRequest {
     companion object {
         public fun request(userId: String): Observable<Boolean> {
 
@@ -18,7 +19,7 @@ public class UserCheckRequest private constructor() {
                     .addPathSegment(userId)
                     .build()
 
-            return Observable.create({ t ->
+            return Observable.create { t ->
 
                 val request = Request.Builder()
                         .url(url)
@@ -40,7 +41,7 @@ public class UserCheckRequest private constructor() {
                 }
 
                 t.onCompleted()
-            })
+            }
         }
     }
 }

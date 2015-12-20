@@ -18,9 +18,9 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.HatenaDeleteBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.events.HatenaPostBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.HatenaPostBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.*
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel

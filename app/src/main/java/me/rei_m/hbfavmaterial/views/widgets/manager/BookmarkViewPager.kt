@@ -5,9 +5,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent
+import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent.Companion.Kind as pageKind
+import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind as pageKind
 
 /**
  * MainActivityのメインコンテンツを管理するViewPager.

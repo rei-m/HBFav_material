@@ -15,6 +15,10 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.*
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.UserRegisterBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
+import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -23,7 +27,6 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserRegisterBookmarkModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 import me.rei_m.hbfavmaterial.views.adapters.UserListAdapter
-import rx.Observable
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
@@ -191,9 +194,7 @@ public class BookmarkUsersFragment : Fragment() {
             val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
             clear()
             if (mFilterType == FilterType.COMMENT) {
-                Observable.from(userRegisterBookmarkModel.bookmarkList)
-                        .filter { bookmark -> !bookmark.description.isNullOrEmpty() }
-                        .subscribe { bookmark -> add(bookmark) }
+                addAll(userRegisterBookmarkModel.bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
             } else {
                 addAll(userRegisterBookmarkModel.bookmarkList)
             }

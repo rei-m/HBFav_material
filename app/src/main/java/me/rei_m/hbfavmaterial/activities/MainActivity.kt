@@ -9,7 +9,11 @@ import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.*
-import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent.Companion.Kind
+import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind
+import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.EntryCategoryChangedEvent
+import me.rei_m.hbfavmaterial.events.ui.EntryListItemClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
