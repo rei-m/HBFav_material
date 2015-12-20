@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 

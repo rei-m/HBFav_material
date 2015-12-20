@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.BookmarkCountClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
 class BookmarkCountTextView : AppCompatTextView {constructor(context: Context?) : super(context)

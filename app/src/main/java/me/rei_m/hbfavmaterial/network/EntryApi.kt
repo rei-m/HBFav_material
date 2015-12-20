@@ -13,7 +13,7 @@ import rx.Observable
 import java.io.Serializable
 import java.net.HttpURLConnection
 
-public final class EntryApi private constructor() {
+public class EntryApi {
 
     companion object {
         public fun request(entryUrl: String): Observable<BookmarkEntity> {
@@ -38,7 +38,7 @@ public final class EntryApi private constructor() {
 
                     val responseJson = Gson().fromJson(response.body().string(), Response::class.java)
 
-                    Observable.from(responseJson.bookmarks).forEach { v ->
+                    responseJson.bookmarks.forEach { v ->
                         val articleEntity = ArticleEntity(
                                 "",
                                 entryUrl,

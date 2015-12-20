@@ -15,7 +15,7 @@ public abstract class AbsBookmarkRss {
 
     protected fun request(url: HttpUrl): Observable<BookmarkEntity> {
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             val request = Request.Builder()
                     .url(url)
@@ -41,6 +41,6 @@ public abstract class AbsBookmarkRss {
             }
 
             t.onCompleted()
-        })
+        }
     }
 }

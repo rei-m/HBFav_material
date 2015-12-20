@@ -12,9 +12,9 @@ import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.HatenaOAuthAccessTokenLoadedEvent
-import me.rei_m.hbfavmaterial.events.HatenaOAuthRequestTokenLoadedEvent
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.HatenaOAuthAccessTokenLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.HatenaOAuthRequestTokenLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator

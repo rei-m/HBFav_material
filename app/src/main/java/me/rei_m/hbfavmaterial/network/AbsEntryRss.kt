@@ -15,7 +15,7 @@ public abstract class AbsEntryRss {
 
     protected fun request(url: HttpUrl): Observable<EntryEntity> {
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             val request = Request.Builder()
                     .url(url)
@@ -41,6 +41,6 @@ public abstract class AbsEntryRss {
             }
 
             t.onCompleted()
-        })
+        }
     }
 }

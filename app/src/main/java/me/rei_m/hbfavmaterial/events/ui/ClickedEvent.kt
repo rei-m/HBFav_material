@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.events
+package me.rei_m.hbfavmaterial.events.ui
 
 public class ClickedEvent(val type: ClickedEvent.Companion.Type) {
     companion object {

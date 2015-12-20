@@ -4,7 +4,7 @@ import com.squareup.okhttp.HttpUrl
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import rx.Observable
 
-public final class BookmarkOwnRss : AbsBookmarkRss() {
+public class BookmarkOwnRss : AbsBookmarkRss() {
 
     public fun request(userId: String, startIndex: Int = 0): Observable<BookmarkEntity> {
         val url = HttpUrl.Builder()
@@ -16,6 +16,5 @@ public final class BookmarkOwnRss : AbsBookmarkRss() {
                 .build()
 
         return super.request(url)
-
     }
 }

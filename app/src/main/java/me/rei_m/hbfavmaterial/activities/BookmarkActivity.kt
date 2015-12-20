@@ -12,6 +12,11 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.*
+import me.rei_m.hbfavmaterial.events.network.HatenaGetBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError

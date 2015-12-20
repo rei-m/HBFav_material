@@ -5,13 +5,16 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.network.UserCheckRequest
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
+/**
+ * ユーザー情報を管理するModel.
+ */
 public class UserModel {
 
     public var isBusy = false
@@ -24,7 +27,11 @@ public class UserModel {
         private final val KEY_PREF_USER = "KEY_PREF_USER"
     }
 
+    /**
+     * コンストラクタ.
+     */
     constructor(context: Context) {
+        // Preferencesに保存しているユーザー情報を復元する.
         val pref = getPreferences(context)
         val userJsonString = pref.getString(KEY_PREF_USER, null)
         if (userJsonString != null) {
@@ -32,10 +39,16 @@ public class UserModel {
         }
     }
 
+    /**
+     * ユーザー情報が設定済か判定する.
+     */
     public fun isSetUserSetting(): Boolean {
         return userEntity != null
     }
 
+    /**
+     * 指定されたユーザーIDの有効確認と保存を行う.
+     */
     public fun checkAndSaveUserId(context: Context, id: String) {
 
         if (isBusy) {
@@ -75,12 +88,13 @@ public class UserModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
+    /**
+     * ユーザー情報をPreferencesに保存する.
+     */
     private fun saveUser(context: Context) {
         getPreferences(context)
                 .edit()
@@ -88,11 +102,17 @@ public class UserModel {
                 .apply()
     }
 
+    /**
+     * ユーザー情報を削除する.
+     */
     public fun deleteUser(context: Context) {
         userEntity = null
         getPreferences(context).edit().remove(KEY_PREF_USER)
     }
 
+    /**
+     * Preferencesを取得する.
+     */
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getAppPreferences(UserModel::class.java.simpleName)
     }

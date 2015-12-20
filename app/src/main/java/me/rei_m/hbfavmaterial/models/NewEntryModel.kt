@@ -2,8 +2,8 @@ package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
-import me.rei_m.hbfavmaterial.events.NewEntryLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.NewEntryLoadedEvent
 import me.rei_m.hbfavmaterial.network.NewEntryRss
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
@@ -11,6 +11,9 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 
+/**
+ * 新着エントリー情報を取得するModel.
+ */
 public class NewEntryModel {
 
     public var isBusy = false
@@ -52,9 +55,7 @@ public class NewEntryModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

@@ -5,7 +5,8 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.events.*
+import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.network.*
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.extensions.getAssetToJson
@@ -15,6 +16,9 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
 
+/**
+ * はてなのOAuth関連の情報を管理するModel.
+ */
 public class HatenaModel {
 
     public var isBusy = false
@@ -26,13 +30,19 @@ public class HatenaModel {
     private var mHatenaOAuthApi: HatenaOAuthApi? = null
 
     companion object {
-        private final val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
+        private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 
+    /**
+     * コンストラクタ.
+     */
     constructor(context: Context) {
+
+        // OAuth認証用のキーを作成し、OAuthAPIを作成する.
         val hatenaJson = context.getAssetToJson("hatena.json")
         mHatenaOAuthApi = HatenaOAuthApi(hatenaJson.getString("consumer_key"), hatenaJson.getString("consumer_secret"))
 
+        // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
         val oauthJsonString = pref.getString(KEY_PREF_OAUTH, null)
         if (oauthJsonString != null) {
@@ -40,10 +50,16 @@ public class HatenaModel {
         }
     }
 
+    /**
+     * OAuth認証済か判定する.
+     */
     public fun isAuthorised(): Boolean {
         return (!(oauthTokenEntity?.token.isNullOrEmpty() || oauthTokenEntity?.secretToken.isNullOrEmpty()))
     }
 
+    /**
+     * OAuth認証用のリクエストトークンを取得する.
+     */
     public fun fetchRequestToken() {
 
         if (isBusy) {
@@ -73,12 +89,13 @@ public class HatenaModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
+    /**
+     * OAuth認証用のAccessTokenを取得する.
+     */
     public fun fetchAccessToken(context: Context, requestToken: String) {
 
         if (isBusy) {
@@ -94,6 +111,7 @@ public class HatenaModel {
             }
 
             override fun onCompleted() {
+                // 成功した場合はTokenをPreferencesに保存.
                 saveToken(context)
                 EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.OK))
             }
@@ -107,17 +125,21 @@ public class HatenaModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
+    /**
+     * 保存しているAccessTokenを削除する.
+     */
     public fun deleteAccessToken(context: Context) {
         oauthTokenEntity = OAuthTokenEntity()
         saveToken(context)
     }
 
+    /**
+     * ブックマーク情報を取得する.
+     */
     public fun fetchBookmark(url: String) {
 
         if (isBusy) {
@@ -152,12 +174,13 @@ public class HatenaModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
+    /**
+     * ブックマーク情報を登録する.
+     */
     public fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
 
         if (isBusy) {
@@ -187,13 +210,14 @@ public class HatenaModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
 
     }
 
+    /**
+     * ブックマーク情報を削除する.
+     */
     public fun deleteBookmark(url: String) {
 
         if (isBusy) {
@@ -225,13 +249,14 @@ public class HatenaModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
 
     }
 
+    /**
+     * PreferencesにModel内のアクセストークンを保存する.
+     */
     private fun saveToken(context: Context) {
         getPreferences(context)
                 .edit()
@@ -239,6 +264,9 @@ public class HatenaModel {
                 .apply()
     }
 
+    /**
+     * PreferencesにModel内の
+     */
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getAppPreferences(HatenaModel::class.java.simpleName)
     }

@@ -2,14 +2,17 @@ package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
-import me.rei_m.hbfavmaterial.events.UserRegisterBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.UserRegisterBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.network.EntryApi
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 
+/**
+ * ブックマークしているユーザーを管理するModel.
+ */
 public class UserRegisterBookmarkModel {
 
     public var isBusy = false
@@ -19,11 +22,14 @@ public class UserRegisterBookmarkModel {
 
     private var bookmarkUrl: String = ""
 
+    /**
+     * Model内で保持しているURLと指定されたURLが同じか判定する.
+     */
     public fun isSameUrl(bookmarkUrl: String): Boolean = (this.bookmarkUrl == bookmarkUrl)
 
     public fun fetch(bookmarkUrl: String) {
 
-        if (this.bookmarkUrl != bookmarkUrl) {
+        if (!isSameUrl(bookmarkUrl)) {
             this.bookmarkUrl = bookmarkUrl
             bookmarkList.clear()
             isBusy = false
@@ -57,9 +63,7 @@ public class UserRegisterBookmarkModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

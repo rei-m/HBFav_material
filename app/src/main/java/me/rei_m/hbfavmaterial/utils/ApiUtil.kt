@@ -4,7 +4,7 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ApiUtil private constructor() {
+public class ApiUtil private constructor() {
 
     companion object {
 

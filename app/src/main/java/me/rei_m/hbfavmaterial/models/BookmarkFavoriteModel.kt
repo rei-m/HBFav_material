@@ -1,15 +1,18 @@
 package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.BookmarkFavoriteLoadedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.LoadedEventStatus
+import me.rei_m.hbfavmaterial.events.network.BookmarkFavoriteLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 
+/**
+ * お気に入りのBookmarkを管理するModel.
+ */
 public class BookmarkFavoriteModel {
 
     public var isBusy = false
@@ -54,9 +57,7 @@ public class BookmarkFavoriteModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo({
-                    isBusy = false
-                })
+                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

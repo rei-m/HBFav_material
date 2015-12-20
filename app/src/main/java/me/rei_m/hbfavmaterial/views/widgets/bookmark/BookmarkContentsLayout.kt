@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.BookmarkClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
 /**
