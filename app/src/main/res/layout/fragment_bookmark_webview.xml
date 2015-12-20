@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <WebView
-        android:id="@+id/view_bookmark_web"
+        android:id="@+id/fragment_bookmark_webview_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

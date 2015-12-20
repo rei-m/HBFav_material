@@ -30,6 +30,9 @@ import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
+/**
+ * 特定のユーザーのブックマークを一覧で表示するFragment.
+ */
 public class BookmarkUserFragment : Fragment() {
 
     private var mUserId: String = ""
@@ -47,32 +50,33 @@ public class BookmarkUserFragment : Fragment() {
         private val ARG_OWNER_FLAG = "ARG_OWNER_FLAG"
 
         /**
-         * ファクトリメソッド
-         *
          * 自分のブックマークを表示する
+         *
+         * @return Fragment
          */
         fun newInstance(): BookmarkUserFragment {
-            val userModel = ModelLocator.get(ModelTag.USER) as UserModel
-            val args = Bundle()
-            args.putString(ARG_USER_ID, userModel.userEntity?.id)
-            args.putBoolean(ARG_OWNER_FLAG, true)
-            val fragment = BookmarkUserFragment()
-            fragment.arguments = args
-            return fragment
+            return BookmarkUserFragment().apply {
+                arguments = Bundle().apply {
+                    val userModel = ModelLocator.get(ModelTag.USER) as UserModel
+                    putString(ARG_USER_ID, userModel.userEntity?.id)
+                    putBoolean(ARG_OWNER_FLAG, true)
+                }
+            }
         }
 
         /**
-         * ファクトリメソッド
-         *
          * 他人のブックマークを表示する
+         *
+         * @userId: 表示対象のユーザーのID.
+         * @return Fragment
          */
         fun newInstance(userId: String): BookmarkUserFragment {
-            val fragment = BookmarkUserFragment()
-            val args = Bundle()
-            args.putString(ARG_USER_ID, userId)
-            args.putBoolean(ARG_OWNER_FLAG, false)
-            fragment.arguments = args
-            return fragment
+            return BookmarkUserFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_USER_ID, userId)
+                    putBoolean(ARG_OWNER_FLAG, false)
+                }
+            }
         }
     }
 
@@ -101,6 +105,7 @@ public class BookmarkUserFragment : Fragment() {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     val bookmarkUserModel = getBookmarkModel()
+                    // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (!bookmarkUserModel.isBusy && 0 < listView.footerViewsCount) {
                         bookmarkUserModel.fetch(mUserId, mListAdapter?.nextIndex!!)
                     }
@@ -113,12 +118,14 @@ public class BookmarkUserFragment : Fragment() {
         })
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            // List内のアイテムをクリックしたらEvent発火
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
             EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
         }
 
         listView.adapter = mListAdapter
+
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
         emptyView.text = getString(R.string.message_text_empty_bookmark_user)
@@ -129,11 +136,9 @@ public class BookmarkUserFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         val bookmarkUserModel = getBookmarkModel()
 
@@ -147,7 +152,6 @@ public class BookmarkUserFragment : Fragment() {
                 // 表示済の件数とModel内で保持している件数をチェックし、
                 // 差分があれば未表示のブックマークがあるのでリストに表示する
                 displayListContents()
-
                 view.findViewById(R.id.fragment_list_progress_list).hide()
             } else if (displayedCount === 0) {
                 // 1件も表示していなければブックマーク情報をRSSから取得する
@@ -156,6 +160,7 @@ public class BookmarkUserFragment : Fragment() {
                 RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
+
             // Model内の情報と表示対象のユーザーIDが異なる場合は
             // 他人のブックマークを表示するので1件目から再取得する
             bookmarkUserModel.fetch(mUserId)
@@ -167,16 +172,14 @@ public class BookmarkUserFragment : Fragment() {
 
         // Pull to refreshのイベントをセット
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
             bookmarkUserModel.fetch(mUserId)
-        }))
+        })
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
 
@@ -187,8 +190,11 @@ public class BookmarkUserFragment : Fragment() {
         }
     }
 
+    /**
+     * ブックマーク情報のロード完了イベント
+     */
     @Subscribe
-    public fun onBookmarkOwnLoaded(event: BookmarkUserLoadedEvent) {
+    public fun subscribe(event: BookmarkUserLoadedEvent) {
 
         when (event.status) {
             LoadedEventStatus.OK -> {
@@ -196,7 +202,6 @@ public class BookmarkUserFragment : Fragment() {
                 displayListContents()
             }
             LoadedEventStatus.NOT_FOUND -> {
-
                 // 読込結果がなかった場合はFooterViewを非表示にする
                 val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
@@ -207,8 +212,7 @@ public class BookmarkUserFragment : Fragment() {
             }
             LoadedEventStatus.ERROR -> {
                 // 読み込み出来なかった場合はSnackbarで通知する
-                val thisActivity = activity as AppCompatActivity
-                thisActivity.showSnackbarNetworkError(view)
+                (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
             else -> {
 
@@ -232,14 +236,17 @@ public class BookmarkUserFragment : Fragment() {
      * ListViewのコンテンツを表示する
      */
     private fun displayListContents() {
-        val bookmarkUserModel = getBookmarkModel()
-        mListAdapter?.clear()
-        mListAdapter?.addAll(bookmarkUserModel.bookmarkList)
-        mListAdapter?.notifyDataSetChanged()
+
+        // コンテンツを表示する
+        mListAdapter?.apply {
+            val bookmarkUserModel = getBookmarkModel()
+            clear()
+            addAll(bookmarkUserModel.bookmarkList)
+            notifyDataSetChanged()
+        }
 
         // FooterViewを表示する
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
-
         if (listView.footerViewsCount == 0) {
             val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
             listView.addFooterView(footerView, null, false)
@@ -250,10 +257,6 @@ public class BookmarkUserFragment : Fragment() {
      * 表示に使用するブックマークモデルを取得する
      */
     private fun getBookmarkModel(): BookmarkUserModel {
-        return if (mIsOwner) {
-            ModelLocator.get(ModelTag.OWN_BOOKMARK) as BookmarkUserModel
-        } else {
-            ModelLocator.get(ModelTag.OTHERS_BOOKMARK) as BookmarkUserModel
-        }
+        return ModelLocator.get(if (mIsOwner) ModelTag.OWN_BOOKMARK else ModelTag.OTHERS_BOOKMARK) as BookmarkUserModel
     }
 }

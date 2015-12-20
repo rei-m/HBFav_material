@@ -10,19 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
-import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
+/**
+ * ユーザーの設定を行うFragment.
+ */
 public class SettingFragment : Fragment() {
 
     companion object {
@@ -40,12 +41,12 @@ public class SettingFragment : Fragment() {
         val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
         textUserId.text = userModel.userEntity?.id
 
-        val dialog = EditUserIdDialogFragment.newInstance()
-
         val layoutUserId = view.findViewById(R.id.fragment_setting_layout_text_hatena_id) as LinearLayout
-        layoutUserId.setOnClickListener({ v ->
-            dialog.show(childFragmentManager, EditUserIdDialogFragment.TAG)
-        })
+        layoutUserId.setOnClickListener { v ->
+            EditUserIdDialogFragment
+                    .newInstance()
+                    .show(childFragmentManager, EditUserIdDialogFragment.TAG)
+        }
 
         val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
@@ -56,24 +57,20 @@ public class SettingFragment : Fragment() {
         textHatenaOAuth.text = resources.getString(oauthTextId)
 
         val layoutHatenaOAuth = view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth) as LinearLayout
-        layoutHatenaOAuth.setOnClickListener({ v ->
+        layoutHatenaOAuth.setOnClickListener { v ->
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
-        })
+        }
 
         return view
     }
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 
@@ -86,15 +83,19 @@ public class SettingFragment : Fragment() {
             return
         }
 
+        // OAuthの認可後の処理を行う.
         when (resultCode) {
             AppCompatActivity.RESULT_OK -> {
+                // 認可の可否が選択されたかチェック
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+                    // 認可の結果により表示を更新する.
                     val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
                     val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
                         R.string.text_hatena_account_connect_ok else
                         R.string.text_hatena_account_connect_no
                     textHatenaOAuth.text = resources.getString(oauthTextId)
                 } else {
+                    // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
                     (activity as AppCompatActivity).showSnackbarNetworkError(view)
                 }
             }
@@ -104,13 +105,15 @@ public class SettingFragment : Fragment() {
         }
     }
 
+    /**
+     * ユーザーIDチェック時のイベント.
+     */
     @Subscribe
-    public fun onUserIdChecked(event: UserIdCheckedEvent) {
+    public fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
             textUserId.text = userModel.userEntity?.id
-            (getAppContext() as App).resetBookmarks()
             EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(userModel.userEntity?.id!!))
         }
     }

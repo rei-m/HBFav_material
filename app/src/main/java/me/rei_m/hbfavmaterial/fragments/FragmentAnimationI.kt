@@ -12,7 +12,7 @@ interface FragmentAnimationI {
 
     var mContainerWidth: Float;
 
-    fun setContainer(container: ViewGroup) {
+    fun setContainerWidth(container: ViewGroup) {
         mContainerWidth = container.width.toFloat()
     }
 

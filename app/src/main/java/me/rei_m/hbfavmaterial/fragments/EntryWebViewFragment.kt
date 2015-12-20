@@ -10,22 +10,25 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import me.rei_m.hbfavmaterial.R
 
+/**
+ * 記事のコンテンツをWebViewに表示するFragment.
+ */
 public class EntryWebViewFragment : Fragment() {
 
     private var mEntryUrl: String? = null
 
     companion object {
 
-        public final val TAG = EntryWebViewFragment::class.java.simpleName
+        val TAG = EntryWebViewFragment::class.java.simpleName
 
         private val ARG_ENTRY_URL = "ARG_ENTRY_URL"
 
         public fun newInstance(entryUrl: String): EntryWebViewFragment {
-            val fragment = EntryWebViewFragment()
-            val args = Bundle()
-            args.putString(ARG_ENTRY_URL, entryUrl)
-            fragment.arguments = args
-            return fragment
+            return EntryWebViewFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_ENTRY_URL, entryUrl)
+                }
+            }
         }
     }
 
@@ -38,17 +41,21 @@ public class EntryWebViewFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_bookmark_webview, container, false)
 
-        val webView = view.findViewById(R.id.view_bookmark_web) as WebView
-        webView.settings.javaScriptEnabled = true
-        webView.settings.setGeolocationEnabled(true)
-        webView.settings.setSupportMultipleWindows(true)
-        webView.setWebChromeClient(WebChromeClient())
-        webView.setWebViewClient(object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                return super.shouldOverrideUrlLoading(view, url);
+        val webView = view.findViewById(R.id.fragment_bookmark_webview_view) as WebView
+        webView.apply {
+            settings.apply {
+                javaScriptEnabled = true
+                setGeolocationEnabled(true)
+                setSupportMultipleWindows(true)
             }
-        })
-        webView.loadUrl(mEntryUrl)
+            setWebChromeClient(WebChromeClient())
+            setWebViewClient(object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    return super.shouldOverrideUrlLoading(view, url);
+                }
+            })
+            loadUrl(mEntryUrl)
+        }
 
         return view
     }
@@ -58,9 +65,14 @@ public class EntryWebViewFragment : Fragment() {
         mEntryUrl = null
     }
 
+    /**
+     * WebView内のコンテンツがヒストリバック可能な場合、ヒストリバックして表示する.
+     *
+     * @return ヒストリバック不可能な場合 true, 可能な場合 false
+     */
     public fun backHistory(): Boolean {
-        val webView = view.findViewById(R.id.view_bookmark_web) as WebView
-        if (webView.canGoBack() ) {
+        val webView = view.findViewById(R.id.fragment_bookmark_webview_view) as WebView
+        if (webView.canGoBack()) {
             webView.goBack()
             return false
         } else {

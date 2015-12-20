@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
@@ -55,9 +56,10 @@ public class SettingActivity : BaseActivityWithDrawer() {
 
         return super.onNavigationItemSelected(item)
     }
-    
+
     @Subscribe
-    public fun onUserIdChanged(event: UserIdChangedEvent) {
+    public fun subscribe(event: UserIdChangedEvent) {
+        (applicationContext as App).resetBookmarks()
         displayUserIconAndName(event.newId)
     }
 }

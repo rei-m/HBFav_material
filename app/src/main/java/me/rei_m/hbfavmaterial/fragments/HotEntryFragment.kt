@@ -25,6 +25,9 @@ import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
+/**
+ * HotEntryを一覧で表示するFragment.
+ */
 public class HotEntryFragment : Fragment() {
 
     private var mListAdapter: EntryListAdapter? = null
@@ -61,6 +64,9 @@ public class HotEntryFragment : Fragment() {
 
         listView.adapter = mListAdapter
 
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
+
         val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
         emptyView.text = getString(R.string.message_text_empty_entry)
 
@@ -69,8 +75,6 @@ public class HotEntryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
         val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
@@ -80,9 +84,7 @@ public class HotEntryFragment : Fragment() {
         if (displayedCount != hotEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
             // 差分があれば未表示のエントリがあるのでリストに表示する
-            mListAdapter?.clear()
-            mListAdapter?.addAll(hotEntryModel.entryList)
-            mListAdapter?.notifyDataSetChanged()
+            displayListContents()
             view.findViewById(R.id.fragment_list_progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければエントリ情報を取得する
@@ -93,24 +95,21 @@ public class HotEntryFragment : Fragment() {
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             hotEntryModel.fetch(hotEntryModel.entryType)
-        }))
+        })
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
     }
 
     @Subscribe
-    public fun onEntryCategoryChangedEvent(event: EntryCategoryChangedEvent) {
+    public fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.HOT) {
             val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
             hotEntryModel.fetch(event.type)
@@ -118,13 +117,10 @@ public class HotEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun onHotEntryLoadedEvent(event: HotEntryLoadedEvent) {
+    public fun subscribe(event: HotEntryLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
-                val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
-                mListAdapter?.clear()
-                mListAdapter?.addAll(hotEntryModel.entryList)
-                mListAdapter?.notifyDataSetChanged()
+                displayListContents()
             }
             LoadedEventStatus.ERROR -> {
                 val thisActivity = activity as AppCompatActivity
@@ -137,12 +133,22 @@ public class HotEntryFragment : Fragment() {
 
         // リストが空の場合はEmptyViewを表示する
         view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
-        
+
         view.findViewById(R.id.fragment_list_progress_list).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false)
         }
+    }
+
+    private fun displayListContents() {
+        mListAdapter?.apply {
+            val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+            clear()
+            addAll(hotEntryModel.entryList)
+            notifyDataSetChanged()
+        }
+        (view.findViewById(R.id.fragment_list_list) as ListView).setSelection(0)
     }
 }
