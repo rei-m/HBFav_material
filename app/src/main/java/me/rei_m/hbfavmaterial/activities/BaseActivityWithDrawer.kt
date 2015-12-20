@@ -52,15 +52,11 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 
@@ -87,7 +83,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
 
         val headerView = navigationView.getHeaderView(0)
-        val imageOwnerIcon = headerView.findViewById(R.id.image_owner_icon) as AppCompatImageView
+        val imageOwnerIcon = headerView.findViewById(R.id.nav_header_main_image_owner_icon) as AppCompatImageView
 
         Picasso.with(this)
                 .load(BookmarkUtil.getLargeIconImageUrlFromId(id))
@@ -95,7 +91,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
                 .transform(RoundedTransformation())
                 .into(imageOwnerIcon)
 
-        val textOwnerId = headerView.findViewById(R.id.text_owner_name) as AppCompatTextView
+        val textOwnerId = headerView.findViewById(R.id.nav_header_main_text_owner_name) as AppCompatTextView
         textOwnerId.text = id
     }
 }

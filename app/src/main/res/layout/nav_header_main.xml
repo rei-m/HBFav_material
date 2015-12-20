@@ -12,13 +12,13 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/image_owner_icon"
+        android:id="@+id/nav_header_main_image_owner_icon"
         android:layout_width="@dimen/icon_size_nav"
         android:layout_height="@dimen/icon_size_nav"
         android:paddingTop="@dimen/nav_header_vertical_spacing" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/text_owner_name"
+        android:id="@+id/nav_header_main_text_owner_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingEnd="@dimen/margin"

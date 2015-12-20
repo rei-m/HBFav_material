@@ -21,6 +21,9 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 
+/**
+ * メインActivity.
+ */
 public class MainActivity : BaseActivityWithDrawer() {
 
     private var mMenu: Menu? = null
@@ -31,16 +34,16 @@ public class MainActivity : BaseActivityWithDrawer() {
 
         public fun createIntent(context: Context,
                                 index: Int = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE): Intent {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra(ARG_PAGER_INDEX, index)
-            return intent
+            return Intent(context, MainActivity::class.java).apply {
+                putExtra(ARG_PAGER_INDEX, index)
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val pager = findViewById(R.id.pager) as BookmarkViewPager
-        pager.init(supportFragmentManager, this)
+        pager.initialize(supportFragmentManager, this)
         pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
     }
 
@@ -134,7 +137,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * ブックマークリスト内のアイテムクリック時のイベント
      */
     @Subscribe
-    public fun onBookmarkListItemClicked(event: BookmarkListItemClickedEvent) {
+    public fun subscribe(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 
@@ -142,7 +145,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * エントリーリスト内のアイテムクリック時のイベント
      */
     @Subscribe
-    public fun onEntryListItemClicked(event: EntryListItemClickedEvent) {
+    public fun subscribe(event: EntryListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.entryEntity))
     }
 
@@ -150,7 +153,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * ページ表示時のイベント
      */
     @Subscribe
-    public fun onMainPageDisplay(event: MainPageDisplayEvent) {
+    public fun subscribe(event: MainPageDisplayEvent) {
 
         // ページの種類に応じてActivityのタイトル表示とメニューの表示/非表示を切り替える
 

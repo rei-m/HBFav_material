@@ -100,8 +100,6 @@ public class BookmarkUsersFragment : Fragment() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
         val bookmarkUrl = if (mBookmarkEntity != null) mBookmarkEntity!!.articleEntity.url else ""
@@ -118,7 +116,6 @@ public class BookmarkUsersFragment : Fragment() {
             } else if (displayedCount === 0) {
                 userRegisterBookmarkModel.fetch(bookmarkUrl)
                 view.findViewById(R.id.fragment_list_progress_list).show()
-                RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
 
@@ -126,11 +123,11 @@ public class BookmarkUsersFragment : Fragment() {
             // 異なる記事のブックマークユーザーを表示するので1件目から再取得する
             userRegisterBookmarkModel.fetch(bookmarkUrl)
             view.findViewById(R.id.fragment_list_progress_list).show()
-            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
 
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)

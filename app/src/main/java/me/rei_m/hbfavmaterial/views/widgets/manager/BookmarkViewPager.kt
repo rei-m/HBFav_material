@@ -4,18 +4,24 @@ import android.content.Context
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.events.MainPageDisplayEvent.Companion.Kind as pageKind
 
-class BookmarkViewPager : ViewPager {
+/**
+ * MainActivityのメインコンテンツを管理するViewPager.
+ */
+public class BookmarkViewPager : ViewPager {
 
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    public fun init(supportFragmentManager: FragmentManager, context: Context) {
+    /**
+     * 初期設定を行う.
+     */
+    public fun initialize(supportFragmentManager: FragmentManager, context: Context) {
 
         adapter = BookmarkPagerAdaptor(supportFragmentManager, context)
 
@@ -34,12 +40,21 @@ class BookmarkViewPager : ViewPager {
         })
     }
 
+    /**
+     * 表示中のページ対応するタイトルを取得する.
+     */
     public fun getCurrentPageTitle() = adapter.getPageTitle(currentItem)
 
+    /**
+     * 表示中のページが表示されたイベントをPOSTする.
+     */
     public fun postCurrentPageDisplayEvent() {
         postPageDisplayEvent(currentItem)
     }
 
+    /**
+     * ページが表示されたイベントをPOSTする.
+     */
     private fun postPageDisplayEvent(position: Int) {
         when (position) {
             BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE ->

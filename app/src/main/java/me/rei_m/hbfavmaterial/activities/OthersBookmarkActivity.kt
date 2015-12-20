@@ -10,6 +10,9 @@ import me.rei_m.hbfavmaterial.events.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 
+/**
+ * 他人のブックマークを表示するActivity.
+ */
 public class OthersBookmarkActivity : BaseActivity() {
 
     companion object {
@@ -17,9 +20,9 @@ public class OthersBookmarkActivity : BaseActivity() {
         private val ARG_USER_ID = "ARG_USER_ID"
 
         public fun createIntent(context: Context, userId: String): Intent {
-            val intent = Intent(context, OthersBookmarkActivity::class.java)
-            intent.putExtra(ARG_USER_ID, userId)
-            return intent
+            return Intent(context, OthersBookmarkActivity::class.java).apply {
+                putExtra(ARG_USER_ID, userId)
+            }
         }
     }
 
@@ -29,16 +32,16 @@ public class OthersBookmarkActivity : BaseActivity() {
         val userId = intent.getStringExtra(ARG_USER_ID)
         supportActionBar.title = userId
 
+        val fab = findViewById(R.id.fab) as FloatingActionButton
+        fab.hide()
+        
         if (savedInstanceState == null) {
             setFragment(BookmarkUserFragment.newInstance(userId))
         }
-
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.hide()
     }
 
     @Subscribe
-    public fun onBookmarkListItemClicked(event: BookmarkListItemClickedEvent) {
+    public fun subscribe(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }

@@ -14,7 +14,10 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkLayout
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
-class BookmarkItemLayout : RelativeLayout {
+/**
+ * ブックマーク一覧のアイテムを表示するレイアウト.
+ */
+public class BookmarkItemLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,
@@ -42,12 +45,14 @@ class BookmarkItemLayout : RelativeLayout {
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.name.text = bookmarkEntity.creator
-        Picasso.with(context)
-                .load(bookmarkEntity.bookmarkIconUrl)
-                .transform(RoundedTransformation())
-                .into(holder.iconImage)
-        holder.bookmarkLayout.bindView(bookmarkEntity)
-        holder.timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+        holder.apply {
+            name.text = bookmarkEntity.creator
+            Picasso.with(context)
+                    .load(bookmarkEntity.bookmarkIconUrl)
+                    .transform(RoundedTransformation())
+                    .into(iconImage)
+            bookmarkLayout.bindView(bookmarkEntity)
+            timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+        }
     }
 }

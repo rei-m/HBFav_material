@@ -13,14 +13,16 @@ public class App : Application() {
         // Application起動時に実行される。アプリの初期処理など
 
         // ModelLocatorにModelの参照を登録
-        ModelLocator.register(Tag.FAVORITE, BookmarkFavoriteModel())
-        ModelLocator.register(Tag.OWN_BOOKMARK, BookmarkUserModel())
-        ModelLocator.register(Tag.HOT_ENTRY, HotEntryModel())
-        ModelLocator.register(Tag.NEW_ENTRY, NewEntryModel())
-        ModelLocator.register(Tag.USER, UserModel(applicationContext))
-        ModelLocator.register(Tag.OTHERS_BOOKMARK, BookmarkUserModel())
-        ModelLocator.register(Tag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel())
-        ModelLocator.register(Tag.HATENA, HatenaModel(applicationContext))
+        ModelLocator.apply {
+            register(Tag.FAVORITE, BookmarkFavoriteModel())
+            register(Tag.OWN_BOOKMARK, BookmarkUserModel())
+            register(Tag.HOT_ENTRY, HotEntryModel())
+            register(Tag.NEW_ENTRY, NewEntryModel())
+            register(Tag.USER, UserModel(applicationContext))
+            register(Tag.OTHERS_BOOKMARK, BookmarkUserModel())
+            register(Tag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel())
+            register(Tag.HATENA, HatenaModel(applicationContext))
+        }
     }
 
     public fun resetBookmarks() {

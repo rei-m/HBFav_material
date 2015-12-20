@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_bookmark_layout_bookmark_contents"
+    android:id="@+id/layout_bookmark_contents"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_layout_pressed"
@@ -10,13 +10,13 @@
     android:paddingRight="@dimen/margin_outline">
 
     <include
-        android:id="@+id/layout_bookmark"
+        android:id="@+id/layout_bookmark_contents_layout_bookmark"
         layout="@layout/layout_bookmark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <include
-        android:id="@+id/layout_article"
+        android:id="@+id/layout_bookmark_contents_layout_article"
         layout="@layout/layout_article"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

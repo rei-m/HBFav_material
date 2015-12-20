@@ -8,7 +8,15 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.BookmarkClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
-class BookmarkContentsLayout : LinearLayout {
+/**
+ * ブックマーク詳細のコンテンツを表示するレイアウト.
+ */
+public class BookmarkContentsLayout : LinearLayout {
+
+    companion object {
+        private class ViewHolder(val bookmarkLayout: BookmarkLayout,
+                                 val articleLayout: ArticleLayout)
+    }
 
     constructor(context: Context?) : super(context)
 
@@ -18,13 +26,18 @@ class BookmarkContentsLayout : LinearLayout {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        tag = ViewHolder(findViewById(R.id.layout_bookmark_contents_layout_bookmark) as BookmarkLayout,
+                findViewById(R.id.layout_bookmark_contents_layout_article) as ArticleLayout)
+    }
+
     public fun bindView(bookmarkEntity: BookmarkEntity) {
-        val bookmarkLayout = findViewById(R.id.layout_bookmark) as BookmarkLayout
-        bookmarkLayout.bindView(bookmarkEntity)
-
-        val articleLayout = findViewById(R.id.layout_article) as ArticleLayout
-        articleLayout.bindView(bookmarkEntity)
-
+        val holder = tag as ViewHolder
+        holder.apply {
+            bookmarkLayout.bindView(bookmarkEntity)
+            articleLayout.bindView(bookmarkEntity)
+        }
         setOnClickListener {
             EventBusHolder.EVENT_BUS.post(BookmarkClickedEvent(bookmarkEntity))
         }

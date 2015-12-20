@@ -9,9 +9,14 @@ import com.squareup.picasso.Picasso
 
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 
-class ArticleLayout : RelativeLayout {
+/**
+ * 記事の情報を表示するレイアウト.
+ */
+public class ArticleLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val body: AppCompatTextView,
@@ -30,25 +35,26 @@ class ArticleLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        tag = ViewHolder(
-                findViewById(R.id.text_article_body) as AppCompatTextView,
-                findViewById(R.id.image_article_body_image) as AppCompatImageView,
-                findViewById(R.id.text_article_url) as AppCompatTextView,
-                findViewById(R.id.text_add_bookmark_timing) as AppCompatTextView)
+        tag = ViewHolder(findViewById(R.id.layout_article_text_body) as AppCompatTextView,
+                findViewById(R.id.layout_article_image_body) as AppCompatImageView,
+                findViewById(R.id.layout_article_text_url) as AppCompatTextView,
+                findViewById(R.id.layout_article_text_add_bookmark_timing) as AppCompatTextView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.body.text = bookmarkEntity.articleEntity.body
-        if (bookmarkEntity.articleEntity.bodyImageUrl.isEmpty()) {
-            holder.image.visibility = GONE
-        } else {
-            holder.image.visibility = VISIBLE
-            Picasso.with(context)
-                    .load(bookmarkEntity.articleEntity.bodyImageUrl)
-                    .into(holder.image)
+        holder.apply {
+            body.text = bookmarkEntity.articleEntity.body
+            if (bookmarkEntity.articleEntity.bodyImageUrl.isEmpty()) {
+                image.hide()
+            } else {
+                image.show()
+                Picasso.with(context)
+                        .load(bookmarkEntity.articleEntity.bodyImageUrl)
+                        .into(image)
+            }
+            link.text = bookmarkEntity.articleEntity.url
+            timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
         }
-        holder.link.text = bookmarkEntity.articleEntity.url
-        holder.timing.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
     }
 }

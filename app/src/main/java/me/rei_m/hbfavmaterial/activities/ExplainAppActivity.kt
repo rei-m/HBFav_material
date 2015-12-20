@@ -16,6 +16,9 @@ import me.rei_m.hbfavmaterial.fragments.ExplainAppFragment
 import me.rei_m.hbfavmaterial.utils.FragmentUtil
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
+/**
+ * アプリについての情報を表示するActivity.
+ */
 public class ExplainAppActivity : BaseActivityWithDrawer() {
 
     companion object {
@@ -58,7 +61,7 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
     }
 
     @Subscribe
-    public fun onClicked(event: ClickedEvent) {
+    public fun subscribe(event: ClickedEvent) {
         when (event.type) {
             ClickedEvent.Companion.Type.FROM_DEVELOPER -> {
                 startActivity(FrameActivity.createIntent(this, FragmentUtil.Companion.Tag.FROM_DEVELOPER))

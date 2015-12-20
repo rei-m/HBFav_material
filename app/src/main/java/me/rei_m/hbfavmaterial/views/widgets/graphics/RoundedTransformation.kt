@@ -4,17 +4,26 @@ import android.graphics.*
 import android.graphics.Bitmap.Config
 import com.squareup.picasso.Transformation
 
-public class RoundedTransformation(private val radius: Int = 50, private val margin: Int = 0) :
-        Transformation {
+/**
+ * Picassoの画像をCircleにトリミングするTransformation.
+ */
+public class RoundedTransformation(private val radius: Int = 50,
+                                   private val margin: Int = 0) : Transformation {
 
     override fun transform(source: Bitmap): Bitmap {
-        val paint = Paint()
-        paint.isAntiAlias = true
-        paint.setShader(BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
+        val paint = Paint().apply {
+            isAntiAlias = true
+            setShader(BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
+        }
 
         val output = Bitmap.createBitmap(source.width, source.height, Config.ARGB_8888)
         val canvas = Canvas(output)
-        canvas.drawRoundRect(RectF(margin.toFloat(), margin.toFloat(), (source.width - margin).toFloat(), (source.height - margin).toFloat()), radius.toFloat(), radius.toFloat(), paint)
+        canvas.drawRoundRect(RectF(margin.toFloat(),
+                margin.toFloat(),
+                (source.width - margin).toFloat(), (source.height - margin).toFloat()),
+                radius.toFloat(),
+                radius.toFloat(),
+                paint)
 
         if (source != output) {
             source.recycle()
