@@ -130,19 +130,22 @@ public class BookmarkActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        data ?: return
+
         if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
             return
         }
 
         when (resultCode) {
             RESULT_OK -> {
-                if (data!!.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
-                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
-                    hatenaModel.fetchBookmark(mEntryLink)
+                if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+                    if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
+                        val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+                        hatenaModel.fetchBookmark(mEntryLink)
+                    }
+                } else {
+                    showSnackbarNetworkError(findViewById(R.id.activity_layout))
                 }
-            }
-            RESULT_CANCELED -> {
-                showSnackbarNetworkError(findViewById(R.id.activity_layout))
             }
             else -> {
 

@@ -1,20 +1,22 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
+import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.extensions.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
@@ -39,11 +41,14 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
 
-        val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_user_id, null)
+        val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
+
+        val textTitle = view.findViewById(R.id.dialog_fragment_edit_user_id_text_title) as AppCompatTextView
+        textTitle.text = getString(R.string.dialog_title_set_user)
 
         val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
         editUserId.setText(userModel.userEntity?.id)
@@ -51,12 +56,12 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
         mLayoutUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user) as TextInputLayout
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
-        buttonCancel.setOnClickListener({ v ->
+        buttonCancel.setOnClickListener { v ->
             dismiss()
-        })
+        }
 
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
-        buttonOk.setOnClickListener({ v ->
+        buttonOk.setOnClickListener { v ->
             val inputtedUserId = editUserId.editableText.toString()
             if (inputtedUserId != userModel.userEntity?.id) {
                 userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
@@ -64,18 +69,14 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
             } else {
                 dismiss()
             }
-        })
+        }
 
         val editUserIdStream = RxTextView.textChanges(editUserId)
         mSubscription = editUserIdStream
-                .map({ v -> 0 < v.length })
-                .subscribe({ isEnabled -> buttonOk.toggle(isEnabled) })
+                .map { v -> 0 < v.length }
+                .subscribe { isEnabled -> buttonOk.toggle(isEnabled) }
 
-        val builder = AlertDialog.Builder(activity)
-                .setTitle(getString(R.string.dialog_title_set_user))
-                .setView(view)
-
-        return builder.create()
+        return view
     }
 
     override fun onDestroyView() {
@@ -85,16 +86,17 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        adjustScreenWidth()
     }
 
     @Subscribe
