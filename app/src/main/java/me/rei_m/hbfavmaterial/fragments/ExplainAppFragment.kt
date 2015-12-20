@@ -13,10 +13,13 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.extensions.openUrl
 import me.rei_m.hbfavmaterial.utils.AppUtil
 
+/**
+ * このアプリについてを表示するFragment.
+ */
 public class ExplainAppFragment : Fragment() {
 
     companion object {
-        public fun newInstance(): ExplainAppFragment {
+        fun newInstance(): ExplainAppFragment {
             return ExplainAppFragment()
         }
     }
@@ -26,19 +29,19 @@ public class ExplainAppFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_explain_app, container, false)
 
         val layoutOpinion = view.findViewById(R.id.fragment_explain_app_layout_opinion) as LinearLayout
-        layoutOpinion.setOnClickListener({ v ->
-            openUrl("https://github.com/rei-m/HBFav_material/issues")
-        })
+        layoutOpinion.setOnClickListener { v ->
+            openUrl(getString(R.string.url_opinion))
+        }
 
         val layoutFromDev = view.findViewById(R.id.fragment_explain_app_layout_from_developer) as LinearLayout
-        layoutFromDev.setOnClickListener({ v ->
+        layoutFromDev.setOnClickListener { v ->
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.FROM_DEVELOPER))
-        })
+        }
 
         val layoutCredit = view.findViewById(R.id.fragment_explain_app_layout_credit) as LinearLayout
-        layoutCredit.setOnClickListener({ v ->
+        layoutCredit.setOnClickListener { v ->
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
-        })
+        }
 
         val textVersion = view.findViewById(R.id.fragment_explain_app_text_version) as AppCompatTextView
         val versionName = AppUtil.getVersionName(activity.applicationContext)

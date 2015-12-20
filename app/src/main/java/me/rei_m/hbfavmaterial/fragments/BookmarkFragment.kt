@@ -22,12 +22,12 @@ public class BookmarkFragment : Fragment(), FragmentAnimationI {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        public fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkFragment {
-            val fragment = BookmarkFragment()
-            val args = Bundle()
-            args.putSerializable(ARG_BOOKMARK, bookmarkEntity)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkFragment {
+            return BookmarkFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_BOOKMARK, bookmarkEntity)
+                }
+            }
         }
     }
 
@@ -40,16 +40,19 @@ public class BookmarkFragment : Fragment(), FragmentAnimationI {
 
         val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
 
-        val bookmarkHeaderLayout = view.findViewById(R.id.layout_bookmark_header) as BookmarkHeaderLayout
-        bookmarkHeaderLayout.bindView(mBookmarkEntity!!)
+        val bookmarkHeaderLayout = view.findViewById(R.id.fragment_bookmark_layout_header) as BookmarkHeaderLayout
 
-        val bookmarkContents = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
-        bookmarkContents.bindView(mBookmarkEntity!!)
+        val bookmarkContents = view.findViewById(R.id.fragment_bookmark_layout_bookmark_contents) as BookmarkContentsLayout
 
-        val bookmarkCountTextView = view.findViewById(R.id.text_bookmark_count) as BookmarkCountTextView
-        bookmarkCountTextView.bindView(mBookmarkEntity!!)
+        val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 
-        setContainer(container!!)
+        mBookmarkEntity?.apply {
+            bookmarkHeaderLayout.bindView(this)
+            bookmarkContents.bindView(this)
+            bookmarkCountTextView.bindView(this)
+        }
+
+        setContainerWidth(container!!)
 
         return view
     }

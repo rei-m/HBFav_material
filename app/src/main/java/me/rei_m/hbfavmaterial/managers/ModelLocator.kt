@@ -7,7 +7,7 @@ public class ModelLocator private constructor() {
     companion object {
         private val showcase = HashMap<Tag, Any>();
 
-        public enum class Tag {
+        enum class Tag {
             FAVORITE,
             OWN_BOOKMARK,
             HOT_ENTRY,

@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import me.rei_m.hbfavmaterial.R
 
+/**
+ * アプリのクレジット表記を行うFragment.
+ */
 public class CreditFragment : Fragment() {
 
     companion object {
-        public fun newInstance(): CreditFragment {
+        fun newInstance(): CreditFragment {
             return CreditFragment()
         }
     }
@@ -21,9 +24,8 @@ public class CreditFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_licence, container, false)
 
         val webView = view.findViewById(R.id.fragment_licence_web_view) as WebView
-        webView.loadUrl("file:///android_asset/licence.html")
+        webView.loadUrl(getString(R.string.url_credit))
 
         return view
     }
-
 }

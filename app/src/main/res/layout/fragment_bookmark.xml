@@ -9,7 +9,7 @@
         android:orientation="vertical">
 
         <include
-            android:id="@+id/layout_bookmark_header"
+            android:id="@+id/fragment_bookmark_layout_header"
             layout="@layout/layout_bookmark_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -19,29 +19,7 @@
             android:layout_height="1dp"
             android:background="@drawable/bg_border_bottom" />
 
-        <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
-            android:id="@+id/layout_bookmark_contents"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_layout_pressed"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/margin"
-            android:paddingLeft="@dimen/margin_outline"
-            android:paddingRight="@dimen/margin_outline">
-
-            <include
-                android:id="@+id/layout_bookmark"
-                layout="@layout/layout_bookmark"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <include
-                android:id="@+id/layout_article"
-                layout="@layout/layout_article"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout>
+        <include layout="@layout/layout_bookmark_contents" />
 
         <View
             android:layout_width="match_parent"
@@ -49,7 +27,7 @@
             android:background="@drawable/bg_border_bottom" />
 
         <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
-            android:id="@+id/text_bookmark_count"
+            android:id="@+id/fragment_bookmark_text_bookmark_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_layout_pressed"

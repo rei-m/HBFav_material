@@ -22,6 +22,9 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
 
+/**
+ * アプリの初期処理を行うFragment.
+ */
 public class InitializeFragment : Fragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
@@ -45,17 +48,15 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
 
         mLayoutUserId = view.findViewById(R.id.fragment_initialize_layout_hatena_id) as TextInputLayout
 
-        val editIdStream = RxTextView.textChanges(editId)
+        mSubscription = RxTextView.textChanges(editId)
+                .map { v -> 0 < v.length }
+                .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled }
 
-        mSubscription = editIdStream
-                .map({ v -> 0 < v.length })
-                .subscribe({ isEnabled -> buttonSetId.isEnabled = isEnabled })
-
-        buttonSetId.setOnClickListener({ v ->
+        buttonSetId.setOnClickListener { v ->
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
             showProgressDialog(activity)
-        })
+        }
 
         return view
     }
@@ -67,8 +68,6 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
         // ユーザー情報が設定済かチェックする
@@ -80,13 +79,11 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 
     @Subscribe
-    public fun onUserIdChecked(event: UserIdCheckedEvent) {
+    public fun subscribe(event: UserIdCheckedEvent) {
 
         closeProgressDialog()
 
@@ -100,9 +97,10 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {
-                val thisActivity = activity as AppCompatActivity
-                thisActivity.hideKeyBoard(view)
-                thisActivity.showSnackbarNetworkError(view)
+                (activity as AppCompatActivity).apply {
+                    hideKeyBoard(view)
+                    showSnackbarNetworkError(view)
+                }
             }
         }
     }

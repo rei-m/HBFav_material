@@ -27,6 +27,9 @@ import rx.Observable
 import rx.subscriptions.CompositeSubscription
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 
+/**
+ * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
+ */
 public class BookmarkUsersFragment : Fragment() {
 
     private var mBookmarkEntity: BookmarkEntity? = null
@@ -40,14 +43,15 @@ public class BookmarkUsersFragment : Fragment() {
     companion object {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
+
         private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkUsersFragment {
-            val fragment = BookmarkUsersFragment()
-            val args = Bundle()
-            args.putSerializable(ARG_BOOKMARK, bookmarkEntity)
-            fragment.arguments = args
-            return fragment
+            return BookmarkUsersFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_BOOKMARK, bookmarkEntity)
+                }
+            }
         }
     }
 
@@ -83,6 +87,9 @@ public class BookmarkUsersFragment : Fragment() {
 
         listView.adapter = mListAdapter
 
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
+
         val emptyView = view.findViewById(R.id.fragment_list_view_empty) as TextView
         emptyView.text = getString(R.string.message_text_empty_user)
 
@@ -91,27 +98,33 @@ public class BookmarkUsersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeResources(R.color.pull_to_refresh_1, R.color.pull_to_refresh_2, R.color.pull_to_refresh_3)
 
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
-        if (userRegisterBookmarkModel.isSameUrl(mBookmarkEntity!!.articleEntity.url)) {
+        val bookmarkUrl = if (mBookmarkEntity != null) mBookmarkEntity!!.articleEntity.url else ""
+
+        // Model内のURLと表示対象のURLが同じかチェックする
+        if (userRegisterBookmarkModel.isSameUrl(bookmarkUrl)) {
+
+            // 同じ場合は再表示する
             val displayedCount = mListAdapter?.count!!
+
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
-                displayBookmarkUsers()
+                displayListContents()
                 view.findViewById(R.id.fragment_list_progress_list).hide()
             } else if (displayedCount === 0) {
-                userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
+                userRegisterBookmarkModel.fetch(bookmarkUrl)
                 view.findViewById(R.id.fragment_list_progress_list).show()
                 RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
-            userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
+
+            // Model内の情報と表示対象のURLが異なる場合は
+            // 異なる記事のブックマークユーザーを表示するので1件目から再取得する
+            userRegisterBookmarkModel.fetch(bookmarkUrl)
             view.findViewById(R.id.fragment_list_progress_list).show()
             RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
@@ -119,15 +132,13 @@ public class BookmarkUsersFragment : Fragment() {
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe({
+        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
-        }))
+        })
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
 
@@ -142,17 +153,19 @@ public class BookmarkUsersFragment : Fragment() {
         outState?.putSerializable(KEY_FILTER_TYPE, mFilterType)
     }
 
+    /**
+     * ブックマークユーザ情報のロード完了イベント
+     */
     @Subscribe
-    public fun onUserRegisterBookmarkLoaded(event: UserRegisterBookmarkLoadedEvent) {
+    public fun subscribe(event: UserRegisterBookmarkLoadedEvent) {
 
         when (event.status) {
             LoadedEventStatus.OK -> {
-                displayBookmarkUsers()
+                displayListContents()
             }
             LoadedEventStatus.ERROR -> {
                 // 読み込み出来なかった場合はSnackbarで通知する
-                val thisActivity = activity as AppCompatActivity
-                thisActivity.showSnackbarNetworkError(view)
+                (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
             else -> {
 
@@ -161,7 +174,7 @@ public class BookmarkUsersFragment : Fragment() {
 
         // リストが空の場合はEmptyViewを表示する
         view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
-        
+
         view.findViewById(R.id.fragment_list_progress_list).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
@@ -171,24 +184,24 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     @Subscribe
-    public fun onBookmarkUsersFiltered(event: BookmarkUsersFilteredEvent) {
+    public fun subscribe(event: BookmarkUsersFilteredEvent) {
         mFilterType = event.filterType
-        displayBookmarkUsers()
+        displayListContents()
     }
 
-    private fun displayBookmarkUsers() {
-        val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
-        mListAdapter?.clear()
-        if (mFilterType == FilterType.COMMENT) {
-            Observable.from(userRegisterBookmarkModel.bookmarkList).filter({ bookmark ->
-                bookmark.description != ""
-            }).subscribe({ bookmark ->
-                mListAdapter?.add(bookmark)
-            })
-        } else {
-            mListAdapter?.addAll(userRegisterBookmarkModel.bookmarkList)
+    private fun displayListContents() {
+        mListAdapter?.apply {
+            val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
+            clear()
+            if (mFilterType == FilterType.COMMENT) {
+                Observable.from(userRegisterBookmarkModel.bookmarkList)
+                        .filter { bookmark -> !bookmark.description.isNullOrEmpty() }
+                        .subscribe { bookmark -> add(bookmark) }
+            } else {
+                addAll(userRegisterBookmarkModel.bookmarkList)
+            }
+            notifyDataSetChanged()
         }
-        mListAdapter?.notifyDataSetChanged()
+        (view.findViewById(R.id.fragment_list_list) as ListView).setSelection(0)
     }
-
 }
