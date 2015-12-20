@@ -9,8 +9,11 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout
 
-public class BookmarkListAdapter constructor(context: Context, resource: Int) :
-        ArrayAdapter<BookmarkEntity>(context, resource) {
+/**
+ * ブックマーク一覧を管理するAdaptor.
+ */
+public class BookmarkListAdapter constructor(context: Context,
+                                             resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 

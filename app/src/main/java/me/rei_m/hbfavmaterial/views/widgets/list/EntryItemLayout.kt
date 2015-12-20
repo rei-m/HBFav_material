@@ -15,7 +15,10 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
-class EntryItemLayout : RelativeLayout {
+/**
+ * エントリー一覧のアイテムを表示するレイアウト.
+ */
+public class EntryItemLayout : RelativeLayout {
 
     private var mMarginTitleRight: Int = 0
 
@@ -37,41 +40,43 @@ class EntryItemLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        tag = ViewHolder(findViewById(R.id.image_article_body_image) as AppCompatImageView,
-                findViewById(R.id.text_article_title) as AppCompatTextView,
-                findViewById(R.id.image_article_icon) as AppCompatImageView,
-                findViewById(R.id.text_article_url) as AppCompatTextView,
-                findViewById(R.id.text_entry_footer) as AppCompatTextView)
+        tag = ViewHolder(findViewById(R.id.list_item_entry_image_body) as AppCompatImageView,
+                findViewById(R.id.list_item_entry_text_article_title) as AppCompatTextView,
+                findViewById(R.id.list_item_entry_image_article_icon) as AppCompatImageView,
+                findViewById(R.id.list_item_entry_text_article_url) as AppCompatTextView,
+                findViewById(R.id.list_item_entry_text_entry_footer) as AppCompatTextView)
 
         mMarginTitleRight = resources.getDimensionPixelSize(R.dimen.margin_outline)
     }
 
-    fun bindView(entryEntity: EntryEntity) {
+    public fun bindView(entryEntity: EntryEntity) {
         val holder = tag as ViewHolder
+        holder.apply {
+            title.text = entryEntity.articleEntity.title
 
-        holder.title.text = entryEntity.articleEntity.title
+            val mlp = holder.title.layoutParams as MarginLayoutParams
+            if (entryEntity.articleEntity.bodyImageUrl.isEmpty()) {
+                holder.bodyImage.hide()
+                mlp.rightMargin = mMarginTitleRight
+            } else {
+                holder.bodyImage.show()
+                mlp.rightMargin = 0
+                Picasso.with(context)
+                        .load(entryEntity.articleEntity.bodyImageUrl)
+                        .into(bodyImage)
+            }
 
-        val mlp = holder.title.layoutParams as MarginLayoutParams
-
-        if (entryEntity.articleEntity.bodyImageUrl.isEmpty()) {
-            holder.bodyImage.hide()
-            mlp.rightMargin = mMarginTitleRight
-        } else {
-            holder.bodyImage.show()
-            mlp.rightMargin = 0
             Picasso.with(context)
-                    .load(entryEntity.articleEntity.bodyImageUrl)
-                    .into(holder.bodyImage)
+                    .load(entryEntity.articleEntity.iconUrl)
+                    .transform(RoundedTransformation())
+                    .into(iconImage)
+
+            url.text = entryEntity.articleEntity.url
+
+            val bookmarkCount = entryEntity.articleEntity.bookmarkCount.toString()
+            val pastTimeString = BookmarkUtil.getPastTimeString(entryEntity.date)
+
+            footer.text = "$bookmarkCount users - ${entryEntity.subject} - $pastTimeString"
         }
-
-        Picasso.with(context)
-                .load(entryEntity.articleEntity.iconUrl)
-                .transform(RoundedTransformation())
-                .into(holder.iconImage)
-
-        holder.url.text = entryEntity.articleEntity.url
-        holder.footer.text = entryEntity.articleEntity.bookmarkCount.toString() + " users - " +
-                entryEntity.subject + " - " +
-                BookmarkUtil.getPastTimeString(entryEntity.date)
     }
 }

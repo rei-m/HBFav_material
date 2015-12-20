@@ -95,7 +95,6 @@ public class HotEntryFragment : Fragment() {
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             hotEntryModel.fetch(hotEntryModel.entryType)

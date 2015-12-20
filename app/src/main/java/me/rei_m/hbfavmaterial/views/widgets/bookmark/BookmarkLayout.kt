@@ -13,7 +13,10 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
-class BookmarkLayout : RelativeLayout {
+/**
+ * ブックマーク情報を表示するレイアウト.
+ */
+public class BookmarkLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val description: AppCompatTextView,
@@ -31,23 +34,25 @@ class BookmarkLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        tag = ViewHolder(findViewById(R.id.text_bookmark_description) as AppCompatTextView,
-                findViewById(R.id.text_bookmark_title) as AppCompatTextView,
-                findViewById(R.id.image_article_icon) as AppCompatImageView)
+        tag = ViewHolder(findViewById(R.id.layout_bookmark_text_description) as AppCompatTextView,
+                findViewById(R.id.layout_bookmark_text_article_title) as AppCompatTextView,
+                findViewById(R.id.layout_bookmark_image_article_icon) as AppCompatImageView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        if (bookmarkEntity.description.isEmpty()) {
-            holder.description.hide()
-        } else {
-            holder.description.show()
-            holder.description.text = bookmarkEntity.description
+        holder.apply {
+            if (bookmarkEntity.description.isEmpty()) {
+                description.hide()
+            } else {
+                description.show()
+                description.text = bookmarkEntity.description
+            }
+            title.text = bookmarkEntity.articleEntity.title
+            Picasso.with(context)
+                    .load(bookmarkEntity.articleEntity.iconUrl)
+                    .transform(RoundedTransformation())
+                    .into(iconImage)
         }
-        holder.title.text = bookmarkEntity.articleEntity.title
-        Picasso.with(context)
-                .load(bookmarkEntity.articleEntity.iconUrl)
-                .transform(RoundedTransformation())
-                .into(holder.iconImage)
     }
 }

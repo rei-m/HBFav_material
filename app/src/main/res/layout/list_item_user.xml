@@ -5,13 +5,13 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/image_user_icon"
+        android:id="@+id/list_item_user_image_icon"
         android:layout_width="@dimen/icon_size_list"
         android:layout_height="@dimen/icon_size_list"
         android:layout_margin="@dimen/margin_outline" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/text_user_name"
+        android:id="@+id/list_item_user_text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_outline"
@@ -21,7 +21,7 @@
         android:layout_marginTop="@dimen/margin_outline" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/text_add_bookmark_timing"
+        android:id="@+id/list_item_user_text_add_bookmark_timing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -32,10 +32,10 @@
         android:textSize="@dimen/text_size_caption" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/text_bookmark_description"
+        android:id="@+id/list_item_user_text_bookmark_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_user_name"
+        android:layout_below="@id/list_item_user_text_name"
         android:layout_marginBottom="@dimen/margin_outline"
         android:layout_marginEnd="@dimen/margin_outline"
         android:layout_marginLeft="@dimen/margin_content_from_screen"

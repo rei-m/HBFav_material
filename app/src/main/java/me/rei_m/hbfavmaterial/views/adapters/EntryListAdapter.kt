@@ -9,6 +9,9 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout
 
+/**
+ * エントリー一覧を管理するAdaptor.
+ */
 public class EntryListAdapter constructor(context: Context, resource: Int) :
         ArrayAdapter<EntryEntity>(context, resource) {
 

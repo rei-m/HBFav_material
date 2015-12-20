@@ -22,6 +22,9 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
+/**
+ * ブックマークの詳細を表示するActivity.
+ */
 public class BookmarkActivity : BaseActivity() {
 
     private var mEntryTitle: String = ""
@@ -36,15 +39,15 @@ public class BookmarkActivity : BaseActivity() {
         private val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
         public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            val intent = Intent(context, BookmarkActivity::class.java)
-            intent.putExtra(ARG_BOOKMARK, bookmarkEntity)
-            return intent
+            return Intent(context, BookmarkActivity::class.java).apply {
+                putExtra(ARG_BOOKMARK, bookmarkEntity)
+            }
         }
 
         public fun createIntent(context: Context, entryEntity: EntryEntity): Intent {
-            val intent = Intent(context, BookmarkActivity::class.java)
-            intent.putExtra(ARG_ENTRY, entryEntity)
-            return intent
+            return Intent(context, BookmarkActivity::class.java).apply {
+                putExtra(ARG_ENTRY, entryEntity)
+            }
         }
     }
 
@@ -154,22 +157,22 @@ public class BookmarkActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun onBookmarkUserClicked(event: BookmarkUserClickedEvent) {
+    public fun subscribe(event: BookmarkUserClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
     }
 
     @Subscribe
-    public fun onBookmarkClicked(event: BookmarkClickedEvent) {
+    public fun subscribe(event: BookmarkClickedEvent) {
         replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
     }
 
     @Subscribe
-    public fun onBookmarkCountClicked(event: BookmarkCountClickedEvent) {
+    public fun subscribe(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
     }
 
     @Subscribe
-    public fun onHatenaGetBookmarkLoaded(event: HatenaGetBookmarkLoadedEvent) {
+    public fun subscribe(event: HatenaGetBookmarkLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 更新用ダイアログを表示

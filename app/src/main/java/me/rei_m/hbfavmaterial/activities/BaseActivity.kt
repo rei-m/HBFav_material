@@ -7,6 +7,9 @@ import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
+/**
+ * Drawer無しのActivityの基底クラス.
+ */
 public abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,15 +23,11 @@ public abstract class BaseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        // EventBus登録
         EventBusHolder.EVENT_BUS.register(this)
     }
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
     }
 

@@ -42,7 +42,7 @@ public class BookmarkFragment : Fragment(), FragmentAnimationI {
 
         val bookmarkHeaderLayout = view.findViewById(R.id.fragment_bookmark_layout_header) as BookmarkHeaderLayout
 
-        val bookmarkContents = view.findViewById(R.id.fragment_bookmark_layout_bookmark_contents) as BookmarkContentsLayout
+        val bookmarkContents = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
 
         val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 

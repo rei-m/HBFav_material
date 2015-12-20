@@ -95,7 +95,6 @@ public class NewEntryFragment : Fragment() {
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             newEntryModel.fetch(newEntryModel.entryType)
@@ -104,14 +103,12 @@ public class NewEntryFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
-        // EventBus登録解除
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription?.unsubscribe()
     }
 
     @Subscribe
-    public fun onEntryCategoryChangedEvent(event: EntryCategoryChangedEvent) {
+    public fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.NEW) {
             val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
             newEntryModel.fetch(event.type)
@@ -119,7 +116,7 @@ public class NewEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun onNewEntryLoadedEvent(event: NewEntryLoadedEvent) {
+    public fun subscribe(event: NewEntryLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 displayListContents()

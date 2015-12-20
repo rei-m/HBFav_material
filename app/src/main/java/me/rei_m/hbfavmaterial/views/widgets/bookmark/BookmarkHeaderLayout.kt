@@ -12,7 +12,10 @@ import me.rei_m.hbfavmaterial.events.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
-class BookmarkHeaderLayout : RelativeLayout {
+/**
+ * ブックマーク詳細のヘッダを表示するレイアウト.
+ */
+public class BookmarkHeaderLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,
@@ -29,20 +32,21 @@ class BookmarkHeaderLayout : RelativeLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        tag = ViewHolder(findViewById(R.id.text_user_name) as AppCompatTextView,
-                findViewById(R.id.image_user_icon) as AppCompatImageView)
+        tag = ViewHolder(findViewById(R.id.layout_bookmark_header_text_user_name) as AppCompatTextView,
+                findViewById(R.id.layout_bookmark_header_image_user_icon) as AppCompatImageView)
     }
 
     fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
-        holder.name.text = bookmarkEntity.creator
-        Picasso.with(context)
-                .load(bookmarkEntity.bookmarkIconUrl)
-                .transform(RoundedTransformation())
-                .into(holder.iconImage)
-
-        setOnClickListener({
+        holder.apply {
+            name.text = bookmarkEntity.creator
+            Picasso.with(context)
+                    .load(bookmarkEntity.bookmarkIconUrl)
+                    .transform(RoundedTransformation())
+                    .into(iconImage)
+        }
+        setOnClickListener {
             EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(bookmarkEntity.creator))
-        })
+        }
     }
 }

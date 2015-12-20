@@ -11,42 +11,37 @@ import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
 import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
 import java.util.*
 
-class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
+/**
+ * メインページのフラグメントを管理するAdaptor.
+ */
+public class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
 
     private val mTitleList = ArrayList<String>()
 
     constructor(fm: FragmentManager, context: Context) : super(fm) {
-        mTitleList.add(INDEX_PAGER_BOOKMARK_FAVORITE,
-                context.getString(R.string.fragment_title_bookmark_favorite))
-        mTitleList.add(INDEX_PAGER_BOOKMARK_OWN,
-                context.getString(R.string.fragment_title_bookmark_own))
-        mTitleList.add(INDEX_PAGER_HOT_ENTRY,
-                context.getString(R.string.fragment_title_hot_entry))
-        mTitleList.add(INDEX_PAGER_NEW_ENTRY,
-                context.getString(R.string.fragment_title_new_entry))
+        mTitleList.apply {
+            add(INDEX_PAGER_BOOKMARK_FAVORITE, context.getString(R.string.fragment_title_bookmark_favorite))
+            add(INDEX_PAGER_BOOKMARK_OWN, context.getString(R.string.fragment_title_bookmark_own))
+            add(INDEX_PAGER_HOT_ENTRY, context.getString(R.string.fragment_title_hot_entry))
+            add(INDEX_PAGER_NEW_ENTRY, context.getString(R.string.fragment_title_new_entry))
+        }
     }
 
     companion object {
-        private const final val PAGE_COUNT = 4
-        public const final val INDEX_PAGER_BOOKMARK_FAVORITE = 0
-        public const final val INDEX_PAGER_BOOKMARK_OWN = 1
-        public const final val INDEX_PAGER_HOT_ENTRY = 2
-        public const final val INDEX_PAGER_NEW_ENTRY = 3
+        private val PAGE_COUNT = 4
+        public val INDEX_PAGER_BOOKMARK_FAVORITE = 0
+        public val INDEX_PAGER_BOOKMARK_OWN = 1
+        public val INDEX_PAGER_HOT_ENTRY = 2
+        public val INDEX_PAGER_NEW_ENTRY = 3
     }
 
     override fun getItem(position: Int): Fragment? {
-
         return when (position) {
-            INDEX_PAGER_BOOKMARK_FAVORITE ->
-                BookmarkFavoriteFragment.newInstance()
-            INDEX_PAGER_BOOKMARK_OWN ->
-                BookmarkUserFragment.newInstance()
-            INDEX_PAGER_HOT_ENTRY ->
-                HotEntryFragment.newInstance()
-            INDEX_PAGER_NEW_ENTRY ->
-                NewEntryFragment.newInstance()
-            else ->
-                null
+            INDEX_PAGER_BOOKMARK_FAVORITE -> BookmarkFavoriteFragment.newInstance()
+            INDEX_PAGER_BOOKMARK_OWN -> BookmarkUserFragment.newInstance()
+            INDEX_PAGER_HOT_ENTRY -> HotEntryFragment.newInstance()
+            INDEX_PAGER_NEW_ENTRY -> NewEntryFragment.newInstance()
+            else -> BookmarkFavoriteFragment.newInstance()
         }
     }
 

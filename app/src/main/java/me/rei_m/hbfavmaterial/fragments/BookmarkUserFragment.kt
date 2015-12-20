@@ -135,10 +135,7 @@ public class BookmarkUserFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         EventBusHolder.EVENT_BUS.register(this)
-
-        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
 
         val bookmarkUserModel = getBookmarkModel()
 
@@ -157,7 +154,6 @@ public class BookmarkUserFragment : Fragment() {
                 // 1件も表示していなければブックマーク情報をRSSから取得する
                 bookmarkUserModel.fetch(mUserId)
                 view.findViewById(R.id.fragment_list_progress_list).show()
-                RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
             }
         } else {
 
@@ -165,12 +161,12 @@ public class BookmarkUserFragment : Fragment() {
             // 他人のブックマークを表示するので1件目から再取得する
             bookmarkUserModel.fetch(mUserId)
             view.findViewById(R.id.fragment_list_progress_list).show()
-            RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true)
         }
 
         view.findViewById(R.id.fragment_list_view_empty).hide()
 
         // Pull to refreshのイベントをセット
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
