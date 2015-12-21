@@ -4,6 +4,9 @@ import com.squareup.okhttp.HttpUrl
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import rx.Observable
 
+/**
+ * ユーザーのブックマークRSSを取得するクラス.
+ */
 public class BookmarkOwnRss : AbsBookmarkRss() {
 
     public fun request(userId: String, startIndex: Int = 0): Observable<BookmarkEntity> {

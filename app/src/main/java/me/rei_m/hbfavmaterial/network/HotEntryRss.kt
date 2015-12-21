@@ -6,6 +6,9 @@ import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observable
 
+/**
+ * ホッテントリをRSSから取得するクラス.
+ */
 public class HotEntryRss : AbsEntryRss() {
 
     public fun request(entryType: EntryType): Observable<EntryEntity> {

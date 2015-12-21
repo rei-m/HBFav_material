@@ -11,6 +11,9 @@ import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.net.HttpURLConnection
 
+/**
+ * エントリーのRSSを取得する抽象クラス.
+ */
 public abstract class AbsEntryRss {
 
     protected fun request(url: HttpUrl): Observable<EntryEntity> {

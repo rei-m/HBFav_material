@@ -15,6 +15,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
+/**
+ * はてなのOAuth認証関連のAPIを管理するクラス.
+ */
 public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     private val mOAuthConsumer = DefaultOAuthConsumer(consumerKey, consumerSecret)
@@ -25,64 +28,71 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     companion object {
 
-        public final val CALLBACK = "https://github.com/rei-m/HBFav_material"
+        public val CALLBACK = "https://github.com/rei-m/HBFav_material"
 
-        private final val REQUEST_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/initiate?scope=read_public,write_public"
+        private val REQUEST_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/initiate?scope=read_public,write_public"
 
-        private final val ACCESS_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/token"
+        private val ACCESS_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/token"
 
-        private final val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
+        private val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
 
-        private final val BOOKMARK_ENDPOINT_URL = "http://api.b.hatena.ne.jp/1/my/bookmark"
+        private val BOOKMARK_ENDPOINT_URL = "http://api.b.hatena.ne.jp/1/my/bookmark"
 
-        public final val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+        public val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
 
-        private final val TWO_HYPHEN = "--"
-        private final val EOL = "\r\n"
-        private final val BOUNDARY = Random().hashCode()
-        private final val CHARSET = "UTF-8"
+        private val TWO_HYPHEN = "--"
+        private val EOL = "\r\n"
+        private val BOUNDARY = Random().hashCode()
+        private val CHARSET = "UTF-8"
     }
 
+    /**
+     * リクエストトークンを取得する.
+     */
     public fun requestRequestToken(): Observable<String> {
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             val authUrl = mOAuthProvider.retrieveRequestToken(mOAuthConsumer, CALLBACK)
 
             if (authUrl != null) {
                 t.onNext(authUrl)
             } else {
-                t.onError(HTTPException(HttpURLConnection.HTTP_NOT_AUTHORITATIVE))
+                t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
 
             t.onCompleted()
-        })
-
+        }
     }
 
+    /**
+     * アクセストークンを取得する.
+     */
     public fun requestAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             mOAuthProvider.retrieveAccessToken(mOAuthConsumer, requestToken)
 
             if (mOAuthConsumer.token != null && mOAuthConsumer.tokenSecret != null) {
                 t.onNext(OAuthTokenEntity(mOAuthConsumer.token, mOAuthConsumer.tokenSecret))
             } else {
-                t.onError(HTTPException(HttpURLConnection.HTTP_NOT_AUTHORITATIVE))
+                t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
 
             t.onCompleted()
-        })
-
+        }
     }
 
+    /**
+     * 指定されたURLのブックマーク情報を取得する.
+     */
     public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String):
             Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
             val connection = url.openConnection() as HttpURLConnection
@@ -104,15 +114,18 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             }
 
             t.onCompleted()
-        })
+        }
     }
 
+    /**
+     * ブックマーク情報を更新する.
+     */
     public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean):
             Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             // Content作成開始
             val sb = StringBuilder()
@@ -121,8 +134,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             // multipart/form-dataでパラメータ作成
             sb.append(createFormDataParameter("url", urlString))
-            sb.append(createFormDataParameter("comment", comment))
-            sb.append(createFormDataParameter("private", if (isOpen) "0" else "1"))
+                    .append(createFormDataParameter("comment", comment))
+                    .append(createFormDataParameter("private", if (isOpen) "0" else "1"))
 
             // RequestHeaderに設定するためPostデータのLengthを取得
             var contentLength = sb.toString().toByteArray(CHARSET).size
@@ -137,10 +150,11 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             mOAuthConsumer.sign(connection)
 
             // Postデータ書き込み
-            val os = DataOutputStream(connection.outputStream)
-            os.write(sb.toString().toByteArray(CHARSET))
-            os.flush()
-            os.close()
+            DataOutputStream(connection.outputStream).apply {
+                write(sb.toString().toByteArray(CHARSET))
+                flush()
+                close()
+            }
 
             when (connection.responseCode) {
                 HttpURLConnection.HTTP_OK -> {
@@ -155,15 +169,18 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             }
 
             t.onCompleted()
-        })
+        }
     }
 
+    /**
+     * ブックマーク情報を削除する.
+     */
     public fun deleteBookmark(oauthToken: OAuthTokenEntity, urlString: String):
             Observable<String> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
-        return Observable.create({ t ->
+        return Observable.create { t ->
 
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
             val connection = url.openConnection() as HttpURLConnection
@@ -186,9 +203,12 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             }
 
             t.onCompleted()
-        })
+        }
     }
 
+    /**
+     * POST用のパラメータ文字列を作成する.
+     */
     private fun createFormDataParameter(key: String, value: String): String {
         val sb = StringBuilder()
         sb.append("$TWO_HYPHEN$BOUNDARY$EOL")
@@ -199,27 +219,32 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         return sb.toString()
     }
 
+    /**
+     * POST用のURLConnectionを作成する.
+     */
     private fun createPostConnection(urlString: String, contentLength: Int): HttpURLConnection {
 
         val url = URL(urlString)
 
         val connection = url.openConnection() as HttpURLConnection
+        return connection.apply {
+            requestMethod = "POST"
+            doInput = true
+            doOutput = true
+            readTimeout = 10 * 1000
+            connectTimeout = 10 * 1000
+            useCaches = false
+            setChunkedStreamingMode(0)
 
-        connection.requestMethod = "POST"
-        connection.doInput = true
-        connection.doOutput = true
-        connection.readTimeout = 10 * 1000
-        connection.connectTimeout = 10 * 1000
-        connection.useCaches = false
-        connection.setChunkedStreamingMode(0)
-
-        connection.addRequestProperty("Connection", "Keep-Alive")
-        connection.addRequestProperty("Content-Type", "multipart/form-data; boundary=$BOUNDARY")
-        connection.addRequestProperty("Content-Length", contentLength.toString())
-
-        return connection
+            addRequestProperty("Connection", "Keep-Alive")
+            addRequestProperty("Content-Type", "multipart/form-data; boundary=$BOUNDARY")
+            addRequestProperty("Content-Length", contentLength.toString())
+        }
     }
 
+    /**
+     * APIのリクエストのStreamを読み込む.
+     */
     private fun readStream(stream: InputStream): String {
 
         val sb = StringBuilder()
