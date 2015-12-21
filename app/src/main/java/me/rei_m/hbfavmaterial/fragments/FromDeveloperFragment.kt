@@ -5,8 +5,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import me.rei_m.hbfavmaterial.R
 
+/**
+ * 開発者からのコメントを表示するFragment.
+ */
 public class FromDeveloperFragment : Fragment() {
 
     companion object {
@@ -19,7 +23,9 @@ public class FromDeveloperFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_from_developer, container, false)
 
+        val webView = view.findViewById(R.id.fragment_from_developer_web_view) as WebView
+        webView.loadUrl(getString(R.string.url_from_developer))
+
         return view
     }
-
 }
