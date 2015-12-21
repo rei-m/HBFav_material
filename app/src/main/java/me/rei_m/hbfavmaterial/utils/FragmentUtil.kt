@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.utils
 
-class FragmentUtil {
+public class FragmentUtil {
     companion object {
         enum class Tag {
             FROM_DEVELOPER,

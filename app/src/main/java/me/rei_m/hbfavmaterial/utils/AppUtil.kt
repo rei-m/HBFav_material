@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.utils
 
 import android.content.Context
 
-class AppUtil private constructor() {
+public class AppUtil private constructor() {
 
     companion object {
 
@@ -15,6 +15,5 @@ class AppUtil private constructor() {
             val pm = context.packageManager
             return pm.getPackageInfo(context.packageName, 0).versionName
         }
-
     }
 }

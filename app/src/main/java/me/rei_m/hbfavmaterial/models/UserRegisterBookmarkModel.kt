@@ -59,7 +59,7 @@ public class UserRegisterBookmarkModel {
             }
         }
 
-        EntryApi.request(bookmarkUrl)
+        EntryApi().request(bookmarkUrl)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

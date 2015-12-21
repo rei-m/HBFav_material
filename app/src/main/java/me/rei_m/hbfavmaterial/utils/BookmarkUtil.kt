@@ -4,7 +4,7 @@ import android.content.Context
 import me.rei_m.hbfavmaterial.R
 import java.util.*
 
-class BookmarkUtil private constructor() {
+public class BookmarkUtil private constructor() {
 
     companion object {
 
@@ -28,8 +28,10 @@ class BookmarkUtil private constructor() {
         fun getFilterTypeString(context: Context, filterType: FilterType): String {
 
             val id = when (filterType) {
-                FilterType.ALL -> R.string.filter_bookmark_users_all
-                FilterType.COMMENT -> R.string.filter_bookmark_users_comment
+                FilterType.ALL ->
+                    R.string.filter_bookmark_users_all
+                FilterType.COMMENT ->
+                    R.string.filter_bookmark_users_comment
             }
 
             return context.getString(id)
@@ -38,15 +40,24 @@ class BookmarkUtil private constructor() {
         fun getEntryTypeString(context: Context, entryType: EntryType): String {
 
             val id = when (entryType) {
-                EntryType.ALL -> R.string.category_title_all
-                EntryType.WORLD -> R.string.category_title_world
-                EntryType.POLITICS_AND_ECONOMY -> R.string.category_title_politics_and_economy
-                EntryType.LIFE -> R.string.category_title_life
-                EntryType.ENTERTAINMENT -> R.string.category_title_entertainment
-                EntryType.STUDY -> R.string.category_title_study
-                EntryType.TECHNOLOGY -> R.string.category_title_technology
-                EntryType.ANIMATION_AND_GAME -> R.string.category_title_animation_and_game
-                EntryType.COMEDY -> R.string.category_title_comedy
+                EntryType.ALL ->
+                    R.string.category_title_all
+                EntryType.WORLD ->
+                    R.string.category_title_world
+                EntryType.POLITICS_AND_ECONOMY ->
+                    R.string.category_title_politics_and_economy
+                EntryType.LIFE ->
+                    R.string.category_title_life
+                EntryType.ENTERTAINMENT ->
+                    R.string.category_title_entertainment
+                EntryType.STUDY ->
+                    R.string.category_title_study
+                EntryType.TECHNOLOGY ->
+                    R.string.category_title_technology
+                EntryType.ANIMATION_AND_GAME ->
+                    R.string.category_title_animation_and_game
+                EntryType.COMEDY ->
+                    R.string.category_title_comedy
             }
 
             return context.getString(id)
@@ -61,8 +72,7 @@ class BookmarkUtil private constructor() {
         }
 
         fun getPastTimeString(bookmarkAddedDatetime: Date,
-                              cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time
-        ): String {
+                              cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time): String {
 
             val diffSec = (cal.time - bookmarkAddedDatetime.time) / 1000
 

@@ -11,6 +11,9 @@ import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.net.HttpURLConnection
 
+/**
+ * ブックマーク用のRSSを取得する抽象クラス.
+ */
 public abstract class AbsBookmarkRss {
 
     protected fun request(url: HttpUrl): Observable<BookmarkEntity> {

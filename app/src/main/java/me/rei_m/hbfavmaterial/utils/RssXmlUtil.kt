@@ -9,7 +9,7 @@ import org.w3c.dom.Node
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RssXmlUtil private constructor() {
+public class RssXmlUtil private constructor() {
 
     companion object {
 

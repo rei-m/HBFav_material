@@ -24,7 +24,7 @@ public class UserModel {
         private set
 
     companion object {
-        private final val KEY_PREF_USER = "KEY_PREF_USER"
+        private val KEY_PREF_USER = "KEY_PREF_USER"
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserModel {
             }
         }
 
-        UserCheckRequest.request(id)
+        UserCheckRequest().request(id)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
