@@ -2,4 +2,5 @@
 <resources>
     <string name="url_opinion">https://github.com/rei-m/HBFav_material/issues</string>
     <string name="url_credit">file:///android_asset/licence.html</string>
+    <string name="url_from_developer">file:///android_asset/from_developer.html</string>
 </resources>
