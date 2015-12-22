@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
@@ -10,6 +11,7 @@ import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
@@ -38,6 +40,12 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
         public fun newInstance(): EditUserIdDialogFragment {
             return EditUserIdDialogFragment()
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+        return super.onCreateDialog(savedInstanceState).apply {
+            window.requestFeature(Window.FEATURE_NO_TITLE)
         }
     }
 
@@ -100,7 +108,7 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun onUserIdChecked(event: UserIdCheckedEvent) {
+    public fun subscribe(event: UserIdCheckedEvent) {
 
         closeProgressDialog()
 
