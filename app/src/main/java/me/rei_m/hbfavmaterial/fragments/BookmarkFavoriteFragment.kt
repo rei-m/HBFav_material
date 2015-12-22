@@ -72,6 +72,9 @@ public class BookmarkFavoriteFragment : Fragment() {
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
+        listView.addFooterView(footerView, null, false)
+        footerView.hide()
 
         listView.setOnScrollListener(object : AbsListView.OnScrollListener {
 
@@ -206,9 +209,8 @@ public class BookmarkFavoriteFragment : Fragment() {
 
         // FooterViewを表示する
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
-        if (listView.footerViewsCount == 0) {
-            val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-            listView.addFooterView(footerView, null, false)
+        if (0 < listView.footerViewsCount) {
+            view.findViewById(R.id.list_footer_loading_layout).show()
         }
     }
 }

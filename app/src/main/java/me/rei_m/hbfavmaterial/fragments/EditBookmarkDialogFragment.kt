@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
@@ -60,6 +62,12 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             return newInstance(title, url).apply {
                 arguments.putSerializable(ARG_BOOKMARK, response)
             }
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+        return super.onCreateDialog(savedInstanceState).apply {
+            window.requestFeature(Window.FEATURE_NO_TITLE)
         }
     }
 

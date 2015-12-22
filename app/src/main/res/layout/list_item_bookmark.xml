@@ -2,7 +2,8 @@
 
 <me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/margin_outline">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/list_item_bookmark_image_user_icon"
@@ -39,7 +40,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/list_item_bookmark_text_user_name"
-        android:layout_marginBottom="@dimen/margin_outline"
         android:layout_marginEnd="@dimen/margin_outline"
         android:layout_marginLeft="@dimen/margin_content_from_screen"
         android:layout_marginRight="@dimen/margin_outline"
