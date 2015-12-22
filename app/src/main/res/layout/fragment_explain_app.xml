@@ -8,13 +8,21 @@
         android:id="@+id/fragment_explain_app_layout_app_name"
         style="@style/LinearLayoutRow"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_item_one_column">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/margin_half"
+        android:paddingTop="@dimen/margin_half">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/fragment_explain_app_text_app_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name" />
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/ic_launcher"
+            android:drawablePadding="@dimen/margin"
+            android:drawableStart="@drawable/ic_launcher"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_size_title" />
 
     </LinearLayout>
 
