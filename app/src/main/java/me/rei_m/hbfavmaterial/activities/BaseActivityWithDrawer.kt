@@ -40,9 +40,6 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
                 R.string.navigation_drawer_close)
 
         drawer.setDrawerListener(toggle)
-        toggle.toolbarNavigationClickListener = View.OnClickListener {
-            println("hoge")
-        }
         toggle.syncState()
 
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
