@@ -34,7 +34,7 @@ public class OthersBookmarkActivity : BaseActivity() {
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.hide()
-        
+
         if (savedInstanceState == null) {
             setFragment(BookmarkUserFragment.newInstance(userId))
         }

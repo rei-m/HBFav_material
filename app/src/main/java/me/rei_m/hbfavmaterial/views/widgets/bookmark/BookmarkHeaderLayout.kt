@@ -8,8 +8,8 @@ import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 /**

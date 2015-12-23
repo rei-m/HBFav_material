@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="ActionButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">@color/app_accent_color</item>
     </style>
+
     <style name="LinearLayoutRow">
         <item name="android:background">@drawable/bg_border_bottom</item>
         <item name="android:gravity">center_vertical</item>

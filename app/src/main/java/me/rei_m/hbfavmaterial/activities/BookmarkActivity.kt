@@ -11,7 +11,6 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.*
 import me.rei_m.hbfavmaterial.events.network.HatenaGetBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent

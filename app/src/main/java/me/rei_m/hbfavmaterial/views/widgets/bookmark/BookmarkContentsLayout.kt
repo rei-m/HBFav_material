@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 
 /**
  * ブックマーク詳細のコンテンツを表示するレイアウト.
