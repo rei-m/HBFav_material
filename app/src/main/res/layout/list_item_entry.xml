@@ -17,9 +17,9 @@
             android:id="@+id/list_item_entry_text_article_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_outline" />
+            android:layout_marginStart="@dimen/margin_outline"
+            android:layout_weight="1" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/list_item_entry_image_body"

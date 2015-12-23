@@ -14,14 +14,11 @@ HBFav Material
 
 ## Environment
 - 開発環境 : Android Studio 1.5.1
-- 開発言語 : Kotlin beta-3595
+- 開発言語 : Kotlin
 
-## Build
-- Android StudioにKotlinの開発用プラグインをインストールしてください。
-  - 参考 : https://kotlinlang.org/docs/tutorials/getting-started.html
-- プロジェクトをcloneした上で `/app/src/main/assets/hatena_dummy.json` をコピーして `hatena.json` を同じディレクトリに作成してください。OAuth認証用のキーを設定するファイルです。
-  - OAuthの確認までする場合は、はてな側でアプリケーションを作成した上でご自身のアプリケーションのキーを設定してください。
-- 上記まで終わったらAndroid Studioでプロジェクトを開いてビルドしてください。
+## Contribute
+
+[CONTRIBUTING.md](https://github.com/rei-m/HBFav_material/blob/master/CONTRIBUTING.md)
 
 ## Licence
 

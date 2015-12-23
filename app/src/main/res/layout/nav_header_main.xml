@@ -22,11 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingEnd="@dimen/margin"
-        android:textSize="@dimen/text_size_title"
         android:paddingLeft="@dimen/margin"
         android:paddingRight="@dimen/margin"
         android:paddingStart="@dimen/margin"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="@dimen/text_size_title" />
 
 </LinearLayout>

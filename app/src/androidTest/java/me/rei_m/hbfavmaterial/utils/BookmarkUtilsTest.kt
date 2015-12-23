@@ -4,13 +4,12 @@ import android.support.test.runner.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
-import kotlin.test.assertEquals
 
 @RunWith(AndroidJUnit4::class)
 public class BookmarkUtilsTest {
 
     @Test
-    public fun testGetAddBookmarkTimeString(){
+    public fun testGetAddBookmarkTimeString() {
 
         val now = Calendar.getInstance()
         now.timeZone = TimeZone.getTimeZone("Asia/Tokyo")

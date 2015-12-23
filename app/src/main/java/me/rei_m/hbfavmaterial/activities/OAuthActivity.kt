@@ -81,7 +81,7 @@ public class OAuthActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun onHatenaOAuthRequestTokenLoaded(event: HatenaOAuthRequestTokenLoadedEvent) {
+    public fun subscribe(event: HatenaOAuthRequestTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 mWebView?.loadUrl(event.authUrl)
@@ -93,7 +93,7 @@ public class OAuthActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun onHatenaOAuthAccessTokenLoaded(event: HatenaOAuthAccessTokenLoadedEvent) {
+    public fun subscribe(event: HatenaOAuthAccessTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 setAuthorizeResult(true, true)

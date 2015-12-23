@@ -179,7 +179,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun onHatenaPostBookmarkLoaded(event: HatenaPostBookmarkLoadedEvent) {
+    public fun subscribe(event: HatenaPostBookmarkLoadedEvent) {
 
         closeProgressDialog()
 
@@ -194,7 +194,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun onHatenaDeleteBookmarkLoaded(event: HatenaDeleteBookmarkLoadedEvent) {
+    public fun subscribe(event: HatenaDeleteBookmarkLoadedEvent) {
 
         closeProgressDialog()
 

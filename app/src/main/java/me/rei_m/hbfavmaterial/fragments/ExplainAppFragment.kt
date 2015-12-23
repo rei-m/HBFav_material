@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.extensions.openUrl
 import me.rei_m.hbfavmaterial.utils.AppUtil
 
