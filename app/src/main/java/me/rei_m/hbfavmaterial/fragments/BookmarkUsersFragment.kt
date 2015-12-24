@@ -105,13 +105,13 @@ public class BookmarkUsersFragment : Fragment() {
 
         val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
 
-        val bookmarkUrl = if (mBookmarkEntity != null) mBookmarkEntity!!.articleEntity.url else ""
+        val bookmarkUrl = mBookmarkEntity?.articleEntity?.url ?: ""
 
         // Model内のURLと表示対象のURLが同じかチェックする
         if (userRegisterBookmarkModel.isSameUrl(bookmarkUrl)) {
 
             // 同じ場合は再表示する
-            val displayedCount = mListAdapter?.count!!
+            val displayedCount = mListAdapter?.count ?: 0
 
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
                 displayListContents()
@@ -133,7 +133,7 @@ public class BookmarkUsersFragment : Fragment() {
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
         mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            userRegisterBookmarkModel.fetch(mBookmarkEntity!!.articleEntity.url)
+            userRegisterBookmarkModel.fetch(mBookmarkEntity?.articleEntity?.url ?: "")
         })
     }
 
@@ -173,7 +173,7 @@ public class BookmarkUsersFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 

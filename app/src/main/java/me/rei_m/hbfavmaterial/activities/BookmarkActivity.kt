@@ -89,8 +89,8 @@ public class BookmarkActivity : BaseActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        mEntryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE)!!
-        mEntryLink = savedInstanceState?.getString(KEY_ENTRY_LINK)!!
+        mEntryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
+        mEntryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
         supportActionBar.title = mEntryTitle
     }
 
@@ -125,8 +125,7 @@ public class BookmarkActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentByTag(EntryWebViewFragment.TAG)
-        fragment.let {
+        supportFragmentManager.findFragmentByTag(EntryWebViewFragment.TAG)?.let {
             if (!(it as EntryWebViewFragment).backHistory()) {
                 return
             }

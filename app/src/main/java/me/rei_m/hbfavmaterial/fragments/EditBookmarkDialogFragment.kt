@@ -38,13 +38,13 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
     companion object {
 
-        public final val TAG = EditBookmarkDialogFragment::class.java.simpleName
+        public val TAG = EditBookmarkDialogFragment::class.java.simpleName
 
-        private final val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
+        private val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
 
-        private final val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
+        private val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
 
-        private final val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
         public fun newInstance(title: String,
                                url: String): EditBookmarkDialogFragment {

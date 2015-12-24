@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -27,8 +26,8 @@ public class OAuthActivity : BaseActivity() {
 
     companion object {
 
-        public final val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
-        public final val ARG_IS_AUTHORIZE_DONE = "ARG_IS_AUTHORIZE_DONE"
+        public val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
+        public val ARG_IS_AUTHORIZE_DONE = "ARG_IS_AUTHORIZE_DONE"
 
         public fun createIntent(context: Context): Intent {
             return Intent(context, OAuthActivity::class.java)
@@ -39,39 +38,40 @@ public class OAuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         mWebView = WebView(this)
-        mWebView!!.clearCache(true)
-        mWebView!!.settings.javaScriptEnabled = true
-        mWebView!!.setWebChromeClient(WebChromeClient())
-        mWebView!!.setWebViewClient(object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        mWebView?.apply {
+            clearCache(true)
+            settings.javaScriptEnabled = true
+            setWebChromeClient(WebChromeClient())
+            setWebViewClient(object : WebViewClient() {
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 
-                val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
-                if (url?.startsWith(HatenaOAuthApi.CALLBACK)!!) {
-                    mWebView!!.stopLoading()
-                    mWebView!!.hide()
-                    val uri = Uri.parse(url)
-                    hatenaModel.fetchAccessToken(applicationContext, uri.getQueryParameter("oauth_verifier"))
-                } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL)!!) {
-                    mWebView!!.stopLoading()
-                    hatenaModel.deleteAccessToken(applicationContext)
-                    setAuthorizeResult(false, true)
-                    finish()
-                } else {
-                    super.onPageStarted(view, url, favicon)
+                    if (url?.startsWith(HatenaOAuthApi.CALLBACK) ?: false) {
+                        stopLoading()
+                        hide()
+                        val uri = Uri.parse(url)
+                        hatenaModel.fetchAccessToken(applicationContext, uri.getQueryParameter("oauth_verifier"))
+                    } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL) ?: false) {
+                        stopLoading()
+                        hatenaModel.deleteAccessToken(applicationContext)
+                        setAuthorizeResult(false, true)
+                        finish()
+                    } else {
+                        super.onPageStarted(view, url, favicon)
+                    }
                 }
-            }
 
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-        })
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    return super.shouldOverrideUrlLoading(view, url);
+                }
+            })
+        }
 
         val content = findViewById(R.id.content) as FrameLayout
         content.addView(mWebView)
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.hide()
+        findViewById(R.id.fab).hide()
     }
 
     override fun onResume() {
@@ -108,12 +108,12 @@ public class OAuthActivity : BaseActivity() {
     }
 
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
-        val intent = Intent()
-        val bundle = Bundle()
-        bundle.putBoolean(ARG_AUTHORIZE_STATUS, isAuthorize)
-        bundle.putBoolean(ARG_IS_AUTHORIZE_DONE, isDone)
-        intent.putExtras(bundle)
-
+        val intent = Intent().apply {
+            putExtras(Bundle().apply {
+                putBoolean(ARG_AUTHORIZE_STATUS, isAuthorize)
+                putBoolean(ARG_IS_AUTHORIZE_DONE, isDone)
+            })
+        }
         setResult(RESULT_OK, intent)
     }
 }

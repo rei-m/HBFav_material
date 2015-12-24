@@ -47,7 +47,7 @@ public abstract class BaseActivityWithDrawer : AppCompatActivity(),
         val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
         val userEntity = userModel.userEntity
 
-        displayUserIconAndName(userEntity?.id!!)
+        displayUserIconAndName(userEntity?.id ?: "")
     }
 
     override fun onResume() {
