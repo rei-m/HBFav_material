@@ -20,8 +20,8 @@ class BookmarkCountTextView : AppCompatTextView {constructor(context: Context?) 
     public fun bindView(bookmarkEntity: BookmarkEntity) {
         text = bookmarkEntity.articleEntity.bookmarkCount.toString() + " users"
 
-        setOnClickListener({
+        setOnClickListener {
             EventBusHolder.EVENT_BUS.post(BookmarkCountClickedEvent(bookmarkEntity))
-        })
+        }
     }
 }

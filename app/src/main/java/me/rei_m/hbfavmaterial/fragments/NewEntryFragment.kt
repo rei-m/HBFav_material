@@ -83,7 +83,7 @@ public class NewEntryFragment : Fragment() {
 
         val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
 
-        val displayedCount = mListAdapter?.count!!
+        val displayedCount = mListAdapter?.count ?: 0
 
         if (displayedCount != newEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
@@ -135,7 +135,7 @@ public class NewEntryFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 

@@ -84,7 +84,7 @@ public class BookmarkFavoriteFragment : Fragment() {
                     val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
                     // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (!favoriteModel.isBusy && 0 < listView.footerViewsCount) {
-                        favoriteModel.fetch(mUserId, mListAdapter?.nextIndex!!)
+                        favoriteModel.fetch(mUserId, mListAdapter?.nextIndex ?: 0)
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class BookmarkFavoriteFragment : Fragment() {
 
         val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
 
-        val displayedCount = mListAdapter?.count!!
+        val displayedCount = mListAdapter?.count
 
         if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
@@ -182,7 +182,7 @@ public class BookmarkFavoriteFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty!!)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
 
         // プログレスを非表示にする
         view.findViewById(R.id.fragment_list_progress_list).hide()

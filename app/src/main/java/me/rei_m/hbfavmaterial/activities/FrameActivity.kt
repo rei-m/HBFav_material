@@ -3,8 +3,8 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.CreditFragment
 import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
@@ -17,9 +17,9 @@ public class FrameActivity : BaseActivity() {
         private val ARG_TAG = "TAG"
 
         public fun createIntent(context: Context, tag: Tag): Intent {
-            val intent = Intent(context, FrameActivity::class.java)
-            intent.putExtra(ARG_TAG, tag)
-            return intent
+            return Intent(context, FrameActivity::class.java).apply {
+                putExtra(ARG_TAG, tag)
+            }
         }
     }
 
@@ -44,7 +44,6 @@ public class FrameActivity : BaseActivity() {
             }
         }
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.hide()
+        findViewById(R.id.fab).hide()
     }
 }

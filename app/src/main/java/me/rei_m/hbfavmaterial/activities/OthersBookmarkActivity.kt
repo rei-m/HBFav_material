@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 
@@ -32,8 +33,7 @@ public class OthersBookmarkActivity : BaseActivity() {
         val userId = intent.getStringExtra(ARG_USER_ID)
         supportActionBar.title = userId
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.hide()
+        findViewById(R.id.fab).hide()
 
         if (savedInstanceState == null) {
             setFragment(BookmarkUserFragment.newInstance(userId))

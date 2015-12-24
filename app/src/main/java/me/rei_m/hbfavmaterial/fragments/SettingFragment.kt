@@ -112,9 +112,11 @@ public class SettingFragment : Fragment() {
     public fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
-            val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
-            textUserId.text = userModel.userEntity?.id
-            EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(userModel.userEntity?.id!!))
+            userModel.userEntity?.apply {
+                val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
+                textUserId.text = id
+                EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(id))
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
@@ -12,6 +11,7 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
@@ -30,9 +30,9 @@ public class BookmarkUsersActivity : BaseActivity() {
         private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            val intent = Intent(context, BookmarkUsersActivity::class.java)
-            intent.putExtra(ARG_BOOKMARK, bookmarkEntity)
-            return intent
+            return Intent(context, BookmarkUsersActivity::class.java).apply {
+                putExtra(ARG_BOOKMARK, bookmarkEntity)
+            }
         }
     }
 
@@ -42,16 +42,14 @@ public class BookmarkUsersActivity : BaseActivity() {
         mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
 
         if (savedInstanceState == null) {
-            mFilterType = FilterType.ALL
             setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity!!))
         } else {
             mFilterType = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as FilterType
         }
 
-        displayTitle(mFilterType!!)
+        displayTitle(mFilterType ?: FilterType.ALL)
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.hide()
+        findViewById(R.id.fab).hide()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
