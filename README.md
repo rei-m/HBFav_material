@@ -15,6 +15,7 @@ HBFav Material
 ## Environment
 - 開発環境 : Android Studio 1.5.1
 - 開発言語 : Kotlin
+- min sdk : 16
 
 ## Contribute
 
@@ -27,3 +28,7 @@ HBFav Material
 ## Author
 
 [rei-m](https://github.com/rei-m)
+
+## Special Thanks
+
+[Naoya Ito](https://twitter.com/naoya_ito)
