@@ -68,14 +68,14 @@ public class BookmarkActivity : BaseActivity() {
                 val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
                 mEntryTitle = entryEntity.articleEntity.title
                 mEntryLink = entryEntity.articleEntity.url
-                setFragment(EntryWebViewFragment.newInstance(mEntryLink))
+                setFragment(EntryWebViewFragment.newInstance(mEntryLink), EntryWebViewFragment.TAG)
             }
             supportActionBar.title = mEntryTitle
         }
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
 
-        fab.setOnClickListener({
+        fab.setOnClickListener {
             // はてぶ投稿ボタン
             val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
 
@@ -84,7 +84,7 @@ public class BookmarkActivity : BaseActivity() {
             } else {
                 hatenaModel.fetchBookmark(mEntryLink)
             }
-        })
+        }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -125,9 +125,9 @@ public class BookmarkActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        var fragment = supportFragmentManager.findFragmentByTag(EntryWebViewFragment.TAG)
-        if (fragment != null) {
-            if (!(fragment as EntryWebViewFragment).backHistory()) {
+        val fragment = supportFragmentManager.findFragmentByTag(EntryWebViewFragment.TAG)
+        fragment.let {
+            if (!(it as EntryWebViewFragment).backHistory()) {
                 return
             }
         }
