@@ -6,4 +6,7 @@
 /build
 /captures
 /app/src/main/assets/hatena.json
-
+/app/keystore/
+/app/src/release/
+gradle.properties
+fabric.properties
