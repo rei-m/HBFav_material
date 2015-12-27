@@ -71,9 +71,11 @@ public class EntryWebViewFragment : Fragment() {
      * @return ヒストリバック不可能な場合 true, 可能な場合 false
      */
     public fun backHistory(): Boolean {
-        val webView = view.findViewById(R.id.fragment_bookmark_webview_view) as WebView
-        if (webView.canGoBack()) {
-            webView.goBack()
+        val view = view.findViewById(R.id.fragment_bookmark_webview_view)
+        view ?: return true
+        view as WebView
+        if (view.canGoBack()) {
+            view.goBack()
             return false
         } else {
             return true
