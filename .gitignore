@@ -8,5 +8,6 @@
 /app/src/main/assets/hatena.json
 /app/keystore/
 /app/src/release/
-gradle.properties
-fabric.properties
+/app/app-release.apk
+/gradle.properties
+/fabric.properties
