@@ -52,19 +52,19 @@ public class RssXmlUtil private constructor() {
             val parsedContent = Jsoup.parse(content)
 
             val articleEntity = ArticleEntity(
-                    title,
-                    link,
-                    bookmarkCount,
-                    extractArticleIcon(parsedContent),
-                    extractArticleBodyForBookmark(parsedContent),
-                    extractArticleImageUrl(parsedContent))
+                    title = title,
+                    url = link,
+                    bookmarkCount = bookmarkCount,
+                    iconUrl = extractArticleIcon(parsedContent),
+                    body = extractArticleBodyForBookmark(parsedContent),
+                    bodyImageUrl = extractArticleImageUrl(parsedContent))
 
             return BookmarkEntity(
-                    articleEntity,
-                    description,
-                    creator,
-                    date!!,
-                    extractProfileIcon(parsedContent))
+                    articleEntity = articleEntity,
+                    description = description,
+                    creator = creator,
+                    date = date!!,
+                    bookmarkIconUrl = extractProfileIcon(parsedContent))
         }
 
         public fun createEntryFromFeed(feed: Node): EntryEntity {
@@ -100,18 +100,18 @@ public class RssXmlUtil private constructor() {
             val parsedContent = Jsoup.parse(content)
 
             val articleEntity = ArticleEntity(
-                    title,
-                    link,
-                    bookmarkCount,
-                    extractArticleIcon(parsedContent),
-                    extractArticleBodyForEntry(parsedContent),
-                    extractArticleImageUrl(parsedContent))
+                    title = title,
+                    url = link,
+                    bookmarkCount = bookmarkCount,
+                    iconUrl = extractArticleIcon(parsedContent),
+                    body = extractArticleBodyForEntry(parsedContent),
+                    bodyImageUrl = extractArticleImageUrl(parsedContent))
 
             return EntryEntity(
-                    articleEntity,
-                    description,
-                    date!!,
-                    subject)
+                    articleEntity = articleEntity,
+                    description = description,
+                    date = date!!,
+                    subject = subject)
         }
 
         private fun extractProfileIcon(content: Document): String = content
