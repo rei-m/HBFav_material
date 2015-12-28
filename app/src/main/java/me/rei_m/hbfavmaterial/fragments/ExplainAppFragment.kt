@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.openUrl
 import me.rei_m.hbfavmaterial.utils.AppUtil
 
@@ -30,7 +31,7 @@ public class ExplainAppFragment : Fragment() {
 
         val layoutOpinion = view.findViewById(R.id.fragment_explain_app_layout_opinion) as LinearLayout
         layoutOpinion.setOnClickListener { v ->
-            openUrl(getString(R.string.url_opinion))
+            getAppContext().openUrl(getString(R.string.url_opinion))
         }
 
         val layoutFromDev = view.findViewById(R.id.fragment_explain_app_layout_from_developer) as LinearLayout

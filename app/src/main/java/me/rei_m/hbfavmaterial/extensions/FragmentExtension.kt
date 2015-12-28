@@ -11,11 +11,3 @@ import android.support.v4.app.Fragment
 fun Fragment.getAppContext(): Context {
     return activity.applicationContext
 }
-
-/**
- * 外部URLを開くIntentを起動する.
- */
-fun Fragment.openUrl(url: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    startActivity(intent)
-}
