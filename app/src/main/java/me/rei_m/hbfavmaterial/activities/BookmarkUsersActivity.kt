@@ -43,8 +43,6 @@ public class BookmarkUsersActivity : BaseActivity() {
 
         if (savedInstanceState == null) {
             setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity!!))
-        } else {
-            mFilterType = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as FilterType
         }
 
         displayTitle(mFilterType ?: FilterType.ALL)
@@ -54,7 +52,8 @@ public class BookmarkUsersActivity : BaseActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        mFilterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE) as FilterType
+        val filterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE)
+        mFilterType = filterType?.let { it as FilterType } ?: FilterType.ALL
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
