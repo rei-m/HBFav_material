@@ -50,8 +50,9 @@ public class OAuthActivity : BaseActivity() {
                     if (url?.startsWith(HatenaOAuthApi.CALLBACK) ?: false) {
                         stopLoading()
                         hide()
-                        val uri = Uri.parse(url)
-                        hatenaModel.fetchAccessToken(applicationContext, uri.getQueryParameter("oauth_verifier"))
+                        val oauthVerifier = Uri.parse(url).getQueryParameter("oauth_verifier")
+                        oauthVerifier ?: finish()
+                        hatenaModel.fetchAccessToken(applicationContext, oauthVerifier)
                     } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL) ?: false) {
                         stopLoading()
                         hatenaModel.deleteAccessToken(applicationContext)
