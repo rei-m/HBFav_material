@@ -53,20 +53,20 @@ public class EntryApi {
 
                 responseJson.bookmarks.forEach { v ->
                     val articleEntity = ArticleEntity(
-                            "",
-                            entryUrl,
-                            responseJson.count,
-                            "",
-                            "",
-                            "")
+                            title = "",
+                            url = entryUrl,
+                            bookmarkCount = responseJson.count,
+                            iconUrl = "",
+                            body = "",
+                            bodyImageUrl = "")
 
                     t.onNext(BookmarkEntity(
-                            articleEntity,
-                            v.comment,
-                            v.user,
-                            ApiUtil.parseStringToDate(v.timestamp),
-                            "",
-                            v.tags))
+                            articleEntity = articleEntity,
+                            description = v.comment,
+                            creator = v.user,
+                            date = ApiUtil.parseStringToDate(v.timestamp),
+                            bookmarkIconUrl = "",
+                            tags = v.tags))
                 }
             } else {
                 t.onError(HTTPException(response.code()))

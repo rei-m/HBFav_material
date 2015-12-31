@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="url_web_hatena_bookmark">http://b.hatena.ne.jp/{{0}}/</string>
     <string name="url_opinion">https://github.com/rei-m/HBFav_material/issues</string>
     <string name="url_credit">file:///android_asset/licence.html</string>
     <string name="url_from_developer">file:///android_asset/from_developer.html</string>
