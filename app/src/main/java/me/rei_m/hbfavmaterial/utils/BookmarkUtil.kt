@@ -72,7 +72,7 @@ public class BookmarkUtil private constructor() {
         }
 
         fun getPastTimeString(bookmarkAddedDatetime: Date,
-                              cal: Date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo")).time): String {
+                              cal: Date = Calendar.getInstance(TimeZone.getDefault()).time): String {
 
             val diffSec = (cal.time - bookmarkAddedDatetime.time) / 1000
 
