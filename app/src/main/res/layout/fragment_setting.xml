@@ -93,4 +93,10 @@
 
     </LinearLayout>
 
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_setting_layout_text_hatena_oauth" />
+
 </RelativeLayout>

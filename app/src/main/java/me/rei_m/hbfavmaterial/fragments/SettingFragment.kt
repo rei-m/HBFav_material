@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
+import com.twitter.sdk.android.core.*
+import com.twitter.sdk.android.core.identity.TwitterLoginButton
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -27,6 +29,9 @@ import me.rei_m.hbfavmaterial.utils.ConstantUtil
 public class SettingFragment : Fragment() {
 
     companion object {
+
+        public val TAG = SettingFragment::class.java.simpleName
+
         public fun newInstance(): SettingFragment {
             return SettingFragment()
         }
@@ -61,6 +66,23 @@ public class SettingFragment : Fragment() {
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
         }
 
+        val buttonTwitterLogin = view.findViewById(R.id.login_button) as TwitterLoginButton
+        buttonTwitterLogin.callback = object : Callback<TwitterSession>() {
+            override fun success(result: Result<TwitterSession>?) {
+                result ?: return
+                // twitterModelに保存.
+                println(result.data)
+                println(result.data.userId)
+                println(result.data.userName)
+                println(result.data.authToken.secret)
+                println(result.data.authToken.token)
+            }
+
+            override fun failure(exception: TwitterException?) {
+
+            }
+        }
+
         return view
     }
 
@@ -79,6 +101,14 @@ public class SettingFragment : Fragment() {
 
         data ?: return
 
+        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
+            // Fabric SDKからのTwitter認可後の処理を行う.
+            val buttonTwitterLogin = view.findViewById(R.id.login_button) as TwitterLoginButton
+            buttonTwitterLogin.onActivityResult(requestCode, resultCode, data);
+            return
+        }
+
+        // はてなのOAuth以外のリクエストの場合は終了.
         if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
             return
         }
