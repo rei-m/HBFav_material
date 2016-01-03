@@ -17,9 +17,11 @@ import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
@@ -67,15 +69,12 @@ public class SettingFragment : Fragment() {
         }
 
         val buttonTwitterLogin = view.findViewById(R.id.login_button) as TwitterLoginButton
+        val context = getAppContext()
         buttonTwitterLogin.callback = object : Callback<TwitterSession>() {
             override fun success(result: Result<TwitterSession>?) {
                 result ?: return
-                // twitterModelに保存.
-                println(result.data)
-                println(result.data.userId)
-                println(result.data.userName)
-                println(result.data.authToken.secret)
-                println(result.data.authToken.token)
+                val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
+                twitterModel.saveSession(context, result.data)
             }
 
             override fun failure(exception: TwitterException?) {

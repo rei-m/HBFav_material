@@ -6,7 +6,9 @@
 /build
 /captures
 /app/src/main/assets/hatena.json
+/app/src/main/assets/twitter.json
 /app/keystore/
+/app/src/debug/
 /app/src/release/
 /app/app-release.apk
 /gradle.properties
