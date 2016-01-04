@@ -26,17 +26,24 @@ public class BookmarkUtil private constructor() {
         }
 
         fun createShareText(url: String, title: String, comment: String): String {
+            val titleLength = Math.ceil(title.toByteArray().size / 3.0).toInt()
+
             return if (0 < comment.length) {
                 val commentLength = Math.ceil(comment.toByteArray().size / 3.0).toInt()
-                val titleLength = Math.ceil(title.toByteArray().size / 3.0).toInt()
                 val postTitle = if (110 < (commentLength + titleLength)) {
                     title.substring(0, 9) + "..."
                 } else {
                     title
                 }
                 "$comment \"$postTitle\" $url"
-            } else
-                "\"$title\" $url"
+            } else {
+                val postTitle = if (110 < titleLength) {
+                    title.substring(0, 109) + "..."
+                } else {
+                    title
+                }
+                "\"$postTitle\" $url"
+            }
         }
 
         fun getFilterTypeString(context: Context, filterType: FilterType): String {
