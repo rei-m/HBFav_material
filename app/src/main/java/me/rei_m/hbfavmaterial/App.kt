@@ -2,7 +2,10 @@ package me.rei_m.hbfavmaterial
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
+import com.twitter.sdk.android.Twitter
+import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
+import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag
 import me.rei_m.hbfavmaterial.models.*
@@ -14,10 +17,10 @@ public class App : Application() {
 
         // Application起動時に実行される。アプリの初期処理など
 
-        // Set up Crashlytics
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, Crashlytics())
-        }
+        // Set up Fabric
+        val twitterJson = getAssetToJson("twitter.json")
+        val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
+        Fabric.with(this, Crashlytics(), Twitter(authConfig))
 
         // ModelLocatorにModelの参照を登録
         ModelLocator.apply {
