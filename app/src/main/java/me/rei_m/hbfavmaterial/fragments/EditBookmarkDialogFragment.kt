@@ -18,6 +18,7 @@ import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.activities.SettingActivity
 import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
@@ -26,6 +27,8 @@ import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.*
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.models.TwitterModel
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
 
 public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
@@ -76,8 +79,10 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
 
         val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
+        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
 
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
+        val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)
 
         val isAdd = (arguments.getSerializable(ARG_BOOKMARK) == null)
 
@@ -85,7 +90,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         textTitle.text = getString(R.string.dialog_title_add_bookmark)
 
         val textBookmarkTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_article_title) as AppCompatTextView
-        textBookmarkTitle.text = arguments.getString(ARG_BOOKMARK_TITLE)
+        textBookmarkTitle.text = bookmarkTitle
 
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
 
@@ -100,9 +105,27 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             }
         }
 
+        val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
+        if (twitterModel.isAuthorised()) {
+            switchShareTwitter.isChecked = twitterModel.isShare
+        } else {
+            switchShareTwitter.isChecked = false
+        }
+        switchShareTwitter.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                if (!twitterModel.isAuthorised()) {
+                    startActivity(SettingActivity.createIntent(activity))
+                    dismiss()
+                    return@setOnCheckedChangeListener
+                }
+            }
+            twitterModel.setIsShare(getAppContext(), isChecked)
+        }
+
         val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
         switchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
             switchOpen.isEnabled = !isChecked
+            switchShareTwitter.isEnabled = !isChecked
             editBookmark.isEnabled = !isChecked
         }
 
@@ -120,7 +143,9 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             } else {
                 val inputtedComment = editBookmark.editableText.toString()
                 hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, switchOpen.isChecked)
-
+                if (switchShareTwitter.isChecked) {
+                    twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
+                }
             }
             showProgressDialog(activity)
         }
