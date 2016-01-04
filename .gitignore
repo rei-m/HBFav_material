@@ -8,7 +8,7 @@
 /app/src/main/assets/hatena.json
 /app/src/main/assets/twitter.json
 /app/keystore/
-/app/src/debug/
+/app/src/debug/AndroidManifest.xml
 /app/src/release/
 /app/app-release.apk
 /gradle.properties
