@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.rei_m.hbfavmaterial">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="YOUR_API_KEY" />
+    </application>
+
+</manifest>

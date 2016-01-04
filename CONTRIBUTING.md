@@ -1,8 +1,11 @@
 ## Contribute
 - Android StudioにKotlinの開発用プラグインをインストールしてください。
   - 参考 : https://kotlinlang.org/docs/tutorials/getting-started.html
-- プロジェクトをcloneした上で `/app/src/main/assets/hatena_dummy.json` をコピーして `hatena.json` を同じディレクトリに作成してください。OAuth認証用のキーを設定するファイルです。
+- プロジェクトをcloneした上で `/app/src/main/assets/hatena_dummy.json` をコピーして `hatena.json` を同じディレクトリに作成してください。はてなのOAuth認証用のキーを設定するファイルです。
   - OAuthの確認までする場合は、はてな側でアプリケーションを作成した上でご自身のアプリケーションのキーを設定してください。
+- 同様に `/app/src/main/assets/twitter_dummy.json` をコピーして `twitter.json` を同じディレクトリに作成してください。TwitterのOAuth認証用のキーを設定するファイルです。
+- Twitter連携用にFabricを導入しています。Fabricのアカウントを作成してアプリケーションを登録してください。
+  - 登録後、FabricのAPIキーが発行されるので `/app/src/debug/AndroidManifest_dummy.xml` をコピーして `AndroidManifest.xml` を同じディレクトリに作成してください。作成したファイル内のAPIキーを発行したAPIキーに差し替えてください。
 - 上記まで終わったらAndroid Studioでプロジェクトを開いてビルドしてください。
 
 ## 構成

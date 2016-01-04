@@ -265,7 +265,7 @@ public class HatenaModel {
     }
 
     /**
-     * PreferencesにModel内の
+     * Preferencesを取得する
      */
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getAppPreferences(HatenaModel::class.java.simpleName)
