@@ -9,11 +9,9 @@ import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import com.twitter.sdk.android.core.models.Tweet
-import io.fabric.sdk.android.Fabric
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 
 /**
  * はてなのOAuth関連の情報を管理するModel.
@@ -38,11 +36,6 @@ public class TwitterModel {
      * コンストラクタ.
      */
     constructor(context: Context) {
-
-        // OAuth認証用のキーを作成し、OAuthAPIを作成する.
-        val twitterJson = context.getAssetToJson("twitter.json")
-        val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
-        Fabric.with(context, Twitter(authConfig))
 
         // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
