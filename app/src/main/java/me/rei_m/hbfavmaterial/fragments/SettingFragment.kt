@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
+import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -18,6 +19,7 @@ import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 
@@ -27,6 +29,9 @@ import me.rei_m.hbfavmaterial.utils.ConstantUtil
 public class SettingFragment : Fragment() {
 
     companion object {
+
+        public val TAG = SettingFragment::class.java.simpleName
+
         public fun newInstance(): SettingFragment {
             return SettingFragment()
         }
@@ -61,17 +66,34 @@ public class SettingFragment : Fragment() {
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
         }
 
+        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
+
+        val layoutTwitterOAuth = view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth) as LinearLayout
+        layoutTwitterOAuth.setOnClickListener { v ->
+            twitterModel.authorize(activity)
+        }
+
         return view
     }
 
     override fun onResume() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
+
+        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
+
+        val textTwitterOAuth = view.findViewById(R.id.fragment_setting_text_twitter_oauth) as AppCompatTextView
+        val twitterOAuthTextId = if (twitterModel.isAuthorised())
+            R.string.text_hatena_account_connect_ok else
+            R.string.text_hatena_account_connect_no
+        textTwitterOAuth.text = resources.getString(twitterOAuthTextId)
     }
 
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
+        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
+        twitterModel.clearBusy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,6 +101,14 @@ public class SettingFragment : Fragment() {
 
         data ?: return
 
+        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
+            // TwitterOAuth認可後の処理を行う.
+            val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
+            twitterModel.onActivityResult(requestCode, resultCode, data)
+            return
+        }
+
+        // はてなのOAuth以外のリクエストの場合は終了.
         if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
             return
         }

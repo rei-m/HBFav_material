@@ -25,6 +25,14 @@ public class BookmarkUtil private constructor() {
             COMEDY
         }
 
+        fun createShareText(url: String, title: String, comment: String): String {
+            val text = "\"$title\" $url"
+            return if (0 < comment.length)
+                "$comment $text"
+            else
+                text
+        }
+
         fun getFilterTypeString(context: Context, filterType: FilterType): String {
 
             val id = when (filterType) {

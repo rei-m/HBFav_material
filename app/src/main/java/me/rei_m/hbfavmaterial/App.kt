@@ -16,7 +16,7 @@ public class App : Application() {
 
         // Set up Crashlytics
         if (!BuildConfig.DEBUG) {
-            Fabric.with(this, Crashlytics());
+            Fabric.with(this, Crashlytics())
         }
 
         // ModelLocatorにModelの参照を登録
@@ -29,6 +29,7 @@ public class App : Application() {
             register(Tag.OTHERS_BOOKMARK, BookmarkUserModel())
             register(Tag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel())
             register(Tag.HATENA, HatenaModel(applicationContext))
+            register(Tag.TWITTER, TwitterModel(applicationContext))
         }
     }
 
