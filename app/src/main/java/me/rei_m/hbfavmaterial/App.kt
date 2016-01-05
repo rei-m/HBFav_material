@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
@@ -19,8 +20,9 @@ public class App : Application() {
 
         // Set up Fabric
         val twitterJson = getAssetToJson("twitter.json")
+        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
         val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
-        Fabric.with(this, Crashlytics(), Twitter(authConfig))
+        Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))
 
         // ModelLocatorにModelの参照を登録
         ModelLocator.apply {
