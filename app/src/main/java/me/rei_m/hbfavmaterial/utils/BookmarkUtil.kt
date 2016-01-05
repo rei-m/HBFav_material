@@ -95,7 +95,17 @@ public class BookmarkUtil private constructor() {
         fun getPastTimeString(bookmarkAddedDatetime: Date,
                               cal: Date = Calendar.getInstance(TimeZone.getDefault()).time): String {
 
-            val diffSec = (cal.time - bookmarkAddedDatetime.time) / 1000
+            val bookmarkCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
+            bookmarkCal.time = bookmarkAddedDatetime
+
+            val bookmarkInMills = bookmarkCal.timeInMillis - bookmarkCal.timeZone.rawOffset
+
+            val nowCal = Calendar.getInstance(TimeZone.getDefault())
+            nowCal.time = cal
+
+            val nowTimeInMillis = nowCal.timeInMillis - nowCal.timeZone.rawOffset
+
+            val diffSec = (nowTimeInMillis - bookmarkInMills) / 1000
 
             if (diffSec < 60) {
                 return "${diffSec.toString()}秒前"

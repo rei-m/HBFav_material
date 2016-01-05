@@ -19,7 +19,7 @@ android {
     buildTypes {
         debug {
             debuggable true
-            applicationIdSuffix ".dubug"
+            applicationIdSuffix ".debug"
             versionNameSuffix "d"
             ext.enableCrashlytics = false
         }
