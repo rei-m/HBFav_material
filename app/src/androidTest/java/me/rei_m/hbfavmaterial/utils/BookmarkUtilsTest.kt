@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.utils
 import android.support.test.runner.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Assert.*
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
@@ -19,8 +20,6 @@ public class BookmarkUtilsTest {
         val cal = Calendar.getInstance()
         cal.timeZone = TimeZone.getTimeZone("Asia/Tokyo")
         cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 58)
-
-//        assertEquals(BookmarkUtil.getPastTimeString(cal.time, now.time), "2秒前")
+        assertEquals(BookmarkUtil.getPastTimeString(cal.time, now.time), "2秒前")
     }
-
 }
