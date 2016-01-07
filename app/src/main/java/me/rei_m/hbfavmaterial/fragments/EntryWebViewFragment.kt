@@ -68,10 +68,10 @@ public class EntryWebViewFragment : Fragment() {
     /**
      * WebView内のコンテンツがヒストリバック可能な場合、ヒストリバックして表示する.
      *
-     * @return ヒストリバック不可能な場合 true, 可能な場合 false
+     * @return ヒストリバックしない場合 true, した場合 false
      */
     public fun backHistory(): Boolean {
-        val view = view.findViewById(R.id.fragment_bookmark_webview_view)
+        val view = view?.findViewById(R.id.fragment_bookmark_webview_view)
         view ?: return true
         view as WebView
         if (view.canGoBack()) {
