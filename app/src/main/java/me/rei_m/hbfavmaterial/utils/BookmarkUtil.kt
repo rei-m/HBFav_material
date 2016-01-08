@@ -26,11 +26,17 @@ public class BookmarkUtil private constructor() {
 
         private val HATENA_CDN_DOMAIN = "http://cdn1.www.st-hatena.com"
 
+        /**
+         * ブックマークのフィルタ.
+         */
         enum class FilterType {
             ALL,
             COMMENT
         }
 
+        /**
+         * エントリーの種類.
+         */
         enum class EntryType {
             ALL,
             WORLD,
@@ -43,19 +49,19 @@ public class BookmarkUtil private constructor() {
             COMEDY
         }
 
+        /**
+         * Twitterのシェア用のテキストを作成する.
+         */
         fun createShareText(url: String, title: String, comment: String): String {
-            val titleLength = Math.ceil(title.toByteArray().size / 3.0).toInt()
-
             return if (0 < comment.length) {
-                val commentLength = Math.ceil(comment.toByteArray().size / 3.0).toInt()
-                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < (commentLength + titleLength)) {
+                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < (comment.length + title.length)) {
                     title.substring(0, 9) + "..."
                 } else {
                     title
                 }
                 "$comment \"$postTitle\" $url"
             } else {
-                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < titleLength) {
+                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < title.length) {
                     title.substring(0, LENGTH_COMMENT_AND_TITLE_AT_TWITTER - 1) + "..."
                 } else {
                     title
@@ -64,6 +70,9 @@ public class BookmarkUtil private constructor() {
             }
         }
 
+        /**
+         * フィルタに対応した文字列を取得する.
+         */
         fun getFilterTypeString(context: Context, filterType: FilterType): String {
 
             val id = when (filterType) {
@@ -76,6 +85,9 @@ public class BookmarkUtil private constructor() {
             return context.getString(id)
         }
 
+        /**
+         * エントリタイプに応じた文字列を取得する.
+         */
         fun getEntryTypeString(context: Context, entryType: EntryType): String {
 
             val id = when (entryType) {
@@ -102,14 +114,23 @@ public class BookmarkUtil private constructor() {
             return context.getString(id)
         }
 
+        /**
+         * ユーザーのアイコン画像のURLを取得する.
+         */
         fun getIconImageUrlFromId(userId: String): String {
             return "$HATENA_CDN_DOMAIN/users/${userId.take(2)}/$userId/profile.gif"
         }
 
+        /**
+         * ユーザーのアイコン画像（大）のURLを取得する.
+         */
         fun getLargeIconImageUrlFromId(userId: String): String {
             return "$HATENA_CDN_DOMAIN/users/${userId.take(2)}/$userId/user.jpg"
         }
 
+        /**
+         * 日付の差分を計算し表示用に整形する.
+         */
         fun getPastTimeString(bookmarkAddedDatetime: Date,
                               cal: Date = Calendar.getInstance(TimeZone.getDefault()).time): String {
 
