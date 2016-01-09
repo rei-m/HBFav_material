@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial
 import android.app.Application
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.squareup.leakcanary.LeakCanary
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
@@ -17,6 +18,11 @@ public class App : Application() {
         super.onCreate()
 
         // Application起動時に実行される。アプリの初期処理など
+
+        // LeakCanaryの設定
+        if (BuildConfig.DEBUG) {
+            LeakCanary.install(this);
+        }
 
         // Set up Fabric
         val twitterJson = getAssetToJson("twitter.json")
