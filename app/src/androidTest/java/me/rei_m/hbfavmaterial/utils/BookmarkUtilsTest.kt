@@ -15,20 +15,27 @@ public class BookmarkUtilsTest {
 
         val url = "https://play.google.com/store/apps/details?id=me.rei_m.hbfavmaterial&hl=ja"
         val title = "HBFav Material はてブを流れるように見るアプリ"
-        val title_120 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
         val comment = "コメントコメントコメントコメント"
+        val string_5 = "12345"
+        val string_120 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
 
-        // コメント無しの場合 / 110文字以内
+        // コメント無しの場合 / タイトルが範囲内
         assertThat(BookmarkUtil.createShareText(url, title, ""), `is`("\"$title\" $url"))
 
-        // コメント無しの場合 / 110文字以上
-        assertThat(BookmarkUtil.createShareText(url, title_120, ""), `is`("\"${title_120.take(109)}...\" $url"))
+        // コメント無しの場合 / タイトルが範囲外
+        assertThat(BookmarkUtil.createShareText(url, string_120, ""), `is`("\"${string_120.take(109)}...\" $url"))
 
-        // コメントありの場合 / 110文字以内
+        // コメントありの場合 / コメントが範囲外, タイトルが残りの範囲内
+        assertThat(BookmarkUtil.createShareText(url, string_5, string_120), `is`("${string_120.take(99)}... \"$string_5\" $url"))
+
+        // コメントありの場合 / コメントが範囲外, タイトルが残りの範囲外
+        assertThat(BookmarkUtil.createShareText(url, string_120, string_120), `is`("${string_120.take(99)}... \"${string_120.take(9)}...\" $url"))
+
+        // コメントありの場合 / コメントが範囲内, タイトルが残りの範囲内
         assertThat(BookmarkUtil.createShareText(url, title, comment), `is`("$comment \"$title\" $url"))
 
-        // コメントありの場合 / 110文字以上
-        assertThat(BookmarkUtil.createShareText(url, title_120, comment), `is`("$comment \"${title_120.take(9)}...\" $url"))
+        // コメントありの場合 / コメントが範囲内, タイトルが残りの範囲外
+        assertThat(BookmarkUtil.createShareText(url, string_120, comment), `is`("$comment \"${string_120.take(93)}...\" $url"))
     }
 
     @Test
