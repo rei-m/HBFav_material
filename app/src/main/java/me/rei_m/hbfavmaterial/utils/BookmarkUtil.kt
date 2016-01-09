@@ -22,7 +22,11 @@ public class BookmarkUtil private constructor() {
 
         private val COUNT_MILLIS_AT_SECOND = 1000
 
-        private val LENGTH_COMMENT_AND_TITLE_AT_TWITTER = 110
+        private val MAX_LENGTH_COMMENT_AT_TWITTER = 100
+
+        private val MAX_LENGTH_TITLE_WITH_COMMENT_AT_TWITTER = 10
+
+        private val MAX_LENGTH_TITLE_AT_TWITTER = MAX_LENGTH_COMMENT_AT_TWITTER + MAX_LENGTH_TITLE_WITH_COMMENT_AT_TWITTER
 
         private val HATENA_CDN_DOMAIN = "http://cdn1.www.st-hatena.com"
 
@@ -54,15 +58,28 @@ public class BookmarkUtil private constructor() {
          */
         fun createShareText(url: String, title: String, comment: String): String {
             return if (0 < comment.length) {
-                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < (comment.length + title.length)) {
-                    title.substring(0, 9) + "..."
+                val postComment: String
+                val postTitle: String
+                if (MAX_LENGTH_COMMENT_AT_TWITTER < comment.length) {
+                    postComment = comment.take(MAX_LENGTH_COMMENT_AT_TWITTER - 1) + "..."
+                    postTitle = if (MAX_LENGTH_TITLE_WITH_COMMENT_AT_TWITTER < (title.length)) {
+                        title.take(MAX_LENGTH_TITLE_WITH_COMMENT_AT_TWITTER - 1) + "..."
+                    } else {
+                        title
+                    }
                 } else {
-                    title
+                    postComment = comment
+                    val postTitleLength = MAX_LENGTH_TITLE_AT_TWITTER - comment.length
+                    postTitle = if (postTitleLength < title.length) {
+                        title.take(postTitleLength - 1) + "..."
+                    } else {
+                        title
+                    }
                 }
-                "$comment \"$postTitle\" $url"
+                "$postComment \"$postTitle\" $url"
             } else {
-                val postTitle = if (LENGTH_COMMENT_AND_TITLE_AT_TWITTER < title.length) {
-                    title.substring(0, LENGTH_COMMENT_AND_TITLE_AT_TWITTER - 1) + "..."
+                val postTitle = if (MAX_LENGTH_TITLE_AT_TWITTER < title.length) {
+                    title.substring(0, MAX_LENGTH_TITLE_AT_TWITTER - 1) + "..."
                 } else {
                     title
                 }
