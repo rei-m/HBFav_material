@@ -14,7 +14,7 @@ import java.util.*
 /**
  * 新着エントリー情報を取得するModel.
  */
-public class NewEntryModel {
+class NewEntryModel {
 
     public var isBusy = false
         private set

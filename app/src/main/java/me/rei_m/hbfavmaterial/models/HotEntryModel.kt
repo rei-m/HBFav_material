@@ -14,7 +14,7 @@ import java.util.*
 /**
  * ホットエントリー情報を取得するModel.
  */
-public class HotEntryModel {
+class HotEntryModel {
 
     public var isBusy = false
         private set

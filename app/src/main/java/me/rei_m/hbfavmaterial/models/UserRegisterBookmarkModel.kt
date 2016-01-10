@@ -13,7 +13,7 @@ import java.util.*
 /**
  * ブックマークしているユーザーを管理するModel.
  */
-public class UserRegisterBookmarkModel {
+class UserRegisterBookmarkModel {
 
     public var isBusy = false
         private set
