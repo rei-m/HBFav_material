@@ -19,7 +19,7 @@ import java.net.HttpURLConnection
 /**
  * はてなのOAuth関連の情報を管理するModel.
  */
-public class HatenaModel {
+class HatenaModel {
 
     public var isBusy = false
         private set

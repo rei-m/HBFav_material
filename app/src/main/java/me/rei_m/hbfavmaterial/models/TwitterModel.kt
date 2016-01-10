@@ -14,9 +14,9 @@ import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 
 /**
- * はてなのOAuth関連の情報を管理するModel.
+ * Twitter関連の情報を管理するModel.
  */
-public class TwitterModel {
+class TwitterModel {
 
     public var isBusy = false
         private set

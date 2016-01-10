@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers
 /**
  * ユーザー情報を管理するModel.
  */
-public class UserModel {
+class UserModel {
 
     public var isBusy = false
         private set

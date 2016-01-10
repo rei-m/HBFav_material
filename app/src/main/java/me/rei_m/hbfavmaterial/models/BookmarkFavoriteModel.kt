@@ -4,7 +4,7 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkFavoriteLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
-import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
+import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -13,14 +13,16 @@ import java.util.*
 /**
  * お気に入りのBookmarkを管理するModel.
  */
-public class BookmarkFavoriteModel {
+class BookmarkFavoriteModel {
 
-    public var isBusy = false
+    private val bookmarkRepository = BookmarkRepository()
+
+    var isBusy = false
         private set
 
-    public val bookmarkList = ArrayList<BookmarkEntity>()
+    val bookmarkList = ArrayList<BookmarkEntity>()
 
-    public fun fetch(userId: String, startIndex: Int = 0) {
+    fun fetch(userId: String, startIndex: Int = 0) {
 
         if (isBusy) {
             return
@@ -28,22 +30,22 @@ public class BookmarkFavoriteModel {
 
         isBusy = true
 
-        val listFromRss = ArrayList<BookmarkEntity>()
+        var isEmpty = false
 
-        val observer = object : Observer<BookmarkEntity> {
-            override fun onNext(t: BookmarkEntity?) {
-                listFromRss.add(t!!)
-            }
-
-            override fun onCompleted() {
+        val observer = object : Observer<List<BookmarkEntity>> {
+            override fun onNext(t: List<BookmarkEntity>?) {
+                t ?: return
                 if (startIndex === 0) {
                     bookmarkList.clear()
                 }
+                isEmpty = t.isEmpty()
+                bookmarkList.addAll(t)
+            }
 
-                if (listFromRss.isEmpty()) {
+            override fun onCompleted() {
+                if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
-                    bookmarkList.addAll(listFromRss)
                     EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.OK))
                 }
             }
@@ -53,7 +55,7 @@ public class BookmarkFavoriteModel {
             }
         }
 
-        BookmarkFavoriteRss().request(userId, startIndex)
+        bookmarkRepository.fetchFavorite(userId, startIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
