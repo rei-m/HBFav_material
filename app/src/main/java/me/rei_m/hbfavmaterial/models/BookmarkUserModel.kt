@@ -73,7 +73,7 @@ class BookmarkUserModel {
             }
         }
 
-        bookmarkRepository.fetchOwn(userId, requestIndex)
+        bookmarkRepository.findByUserId(userId, requestIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
