@@ -17,10 +17,10 @@ import rx.schedulers.Schedulers
  */
 class UserModel {
 
-    public var isBusy = false
+    var isBusy = false
         private set
 
-    public var userEntity: UserEntity? = null
+    var userEntity: UserEntity? = null
         private set
 
     companion object {
@@ -42,14 +42,14 @@ class UserModel {
     /**
      * ユーザー情報が設定済か判定する.
      */
-    public fun isSetUserSetting(): Boolean {
+    fun isSetUserSetting(): Boolean {
         return userEntity != null
     }
 
     /**
      * 指定されたユーザーIDの有効確認と保存を行う.
      */
-    public fun checkAndSaveUserId(context: Context, id: String) {
+    fun checkAndSaveUserId(context: Context, id: String) {
 
         if (isBusy) {
             return
@@ -105,7 +105,7 @@ class UserModel {
     /**
      * ユーザー情報を削除する.
      */
-    public fun deleteUser(context: Context) {
+    fun deleteUser(context: Context) {
         userEntity = null
         getPreferences(context).edit().remove(KEY_PREF_USER)
     }

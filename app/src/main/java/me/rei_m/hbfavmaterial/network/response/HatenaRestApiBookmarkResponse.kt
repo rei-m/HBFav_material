@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.entities
+package me.rei_m.hbfavmaterial.network.response
 
 import java.io.Serializable
 

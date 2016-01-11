@@ -17,25 +17,25 @@ class EntryRepository {
     /**
      * ホッテントリ情報を取得する.
      */
-    fun fetchHot(entryType: EntryType): Observable<List<EntryEntity>> {
+    fun findByEntryTypeForHot(entryType: EntryType): Observable<List<EntryEntity>> {
         return HotEntryRss()
                 .request(entryType)
-                .map { response -> parseResponse(response) }
+                .map { response -> parseRssResponse(response) }
     }
 
     /**
      * 新着エントリ情報を取得する.
      */
-    fun fetchNew(entryType: EntryType): Observable<List<EntryEntity>> {
+    fun findByEntryTypeForNew(entryType: EntryType): Observable<List<EntryEntity>> {
         return NewEntryRss()
                 .request(entryType)
-                .map { response -> parseResponse(response) }
+                .map { response -> parseRssResponse(response) }
     }
 
     /**
      * レスポンスをパースしてエントリ情報に変換する.
      */
-    private fun parseResponse(response: String): List<EntryEntity> {
+    private fun parseRssResponse(response: String): List<EntryEntity> {
         return ArrayList<EntryEntity>().apply {
             val document = parseXml(response.byteInputStream())
             val feeds = document.getElementsByTagName("item")

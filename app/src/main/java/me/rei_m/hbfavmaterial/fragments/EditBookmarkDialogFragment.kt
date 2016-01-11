@@ -19,7 +19,7 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.SettingActivity
-import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
+import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.HatenaPostBookmarkLoadedEvent
@@ -41,7 +41,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
     companion object {
 
-        public val TAG = EditBookmarkDialogFragment::class.java.simpleName
+        val TAG = EditBookmarkDialogFragment::class.java.simpleName
 
         private val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
 
@@ -49,8 +49,8 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        public fun newInstance(title: String,
-                               url: String): EditBookmarkDialogFragment {
+        fun newInstance(title: String,
+                        url: String): EditBookmarkDialogFragment {
             return EditBookmarkDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_BOOKMARK_TITLE, title)
@@ -59,11 +59,11 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             }
         }
 
-        public fun newInstance(title: String,
-                               url: String,
-                               response: HatenaRestApiBookmarkResponse): EditBookmarkDialogFragment {
+        fun newInstance(title: String,
+                        url: String,
+                        bookmarkEditEntity: BookmarkEditEntity): EditBookmarkDialogFragment {
             return newInstance(title, url).apply {
-                arguments.putSerializable(ARG_BOOKMARK, response)
+                arguments.putSerializable(ARG_BOOKMARK, bookmarkEditEntity)
             }
         }
     }
@@ -171,10 +171,10 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
                 }
 
         if (!isAdd) {
-            val bookmark = arguments.getSerializable(ARG_BOOKMARK) as HatenaRestApiBookmarkResponse
+            val bookmark = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEditEntity
             textTitle.text = resources.getString(R.string.dialog_title_update_bookmark)
             editBookmark.setText(bookmark.comment)
-            switchOpen.isChecked = !bookmark.private
+            switchOpen.isChecked = !bookmark.isPrivate
             buttonOk.text = resources.getString(R.string.button_update)
         } else {
             switchDelete.hide()

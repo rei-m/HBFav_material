@@ -51,7 +51,7 @@ class NewEntryModel {
             }
         }
 
-        entryRepository.fetchNew(entryType)
+        entryRepository.findByEntryTypeForNew(entryType)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
