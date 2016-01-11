@@ -55,7 +55,7 @@ class BookmarkFavoriteModel {
             }
         }
 
-        bookmarkRepository.fetchFavorite(userId, startIndex)
+        bookmarkRepository.findByUserIdForFavorite(userId, startIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -4,7 +4,7 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.network.UserRegisterBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.network.EntryApi
+import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -15,19 +15,21 @@ import java.util.*
  */
 class UserRegisterBookmarkModel {
 
-    public var isBusy = false
+    private val bookmarkRepository = BookmarkRepository()
+
+    var isBusy = false
         private set
 
-    public val bookmarkList = ArrayList<BookmarkEntity>()
+    val bookmarkList = ArrayList<BookmarkEntity>()
 
     private var bookmarkUrl: String = ""
 
     /**
      * Model内で保持しているURLと指定されたURLが同じか判定する.
      */
-    public fun isSameUrl(bookmarkUrl: String): Boolean = (this.bookmarkUrl == bookmarkUrl)
+    fun isSameUrl(bookmarkUrl: String): Boolean = (this.bookmarkUrl == bookmarkUrl)
 
-    public fun fetch(bookmarkUrl: String) {
+    fun fetch(bookmarkUrl: String) {
 
         if (!isSameUrl(bookmarkUrl)) {
             this.bookmarkUrl = bookmarkUrl
@@ -40,17 +42,15 @@ class UserRegisterBookmarkModel {
         }
 
         isBusy = true
-
-        val listFromApi = ArrayList<BookmarkEntity>()
-
-        val observer = object : Observer<BookmarkEntity> {
-            override fun onNext(t: BookmarkEntity?) {
-                listFromApi.add(t!!)
+        
+        val observer = object : Observer<List<BookmarkEntity>> {
+            override fun onNext(t: List<BookmarkEntity>?) {
+                t ?: return
+                bookmarkList.clear()
+                bookmarkList.addAll(t)
             }
 
             override fun onCompleted() {
-                bookmarkList.clear()
-                bookmarkList.addAll(listFromApi)
                 EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.OK))
             }
 
@@ -59,7 +59,7 @@ class UserRegisterBookmarkModel {
             }
         }
 
-        EntryApi().request(bookmarkUrl)
+        bookmarkRepository.findByArticleUrl(bookmarkUrl)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
