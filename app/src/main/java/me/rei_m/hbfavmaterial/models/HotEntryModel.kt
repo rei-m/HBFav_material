@@ -51,7 +51,7 @@ class HotEntryModel {
             }
         }
 
-        entryRepository.fetchHot(entryType)
+        entryRepository.findByEntryTypeForHot(entryType)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
