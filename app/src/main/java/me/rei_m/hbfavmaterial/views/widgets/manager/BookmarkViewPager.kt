@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind as p
 /**
  * MainActivityのメインコンテンツを管理するViewPager.
  */
-public class BookmarkViewPager : ViewPager {
+class BookmarkViewPager : ViewPager {
 
     constructor(context: Context?) : super(context)
 
@@ -21,7 +21,7 @@ public class BookmarkViewPager : ViewPager {
     /**
      * 初期設定を行う.
      */
-    public fun initialize(supportFragmentManager: FragmentManager, context: Context) {
+    fun initialize(supportFragmentManager: FragmentManager, context: Context) {
 
         adapter = BookmarkPagerAdaptor(supportFragmentManager, context)
 
@@ -43,12 +43,12 @@ public class BookmarkViewPager : ViewPager {
     /**
      * 表示中のページ対応するタイトルを取得する.
      */
-    public fun getCurrentPageTitle() = adapter.getPageTitle(currentItem)
+    fun getCurrentPageTitle() = adapter.getPageTitle(currentItem)
 
     /**
      * 表示中のページが表示されたイベントをPOSTする.
      */
-    public fun postCurrentPageDisplayEvent() {
+    fun postCurrentPageDisplayEvent() {
         postPageDisplayEvent(currentItem)
     }
 

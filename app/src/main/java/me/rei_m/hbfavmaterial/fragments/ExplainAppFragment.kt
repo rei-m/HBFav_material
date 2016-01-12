@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.utils.AppUtil
 /**
  * このアプリについてを表示するFragment.
  */
-public class ExplainAppFragment : Fragment() {
+class ExplainAppFragment : Fragment() {
 
     companion object {
         fun newInstance(): ExplainAppFragment {

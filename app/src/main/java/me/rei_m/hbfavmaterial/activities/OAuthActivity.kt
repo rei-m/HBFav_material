@@ -20,16 +20,16 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 
-public class OAuthActivity : BaseActivity() {
+class OAuthActivity : BaseActivity() {
 
     private var mWebView: WebView? = null;
 
     companion object {
 
-        public val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
-        public val ARG_IS_AUTHORIZE_DONE = "ARG_IS_AUTHORIZE_DONE"
+        val ARG_AUTHORIZE_STATUS = "ARG_AUTHORIZE_STATUS"
+        val ARG_IS_AUTHORIZE_DONE = "ARG_IS_AUTHORIZE_DONE"
 
-        public fun createIntent(context: Context): Intent {
+        fun createIntent(context: Context): Intent {
             return Intent(context, OAuthActivity::class.java)
         }
     }
@@ -82,7 +82,7 @@ public class OAuthActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun subscribe(event: HatenaOAuthRequestTokenLoadedEvent) {
+    fun subscribe(event: HatenaOAuthRequestTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 mWebView?.loadUrl(event.authUrl)
@@ -94,7 +94,7 @@ public class OAuthActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun subscribe(event: HatenaOAuthAccessTokenLoadedEvent) {
+    fun subscribe(event: HatenaOAuthAccessTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 setAuthorizeResult(true, true)

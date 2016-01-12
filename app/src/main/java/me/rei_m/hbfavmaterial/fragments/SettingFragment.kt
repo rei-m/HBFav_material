@@ -26,13 +26,13 @@ import me.rei_m.hbfavmaterial.utils.ConstantUtil
 /**
  * ユーザーの設定を行うFragment.
  */
-public class SettingFragment : Fragment() {
+class SettingFragment : Fragment() {
 
     companion object {
 
-        public val TAG = SettingFragment::class.java.simpleName
+        val TAG = SettingFragment::class.java.simpleName
 
-        public fun newInstance(): SettingFragment {
+        fun newInstance(): SettingFragment {
             return SettingFragment()
         }
     }
@@ -139,7 +139,7 @@ public class SettingFragment : Fragment() {
      * ユーザーIDチェック時のイベント.
      */
     @Subscribe
-    public fun subscribe(event: UserIdCheckedEvent) {
+    fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             userModel.userEntity?.apply {

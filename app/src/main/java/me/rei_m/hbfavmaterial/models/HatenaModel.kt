@@ -210,7 +210,6 @@ class HatenaModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .finallyDo { isBusy = false }
                 .subscribe(observer)
-
     }
 
     /**

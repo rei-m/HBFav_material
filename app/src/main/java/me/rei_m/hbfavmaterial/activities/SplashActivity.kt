@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.fragments.InitializeFragment
 /**
  * 最初に起動するActivity.
  */
-public class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ public class SplashActivity : AppCompatActivity() {
      * ユーザーIDチェック完了時のイベント
      */
     @Subscribe
-    public fun subscribe(event: UserIdCheckedEvent) {
+    fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             // IDチェックが問題なければ次の画面に進む.
             startActivityWithClearTop(MainActivity.createIntent(applicationContext))

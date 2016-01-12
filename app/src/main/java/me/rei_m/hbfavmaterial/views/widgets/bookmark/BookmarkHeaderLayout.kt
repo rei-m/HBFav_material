@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 /**
  * ブックマーク詳細のヘッダを表示するレイアウト.
  */
-public class BookmarkHeaderLayout : RelativeLayout {
+class BookmarkHeaderLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,

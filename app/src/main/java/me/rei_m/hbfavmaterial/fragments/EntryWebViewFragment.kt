@@ -13,7 +13,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 記事のコンテンツをWebViewに表示するFragment.
  */
-public class EntryWebViewFragment : Fragment() {
+class EntryWebViewFragment : Fragment() {
 
     private var mEntryUrl: String? = null
 
@@ -23,7 +23,7 @@ public class EntryWebViewFragment : Fragment() {
 
         private val ARG_ENTRY_URL = "ARG_ENTRY_URL"
 
-        public fun newInstance(entryUrl: String): EntryWebViewFragment {
+        fun newInstance(entryUrl: String): EntryWebViewFragment {
             return EntryWebViewFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_ENTRY_URL, entryUrl)
@@ -70,7 +70,7 @@ public class EntryWebViewFragment : Fragment() {
      *
      * @return ヒストリバックしない場合 true, した場合 false
      */
-    public fun backHistory(): Boolean {
+    fun backHistory(): Boolean {
         val view = view?.findViewById(R.id.fragment_bookmark_webview_view)
         view ?: return true
         view as WebView

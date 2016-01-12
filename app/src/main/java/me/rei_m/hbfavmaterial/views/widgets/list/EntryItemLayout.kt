@@ -18,7 +18,7 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 /**
  * エントリー一覧のアイテムを表示するレイアウト.
  */
-public class EntryItemLayout : RelativeLayout {
+class EntryItemLayout : RelativeLayout {
 
     private var mMarginTitleRight: Int = 0
 
@@ -49,7 +49,7 @@ public class EntryItemLayout : RelativeLayout {
         mMarginTitleRight = resources.getDimensionPixelSize(R.dimen.margin_outline)
     }
 
-    public fun bindView(entryEntity: EntryEntity) {
+    fun bindView(entryEntity: EntryEntity) {
         val holder = tag as ViewHolder
         holder.apply {
             title.text = entryEntity.articleEntity.title

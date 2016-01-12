@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout
 /**
  * エントリー一覧を管理するAdaptor.
  */
-public class EntryListAdapter constructor(context: Context, resource: Int) :
+class EntryListAdapter constructor(context: Context, resource: Int) :
         ArrayAdapter<EntryEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {

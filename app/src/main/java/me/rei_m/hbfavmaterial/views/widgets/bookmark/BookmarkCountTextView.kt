@@ -17,7 +17,7 @@ class BookmarkCountTextView : AppCompatTextView {constructor(context: Context?) 
         super.onFinishInflate()
     }
 
-    public fun bindView(bookmarkEntity: BookmarkEntity) {
+    fun bindView(bookmarkEntity: BookmarkEntity) {
         text = bookmarkEntity.articleEntity.bookmarkCount.toString() + " users"
 
         setOnClickListener {

@@ -5,12 +5,12 @@ import java.io.Serializable
 /**
  * はてぶAPIのレスポンス.
  */
-public data class HatenaRestApiBookmarkResponse(val comment_raw: String,
-                                                val private: Boolean,
-                                                val eid: Int,
-                                                val created_epoch: Int,
-                                                val tags: List<String>,
-                                                val permalink: String,
-                                                val comment: String,
-                                                val created_datetime: String,
-                                                val user: String) : Serializable
+data class HatenaRestApiBookmarkResponse(val comment_raw: String,
+                                         val private: Boolean,
+                                         val eid: Int,
+                                         val created_epoch: Int,
+                                         val tags: List<String>,
+                                         val permalink: String,
+                                         val comment: String,
+                                         val created_datetime: String,
+                                         val user: String) : Serializable

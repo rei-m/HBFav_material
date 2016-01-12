@@ -33,7 +33,7 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-public class BookmarkFavoriteFragment : Fragment() {
+class BookmarkFavoriteFragment : Fragment() {
 
     private var mUserId: String = ""
 
@@ -156,7 +156,7 @@ public class BookmarkFavoriteFragment : Fragment() {
      * ブックマーク情報のロード完了イベント
      */
     @Subscribe
-    public fun subscribe(event: BookmarkFavoriteLoadedEvent) {
+    fun subscribe(event: BookmarkFavoriteLoadedEvent) {
 
         when (event.status) {
             LoadedEventStatus.OK -> {

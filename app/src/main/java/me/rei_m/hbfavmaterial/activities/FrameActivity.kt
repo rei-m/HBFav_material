@@ -10,13 +10,13 @@ import me.rei_m.hbfavmaterial.fragments.CreditFragment
 import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
 import me.rei_m.hbfavmaterial.utils.FragmentUtil.Companion.Tag
 
-public class FrameActivity : BaseActivity() {
+class FrameActivity : BaseActivity() {
 
     companion object {
 
         private val ARG_TAG = "TAG"
 
-        public fun createIntent(context: Context, tag: Tag): Intent {
+        fun createIntent(context: Context, tag: Tag): Intent {
             return Intent(context, FrameActivity::class.java).apply {
                 putExtra(ARG_TAG, tag)
             }

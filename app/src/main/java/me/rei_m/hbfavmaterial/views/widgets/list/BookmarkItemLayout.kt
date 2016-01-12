@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 /**
  * ブックマーク一覧のアイテムを表示するレイアウト.
  */
-public class BookmarkItemLayout : RelativeLayout {
+class BookmarkItemLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,
