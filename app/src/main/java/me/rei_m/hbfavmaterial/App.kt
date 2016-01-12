@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag
 import me.rei_m.hbfavmaterial.models.*
 
-public class App : Application() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -44,7 +44,7 @@ public class App : Application() {
         }
     }
 
-    public fun resetBookmarks() {
+    fun resetBookmarks() {
 
         val favoriteModel = ModelLocator.get(Tag.FAVORITE) as BookmarkFavoriteModel
         val ownModel = ModelLocator.get(Tag.OWN_BOOKMARK) as BookmarkUserModel

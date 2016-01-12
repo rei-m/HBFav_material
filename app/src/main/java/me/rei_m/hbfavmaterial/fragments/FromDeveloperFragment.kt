@@ -11,10 +11,10 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 開発者からのコメントを表示するFragment.
  */
-public class FromDeveloperFragment : Fragment() {
+class FromDeveloperFragment : Fragment() {
 
     companion object {
-        public fun newInstance(): FromDeveloperFragment {
+        fun newInstance(): FromDeveloperFragment {
             return FromDeveloperFragment()
         }
     }

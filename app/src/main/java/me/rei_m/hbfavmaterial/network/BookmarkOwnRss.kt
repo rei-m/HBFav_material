@@ -11,7 +11,7 @@ import java.net.HttpURLConnection
 /**
  * ユーザーのブックマークRSSを取得するクラス.
  */
-public class BookmarkOwnRss {
+class BookmarkOwnRss {
 
     fun request(userId: String, startIndex: Int = 0): Observable<String> {
 

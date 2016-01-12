@@ -19,10 +19,10 @@ import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 /**
  * アプリについての情報を表示するActivity.
  */
-public class ExplainAppActivity : BaseActivityWithDrawer() {
+class ExplainAppActivity : BaseActivityWithDrawer() {
 
     companion object {
-        public fun createIntent(context: Context): Intent {
+        fun createIntent(context: Context): Intent {
             return Intent(context, ExplainAppActivity::class.java)
         }
     }
@@ -61,7 +61,7 @@ public class ExplainAppActivity : BaseActivityWithDrawer() {
     }
 
     @Subscribe
-    public fun subscribe(event: ClickedEvent) {
+    fun subscribe(event: ClickedEvent) {
         when (event.type) {
             ClickedEvent.Companion.Type.FROM_DEVELOPER -> {
                 startActivity(FrameActivity.createIntent(this, FragmentUtil.Companion.Tag.FROM_DEVELOPER))

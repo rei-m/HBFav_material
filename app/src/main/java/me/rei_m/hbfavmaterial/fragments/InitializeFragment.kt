@@ -25,7 +25,7 @@ import rx.Subscription
 /**
  * アプリの初期処理を行うFragment.
  */
-public class InitializeFragment : Fragment(), ProgressDialogI {
+class InitializeFragment : Fragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
 
@@ -34,7 +34,7 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
     private var mSubscription: Subscription? = null
 
     companion object {
-        public fun newInstance(): InitializeFragment {
+        fun newInstance(): InitializeFragment {
             return InitializeFragment()
         }
     }
@@ -83,7 +83,7 @@ public class InitializeFragment : Fragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun subscribe(event: UserIdCheckedEvent) {
+    fun subscribe(event: UserIdCheckedEvent) {
 
         closeProgressDialog()
 

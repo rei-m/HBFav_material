@@ -16,7 +16,7 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 /**
  * 記事の情報を表示するレイアウト.
  */
-public class ArticleLayout : RelativeLayout {
+class ArticleLayout : RelativeLayout {
 
     companion object {
         private class ViewHolder(val body: AppCompatTextView,

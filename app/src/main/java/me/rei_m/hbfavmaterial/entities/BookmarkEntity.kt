@@ -6,9 +6,9 @@ import java.util.*
 /**
  * ブックマーク情報のEntity.
  */
-public data class BookmarkEntity(val articleEntity: ArticleEntity,
-                                 val description: String,
-                                 val creator: String,
-                                 val date: Date,
-                                 val bookmarkIconUrl: String,
-                                 val tags: List<String> = ArrayList()) : Serializable
+data class BookmarkEntity(val articleEntity: ArticleEntity,
+                          val description: String,
+                          val creator: String,
+                          val date: Date,
+                          val bookmarkIconUrl: String,
+                          val tags: List<String> = ArrayList()) : Serializable

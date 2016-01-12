@@ -2,18 +2,16 @@ package me.rei_m.hbfavmaterial.utils
 
 import android.content.Context
 
-public class AppUtil private constructor() {
+class AppUtil private constructor() {
 
     companion object {
 
-        public fun getVersionCode(context: Context): Int {
-            val pm = context.packageManager
-            return pm.getPackageInfo(context.packageName, 0).versionCode
+        fun getVersionCode(context: Context): Int {
+            return context.packageManager.getPackageInfo(context.packageName, 0).versionCode
         }
 
-        public fun getVersionName(context: Context): String {
-            val pm = context.packageManager
-            return pm.getPackageInfo(context.packageName, 0).versionName
+        fun getVersionName(context: Context): String {
+            return context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }
     }
 }

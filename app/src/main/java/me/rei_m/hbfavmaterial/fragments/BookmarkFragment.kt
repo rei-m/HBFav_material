@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
-public class BookmarkFragment : Fragment(), FragmentAnimationI {
+class BookmarkFragment : Fragment(), FragmentAnimationI {
 
     private var mBookmarkEntity: BookmarkEntity? = null
 

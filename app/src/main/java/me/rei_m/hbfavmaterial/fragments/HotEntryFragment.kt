@@ -32,7 +32,7 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 /**
  * HotEntryを一覧で表示するFragment.
  */
-public class HotEntryFragment : Fragment() {
+class HotEntryFragment : Fragment() {
 
     private var mListAdapter: EntryListAdapter? = null
 
@@ -112,7 +112,7 @@ public class HotEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun subscribe(event: EntryCategoryChangedEvent) {
+    fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.HOT) {
             val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
             hotEntryModel.fetch(event.type)
@@ -120,7 +120,7 @@ public class HotEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun subscribe(event: HotEntryLoadedEvent) {
+    fun subscribe(event: HotEntryLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 displayListContents()

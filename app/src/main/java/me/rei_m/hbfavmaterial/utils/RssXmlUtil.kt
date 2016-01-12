@@ -9,17 +9,13 @@ import org.w3c.dom.Node
 import java.text.SimpleDateFormat
 import java.util.*
 
-public class RssXmlUtil private constructor() {
+class RssXmlUtil private constructor() {
 
     companion object {
 
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
-        private fun parseStringToDate(dateString: String): Date {
-            return dateFormat.parse(dateString)
-        }
-
-        public fun createBookmarkFromFeed(feed: Node): BookmarkEntity {
+        fun createBookmarkFromFeed(feed: Node): BookmarkEntity {
 
             var title = ""
             var link = ""
@@ -41,7 +37,7 @@ public class RssXmlUtil private constructor() {
                     "dc:creator" ->
                         creator = feedItem.textContent
                     "dc:date" ->
-                        date = parseStringToDate(feedItem.textContent)
+                        date = dateFormat.parse(feedItem.textContent)
                     "hatena:bookmarkcount" ->
                         bookmarkCount = feedItem.textContent.toInt()
                     "content:encoded" ->
@@ -67,7 +63,7 @@ public class RssXmlUtil private constructor() {
                     bookmarkIconUrl = extractProfileIcon(parsedContent))
         }
 
-        public fun createEntryFromFeed(feed: Node): EntryEntity {
+        fun createEntryFromFeed(feed: Node): EntryEntity {
 
             var title = ""
             var link = ""
@@ -89,7 +85,7 @@ public class RssXmlUtil private constructor() {
                     "dc:subject" ->
                         subject = feedItem.textContent
                     "dc:date" ->
-                        date = parseStringToDate(feedItem.textContent)
+                        date = dateFormat.parse(feedItem.textContent)
                     "hatena:bookmarkcount" ->
                         bookmarkCount = feedItem.textContent.toInt()
                     "content:encoded" ->

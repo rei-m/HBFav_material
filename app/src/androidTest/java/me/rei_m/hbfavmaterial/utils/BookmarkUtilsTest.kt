@@ -8,10 +8,10 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-public class BookmarkUtilsTest {
+class BookmarkUtilsTest {
 
     @Test
-    public fun testCreateShareText() {
+    fun testCreateShareText() {
 
         val url = "https://play.google.com/store/apps/details?id=me.rei_m.hbfavmaterial&hl=ja"
         val title = "HBFav Material はてブを流れるように見るアプリ"

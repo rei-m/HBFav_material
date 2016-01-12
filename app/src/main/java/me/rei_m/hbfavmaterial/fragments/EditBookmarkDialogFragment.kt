@@ -31,7 +31,7 @@ import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
 
-public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
+class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
 
@@ -204,7 +204,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun subscribe(event: HatenaPostBookmarkLoadedEvent) {
+    fun subscribe(event: HatenaPostBookmarkLoadedEvent) {
 
         closeProgressDialog()
 
@@ -219,7 +219,7 @@ public class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun subscribe(event: HatenaDeleteBookmarkLoadedEvent) {
+    fun subscribe(event: HatenaDeleteBookmarkLoadedEvent) {
 
         closeProgressDialog()
 
