@@ -42,7 +42,7 @@ class UserRegisterBookmarkModel {
         }
 
         isBusy = true
-        
+
         val observer = object : Observer<List<BookmarkEntity>> {
             override fun onNext(t: List<BookmarkEntity>?) {
                 t ?: return

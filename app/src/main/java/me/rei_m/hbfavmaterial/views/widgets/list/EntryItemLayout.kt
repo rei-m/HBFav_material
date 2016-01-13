@@ -27,7 +27,9 @@ class EntryItemLayout : RelativeLayout {
                                  val title: AppCompatTextView,
                                  val iconImage: AppCompatImageView,
                                  val url: AppCompatTextView,
-                                 val footer: AppCompatTextView)
+                                 val footerBookmarkCount: AppCompatTextView,
+                                 val footerCategory: AppCompatTextView,
+                                 val footerTiming: AppCompatTextView)
     }
 
     constructor(context: Context?) : super(context)
@@ -44,7 +46,9 @@ class EntryItemLayout : RelativeLayout {
                 findViewById(R.id.list_item_entry_text_article_title) as AppCompatTextView,
                 findViewById(R.id.list_item_entry_image_article_icon) as AppCompatImageView,
                 findViewById(R.id.list_item_entry_text_article_url) as AppCompatTextView,
-                findViewById(R.id.list_item_entry_text_entry_footer) as AppCompatTextView)
+                findViewById(R.id.list_item_entry_text_entry_footer_user_count) as AppCompatTextView,
+                findViewById(R.id.list_item_entry_text_entry_footer_category) as AppCompatTextView,
+                findViewById(R.id.list_item_entry_text_entry_footer_timing) as AppCompatTextView)
 
         mMarginTitleRight = resources.getDimensionPixelSize(R.dimen.margin_outline)
     }
@@ -75,8 +79,10 @@ class EntryItemLayout : RelativeLayout {
 
             val bookmarkCount = entryEntity.articleEntity.bookmarkCount.toString()
             val pastTimeString = BookmarkUtil.getPastTimeString(entryEntity.date)
-
-            footer.text = "$bookmarkCount users - ${entryEntity.subject} - $pastTimeString"
+            
+            footerBookmarkCount.text = "$bookmarkCount users"
+            footerCategory.text = " - ${entryEntity.subject} - "
+            footerTiming.text = pastTimeString
         }
     }
 }

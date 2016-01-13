@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.network
 
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.network.response.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import me.rei_m.hbfavmaterial.network.response.HatenaRestApiBookmarkResponse
 import oauth.signpost.basic.DefaultOAuthConsumer
 import oauth.signpost.basic.DefaultOAuthProvider
 import rx.Observable
