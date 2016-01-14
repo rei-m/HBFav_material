@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_outline"
             android:layout_marginStart="@dimen/margin_outline"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimaryDark" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/list_item_entry_image_body"
@@ -53,15 +54,34 @@
         android:textSize="@dimen/text_size_caption" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/list_item_entry_text_entry_footer"
+        android:id="@+id/list_item_entry_text_entry_footer_user_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/list_item_entry_text_article_url"
-        android:layout_marginEnd="@dimen/margin_outline"
-        android:layout_marginRight="@dimen/margin_outline"
         android:layout_marginTop="@dimen/margin_half"
         android:layout_toEndOf="@id/list_item_entry_image_article_icon"
         android:layout_toRightOf="@id/list_item_entry_image_article_icon"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/text_size_caption" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_entry_footer_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_text_article_url"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/list_item_entry_text_entry_footer_user_count"
+        android:layout_toRightOf="@id/list_item_entry_text_entry_footer_user_count"
+        android:textSize="@dimen/text_size_caption" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_entry_footer_timing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_text_article_url"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/list_item_entry_text_entry_footer_category"
+        android:layout_toRightOf="@id/list_item_entry_text_entry_footer_category"
         android:textSize="@dimen/text_size_caption" />
 
 </me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout>
