@@ -34,7 +34,8 @@
             android:paddingBottom="@dimen/margin"
             android:paddingLeft="@dimen/margin_outline"
             android:paddingRight="@dimen/margin_outline"
-            android:paddingTop="@dimen/margin" />
+            android:paddingTop="@dimen/margin"
+            android:textColor="@android:color/holo_red_light" />
 
         <View
             android:layout_width="match_parent"

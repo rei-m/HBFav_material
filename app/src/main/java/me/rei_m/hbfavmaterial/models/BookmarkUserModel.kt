@@ -49,7 +49,7 @@ class BookmarkUserModel {
         val observer = object : Observer<List<BookmarkEntity>> {
             override fun onNext(t: List<BookmarkEntity>?) {
                 t ?: return
-                if (startIndex === 0) {
+                if (requestIndex === 0) {
                     bookmarkList.clear()
                 }
                 isEmpty = t.isEmpty()
@@ -57,10 +57,6 @@ class BookmarkUserModel {
             }
 
             override fun onCompleted() {
-                if (requestIndex === 0) {
-                    bookmarkList.clear()
-                }
-
                 if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
