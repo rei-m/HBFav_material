@@ -17,10 +17,10 @@ import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
-public class SettingActivity : BaseActivityWithDrawer() {
+class SettingActivity : BaseActivityWithDrawer() {
 
     companion object {
-        public fun createIntent(context: Context): Intent {
+        fun createIntent(context: Context): Intent {
             return Intent(context, SettingActivity::class.java)
         }
     }
@@ -67,7 +67,7 @@ public class SettingActivity : BaseActivityWithDrawer() {
     }
 
     @Subscribe
-    public fun subscribe(event: UserIdChangedEvent) {
+    fun subscribe(event: UserIdChangedEvent) {
         (applicationContext as App).resetBookmarks()
         displayUserIconAndName(event.newId)
     }

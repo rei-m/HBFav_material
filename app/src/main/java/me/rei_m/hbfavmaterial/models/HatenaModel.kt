@@ -3,14 +3,13 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
+import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.*
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
-import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
+import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -19,15 +18,15 @@ import java.net.HttpURLConnection
 /**
  * はてなのOAuth関連の情報を管理するModel.
  */
-public class HatenaModel {
+class HatenaModel {
 
-    public var isBusy = false
+    var isBusy = false
         private set
 
-    public var oauthTokenEntity: OAuthTokenEntity? = null
+    var oauthTokenEntity: OAuthTokenEntity? = null
         private set
 
-    private var mHatenaOAuthApi: HatenaOAuthApi? = null
+    private var mHatenaRepository: HatenaRepository? = null
 
     companion object {
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
@@ -38,9 +37,8 @@ public class HatenaModel {
      */
     constructor(context: Context) {
 
-        // OAuth認証用のキーを作成し、OAuthAPIを作成する.
-        val hatenaJson = context.getAssetToJson("hatena.json")
-        mHatenaOAuthApi = HatenaOAuthApi(hatenaJson.getString("consumer_key"), hatenaJson.getString("consumer_secret"))
+        // Repositoryを作成する.
+        mHatenaRepository = HatenaRepository(context)
 
         // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
@@ -53,14 +51,14 @@ public class HatenaModel {
     /**
      * OAuth認証済か判定する.
      */
-    public fun isAuthorised(): Boolean {
+    fun isAuthorised(): Boolean {
         return (!(oauthTokenEntity?.token.isNullOrEmpty() || oauthTokenEntity?.secretToken.isNullOrEmpty()))
     }
 
     /**
      * OAuth認証用のリクエストトークンを取得する.
      */
-    public fun fetchRequestToken() {
+    fun fetchRequestToken() {
 
         if (isBusy) {
             return
@@ -85,7 +83,7 @@ public class HatenaModel {
             }
         }
 
-        mHatenaOAuthApi!!.requestRequestToken()
+        mHatenaRepository!!.fetchRequestToken()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -96,7 +94,7 @@ public class HatenaModel {
     /**
      * OAuth認証用のAccessTokenを取得する.
      */
-    public fun fetchAccessToken(context: Context, requestToken: String) {
+    fun fetchAccessToken(context: Context, requestToken: String) {
 
         if (isBusy) {
             return
@@ -121,7 +119,7 @@ public class HatenaModel {
             }
         }
 
-        mHatenaOAuthApi!!.requestAccessToken(requestToken)
+        mHatenaRepository!!.fetchAccessToken(requestToken)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,7 +130,7 @@ public class HatenaModel {
     /**
      * 保存しているAccessTokenを削除する.
      */
-    public fun deleteAccessToken(context: Context) {
+    fun deleteAccessToken(context: Context) {
         oauthTokenEntity = OAuthTokenEntity()
         saveToken(context)
     }
@@ -140,7 +138,7 @@ public class HatenaModel {
     /**
      * ブックマーク情報を取得する.
      */
-    public fun fetchBookmark(url: String) {
+    fun fetchBookmark(url: String) {
 
         if (isBusy) {
             return
@@ -148,16 +146,16 @@ public class HatenaModel {
 
         isBusy = true
 
-        var response: HatenaRestApiBookmarkResponse? = null
+        var bookmark: BookmarkEditEntity? = null
 
-        val observer = object : Observer<HatenaRestApiBookmarkResponse> {
+        val observer = object : Observer<BookmarkEditEntity> {
 
-            override fun onNext(t: HatenaRestApiBookmarkResponse?) {
-                response = t
+            override fun onNext(t: BookmarkEditEntity?) {
+                bookmark = t
             }
 
             override fun onCompleted() {
-                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(response, LoadedEventStatus.OK))
+                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(bookmark, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
@@ -170,7 +168,7 @@ public class HatenaModel {
             }
         }
 
-        mHatenaOAuthApi!!.getBookmark(oauthTokenEntity!!, url)
+        mHatenaRepository!!.findBookmarkByUrl(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -181,7 +179,7 @@ public class HatenaModel {
     /**
      * ブックマーク情報を登録する.
      */
-    public fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
+    fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
 
         if (isBusy) {
             return
@@ -189,16 +187,16 @@ public class HatenaModel {
 
         isBusy = true
 
-        var response: HatenaRestApiBookmarkResponse? = null
+        var bookmark: BookmarkEditEntity? = null
 
-        val observer = object : Observer<HatenaRestApiBookmarkResponse> {
+        val observer = object : Observer<BookmarkEditEntity> {
 
-            override fun onNext(t: HatenaRestApiBookmarkResponse?) {
-                response = t
+            override fun onNext(t: BookmarkEditEntity?) {
+                bookmark = t
             }
 
             override fun onCompleted() {
-                EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(response, LoadedEventStatus.OK))
+                EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(bookmark, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
@@ -206,19 +204,18 @@ public class HatenaModel {
             }
         }
 
-        mHatenaOAuthApi!!.postBookmark(oauthTokenEntity!!, url, comment, isOpen)
+        mHatenaRepository!!.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .finallyDo { isBusy = false }
                 .subscribe(observer)
-
     }
 
     /**
      * ブックマーク情報を削除する.
      */
-    public fun deleteBookmark(url: String) {
+    fun deleteBookmark(url: String) {
 
         if (isBusy) {
             return
@@ -226,9 +223,9 @@ public class HatenaModel {
 
         isBusy = true
 
-        val observer = object : Observer<String> {
+        val observer = object : Observer<Boolean> {
 
-            override fun onNext(t: String?) {
+            override fun onNext(t: Boolean?) {
             }
 
             override fun onCompleted() {
@@ -245,7 +242,7 @@ public class HatenaModel {
             }
         }
 
-        mHatenaOAuthApi!!.deleteBookmark(oauthTokenEntity!!, url)
+        mHatenaRepository!!.deleteBookmark(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

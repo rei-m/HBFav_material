@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * アプリのクレジット表記を行うFragment.
  */
-public class CreditFragment : Fragment() {
+class CreditFragment : Fragment() {
 
     companion object {
         fun newInstance(): CreditFragment {

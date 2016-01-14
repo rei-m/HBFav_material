@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.network
 
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import me.rei_m.hbfavmaterial.network.response.HatenaRestApiBookmarkResponse
 import oauth.signpost.basic.DefaultOAuthConsumer
 import oauth.signpost.basic.DefaultOAuthProvider
 import rx.Observable
@@ -18,7 +18,7 @@ import java.util.*
 /**
  * はてなのOAuth認証関連のAPIを管理するクラス.
  */
-public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
+class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     private val mOAuthConsumer = DefaultOAuthConsumer(consumerKey, consumerSecret)
 
@@ -49,7 +49,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     /**
      * リクエストトークンを取得する.
      */
-    public fun requestRequestToken(): Observable<String> {
+    fun requestRequestToken(): Observable<String> {
 
         return Observable.create { t ->
 
@@ -68,7 +68,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     /**
      * アクセストークンを取得する.
      */
-    public fun requestAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
+    fun requestAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
 
         return Observable.create { t ->
 
@@ -87,8 +87,8 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     /**
      * 指定されたURLのブックマーク情報を取得する.
      */
-    public fun getBookmark(oauthToken: OAuthTokenEntity, urlString: String):
-            Observable<HatenaRestApiBookmarkResponse> {
+    fun getBookmark(oauthToken: OAuthTokenEntity,
+                    urlString: String): Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -120,8 +120,10 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     /**
      * ブックマーク情報を更新する.
      */
-    public fun postBookmark(oauthToken: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean):
-            Observable<HatenaRestApiBookmarkResponse> {
+    fun postBookmark(oauthToken: OAuthTokenEntity,
+                     urlString: String,
+                     comment: String,
+                     isOpen: Boolean): Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -175,8 +177,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     /**
      * ブックマーク情報を削除する.
      */
-    public fun deleteBookmark(oauthToken: OAuthTokenEntity, urlString: String):
-            Observable<String> {
+    fun deleteBookmark(oauthToken: OAuthTokenEntity, urlString: String): Observable<Boolean> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -194,7 +195,7 @@ public class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             when (connection.responseCode) {
                 HttpURLConnection.HTTP_NO_CONTENT -> {
                     connection.disconnect()
-                    t.onNext("")
+                    t.onNext(true)
                 }
                 else -> {
                     connection.disconnect()

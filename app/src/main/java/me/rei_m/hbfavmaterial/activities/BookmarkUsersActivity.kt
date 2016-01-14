@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
-public class BookmarkUsersActivity : BaseActivity() {
+class BookmarkUsersActivity : BaseActivity() {
 
     private var mBookmarkEntity: BookmarkEntity? = null
 
@@ -29,7 +29,7 @@ public class BookmarkUsersActivity : BaseActivity() {
 
         private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
-        public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
+        fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             return Intent(context, BookmarkUsersActivity::class.java).apply {
                 putExtra(ARG_BOOKMARK, bookmarkEntity)
             }
@@ -87,7 +87,7 @@ public class BookmarkUsersActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun subscribe(event: UserListItemClickedEvent) {
+    fun subscribe(event: UserListItemClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
     }
 

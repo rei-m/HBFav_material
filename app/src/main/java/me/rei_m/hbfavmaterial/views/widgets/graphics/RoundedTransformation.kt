@@ -7,8 +7,8 @@ import com.squareup.picasso.Transformation
 /**
  * Picassoの画像をCircleにトリミングするTransformation.
  */
-public class RoundedTransformation(private val radius: Int = 50,
-                                   private val margin: Int = 0) : Transformation {
+class RoundedTransformation(private val radius: Int = 50,
+                            private val margin: Int = 0) : Transformation {
 
     override fun transform(source: Bitmap): Bitmap {
         val paint = Paint().apply {

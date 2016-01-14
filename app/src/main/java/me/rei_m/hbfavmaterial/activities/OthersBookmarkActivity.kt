@@ -14,13 +14,13 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 /**
  * 他人のブックマークを表示するActivity.
  */
-public class OthersBookmarkActivity : BaseActivity() {
+class OthersBookmarkActivity : BaseActivity() {
 
     companion object {
 
         private val ARG_USER_ID = "ARG_USER_ID"
 
-        public fun createIntent(context: Context, userId: String): Intent {
+        fun createIntent(context: Context, userId: String): Intent {
             return Intent(context, OthersBookmarkActivity::class.java).apply {
                 putExtra(ARG_USER_ID, userId)
             }
@@ -46,7 +46,7 @@ public class OthersBookmarkActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun subscribe(event: BookmarkListItemClickedEvent) {
+    fun subscribe(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }

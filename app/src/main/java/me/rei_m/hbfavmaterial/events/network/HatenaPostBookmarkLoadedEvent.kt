@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.events.network
 
-import me.rei_m.hbfavmaterial.entities.HatenaRestApiBookmarkResponse
+import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 
-public class HatenaPostBookmarkLoadedEvent(val response: HatenaRestApiBookmarkResponse?,
-                                           val status: LoadedEventStatus)
+class HatenaPostBookmarkLoadedEvent(val bookmark: BookmarkEditEntity?,
+                                    val status: LoadedEventStatus)

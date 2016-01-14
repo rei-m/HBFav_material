@@ -10,7 +10,7 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 /**
  * Drawer無しのActivityの基底クラス.
  */
-public abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

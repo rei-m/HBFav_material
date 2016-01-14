@@ -14,7 +14,7 @@ import java.util.*
 /**
  * メインページのフラグメントを管理するAdaptor.
  */
-public class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
+class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
 
     private val mTitleList = ArrayList<String>()
 

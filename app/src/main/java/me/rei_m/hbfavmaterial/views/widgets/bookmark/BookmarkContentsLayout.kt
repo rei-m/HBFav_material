@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 /**
  * ブックマーク詳細のコンテンツを表示するレイアウト.
  */
-public class BookmarkContentsLayout : LinearLayout {
+class BookmarkContentsLayout : LinearLayout {
 
     companion object {
         private class ViewHolder(val bookmarkLayout: BookmarkLayout,
@@ -32,7 +32,7 @@ public class BookmarkContentsLayout : LinearLayout {
                 findViewById(R.id.layout_bookmark_contents_layout_article) as ArticleLayout)
     }
 
-    public fun bindView(bookmarkEntity: BookmarkEntity) {
+    fun bindView(bookmarkEntity: BookmarkEntity) {
         val holder = tag as ViewHolder
         holder.apply {
             bookmarkLayout.bindView(bookmarkEntity)

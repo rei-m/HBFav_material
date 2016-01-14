@@ -12,8 +12,8 @@ import me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout
 /**
  * ブックマーク一覧を管理するAdaptor.
  */
-public class BookmarkListAdapter constructor(context: Context,
-                                             resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
+class BookmarkListAdapter constructor(context: Context,
+                                      resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
@@ -24,7 +24,7 @@ public class BookmarkListAdapter constructor(context: Context,
         return view
     }
 
-    public val nextIndex: Int
+    val nextIndex: Int
         get() {
             return count + 1
         }

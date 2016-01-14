@@ -21,7 +21,7 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 /**
  * Drawer付きActivityの基底クラス.
  */
-public abstract class BaseActivityWithDrawer : AppCompatActivity(),
+abstract class BaseActivityWithDrawer : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {

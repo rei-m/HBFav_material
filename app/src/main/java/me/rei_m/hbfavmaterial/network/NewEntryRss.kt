@@ -1,27 +1,48 @@
 package me.rei_m.hbfavmaterial.network
 
+import com.squareup.okhttp.CacheControl
 import com.squareup.okhttp.HttpUrl
-import me.rei_m.hbfavmaterial.entities.EntryEntity
+import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.Request
+import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observable
+import java.net.HttpURLConnection
 
 /**
  * 新着エントリーをRSSから取得するクラス.
  */
-public class NewEntryRss : AbsEntryRss() {
+class NewEntryRss {
 
-    public fun request(entryType: EntryType): Observable<EntryEntity> {
+    fun request(entryType: EntryType): Observable<String> {
 
-        val builder = HttpUrl.Builder().scheme("http").host("b.hatena.ne.jp")
+        return Observable.create { t ->
 
-        if (entryType == EntryType.ALL) {
-            builder.addPathSegment("entrylist.rss")
-        } else {
-            builder.addPathSegment("entrylist")
-                    .addPathSegment(ApiUtil.getEntryTypeRss(entryType))
+            val builder = HttpUrl.Builder().scheme("http").host("b.hatena.ne.jp")
+
+            if (entryType == EntryType.ALL) {
+                builder.addPathSegment("entrylist.rss")
+            } else {
+                builder.addPathSegment("entrylist")
+                        .addPathSegment(ApiUtil.getEntryTypeRss(entryType))
+            }
+
+            val url = builder.build()
+
+            val request = Request.Builder()
+                    .url(url)
+                    .cacheControl(CacheControl.FORCE_NETWORK)
+                    .build()
+
+            val response = OkHttpClient().newCall(request).execute()
+            if (response.code() == HttpURLConnection.HTTP_OK) {
+                t.onNext(response.body().string())
+            } else {
+                t.onError(HTTPException(response.code()))
+            }
+
+            t.onCompleted()
         }
-
-        return super.request(builder.build())
     }
 }

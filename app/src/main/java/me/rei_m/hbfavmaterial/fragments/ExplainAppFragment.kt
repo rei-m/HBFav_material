@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.utils.AppUtil
 /**
  * このアプリについてを表示するFragment.
  */
-public class ExplainAppFragment : Fragment() {
+class ExplainAppFragment : Fragment() {
 
     companion object {
         fun newInstance(): ExplainAppFragment {
@@ -28,6 +28,11 @@ public class ExplainAppFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val view = inflater.inflate(R.layout.fragment_explain_app, container, false)
+
+        val layoutReview = view.findViewById(R.id.fragment_explain_app_layout_review) as LinearLayout
+        layoutReview.setOnClickListener { v ->
+            getAppContext().openUrl(getString(R.string.url_review))
+        }
 
         val layoutOpinion = view.findViewById(R.id.fragment_explain_app_layout_opinion) as LinearLayout
         layoutOpinion.setOnClickListener { v ->

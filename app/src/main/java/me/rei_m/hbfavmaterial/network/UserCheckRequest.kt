@@ -11,9 +11,9 @@ import java.net.HttpURLConnection
 /**
  * ユーザーIDが有効か問い合わせるクラス.
  */
-public class UserCheckRequest {
+class UserCheckRequest {
 
-    public fun request(userId: String): Observable<Boolean> {
+    fun request(userId: String): Observable<Boolean> {
 
         val url = HttpUrl.Builder()
                 .scheme("http")

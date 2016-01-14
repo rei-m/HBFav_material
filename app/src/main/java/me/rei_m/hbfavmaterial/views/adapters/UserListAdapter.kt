@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.views.widgets.list.UserItemLayout
 /**
  * ユーザー一覧を管理するAdaptor.
  */
-public class UserListAdapter constructor(context: Context, resource: Int) :
+class UserListAdapter constructor(context: Context, resource: Int) :
         ArrayAdapter<BookmarkEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {

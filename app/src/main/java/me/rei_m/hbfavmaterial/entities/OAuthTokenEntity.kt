@@ -5,5 +5,5 @@ import java.io.Serializable
 /**
  * OAuthトークンのEntity.
  */
-public data class OAuthTokenEntity(var token: String = "",
-                                   var secretToken: String = "") : Serializable
+data class OAuthTokenEntity(var token: String = "",
+                            var secretToken: String = "") : Serializable

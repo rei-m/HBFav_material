@@ -28,7 +28,7 @@ import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 /**
  * メインActivity.
  */
-public class MainActivity : BaseActivityWithDrawer() {
+class MainActivity : BaseActivityWithDrawer() {
 
     private var mMenu: Menu? = null
 
@@ -36,8 +36,8 @@ public class MainActivity : BaseActivityWithDrawer() {
 
         private val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
 
-        public fun createIntent(context: Context,
-                                index: Int = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE): Intent {
+        fun createIntent(context: Context,
+                         index: Int = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE): Intent {
             return Intent(context, MainActivity::class.java).apply {
                 putExtra(ARG_PAGER_INDEX, index)
             }
@@ -141,7 +141,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * ブックマークリスト内のアイテムクリック時のイベント
      */
     @Subscribe
-    public fun subscribe(event: BookmarkListItemClickedEvent) {
+    fun subscribe(event: BookmarkListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 
@@ -149,7 +149,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * エントリーリスト内のアイテムクリック時のイベント
      */
     @Subscribe
-    public fun subscribe(event: EntryListItemClickedEvent) {
+    fun subscribe(event: EntryListItemClickedEvent) {
         startActivity(BookmarkActivity.createIntent(this, event.entryEntity))
     }
 
@@ -157,7 +157,7 @@ public class MainActivity : BaseActivityWithDrawer() {
      * ページ表示時のイベント
      */
     @Subscribe
-    public fun subscribe(event: MainPageDisplayEvent) {
+    fun subscribe(event: MainPageDisplayEvent) {
 
         // ページの種類に応じてActivityのタイトル表示とメニューの表示/非表示を切り替える
 

@@ -26,7 +26,7 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
 
-public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
+class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
     override var mProgressDialog: ProgressDialog? = null
 
@@ -36,9 +36,9 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
     companion object {
 
-        public final val TAG = EditUserIdDialogFragment::class.java.simpleName
+        final val TAG = EditUserIdDialogFragment::class.java.simpleName
 
-        public fun newInstance(): EditUserIdDialogFragment {
+        fun newInstance(): EditUserIdDialogFragment {
             return EditUserIdDialogFragment()
         }
     }
@@ -108,7 +108,7 @@ public class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
     }
 
     @Subscribe
-    public fun subscribe(event: UserIdCheckedEvent) {
+    fun subscribe(event: UserIdCheckedEvent) {
 
         closeProgressDialog()
 

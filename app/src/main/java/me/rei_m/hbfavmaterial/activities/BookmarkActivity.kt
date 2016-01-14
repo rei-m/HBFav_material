@@ -29,7 +29,7 @@ import me.rei_m.hbfavmaterial.utils.ConstantUtil
 /**
  * ブックマークの詳細を表示するActivity.
  */
-public class BookmarkActivity : BaseActivity() {
+class BookmarkActivity : BaseActivity() {
 
     private var mEntryTitle: String = ""
     private var mEntryLink: String = ""
@@ -42,13 +42,13 @@ public class BookmarkActivity : BaseActivity() {
         private val KEY_ENTRY_TITLE = "KEY_ENTRY_TITLE"
         private val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
-        public fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
+        fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             return Intent(context, BookmarkActivity::class.java).apply {
                 putExtra(ARG_BOOKMARK, bookmarkEntity)
             }
         }
 
-        public fun createIntent(context: Context, entryEntity: EntryEntity): Intent {
+        fun createIntent(context: Context, entryEntity: EntryEntity): Intent {
             return Intent(context, BookmarkActivity::class.java).apply {
                 putExtra(ARG_ENTRY, entryEntity)
             }
@@ -160,26 +160,26 @@ public class BookmarkActivity : BaseActivity() {
     }
 
     @Subscribe
-    public fun subscribe(event: BookmarkUserClickedEvent) {
+    fun subscribe(event: BookmarkUserClickedEvent) {
         startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
     }
 
     @Subscribe
-    public fun subscribe(event: BookmarkClickedEvent) {
+    fun subscribe(event: BookmarkClickedEvent) {
         replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
     }
 
     @Subscribe
-    public fun subscribe(event: BookmarkCountClickedEvent) {
+    fun subscribe(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
     }
 
     @Subscribe
-    public fun subscribe(event: HatenaGetBookmarkLoadedEvent) {
+    fun subscribe(event: HatenaGetBookmarkLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 更新用ダイアログを表示
-                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle, mEntryLink, event.response!!)
+                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle, mEntryLink, event.bookmarkEditEntity!!)
                 dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.NOT_FOUND -> {

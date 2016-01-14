@@ -4,7 +4,7 @@ import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
-import me.rei_m.hbfavmaterial.network.HotEntryRss
+import me.rei_m.hbfavmaterial.repositories.EntryRepository
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
@@ -14,17 +14,19 @@ import java.util.*
 /**
  * ホットエントリー情報を取得するModel.
  */
-public class HotEntryModel {
+class HotEntryModel {
 
-    public var isBusy = false
+    private val entryRepository = EntryRepository()
+
+    var isBusy = false
         private set
 
-    public val entryList = ArrayList<EntryEntity>()
+    val entryList = ArrayList<EntryEntity>()
 
-    public var entryType = EntryType.ALL
+    var entryType = EntryType.ALL
         private set
 
-    public fun fetch(entryType: EntryType) {
+    fun fetch(entryType: EntryType) {
 
         if (isBusy) {
             return
@@ -32,17 +34,15 @@ public class HotEntryModel {
 
         isBusy = true
 
-        val listFromRss = ArrayList<EntryEntity>()
-
-        val observer = object : Observer<EntryEntity> {
-            override fun onNext(t: EntryEntity?) {
-                listFromRss.add(t!!)
+        val observer = object : Observer<List<EntryEntity>> {
+            override fun onNext(t: List<EntryEntity>?) {
+                t ?: return
+                entryList.clear()
+                entryList.addAll(t)
+                this@HotEntryModel.entryType = entryType
             }
 
             override fun onCompleted() {
-                entryList.clear()
-                entryList.addAll(listFromRss)
-                this@HotEntryModel.entryType = entryType
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
@@ -51,7 +51,7 @@ public class HotEntryModel {
             }
         }
 
-        HotEntryRss().request(entryType)
+        entryRepository.findByEntryTypeForHot(entryType)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

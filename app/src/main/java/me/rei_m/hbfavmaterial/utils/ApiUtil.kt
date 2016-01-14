@@ -4,17 +4,17 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import java.text.SimpleDateFormat
 import java.util.*
 
-public class ApiUtil private constructor() {
+class ApiUtil private constructor() {
 
     companion object {
 
         private val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
 
-        public fun parseStringToDate(dateString: String): Date {
+        fun parseStringToDate(dateString: String): Date {
             return dateFormat.parse(dateString)
         }
 
-        public fun getEntryTypeRss(entryType: EntryType): String = when (entryType) {
+        fun getEntryTypeRss(entryType: EntryType): String = when (entryType) {
             EntryType.WORLD ->
                 "social.rss"
             EntryType.POLITICS_AND_ECONOMY ->

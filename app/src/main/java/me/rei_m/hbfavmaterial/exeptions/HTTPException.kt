@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.exeptions
 
 import java.net.ProtocolException
 
-public class HTTPException : ProtocolException {
+class HTTPException : ProtocolException {
 
     var statusCode: Int? = null
         private set

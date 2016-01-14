@@ -32,7 +32,7 @@ import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
 /**
  * 新着Entryを一覧で表示するFragment.
  */
-public class NewEntryFragment : Fragment() {
+class NewEntryFragment : Fragment() {
 
     private var mListAdapter: EntryListAdapter? = null
 
@@ -112,7 +112,7 @@ public class NewEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun subscribe(event: EntryCategoryChangedEvent) {
+    fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.NEW) {
             val newEntryModel = ModelLocator.get(ModelTag.NEW_ENTRY) as NewEntryModel
             newEntryModel.fetch(event.type)
@@ -120,7 +120,7 @@ public class NewEntryFragment : Fragment() {
     }
 
     @Subscribe
-    public fun subscribe(event: NewEntryLoadedEvent) {
+    fun subscribe(event: NewEntryLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 displayListContents()

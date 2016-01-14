@@ -14,17 +14,17 @@ import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 
 /**
- * はてなのOAuth関連の情報を管理するModel.
+ * Twitter関連の情報を管理するModel.
  */
-public class TwitterModel {
+class TwitterModel {
 
-    public var isBusy = false
+    var isBusy = false
         private set
 
-    public var twitterSessionEntity: TwitterSessionEntity? = null
+    var twitterSessionEntity: TwitterSessionEntity? = null
         private set
 
-    public var isShare: Boolean = false
+    var isShare: Boolean = false
         private set
 
     companion object {
@@ -53,14 +53,14 @@ public class TwitterModel {
     /**
      * OAuth認証済か判定する.
      */
-    public fun isAuthorised(): Boolean {
+    fun isAuthorised(): Boolean {
         return Twitter.getSessionManager().activeSession != null
     }
 
     /**
      * OAuth認証を行う.
      */
-    public fun authorize(activity: Activity) {
+    fun authorize(activity: Activity) {
 
         if (isBusy) {
             return
@@ -82,7 +82,7 @@ public class TwitterModel {
     /**
      * OAuth認証後のコールバック処理を行う.
      */
-    public fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         isBusy = false
         TwitterAuthClient().onActivityResult(requestCode, resultCode, data)
     }
@@ -90,14 +90,14 @@ public class TwitterModel {
     /**
      * Busyフラグをクリアする.
      */
-    public fun clearBusy() {
+    fun clearBusy() {
         isBusy = false
     }
 
     /**
      * ツイートを投稿する.
      */
-    public fun postTweet(text: String) {
+    fun postTweet(text: String) {
 
         if (isBusy) {
             return
@@ -126,7 +126,10 @@ public class TwitterModel {
                 })
     }
 
-    public fun setIsShare(context: Context, value: Boolean) {
+    /**
+     * Twitterにシェアする設定を保存する.
+     */
+    fun setIsShare(context: Context, value: Boolean) {
         isShare = value
         saveIsShare(context)
     }
@@ -157,6 +160,9 @@ public class TwitterModel {
                 .apply()
     }
 
+    /**
+     * PreferencesにTwitterにシェアする設定を保存する.
+     */
     private fun saveIsShare(context: Context) {
         getPreferences(context)
                 .edit()

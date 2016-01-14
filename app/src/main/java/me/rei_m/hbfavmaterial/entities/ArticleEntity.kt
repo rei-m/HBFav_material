@@ -5,9 +5,9 @@ import java.io.Serializable
 /**
  * 記事情報のEntity.
  */
-public data class ArticleEntity(val title: String,
-                                val url: String,
-                                val bookmarkCount: Int,
-                                val iconUrl: String,
-                                val body: String,
-                                val bodyImageUrl: String) : Serializable
+data class ArticleEntity(val title: String,
+                         val url: String,
+                         val bookmarkCount: Int,
+                         val iconUrl: String,
+                         val body: String,
+                         val bodyImageUrl: String) : Serializable
