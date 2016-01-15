@@ -14,10 +14,19 @@ import me.rei_m.hbfavmaterial.models.*
 
 class App : Application() {
 
+    companion object {
+        // platformStatic allow access it from java code
+        //@JvmStatic lateinit public var graph: ApplicationComponent
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         // Application起動時に実行される。アプリの初期処理など
+
+        // Dagger2
+//        graph = DaggerApplicationComponent.builder().androidModule(ApplicationModule(this)).build()
+//        graph.inject(this)
 
         // LeakCanaryの設定
         if (BuildConfig.DEBUG) {
