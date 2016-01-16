@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -23,48 +24,38 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
+import javax.inject.Inject
 
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
 class BookmarkFavoriteFragment : Fragment() {
 
-    private var mUserId: String = ""
+    @Inject
+    lateinit var bookmarkFavoriteModel: BookmarkFavoriteModel
 
-    private var mListAdapter: BookmarkListAdapter? = null
+    @Inject
+    lateinit var userModel: UserModel
 
-    private var mCompositeSubscription: CompositeSubscription? = null
+    lateinit private var mListAdapter: BookmarkListAdapter
+
+    lateinit private var mCompositeSubscription: CompositeSubscription
 
     companion object {
-
-        private val ARG_USER_ID = "ARG_USER_ID"
-
         fun newInstance(): BookmarkFavoriteFragment {
-            return BookmarkFavoriteFragment().apply {
-                arguments = Bundle().apply {
-                    val userModel = ModelLocator.get(ModelTag.USER) as UserModel
-                    putString(ARG_USER_ID, userModel.userEntity?.id)
-                }
-            }
+            return BookmarkFavoriteFragment()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
-        mUserId = arguments.getString(ARG_USER_ID)
-    }
+        App.graph.inject(this)
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mListAdapter = null
-        mCompositeSubscription = null
+        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,10 +72,9 @@ class BookmarkFavoriteFragment : Fragment() {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    val favoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
                     // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
-                    if (!favoriteModel.isBusy && 0 < listView.footerViewsCount) {
-                        favoriteModel.fetch(mUserId, mListAdapter?.nextIndex ?: 0)
+                    if (!bookmarkFavoriteModel.isBusy && 0 < listView.footerViewsCount) {
+                        bookmarkFavoriteModel.fetch(userModel.userEntity!!.id, mListAdapter.nextIndex)
                     }
                 }
             }
@@ -114,9 +104,7 @@ class BookmarkFavoriteFragment : Fragment() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
-
-        val displayedCount = mListAdapter?.count
+        val displayedCount = mListAdapter.count
 
         if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
@@ -125,7 +113,7 @@ class BookmarkFavoriteFragment : Fragment() {
             view.findViewById(R.id.fragment_list_progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければブックマーク情報をRSSから取得する
-            bookmarkFavoriteModel.fetch(mUserId)
+            bookmarkFavoriteModel.fetch(userModel.userEntity!!.id)
             view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
@@ -134,16 +122,16 @@ class BookmarkFavoriteFragment : Fragment() {
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
-            bookmarkFavoriteModel.fetch(mUserId)
+            bookmarkFavoriteModel.fetch(userModel.userEntity!!.id)
         })
     }
 
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription?.unsubscribe()
+        mCompositeSubscription.unsubscribe()
 
         // Pull to Refresh中であれば解除する
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
@@ -182,7 +170,7 @@ class BookmarkFavoriteFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
         // プログレスを非表示にする
         view.findViewById(R.id.fragment_list_progress_list).hide()
@@ -200,8 +188,7 @@ class BookmarkFavoriteFragment : Fragment() {
     private fun displayListContents() {
 
         // コンテンツを表示する
-        mListAdapter?.apply {
-            val bookmarkFavoriteModel = ModelLocator.get(ModelTag.FAVORITE) as BookmarkFavoriteModel
+        mListAdapter.apply {
             clear()
             addAll(bookmarkFavoriteModel.bookmarkList)
             notifyDataSetChanged()

@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -23,23 +24,32 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.BookmarkUserModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
 class BookmarkUserFragment : Fragment() {
 
-    private var mUserId: String = ""
+    @field:[Inject Named("bookmarkUserModelForSelf")]
+    lateinit var bookmarkUserModelForSelf: BookmarkUserModel
 
-    private var mListAdapter: BookmarkListAdapter? = null
+    @field:[Inject Named("bookmarkUserModelForOther")]
+    lateinit var bookmarkUserModelForOther: BookmarkUserModel
 
-    private var mCompositeSubscription: CompositeSubscription? = null
+    @Inject
+    lateinit var userModel: UserModel
+
+    lateinit private var mUserId: String
+
+    lateinit private var mListAdapter: BookmarkListAdapter
+
+    lateinit private var mCompositeSubscription: CompositeSubscription
 
     private var mIsOwner: Boolean = true
 
@@ -57,8 +67,6 @@ class BookmarkUserFragment : Fragment() {
         fun newInstance(): BookmarkUserFragment {
             return BookmarkUserFragment().apply {
                 arguments = Bundle().apply {
-                    val userModel = ModelLocator.get(ModelTag.USER) as UserModel
-                    putString(ARG_USER_ID, userModel.userEntity?.id)
                     putBoolean(ARG_OWNER_FLAG, true)
                 }
             }
@@ -82,15 +90,11 @@ class BookmarkUserFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+        
         mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
-        mUserId = arguments.getString(ARG_USER_ID)
         mIsOwner = arguments.getBoolean(ARG_OWNER_FLAG)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mListAdapter = null
-        mCompositeSubscription = null
+        mUserId = if (mIsOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -110,7 +114,7 @@ class BookmarkUserFragment : Fragment() {
                     val bookmarkUserModel = getBookmarkModel()
                     // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (!bookmarkUserModel.isBusy && 0 < listView.footerViewsCount) {
-                        bookmarkUserModel.fetch(mUserId, mListAdapter?.nextIndex ?: 0)
+                        bookmarkUserModel.fetch(mUserId, mListAdapter.nextIndex)
                     }
                 }
             }
@@ -146,7 +150,7 @@ class BookmarkUserFragment : Fragment() {
         if (bookmarkUserModel.isSameUser(mUserId)) {
 
             // 同じ場合は再表示する
-            val displayedCount = mListAdapter?.count ?: 0
+            val displayedCount = mListAdapter.count
 
             if (displayedCount != bookmarkUserModel.bookmarkList.size) {
                 // 表示済の件数とModel内で保持している件数をチェックし、
@@ -171,7 +175,7 @@ class BookmarkUserFragment : Fragment() {
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
             bookmarkUserModel.fetch(mUserId)
         })
@@ -180,7 +184,7 @@ class BookmarkUserFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription?.unsubscribe()
+        mCompositeSubscription.unsubscribe()
 
         // Pull to Refresh中であれば解除する
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
@@ -219,7 +223,7 @@ class BookmarkUserFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
         // プログレスを非表示にする
         view.findViewById(R.id.fragment_list_progress_list).hide()
@@ -237,7 +241,7 @@ class BookmarkUserFragment : Fragment() {
     private fun displayListContents() {
 
         // コンテンツを表示する
-        mListAdapter?.apply {
+        mListAdapter.apply {
             val bookmarkUserModel = getBookmarkModel()
             clear()
             addAll(bookmarkUserModel.bookmarkList)
@@ -255,6 +259,6 @@ class BookmarkUserFragment : Fragment() {
      * 表示に使用するブックマークモデルを取得する
      */
     private fun getBookmarkModel(): BookmarkUserModel {
-        return ModelLocator.get(if (mIsOwner) ModelTag.OWN_BOOKMARK else ModelTag.OTHERS_BOOKMARK) as BookmarkUserModel
+        return if (mIsOwner) bookmarkUserModelForSelf else bookmarkUserModelForOther
     }
 }

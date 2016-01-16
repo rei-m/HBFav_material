@@ -1,11 +1,10 @@
-package me.rei_m.hbfavmaterial
+package me.rei_m.hbfavmaterial.di
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import android.location.LocationManager
 import dagger.Module
 import dagger.Provides
+import me.rei_m.hbfavmaterial.di.ForApplication
 import javax.inject.Singleton
 
 /**
@@ -24,12 +23,4 @@ class ApplicationModule(private val application: Application) {
     fun provideApplicationContext(): Context {
         return application
     }
-
-
-
-    //    @Provides
-    //    @Singleton
-    //    fun provideModelLocator(): ModelLocator {
-    //        return application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    //    }
 }

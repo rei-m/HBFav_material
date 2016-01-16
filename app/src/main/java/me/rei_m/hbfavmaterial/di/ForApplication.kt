@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial
+package me.rei_m.hbfavmaterial.di
 
 import javax.inject.Qualifier
 
