@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
@@ -14,7 +15,7 @@ import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
 class BookmarkFragment : Fragment(), FragmentAnimationI {
 
-    private var mBookmarkEntity: BookmarkEntity? = null
+    lateinit private var mBookmarkEntity: BookmarkEntity
 
     override var mContainerWidth: Float = 0.0f
 
@@ -33,6 +34,8 @@ class BookmarkFragment : Fragment(), FragmentAnimationI {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+
         mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
@@ -46,7 +49,7 @@ class BookmarkFragment : Fragment(), FragmentAnimationI {
 
         val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 
-        mBookmarkEntity?.apply {
+        mBookmarkEntity.apply {
             bookmarkHeaderLayout.bindView(this)
             bookmarkContents.bindView(this)
             bookmarkCountTextView.bindView(this)
@@ -55,11 +58,6 @@ class BookmarkFragment : Fragment(), FragmentAnimationI {
         setContainerWidth(container!!)
 
         return view
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        mBookmarkEntity = null
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

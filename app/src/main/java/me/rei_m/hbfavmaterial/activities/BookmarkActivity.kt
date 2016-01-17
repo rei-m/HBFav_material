@@ -8,6 +8,7 @@ import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
@@ -22,16 +23,20 @@ import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
+import javax.inject.Inject
 
 /**
  * ブックマークの詳細を表示するActivity.
  */
 class BookmarkActivity : BaseActivity() {
 
+    @Inject
+    lateinit var hatenaModel: HatenaModel
+
     private var mEntryTitle: String = ""
+
     private var mEntryLink: String = ""
 
     companion object {
@@ -57,6 +62,7 @@ class BookmarkActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
@@ -77,8 +83,6 @@ class BookmarkActivity : BaseActivity() {
 
         fab.setOnClickListener {
             // はてぶ投稿ボタン
-            val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
-
             if (!hatenaModel.isAuthorised()) {
                 startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
             } else {
@@ -146,7 +150,6 @@ class BookmarkActivity : BaseActivity() {
             RESULT_OK -> {
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
                     if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
-                        val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
                         hatenaModel.fetchBookmark(mEntryLink)
                     }
                 } else {

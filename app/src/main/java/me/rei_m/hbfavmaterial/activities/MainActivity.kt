@@ -18,18 +18,24 @@ import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
+import javax.inject.Inject
 
 /**
  * メインActivity.
  */
 class MainActivity : BaseActivityWithDrawer() {
+
+    @Inject
+    lateinit var hotEntryModel: HotEntryModel
+
+    @Inject
+    lateinit var newEntryModel: NewEntryModel
 
     lateinit private var mMenu: Menu
 
@@ -185,7 +191,6 @@ class MainActivity : BaseActivityWithDrawer() {
             Kind.HOT_ENTRY -> {
                 mMenu.show()
                 val mainTitle = pager.getCurrentPageTitle().toString()
-                val hotEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.HOT_ENTRY) as HotEntryModel
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_hot_entry
@@ -193,7 +198,6 @@ class MainActivity : BaseActivityWithDrawer() {
             Kind.NEW_ENTRY -> {
                 mMenu.show()
                 val mainTitle = pager.getCurrentPageTitle().toString()
-                val newEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.NEW_ENTRY) as NewEntryModel
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_new_entry

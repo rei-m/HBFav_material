@@ -32,6 +32,12 @@ class AppLayerModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun provideHatenaModel(): HatenaModel {
+        return HatenaModel(application)
+    }
+
+    @Provides
+    @Singleton
     fun provideHotEntryModel(): HotEntryModel {
         return HotEntryModel()
     }
@@ -46,5 +52,11 @@ class AppLayerModule(private val application: Application) {
     @Singleton
     fun provideUserModel(): UserModel {
         return UserModel(application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRegisterBookmarkModel(): UserRegisterBookmarkModel {
+        return UserRegisterBookmarkModel()
     }
 }

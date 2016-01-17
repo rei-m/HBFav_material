@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.openUrl
@@ -29,6 +30,7 @@ class OthersBookmarkActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
 
         val userId = intent.getStringExtra(ARG_USER_ID)
         supportActionBar.title = userId

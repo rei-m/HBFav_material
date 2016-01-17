@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
@@ -25,6 +26,7 @@ class FrameActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
 
         if (savedInstanceState == null) {
             val tag = intent.getSerializableExtra(ARG_TAG) as Tag
