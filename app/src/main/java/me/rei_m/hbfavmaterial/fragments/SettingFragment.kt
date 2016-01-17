@@ -11,22 +11,32 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
+import javax.inject.Inject
 
 /**
  * ユーザーの設定を行うFragment.
  */
 class SettingFragment : Fragment() {
+
+    @Inject
+    lateinit var userModel: UserModel
+
+    @Inject
+    lateinit var hatenaModel: HatenaModel
+
+    @Inject
+    lateinit var twitterModel: TwitterModel
 
     companion object {
 
@@ -37,9 +47,12 @@ class SettingFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+    }
 
-        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
 
@@ -53,8 +66,6 @@ class SettingFragment : Fragment() {
                     .show(childFragmentManager, EditUserIdDialogFragment.TAG)
         }
 
-        val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
-
         val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
         val oauthTextId = if (hatenaModel.isAuthorised())
             R.string.text_hatena_account_connect_ok else
@@ -65,8 +76,6 @@ class SettingFragment : Fragment() {
         layoutHatenaOAuth.setOnClickListener { v ->
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
         }
-
-        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
 
         val layoutTwitterOAuth = view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth) as LinearLayout
         layoutTwitterOAuth.setOnClickListener { v ->
@@ -80,8 +89,6 @@ class SettingFragment : Fragment() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
-
         val textTwitterOAuth = view.findViewById(R.id.fragment_setting_text_twitter_oauth) as AppCompatTextView
         val twitterOAuthTextId = if (twitterModel.isAuthorised())
             R.string.text_hatena_account_connect_ok else
@@ -92,7 +99,6 @@ class SettingFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
-        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
         twitterModel.clearBusy()
     }
 
@@ -103,7 +109,6 @@ class SettingFragment : Fragment() {
 
         if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
             // TwitterOAuth認可後の処理を行う.
-            val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
             twitterModel.onActivityResult(requestCode, resultCode, data)
             return
         }
@@ -141,7 +146,6 @@ class SettingFragment : Fragment() {
     @Subscribe
     fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
-            val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             userModel.userEntity?.apply {
                 val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
                 textUserId.text = id

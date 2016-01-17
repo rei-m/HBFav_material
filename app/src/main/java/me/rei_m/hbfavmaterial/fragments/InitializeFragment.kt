@@ -12,31 +12,40 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hideKeyBoard
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
+import javax.inject.Inject
 
 /**
  * アプリの初期処理を行うFragment.
  */
 class InitializeFragment : Fragment(), ProgressDialogI {
 
+    @Inject
+    lateinit var userModel: UserModel
+
     override var mProgressDialog: ProgressDialog? = null
 
     private var mLayoutUserId: TextInputLayout? = null
 
-    private var mSubscription: Subscription? = null
+    lateinit private var mSubscription: Subscription
 
     companion object {
         fun newInstance(): InitializeFragment {
             return InitializeFragment()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.graph.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -53,7 +62,6 @@ class InitializeFragment : Fragment(), ProgressDialogI {
                 .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled }
 
         buttonSetId.setOnClickListener { v ->
-            val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
             userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
             showProgressDialog(activity)
         }
@@ -63,7 +71,7 @@ class InitializeFragment : Fragment(), ProgressDialogI {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mSubscription?.unsubscribe()
+        mSubscription.unsubscribe()
     }
 
     override fun onResume() {
@@ -71,7 +79,6 @@ class InitializeFragment : Fragment(), ProgressDialogI {
         EventBusHolder.EVENT_BUS.register(this)
 
         // ユーザー情報が設定済かチェックする
-        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
         if (userModel.isSetUserSetting()) {
             EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
         }

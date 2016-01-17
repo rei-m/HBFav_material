@@ -12,9 +12,10 @@ import me.rei_m.hbfavmaterial.di.ApplicationComponent
 import me.rei_m.hbfavmaterial.di.ApplicationModule
 import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
 import me.rei_m.hbfavmaterial.extensions.getAssetToJson
-import me.rei_m.hbfavmaterial.managers.ModelLocator
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag
-import me.rei_m.hbfavmaterial.models.*
+import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
+import me.rei_m.hbfavmaterial.models.BookmarkUserModel
+import me.rei_m.hbfavmaterial.models.HotEntryModel
+import me.rei_m.hbfavmaterial.models.NewEntryModel
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -59,19 +60,6 @@ class App : Application() {
         val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
         val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))
-
-        // ModelLocatorにModelの参照を登録
-        ModelLocator.apply {
-            register(Tag.FAVORITE, BookmarkFavoriteModel())
-            register(Tag.OWN_BOOKMARK, BookmarkUserModel())
-            register(Tag.HOT_ENTRY, HotEntryModel())
-            register(Tag.NEW_ENTRY, NewEntryModel())
-            register(Tag.USER, UserModel(applicationContext))
-            register(Tag.OTHERS_BOOKMARK, BookmarkUserModel())
-            register(Tag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel())
-            register(Tag.HATENA, HatenaModel(applicationContext))
-            register(Tag.TWITTER, TwitterModel(applicationContext))
-        }
     }
 
     fun resetBookmarks() {

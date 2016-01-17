@@ -32,5 +32,9 @@ interface ApplicationComponent {
 
     fun inject(hotEntryFragment: HotEntryFragment)
 
+    fun inject(initializeFragment: InitializeFragment)
+
     fun inject(newEntryFragment: NewEntryFragment)
+
+    fun inject(settingFragment: SettingFragment)
 }
