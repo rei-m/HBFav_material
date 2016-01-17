@@ -15,6 +15,7 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
@@ -22,17 +23,20 @@ import me.rei_m.hbfavmaterial.extensions.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
+import javax.inject.Inject
 
 class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
+    @Inject
+    lateinit var userModel: UserModel
+
     override var mProgressDialog: ProgressDialog? = null
 
-    private var mLayoutUserId: TextInputLayout? = null
+    lateinit private var mLayoutUserId: TextInputLayout
 
-    private var mSubscription: Subscription? = null
+    lateinit private var mSubscription: Subscription
 
     companion object {
 
@@ -49,9 +53,12 @@ class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+    }
 
-        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
 
@@ -89,7 +96,7 @@ class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mSubscription?.unsubscribe()
+        mSubscription.unsubscribe()
     }
 
     override fun onResume() {
@@ -114,12 +121,12 @@ class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
 
         when (event.type) {
             UserIdCheckedEvent.Companion.Type.OK -> {
-                mLayoutUserId?.isErrorEnabled = false
+                mLayoutUserId.isErrorEnabled = false
                 dismiss()
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                mLayoutUserId?.error = getString(R.string.message_error_input_user_id)
+                mLayoutUserId.error = getString(R.string.message_error_input_user_id)
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

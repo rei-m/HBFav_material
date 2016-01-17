@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
@@ -30,7 +29,6 @@ class ExplainAppActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
 
         findViewById(R.id.pager).hide()
         findViewById(R.id.content).show()

@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.R
  */
 class EntryWebViewFragment : Fragment() {
 
-    private var mEntryUrl: String? = null
+    lateinit private var mEntryUrl: String
 
     companion object {
 
@@ -58,11 +58,6 @@ class EntryWebViewFragment : Fragment() {
         }
 
         return view
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        mEntryUrl = null
     }
 
     /**

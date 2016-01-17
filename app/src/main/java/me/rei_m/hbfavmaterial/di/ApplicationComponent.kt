@@ -16,31 +16,21 @@ interface ApplicationComponent {
 
     fun inject(bookmarkActivity: BookmarkActivity)
 
-    fun inject(bookmarkUsersActivity: BookmarkUsersActivity)
-
-    fun inject(explainAppActivity: ExplainAppActivity)
-
-    fun inject(frameActivity: FrameActivity)
-
     fun inject(mainActivity: MainActivity)
 
     fun inject(oAuthActivity: OAuthActivity)
-
-    fun inject(othersBookmarkActivity: OthersBookmarkActivity)
-
-    fun inject(settingActivity: SettingActivity)
-
-    fun inject(splashActivity: SplashActivity)
 
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 
     fun inject(bookmarkUserFragment: BookmarkUserFragment)
 
+    fun inject(bookmarkUsersFragment: BookmarkUsersFragment)
+
+    fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
+
+    fun inject(editUserIdDialogFragment: EditUserIdDialogFragment)
+
     fun inject(hotEntryFragment: HotEntryFragment)
 
     fun inject(newEntryFragment: NewEntryFragment)
-
-    fun inject(bookmarkFragment: BookmarkFragment)
-
-    fun inject(bookmarkUsersFragment: BookmarkUsersFragment)
 }

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
@@ -34,8 +33,6 @@ class BookmarkFragment : Fragment(), FragmentAnimationI {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
-
         mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 

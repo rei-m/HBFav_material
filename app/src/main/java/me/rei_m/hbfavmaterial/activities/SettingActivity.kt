@@ -27,7 +27,6 @@ class SettingActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
 
         findViewById(R.id.pager).hide()
         findViewById(R.id.content).show()

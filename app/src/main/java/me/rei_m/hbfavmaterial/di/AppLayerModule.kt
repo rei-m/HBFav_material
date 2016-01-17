@@ -50,6 +50,12 @@ class AppLayerModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun provideTwitterModel(): TwitterModel {
+        return TwitterModel(application)
+    }
+
+    @Provides
+    @Singleton
     fun provideUserModel(): UserModel {
         return UserModel(application)
     }
