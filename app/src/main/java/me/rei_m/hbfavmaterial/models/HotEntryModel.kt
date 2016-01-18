@@ -42,10 +42,12 @@ class HotEntryModel @Inject constructor(private val entryRepository: EntryReposi
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -54,7 +56,6 @@ class HotEntryModel @Inject constructor(private val entryRepository: EntryReposi
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

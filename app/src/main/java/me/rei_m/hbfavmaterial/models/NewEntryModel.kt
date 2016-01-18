@@ -42,10 +42,12 @@ class NewEntryModel @Inject constructor(private val entryRepository: EntryReposi
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(NewEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -54,7 +56,6 @@ class NewEntryModel @Inject constructor(private val entryRepository: EntryReposi
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

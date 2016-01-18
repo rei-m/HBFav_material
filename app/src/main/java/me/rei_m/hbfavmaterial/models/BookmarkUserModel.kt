@@ -56,6 +56,7 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
@@ -64,6 +65,7 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -72,7 +74,6 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }
