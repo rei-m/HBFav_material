@@ -31,7 +31,7 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
 import javax.inject.Inject
 
-class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
+class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     @Inject
     lateinit var hatenaModel: HatenaModel

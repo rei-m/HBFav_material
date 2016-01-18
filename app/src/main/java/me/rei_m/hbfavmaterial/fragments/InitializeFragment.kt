@@ -26,7 +26,7 @@ import javax.inject.Inject
 /**
  * アプリの初期処理を行うFragment.
  */
-class InitializeFragment : Fragment(), ProgressDialogI {
+class InitializeFragment : Fragment(), IProgressDialog {
 
     @Inject
     lateinit var userModel: UserModel

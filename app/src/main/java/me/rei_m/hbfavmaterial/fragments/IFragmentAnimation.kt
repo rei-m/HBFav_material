@@ -8,7 +8,7 @@ import android.view.animation.AnimationUtils
 
 import me.rei_m.hbfavmaterial.R
 
-interface FragmentAnimationI {
+interface IFragmentAnimation {
 
     var mContainerWidth: Float;
 

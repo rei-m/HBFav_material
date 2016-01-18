@@ -6,7 +6,7 @@ import junit.framework.TestCase
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkFavoriteLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
-import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
+import me.rei_m.hbfavmaterial.repositories.MockBookmarkRepository
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
@@ -19,11 +19,12 @@ import java.util.concurrent.TimeUnit
 @RunWith(AndroidJUnit4::class)
 class BookmarkFavoriteModelTest : TestCase() {
 
-    private val bookmarkRepository = BookmarkRepository()
+    lateinit private var bookmarkRepository: MockBookmarkRepository
 
     @Before
     override public fun setUp() {
         super.setUp()
+        bookmarkRepository = MockBookmarkRepository()
     }
 
     @Test
@@ -43,7 +44,7 @@ class BookmarkFavoriteModelTest : TestCase() {
 
         // 取得開始
         eventCatcher.initCountDown()
-        bookmarkFavoriteModel.fetch("Rei19")
+        bookmarkFavoriteModel.fetch(MockBookmarkRepository.TEST_ID_SUCCESS)
 
         // リクエスト中はBusy
         assertThat(bookmarkFavoriteModel.isBusy, `is`(true))
@@ -55,7 +56,7 @@ class BookmarkFavoriteModelTest : TestCase() {
 
         // 2ページ目を取得
         eventCatcher.initCountDown()
-        bookmarkFavoriteModel.fetch("Rei19", 2)
+        bookmarkFavoriteModel.fetch(MockBookmarkRepository.TEST_ID_SUCCESS, 2)
         eventCatcher.startCountDown()
 
         // 取得したあとは50件取れている
@@ -67,7 +68,7 @@ class BookmarkFavoriteModelTest : TestCase() {
 
         // 先頭から取得し直す
         eventCatcher.initCountDown()
-        bookmarkFavoriteModel.fetch("Rei19")
+        bookmarkFavoriteModel.fetch(MockBookmarkRepository.TEST_ID_SUCCESS)
         eventCatcher.startCountDown()
 
         // 先頭から取得しなおした場合は今までのリストはクリアされる
@@ -86,9 +87,9 @@ class BookmarkFavoriteModelTest : TestCase() {
 
         val bookmarkFavoriteModel = BookmarkFavoriteModel(bookmarkRepository)
 
-        // 存在しないユーザーのRSSを取得
+        // ブックマーク登録のないユーザのRSSを取得
         eventCatcher.initCountDown()
-        bookmarkFavoriteModel.fetch("hogehogehogehoge")
+        bookmarkFavoriteModel.fetch(MockBookmarkRepository.TEST_ID_EMPTY)
         eventCatcher.startCountDown()
 
         // 対象は見つからなかった
@@ -108,7 +109,7 @@ class BookmarkFavoriteModelTest : TestCase() {
 
         // 存在しないユーザーのRSSを取得
         eventCatcher.initCountDown()
-        bookmarkFavoriteModel.fetch("hogehogehogehoge")
+        bookmarkFavoriteModel.fetch(MockBookmarkRepository.TEST_ID_NOT_FOUND)
         eventCatcher.startCountDown()
 
         // 対象は見つからなかった
