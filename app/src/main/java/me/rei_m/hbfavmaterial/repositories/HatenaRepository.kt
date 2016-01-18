@@ -1,23 +1,26 @@
 package me.rei_m.hbfavmaterial.repositories
 
 import android.content.Context
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 import rx.Observable
+import javax.inject.Inject
 
 class HatenaRepository {
 
     /**
      * HatenaのOAuth認証が必要なAPIにアクセスするモジュール.
      */
-    private var mHatenaOAuthApi: HatenaOAuthApi? = null
+    private val mHatenaOAuthApi: HatenaOAuthApi
 
     /**
      * コンストラクタ.
      */
-    constructor(context: Context) {
+    @Inject
+    constructor(@ForApplication context: Context) {
         // OAuth認証用のキーを作成し、OAuthAPIを作成する.
         val hatenaJson = context.getAssetToJson("hatena.json")
         mHatenaOAuthApi = HatenaOAuthApi(hatenaJson.getString("consumer_key"), hatenaJson.getString("consumer_secret"))
@@ -27,7 +30,7 @@ class HatenaRepository {
      * 認証用のRequestTokenを取得する.
      */
     fun fetchRequestToken(): Observable<String> {
-        return mHatenaOAuthApi!!
+        return mHatenaOAuthApi
                 .requestRequestToken()
     }
 
@@ -35,7 +38,7 @@ class HatenaRepository {
      * 認証用のAccessTokenを取得する.
      */
     fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
-        return mHatenaOAuthApi!!
+        return mHatenaOAuthApi
                 .requestAccessToken(requestToken)
     }
 
@@ -44,7 +47,7 @@ class HatenaRepository {
      */
     fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
                           urlString: String): Observable<BookmarkEditEntity> {
-        return mHatenaOAuthApi!!
+        return mHatenaOAuthApi
                 .getBookmark(oauthTokenEntity, urlString)
                 .map {
                     response ->
@@ -61,7 +64,7 @@ class HatenaRepository {
                        urlString: String,
                        comment: String,
                        isOpen: Boolean): Observable<BookmarkEditEntity> {
-        return mHatenaOAuthApi!!.postBookmark(oauthTokenEntity, urlString, comment, isOpen)
+        return mHatenaOAuthApi.postBookmark(oauthTokenEntity, urlString, comment, isOpen)
                 .map {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
@@ -75,6 +78,6 @@ class HatenaRepository {
      */
     fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
                        urlString: String): Observable<Boolean> {
-        return mHatenaOAuthApi!!.deleteBookmark(oauthTokenEntity, urlString)
+        return mHatenaOAuthApi.deleteBookmark(oauthTokenEntity, urlString)
     }
 }

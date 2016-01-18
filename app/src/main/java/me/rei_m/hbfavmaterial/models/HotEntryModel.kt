@@ -10,14 +10,13 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * ホットエントリー情報を取得するModel.
  */
-class HotEntryModel {
-
-    private val entryRepository = EntryRepository()
-
+class HotEntryModel @Inject constructor(private val entryRepository: EntryRepository) {
+    
     var isBusy = false
         private set
 

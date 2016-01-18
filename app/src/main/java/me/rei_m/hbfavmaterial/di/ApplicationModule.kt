@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.di.ForApplication
 import javax.inject.Singleton
 
 /**

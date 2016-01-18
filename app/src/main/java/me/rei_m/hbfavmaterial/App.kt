@@ -7,10 +7,7 @@ import com.squareup.leakcanary.LeakCanary
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
-import me.rei_m.hbfavmaterial.di.AppLayerModule
-import me.rei_m.hbfavmaterial.di.ApplicationComponent
-import me.rei_m.hbfavmaterial.di.ApplicationModule
-import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
+import me.rei_m.hbfavmaterial.di.*
 import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
 import me.rei_m.hbfavmaterial.models.BookmarkUserModel
@@ -46,7 +43,8 @@ class App : Application() {
         // Dagger2
         graph = DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this))
-                .appLayerModule(AppLayerModule(this))
+                .appLayerModule(AppLayerModule())
+                .infraLayerModule(InfraLayerModule())
                 .build()
         graph.inject(this)
 

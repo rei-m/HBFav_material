@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.fragments.*
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class, AppLayerModule::class))
+@Component(modules = arrayOf(ApplicationModule::class, AppLayerModule::class, InfraLayerModule::class))
 interface ApplicationComponent {
 
     fun inject(application: App)

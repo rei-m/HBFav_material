@@ -1,68 +1,75 @@
 package me.rei_m.hbfavmaterial.di
 
-import android.app.Application
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.models.*
+import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
+import me.rei_m.hbfavmaterial.repositories.EntryRepository
+import me.rei_m.hbfavmaterial.repositories.HatenaRepository
+import me.rei_m.hbfavmaterial.repositories.UserRepository
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class AppLayerModule(private val application: Application) {
+class AppLayerModule() {
 
     @Provides
     @Singleton
-    fun provideBookmarkFavoriteModel(): BookmarkFavoriteModel {
-        return BookmarkFavoriteModel()
+    fun provideBookmarkFavoriteModel(bookmarkRepository: BookmarkRepository): BookmarkFavoriteModel {
+        return BookmarkFavoriteModel(bookmarkRepository)
     }
 
     @Provides
     @Singleton
     @Named("bookmarkUserModelForSelf")
-    fun provideBookmarkUserModelForSelf(): BookmarkUserModel {
-        return BookmarkUserModel()
+    fun provideBookmarkUserModelForSelf(bookmarkRepository: BookmarkRepository): BookmarkUserModel {
+        return BookmarkUserModel(bookmarkRepository)
     }
 
     @Provides
     @Singleton
     @Named("bookmarkUserModelForOther")
-    fun provideBookmarkUserModelForOther(): BookmarkUserModel {
-        return BookmarkUserModel()
+    fun provideBookmarkUserModelForOther(bookmarkRepository: BookmarkRepository): BookmarkUserModel {
+        return BookmarkUserModel(bookmarkRepository)
     }
 
     @Provides
     @Singleton
-    fun provideHatenaModel(): HatenaModel {
-        return HatenaModel(application)
+    @ForApplication
+    fun provideHatenaModel(context: Context, hatenaRepository: HatenaRepository): HatenaModel {
+        return HatenaModel(context, hatenaRepository)
     }
 
     @Provides
     @Singleton
-    fun provideHotEntryModel(): HotEntryModel {
-        return HotEntryModel()
+    fun provideHotEntryModel(entryRepository: EntryRepository): HotEntryModel {
+        return HotEntryModel(entryRepository)
     }
 
     @Provides
     @Singleton
-    fun provideNewEntryModel(): NewEntryModel {
-        return NewEntryModel()
+    fun provideNewEntryModel(entryRepository: EntryRepository): NewEntryModel {
+        return NewEntryModel(entryRepository)
     }
 
     @Provides
     @Singleton
-    fun provideTwitterModel(): TwitterModel {
-        return TwitterModel(application)
+    @ForApplication
+    fun provideTwitterModel(context: Context): TwitterModel {
+        return TwitterModel(context)
     }
 
     @Provides
     @Singleton
-    fun provideUserModel(): UserModel {
-        return UserModel(application)
+    @ForApplication
+    fun provideUserModel(context: Context, userRepository: UserRepository): UserModel {
+        return UserModel(context, userRepository)
     }
 
     @Provides
     @Singleton
-    fun provideUserRegisterBookmarkModel(): UserRegisterBookmarkModel {
-        return UserRegisterBookmarkModel()
+    fun provideUserRegisterBookmarkModel(bookmarkRepository: BookmarkRepository): UserRegisterBookmarkModel {
+        return UserRegisterBookmarkModel(bookmarkRepository)
     }
 }

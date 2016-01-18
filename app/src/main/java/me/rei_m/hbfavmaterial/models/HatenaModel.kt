@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -14,6 +15,7 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
+import javax.inject.Inject
 
 /**
  * はてなのOAuth関連の情報を管理するModel.
@@ -26,19 +28,17 @@ class HatenaModel {
     var oauthTokenEntity: OAuthTokenEntity? = null
         private set
 
-    private var mHatenaRepository: HatenaRepository? = null
+    private val mHatenaRepository: HatenaRepository
 
     companion object {
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 
-    /**
-     * コンストラクタ.
-     */
-    constructor(context: Context) {
+    @Inject
+    constructor(@ForApplication context: Context, hatenaRepository: HatenaRepository) {
 
         // Repositoryを作成する.
-        mHatenaRepository = HatenaRepository(context)
+        this.mHatenaRepository = hatenaRepository
 
         // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
@@ -83,7 +83,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.fetchRequestToken()
+        mHatenaRepository.fetchRequestToken()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -119,7 +119,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.fetchAccessToken(requestToken)
+        mHatenaRepository.fetchAccessToken(requestToken)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,7 +168,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.findBookmarkByUrl(oauthTokenEntity!!, url)
+        mHatenaRepository.findBookmarkByUrl(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -204,7 +204,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
+        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -242,7 +242,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.deleteBookmark(oauthTokenEntity!!, url)
+        mHatenaRepository.deleteBookmark(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -9,9 +9,11 @@ import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import com.twitter.sdk.android.core.models.Tweet
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
+import javax.inject.Inject
 
 /**
  * Twitter関連の情報を管理するModel.
@@ -35,7 +37,8 @@ class TwitterModel {
     /**
      * コンストラクタ.
      */
-    constructor(context: Context) {
+    @Inject
+    constructor(@ForApplication context: Context) {
 
         // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
