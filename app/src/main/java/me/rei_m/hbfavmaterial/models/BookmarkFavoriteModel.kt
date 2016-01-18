@@ -20,7 +20,7 @@ class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: 
         private set
 
     val bookmarkList = ArrayList<BookmarkEntity>()
-    
+
     fun fetch(userId: String, startIndex: Int = 0) {
 
         if (isBusy) {
@@ -42,6 +42,7 @@ class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: 
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
@@ -50,6 +51,7 @@ class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: 
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -58,7 +60,6 @@ class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: 
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

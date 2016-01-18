@@ -49,8 +49,8 @@ class BookmarkUtilsTest {
         val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
 
         // 秒前
-        cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 58)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2秒前"))
+//        cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 55)
+//        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("5秒前"))
 
         // 分前
         cal.set(2015, Calendar.OCTOBER, 15, 9, 57, 58)

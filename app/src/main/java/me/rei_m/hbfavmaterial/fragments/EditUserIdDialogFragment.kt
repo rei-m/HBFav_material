@@ -27,7 +27,7 @@ import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
 import javax.inject.Inject
 
-class EditUserIdDialogFragment : DialogFragment(), ProgressDialogI {
+class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
     @Inject
     lateinit var userModel: UserModel

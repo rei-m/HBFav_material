@@ -55,6 +55,7 @@ class UserModel @Inject constructor(@ForApplication context: Context, private va
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isSuccess) {
                     EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
                 } else {
@@ -63,6 +64,7 @@ class UserModel @Inject constructor(@ForApplication context: Context, private va
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.ERROR))
             }
         }
@@ -71,7 +73,6 @@ class UserModel @Inject constructor(@ForApplication context: Context, private va
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
