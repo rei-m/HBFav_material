@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
@@ -17,6 +16,7 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
@@ -25,19 +25,23 @@ import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.HatenaPostBookmarkLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.*
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
+import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
+    @Inject
+    lateinit var hatenaModel: HatenaModel
+
+    @Inject
+    lateinit var twitterModel: TwitterModel
+
     override var mProgressDialog: ProgressDialog? = null
 
-    private var mLayoutBookmark: TextInputLayout? = null
-
-    private var mSubscription: Subscription? = null
+    lateinit private var mSubscription: Subscription
 
     companion object {
 
@@ -74,13 +78,15 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
-
-        val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
-        val twitterModel = ModelLocator.get(ModelLocator.Companion.Tag.TWITTER) as TwitterModel
-
+        
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
         val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)
 
@@ -128,8 +134,6 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
             switchShareTwitter.isEnabled = !isChecked
             editBookmark.isEnabled = !isChecked
         }
-
-        mLayoutBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_layout_edit_bookmark) as TextInputLayout
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
         buttonCancel.setOnClickListener { v ->
@@ -185,7 +189,7 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogI {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mSubscription?.unsubscribe()
+        mSubscription.unsubscribe()
     }
 
     override fun onResume() {

@@ -12,6 +12,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -23,20 +24,22 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
+import javax.inject.Inject
 
 /**
  * HotEntryを一覧で表示するFragment.
  */
 class HotEntryFragment : Fragment() {
 
-    private var mListAdapter: EntryListAdapter? = null
+    @Inject
+    lateinit var hotEntryModel: HotEntryModel
 
-    private var mCompositeSubscription: CompositeSubscription? = null
+    lateinit private var mListAdapter: EntryListAdapter
+
+    lateinit private var mCompositeSubscription: CompositeSubscription
 
     companion object {
         fun newInstance(): HotEntryFragment {
@@ -46,13 +49,9 @@ class HotEntryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mListAdapter = EntryListAdapter(activity, R.layout.list_item_entry)
-    }
+        App.graph.inject(this)
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mListAdapter = null
-        mCompositeSubscription = null
+        mListAdapter = EntryListAdapter(activity, R.layout.list_item_entry)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,9 +80,7 @@ class HotEntryFragment : Fragment() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
-
-        val displayedCount = mListAdapter?.count ?: 0
+        val displayedCount = mListAdapter.count
 
         if (displayedCount != hotEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
@@ -100,7 +97,7 @@ class HotEntryFragment : Fragment() {
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             hotEntryModel.fetch(hotEntryModel.entryType)
         })
     }
@@ -108,13 +105,12 @@ class HotEntryFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription?.unsubscribe()
+        mCompositeSubscription.unsubscribe()
     }
 
     @Subscribe
     fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Companion.Target.HOT) {
-            val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
             hotEntryModel.fetch(event.type)
         }
     }
@@ -135,7 +131,7 @@ class HotEntryFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 
@@ -146,8 +142,7 @@ class HotEntryFragment : Fragment() {
     }
 
     private fun displayListContents() {
-        mListAdapter?.apply {
-            val hotEntryModel = ModelLocator.get(ModelTag.HOT_ENTRY) as HotEntryModel
+        mListAdapter.apply {
             clear()
             addAll(hotEntryModel.entryList)
             notifyDataSetChanged()

@@ -57,6 +57,10 @@ android {
     }
 }
 
+kapt {
+    generateStubs = true
+}
+
 dependencies {
     ext.rx_android_kotlin_version = '0.3.0'
     ext.kotlinx_dom_version = '0.0.5'
@@ -66,6 +70,11 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7-kotlin:$rx_android_kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx.dom:$kotlinx_dom_version"
+
+    compile 'com.google.dagger:dagger:2.0'
+    kapt 'com.google.dagger:dagger-compiler:2.0'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
@@ -94,7 +103,9 @@ buildscript {
     ext.kotlin_version = '1.0.0-beta-4583'
     repositories {
         mavenCentral()
-        maven { url 'https://maven.fabric.io/public' }
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

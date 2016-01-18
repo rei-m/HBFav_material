@@ -7,6 +7,7 @@ import android.support.design.widget.NavigationView
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
@@ -17,20 +18,26 @@ import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
+import javax.inject.Inject
 
 /**
  * メインActivity.
  */
 class MainActivity : BaseActivityWithDrawer() {
 
-    private var mMenu: Menu? = null
+    @Inject
+    lateinit var hotEntryModel: HotEntryModel
+
+    @Inject
+    lateinit var newEntryModel: NewEntryModel
+
+    lateinit private var mMenu: Menu
 
     companion object {
 
@@ -46,6 +53,8 @@ class MainActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+
         val pager = findViewById(R.id.pager) as BookmarkViewPager
         pager.initialize(supportFragmentManager, this)
         pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
@@ -170,27 +179,25 @@ class MainActivity : BaseActivityWithDrawer() {
 
         when (event.kind) {
             Kind.BOOKMARK_FAVORITE -> {
-                mMenu?.hide()
+                mMenu.hide()
                 title = pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_favorite
             }
             Kind.BOOKMARK_OWN -> {
-                mMenu?.hide()
+                mMenu.hide()
                 title = pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_own
             }
             Kind.HOT_ENTRY -> {
-                mMenu?.show()
+                mMenu.show()
                 val mainTitle = pager.getCurrentPageTitle().toString()
-                val hotEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.HOT_ENTRY) as HotEntryModel
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_hot_entry
             }
             Kind.NEW_ENTRY -> {
-                mMenu?.show()
+                mMenu.show()
                 val mainTitle = pager.getCurrentPageTitle().toString()
-                val newEntryModel = ModelLocator.get(ModelLocator.Companion.Tag.NEW_ENTRY) as NewEntryModel
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_new_entry

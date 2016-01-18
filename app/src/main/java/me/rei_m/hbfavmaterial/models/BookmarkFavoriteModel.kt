@@ -9,19 +9,18 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * お気に入りのBookmarkを管理するModel.
  */
-class BookmarkFavoriteModel {
-
-    private val bookmarkRepository = BookmarkRepository()
+class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     var isBusy = false
         private set
 
     val bookmarkList = ArrayList<BookmarkEntity>()
-
+    
     fun fetch(userId: String, startIndex: Int = 0) {
 
         if (isBusy) {

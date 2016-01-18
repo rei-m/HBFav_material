@@ -27,6 +27,7 @@ class SettingActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         findViewById(R.id.pager).hide()
         findViewById(R.id.content).show()
         if (savedInstanceState == null) {

@@ -19,9 +19,9 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
 class BookmarkUsersActivity : BaseActivity() {
 
-    private var mBookmarkEntity: BookmarkEntity? = null
+    lateinit private var mBookmarkEntity: BookmarkEntity
 
-    private var mFilterType: FilterType? = null
+    private var mFilterType: FilterType = FilterType.ALL
 
     companion object {
 
@@ -42,10 +42,10 @@ class BookmarkUsersActivity : BaseActivity() {
         mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity!!))
+            setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity))
         }
 
-        displayTitle(mFilterType ?: FilterType.ALL)
+        displayTitle(mFilterType)
 
         findViewById(R.id.fab).hide()
     }
@@ -79,9 +79,9 @@ class BookmarkUsersActivity : BaseActivity() {
                 return super.onOptionsItemSelected(item)
         }
 
-        EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mFilterType!!))
+        EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mFilterType))
 
-        displayTitle(mFilterType!!)
+        displayTitle(mFilterType)
 
         return true
     }
@@ -92,7 +92,7 @@ class BookmarkUsersActivity : BaseActivity() {
     }
 
     private fun displayTitle(filterType: FilterType) {
-        val bookmarkCountString = mBookmarkEntity?.articleEntity?.bookmarkCount.toString()
+        val bookmarkCountString = mBookmarkEntity.articleEntity.bookmarkCount.toString()
         val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
         supportActionBar.title = "$bookmarkCountString users - $filterTypeString"
     }

@@ -11,12 +11,13 @@ import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.picasso.Picasso
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
+import javax.inject.Inject
 
 /**
  * Drawer付きActivityの基底クラス.
@@ -24,8 +25,13 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 abstract class BaseActivityWithDrawer : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
+    @Inject
+    lateinit var userModel: UserModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -44,7 +50,6 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(),
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
-        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
         val userEntity = userModel.userEntity
 
         displayUserIconAndName(userEntity?.id ?: "")

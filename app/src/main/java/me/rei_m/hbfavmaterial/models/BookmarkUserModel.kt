@@ -9,14 +9,13 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * ユーザーのブックマーク情報を管理するModel.
  */
-class BookmarkUserModel {
-
-    private val bookmarkRepository = BookmarkRepository()
-
+class BookmarkUserModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
+    
     private var userId = ""
 
     var isBusy = false

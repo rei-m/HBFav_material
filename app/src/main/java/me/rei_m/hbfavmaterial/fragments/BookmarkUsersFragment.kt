@@ -12,6 +12,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -23,25 +24,27 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserRegisterBookmarkModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 import me.rei_m.hbfavmaterial.views.adapters.UserListAdapter
 import rx.subscriptions.CompositeSubscription
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag as ModelTag
+import javax.inject.Inject
 
 /**
  * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
  */
 public class BookmarkUsersFragment : Fragment() {
 
-    private var mBookmarkEntity: BookmarkEntity? = null
+    @Inject
+    lateinit var userRegisterBookmarkModel: UserRegisterBookmarkModel
 
-    private var mFilterType: FilterType? = null
+    lateinit private var mBookmarkEntity: BookmarkEntity
 
-    private var mListAdapter: UserListAdapter? = null
+    private var mFilterType: FilterType = FilterType.ALL
 
-    private var mCompositeSubscription: CompositeSubscription? = null
+    lateinit private var mListAdapter: UserListAdapter
+
+    lateinit private var mCompositeSubscription: CompositeSubscription
 
     companion object {
 
@@ -60,6 +63,8 @@ public class BookmarkUsersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+
         mListAdapter = UserListAdapter(activity, R.layout.list_item_user)
         mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
 
@@ -68,13 +73,6 @@ public class BookmarkUsersFragment : Fragment() {
         } else {
             mFilterType = FilterType.ALL
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mListAdapter = null
-        mBookmarkEntity = null
-        mFilterType = null
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -103,15 +101,13 @@ public class BookmarkUsersFragment : Fragment() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
-
-        val bookmarkUrl = mBookmarkEntity?.articleEntity?.url ?: ""
+        val bookmarkUrl = mBookmarkEntity.articleEntity.url
 
         // Model内のURLと表示対象のURLが同じかチェックする
         if (userRegisterBookmarkModel.isSameUrl(bookmarkUrl)) {
 
             // 同じ場合は再表示する
-            val displayedCount = mListAdapter?.count ?: 0
+            val displayedCount = mListAdapter.count
 
             if (displayedCount != userRegisterBookmarkModel.bookmarkList.size) {
                 displayListContents()
@@ -132,15 +128,15 @@ public class BookmarkUsersFragment : Fragment() {
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription!!.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            userRegisterBookmarkModel.fetch(mBookmarkEntity?.articleEntity?.url ?: "")
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+            userRegisterBookmarkModel.fetch(mBookmarkEntity.articleEntity.url)
         })
     }
 
     override fun onPause() {
         super.onPause()
         EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription?.unsubscribe()
+        mCompositeSubscription.unsubscribe()
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         if (swipeRefreshLayout.isRefreshing) {
@@ -173,7 +169,7 @@ public class BookmarkUsersFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter?.isEmpty ?: true)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
         view.findViewById(R.id.fragment_list_progress_list).hide()
 
@@ -190,8 +186,7 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     private fun displayListContents() {
-        mListAdapter?.apply {
-            val userRegisterBookmarkModel = ModelLocator.get(ModelTag.USER_REGISTER_BOOKMARK) as UserRegisterBookmarkModel
+        mListAdapter.apply {
             clear()
             if (mFilterType == FilterType.COMMENT) {
                 addAll(userRegisterBookmarkModel.bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
