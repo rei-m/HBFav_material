@@ -11,12 +11,25 @@ class MockBookmarkRepository : BookmarkRepository() {
 
     companion object {
         val TEST_ID_SUCCESS = "success"
+        val TEST_ID_SUCCESS_2 = "success_2"
         val TEST_ID_NOT_FOUND = "not_found"
         val TEST_ID_EMPTY = "empty"
     }
 
     override fun findByUserIdForFavorite(userId: String, startIndex: Int): Observable<List<BookmarkEntity>> {
+        return createTestEntitiesObservable(userId, startIndex)
+    }
 
+    override fun findByUserId(userId: String, startIndex: Int): Observable<List<BookmarkEntity>> {
+        return createTestEntitiesObservable(userId, startIndex)
+    }
+
+    override fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>> {
+
+        return super.findByArticleUrl(articleUrl)
+    }
+
+    private fun createTestEntitiesObservable(userId: String, startIndex: Int): Observable<List<BookmarkEntity>> {
         val bookmarkEntities = ArrayList<BookmarkEntity>()
 
         return when (userId) {
@@ -38,16 +51,6 @@ class MockBookmarkRepository : BookmarkRepository() {
                 Observable.just(bookmarkEntities)
             }
         }
-    }
-
-    override fun findByUserId(userId: String, startIndex: Int): Observable<List<BookmarkEntity>> {
-
-        return super.findByUserId(userId, startIndex)
-    }
-
-    override fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>> {
-
-        return super.findByArticleUrl(articleUrl)
     }
 
     private fun createTestEntity(index: Int): BookmarkEntity {
