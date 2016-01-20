@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 import rx.Observable
 import javax.inject.Inject
 
-class HatenaRepository {
+open class HatenaRepository {
 
     /**
      * HatenaのOAuth認証が必要なAPIにアクセスするモジュール.
@@ -29,7 +29,7 @@ class HatenaRepository {
     /**
      * 認証用のRequestTokenを取得する.
      */
-    fun fetchRequestToken(): Observable<String> {
+    open fun fetchRequestToken(): Observable<String> {
         return mHatenaOAuthApi
                 .requestRequestToken()
     }
@@ -37,7 +37,7 @@ class HatenaRepository {
     /**
      * 認証用のAccessTokenを取得する.
      */
-    fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
+    open fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
         return mHatenaOAuthApi
                 .requestAccessToken(requestToken)
     }
@@ -45,8 +45,8 @@ class HatenaRepository {
     /**
      * ブックマーク情報をURLから検索する.
      */
-    fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
-                          urlString: String): Observable<BookmarkEditEntity> {
+    open fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
+                               urlString: String): Observable<BookmarkEditEntity> {
         return mHatenaOAuthApi
                 .getBookmark(oauthTokenEntity, urlString)
                 .map {
@@ -60,10 +60,10 @@ class HatenaRepository {
     /**
      * ブックマーク情報を追加または更新する.
      */
-    fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String,
-                       comment: String,
-                       isOpen: Boolean): Observable<BookmarkEditEntity> {
+    open fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
+                            urlString: String,
+                            comment: String,
+                            isOpen: Boolean): Observable<BookmarkEditEntity> {
         return mHatenaOAuthApi.postBookmark(oauthTokenEntity, urlString, comment, isOpen)
                 .map {
                     response ->
@@ -76,8 +76,8 @@ class HatenaRepository {
     /**
      * ブックマーク情報を削除する.
      */
-    fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String): Observable<Boolean> {
+    open fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
+                            urlString: String): Observable<Boolean> {
         return mHatenaOAuthApi.deleteBookmark(oauthTokenEntity, urlString)
     }
 }
