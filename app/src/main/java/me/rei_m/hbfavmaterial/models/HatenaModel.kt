@@ -253,7 +253,6 @@ class HatenaModel {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
     }
 
     /**
