@@ -12,12 +12,12 @@ import java.util.*
 /**
  * エントリー情報のリポジトリ.
  */
-class EntryRepository {
+open class EntryRepository {
 
     /**
      * ホッテントリ情報を取得する.
      */
-    fun findByEntryTypeForHot(entryType: EntryType): Observable<List<EntryEntity>> {
+    open fun findByEntryTypeForHot(entryType: EntryType): Observable<List<EntryEntity>> {
         return HotEntryRss()
                 .request(entryType)
                 .map { response -> parseRssResponse(response) }
@@ -26,7 +26,7 @@ class EntryRepository {
     /**
      * 新着エントリ情報を取得する.
      */
-    fun findByEntryTypeForNew(entryType: EntryType): Observable<List<EntryEntity>> {
+    open fun findByEntryTypeForNew(entryType: EntryType): Observable<List<EntryEntity>> {
         return NewEntryRss()
                 .request(entryType)
                 .map { response -> parseRssResponse(response) }

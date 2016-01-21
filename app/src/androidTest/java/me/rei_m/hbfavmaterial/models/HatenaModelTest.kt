@@ -8,6 +8,7 @@ import me.rei_m.hbfavmaterial.events.network.*
 import me.rei_m.hbfavmaterial.repositories.MockHatenaErrorRepository
 import me.rei_m.hbfavmaterial.repositories.MockHatenaRepository
 import org.hamcrest.CoreMatchers.*
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -20,10 +21,15 @@ class HatenaModelTest : TestCase() {
     lateinit private var hatenaErrorRepository: MockHatenaErrorRepository
 
     @Before
-    override public fun setUp() {
+    public override fun setUp() {
         super.setUp()
         hatenaRepository = MockHatenaRepository(InstrumentationRegistry.getTargetContext())
         hatenaErrorRepository = MockHatenaErrorRepository(InstrumentationRegistry.getTargetContext())
+    }
+
+    @After
+    public override fun tearDown() {
+
     }
 
     @Test

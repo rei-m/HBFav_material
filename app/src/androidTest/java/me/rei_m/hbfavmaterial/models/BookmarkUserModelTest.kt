@@ -9,6 +9,7 @@ import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.MockBookmarkRepository
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -22,9 +23,14 @@ class BookmarkUserModelTest : TestCase() {
     lateinit private var bookmarkRepository: MockBookmarkRepository
 
     @Before
-    override public fun setUp() {
+    public override fun setUp() {
         super.setUp()
         bookmarkRepository = MockBookmarkRepository()
+    }
+
+    @After
+    public override fun tearDown() {
+
     }
 
     @Test
