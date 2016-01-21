@@ -2,10 +2,8 @@ package me.rei_m.hbfavmaterial.repositories
 
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Observable
-import java.net.HttpURLConnection
 import java.util.*
 
 class MockEntryRepository : EntryRepository() {
