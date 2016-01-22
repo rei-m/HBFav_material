@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import rx.Observable
 import java.io.Serializable
@@ -42,7 +41,7 @@ class EntryApi {
                     .cacheControl(CacheControl.FORCE_NETWORK)
                     .build()
 
-            val response = OkHttpClient().newCall(request).execute()
+            val response = HttpClient.instance.newCall(request).execute()
             if (response.code() == HttpURLConnection.HTTP_OK) {
                 t.onNext(Gson().fromJson(response.body().string(), Response::class.java))
             } else {
