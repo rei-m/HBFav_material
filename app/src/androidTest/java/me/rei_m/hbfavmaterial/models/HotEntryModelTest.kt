@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.models
 
+import android.support.test.runner.AndroidJUnit4
 import com.squareup.otto.Subscribe
 import junit.framework.TestCase
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -13,9 +14,11 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+@RunWith(AndroidJUnit4::class)
 class HotEntryModelTest : TestCase() {
 
     lateinit private var entryRepository: MockEntryRepository
