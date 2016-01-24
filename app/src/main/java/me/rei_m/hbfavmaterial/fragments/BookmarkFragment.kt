@@ -66,7 +66,6 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
         // ヘッダ部分
         binding.fragmentBookmarkLayoutHeader.let {
-            it.bookmarkEntity = mBookmarkEntity
             Picasso.with(context)
                     .load(mBookmarkEntity.bookmarkIconUrl)
                     .transform(RoundedTransformation())
@@ -78,8 +77,7 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
         // ブックマーク部分
         binding.layoutBookmarkContentsLayoutBookmark.let {
-            it.bookmarkEntity = mBookmarkEntity
-            it.layoutBookmarkTextDescription.toggle(mBookmarkEntity.description.isEmpty())
+            it.layoutBookmarkTextDescription.toggle(!mBookmarkEntity.description.isEmpty())
             Picasso.with(context)
                     .load(mBookmarkEntity.articleEntity.iconUrl)
                     .transform(RoundedTransformation())
@@ -88,7 +86,6 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
         // 記事部分
         binding.layoutBookmarkContentsLayoutArticle.let {
-            it.bookmarkEntity = mBookmarkEntity
             if (mBookmarkEntity.articleEntity.bodyImageUrl.isEmpty()) {
                 it.layoutArticleImageBody.hide()
             } else {

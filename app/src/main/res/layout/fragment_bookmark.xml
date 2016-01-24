@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools">
 
     <data>
 
@@ -21,7 +22,8 @@
                 android:id="@+id/fragment_bookmark_layout_header"
                 layout="@layout/layout_bookmark_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                bind:bookmarkEntity="@{bookmarkEntity}" />
 
             <View
                 android:layout_width="match_parent"
@@ -42,13 +44,15 @@
                     android:id="@+id/layout_bookmark_contents_layout_bookmark"
                     layout="@layout/layout_bookmark"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    bind:bookmarkEntity="@{bookmarkEntity}" />
 
                 <include
                     android:id="@+id/layout_bookmark_contents_layout_article"
                     layout="@layout/layout_article"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    bind:bookmarkEntity="@{bookmarkEntity}" />
 
             </LinearLayout>
 

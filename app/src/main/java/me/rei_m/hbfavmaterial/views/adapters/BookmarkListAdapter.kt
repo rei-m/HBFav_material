@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.databinding.ListItemBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
@@ -54,11 +54,7 @@ class BookmarkListAdapter(context: Context,
         }
 
         binding.listItemBookmarkLayoutBookmark.let {
-            it.bookmarkEntity = bookmarkEntity
-            if (bookmarkEntity.description.isEmpty()) {
-                it.layoutBookmarkTextDescription.hide()
-            }
-
+            it.layoutBookmarkTextDescription.toggle(!bookmarkEntity.description.isEmpty())
             Picasso.with(context)
                     .load(bookmarkEntity.bookmarkIconUrl)
                     .transform(RoundedTransformation())
