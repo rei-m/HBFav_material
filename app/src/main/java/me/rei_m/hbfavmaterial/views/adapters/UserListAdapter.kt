@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.squareup.picasso.Picasso
-import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
@@ -22,12 +21,12 @@ class UserListAdapter(context: Context,
     private val mLayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        
+
         val view = convertView?.apply {
             val binding = DataBindingUtil.getBinding<ListItemUserBinding>(this)
             bindEntity(binding, getItem(position))
         } ?: let {
-            val binding = DataBindingUtil.inflate<ListItemUserBinding>(mLayoutInflater, R.layout.list_item_user, parent, false)
+            val binding = ListItemUserBinding.inflate(mLayoutInflater, parent, false)
             bindEntity(binding, getItem(position))
             return binding.root
         }

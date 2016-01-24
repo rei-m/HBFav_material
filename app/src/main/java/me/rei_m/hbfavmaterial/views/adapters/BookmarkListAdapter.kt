@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.squareup.picasso.Picasso
-import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ListItemBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.extensions.hide
@@ -23,12 +22,12 @@ class BookmarkListAdapter(context: Context,
     private val mLayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        
+
         val view = convertView?.apply {
             val binding = DataBindingUtil.getBinding<ListItemBookmarkBinding>(this)
             bindEntity(binding, getItem(position))
         } ?: let {
-            val binding = DataBindingUtil.inflate<ListItemBookmarkBinding>(mLayoutInflater, R.layout.list_item_bookmark, parent, false)
+            val binding = ListItemBookmarkBinding.inflate(mLayoutInflater, parent, false)
             bindEntity(binding, getItem(position))
             return binding.root
         }
