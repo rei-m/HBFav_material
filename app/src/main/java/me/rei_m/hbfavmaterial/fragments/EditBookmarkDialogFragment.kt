@@ -19,6 +19,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.SettingActivity
+import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
@@ -84,6 +85,8 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+//        val binding = DialogFragmentEditBookmarkBinding.in
 
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
         

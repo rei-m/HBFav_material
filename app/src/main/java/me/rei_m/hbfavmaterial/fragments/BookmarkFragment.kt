@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import com.squareup.picasso.Picasso
-import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -47,7 +45,7 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding = DataBindingUtil.inflate<FragmentBookmarkBinding>(inflater, R.layout.fragment_bookmark, container, false)
+        val binding = FragmentBookmarkBinding.inflate(inflater, container, false)
 
         // 全体
         binding.let {

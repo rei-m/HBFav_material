@@ -1,12 +1,13 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentLicenceBinding
 
 /**
  * アプリのクレジット表記を行うFragment.
@@ -21,11 +22,10 @@ class CreditFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_licence, container, false)
+        val binding = DataBindingUtil.inflate<FragmentLicenceBinding>(inflater, R.layout.fragment_licence, container, false)
 
-        val webView = view.findViewById(R.id.fragment_licence_web_view) as WebView
-        webView.loadUrl(getString(R.string.url_credit))
+        binding.fragmentLicenceWebView.loadUrl(getString(R.string.url_credit))
 
-        return view
+        return binding.root
     }
 }

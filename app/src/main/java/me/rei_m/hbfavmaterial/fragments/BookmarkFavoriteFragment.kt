@@ -59,7 +59,7 @@ class BookmarkFavoriteFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = FragmentListBinding.inflate(inflater, container, false)
+        val binding = DataBindingUtil.inflate<FragmentListBinding>(inflater, R.layout.fragment_list, container, false)
 
         val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
         binding.fragmentListList.addFooterView(footerView, null, false)
@@ -116,6 +116,7 @@ class BookmarkFavoriteFragment : Fragment() {
             bookmarkFavoriteModel.fetch(userModel.userEntity!!.id)
             binding.fragmentListProgressList.show()
         }
+
         binding.fragmentListViewEmpty.hide()
 
         // Pull to refreshのイベントをセット
