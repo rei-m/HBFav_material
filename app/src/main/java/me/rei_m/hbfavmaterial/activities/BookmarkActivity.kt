@@ -3,7 +3,6 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
@@ -79,9 +78,7 @@ class BookmarkActivity : BaseActivity() {
             supportActionBar.title = mEntryTitle
         }
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             // はてぶ投稿ボタン
             if (!hatenaModel.isAuthorised()) {
                 startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
@@ -153,7 +150,7 @@ class BookmarkActivity : BaseActivity() {
                         hatenaModel.fetchBookmark(mEntryLink)
                     }
                 } else {
-                    showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                    showSnackbarNetworkError(binding.activityLayout)
                 }
             }
             else -> {
@@ -191,7 +188,7 @@ class BookmarkActivity : BaseActivity() {
                 dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.ERROR -> {
-                showSnackbarNetworkError(findViewById(R.id.content))
+                showSnackbarNetworkError(binding.content)
             }
         }
     }

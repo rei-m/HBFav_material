@@ -28,13 +28,13 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(),
     @Inject
     lateinit var userModel: UserModel
 
-    private lateinit var binding: ActivityMainBinding
+    protected lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setSupportActionBar(binding.activityMainApp.toolbar)
 

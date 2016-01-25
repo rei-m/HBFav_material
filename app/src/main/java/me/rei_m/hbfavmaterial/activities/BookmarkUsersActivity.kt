@@ -11,7 +11,6 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
-import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
@@ -47,7 +46,7 @@ class BookmarkUsersActivity : BaseActivity() {
 
         displayTitle(mFilterType)
 
-        findViewById(R.id.fab).hide()
+        binding.fab.hide()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

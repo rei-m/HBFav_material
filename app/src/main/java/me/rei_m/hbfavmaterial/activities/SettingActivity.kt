@@ -3,7 +3,6 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
@@ -16,6 +15,7 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 
 class SettingActivity : BaseActivityWithDrawer() {
 
@@ -28,14 +28,14 @@ class SettingActivity : BaseActivityWithDrawer() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        findViewById(R.id.pager).hide()
-        findViewById(R.id.content).show()
+        // 何故かクラスが見えないと言われるのでCastする
+        (binding.activityMainApp.pager as BookmarkViewPager).hide()
+        binding.activityMainApp.content.show()
+        binding.activityMainNav.setCheckedItem(R.id.nav_explain_app)
+
         if (savedInstanceState == null) {
             setFragment(SettingFragment.newInstance(), SettingFragment.TAG)
         }
-
-        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
-        navigationView.setCheckedItem(R.id.nav_setting)
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
