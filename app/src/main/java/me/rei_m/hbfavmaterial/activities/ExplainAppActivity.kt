@@ -14,7 +14,6 @@ import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.ExplainAppFragment
 import me.rei_m.hbfavmaterial.utils.FragmentUtil
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 
 /**
  * アプリについての情報を表示するActivity.
@@ -30,8 +29,7 @@ class ExplainAppActivity : BaseActivityWithDrawer() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 何故かクラスが見えないと言われるのでCastする
-        (binding.activityMainApp.pager as BookmarkViewPager).hide()
+        binding.activityMainApp.pager.hide()
         binding.activityMainApp.content.show()
         binding.activityMainNav.setCheckedItem(R.id.nav_explain_app)
 

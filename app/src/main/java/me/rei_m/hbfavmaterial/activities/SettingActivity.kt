@@ -15,7 +15,6 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 
 class SettingActivity : BaseActivityWithDrawer() {
 
@@ -28,8 +27,7 @@ class SettingActivity : BaseActivityWithDrawer() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 何故かクラスが見えないと言われるのでCastする
-        (binding.activityMainApp.pager as BookmarkViewPager).hide()
+        binding.activityMainApp.pager.hide()
         binding.activityMainApp.content.show()
         binding.activityMainNav.setCheckedItem(R.id.nav_explain_app)
 
