@@ -1,12 +1,10 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.app.ProgressDialog
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
-import android.support.v7.widget.AppCompatEditText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +12,7 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentInitializeBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -33,8 +32,6 @@ class InitializeFragment : Fragment(), IProgressDialog {
 
     override var mProgressDialog: ProgressDialog? = null
 
-    private var mLayoutUserId: TextInputLayout? = null
-
     lateinit private var mSubscription: Subscription
 
     companion object {
@@ -49,24 +46,19 @@ class InitializeFragment : Fragment(), IProgressDialog {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_initialize, container, false)
 
-        val editId = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as AppCompatEditText
+        val binding = FragmentInitializeBinding.inflate(inflater, container, false)
 
-        val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
-
-        mLayoutUserId = view.findViewById(R.id.fragment_initialize_layout_hatena_id) as TextInputLayout
-
-        mSubscription = RxTextView.textChanges(editId)
+        mSubscription = RxTextView.textChanges(binding.fragmentInitializeEditHatenaId)
                 .map { v -> 0 < v.length }
-                .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled }
+                .subscribe { isEnabled -> binding.fragmentInitializeButtonSetHatenaId.isEnabled = isEnabled }
 
-        buttonSetId.setOnClickListener { v ->
-            userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
+        binding.fragmentInitializeButtonSetHatenaId.setOnClickListener { v ->
+            userModel.checkAndSaveUserId(getAppContext(), binding.fragmentInitializeEditHatenaId.editableText.toString())
             showProgressDialog(activity)
         }
 
-        return view
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -100,7 +92,8 @@ class InitializeFragment : Fragment(), IProgressDialog {
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                mLayoutUserId?.error = getString(R.string.message_error_input_user_id)
+                val binding = DataBindingUtil.getBinding<FragmentInitializeBinding>(view)
+                binding.fragmentInitializeLayoutHatenaId.error = getString(R.string.message_error_input_user_id)
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

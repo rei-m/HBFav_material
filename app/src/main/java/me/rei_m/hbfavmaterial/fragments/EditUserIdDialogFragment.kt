@@ -2,21 +2,19 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
-import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditUserIdBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.adjustScreenWidth
@@ -33,8 +31,6 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
     lateinit var userModel: UserModel
 
     override var mProgressDialog: ProgressDialog? = null
-
-    lateinit private var mLayoutUserId: TextInputLayout
 
     lateinit private var mSubscription: Subscription
 
@@ -60,38 +56,35 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
+        val binding = DialogFragmentEditUserIdBinding.inflate(inflater, container, false)
+        
+        binding.dialogFragmentEditUserIdTextTitle.text = getString(R.string.dialog_title_set_user)
 
-        val textTitle = view.findViewById(R.id.dialog_fragment_edit_user_id_text_title) as AppCompatTextView
-        textTitle.text = getString(R.string.dialog_title_set_user)
+        binding.dialogFragmentEditUserIdEditUserId.setText(userModel.userEntity?.id)
 
-        val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
-        editUserId.setText(userModel.userEntity?.id)
-
-        mLayoutUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user) as TextInputLayout
-
-        val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
-        buttonCancel.setOnClickListener { v ->
+        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener { v ->
             dismiss()
         }
 
-        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
-        buttonOk.setOnClickListener { v ->
-            val inputtedUserId = editUserId.editableText.toString()
+        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener { v ->
+            val inputtedUserId = binding.dialogFragmentEditUserIdEditUserId.editableText.toString()
             if (inputtedUserId != userModel.userEntity?.id) {
-                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
+                userModel.checkAndSaveUserId(getAppContext(), binding.dialogFragmentEditUserIdEditUserId.editableText.toString())
                 showProgressDialog(activity)
             } else {
                 dismiss()
             }
         }
 
-        val editUserIdStream = RxTextView.textChanges(editUserId)
-        mSubscription = editUserIdStream
-                .map { v -> 0 < v.length }
-                .subscribe { isEnabled -> buttonOk.toggle(isEnabled) }
+        mSubscription = RxTextView.textChanges(binding.dialogFragmentEditUserIdEditUserId)
+                .map { v ->
+                    0 < v.length
+                }
+                .subscribe { isEnabled ->
+                    binding.dialogFragmentEditUserIdButtonOk.toggle(isEnabled)
+                }
 
-        return view
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -117,16 +110,18 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
     @Subscribe
     fun subscribe(event: UserIdCheckedEvent) {
 
+        val binding = DataBindingUtil.getBinding<DialogFragmentEditUserIdBinding>(view)
+
         closeProgressDialog()
 
         when (event.type) {
             UserIdCheckedEvent.Companion.Type.OK -> {
-                mLayoutUserId.isErrorEnabled = false
+                binding.dialogFragmentEditUserIdLayoutEditUser.isErrorEnabled = false
                 dismiss()
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                mLayoutUserId.error = getString(R.string.message_error_input_user_id)
+                binding.dialogFragmentEditUserIdLayoutEditUser.error = getString(R.string.message_error_input_user_id)
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

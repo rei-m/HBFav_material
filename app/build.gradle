@@ -55,6 +55,10 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 kapt {
@@ -74,6 +78,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0'
     kapt 'com.google.dagger:dagger-compiler:2.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+    kapt 'com.android.databinding:compiler:1.0-rc5'
 
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'

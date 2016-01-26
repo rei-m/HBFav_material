@@ -2,12 +2,11 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentExplainAppBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -27,32 +26,27 @@ class ExplainAppFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_explain_app, container, false)
+        val binding = FragmentExplainAppBinding.inflate(inflater, container, false)
 
-        val layoutReview = view.findViewById(R.id.fragment_explain_app_layout_review) as LinearLayout
-        layoutReview.setOnClickListener { v ->
+        binding.fragmentExplainAppLayoutReview.setOnClickListener { v ->
             getAppContext().openUrl(getString(R.string.url_review))
         }
 
-        val layoutOpinion = view.findViewById(R.id.fragment_explain_app_layout_opinion) as LinearLayout
-        layoutOpinion.setOnClickListener { v ->
+        binding.fragmentExplainAppLayoutOpinion.setOnClickListener { v ->
             getAppContext().openUrl(getString(R.string.url_opinion))
         }
 
-        val layoutFromDev = view.findViewById(R.id.fragment_explain_app_layout_from_developer) as LinearLayout
-        layoutFromDev.setOnClickListener { v ->
+        binding.fragmentExplainAppLayoutFromDeveloper.setOnClickListener { v ->
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.FROM_DEVELOPER))
         }
 
-        val layoutCredit = view.findViewById(R.id.fragment_explain_app_layout_credit) as LinearLayout
-        layoutCredit.setOnClickListener { v ->
+        binding.fragmentExplainAppLayoutCredit.setOnClickListener { v ->
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
         }
 
-        val textVersion = view.findViewById(R.id.fragment_explain_app_text_version) as AppCompatTextView
         val versionName = AppUtil.getVersionName(activity.applicationContext)
-        textVersion.text = "${getString(R.string.text_version)} : $versionName"
+        binding.fragmentExplainAppTextVersion.text = "${getString(R.string.text_version)} : $versionName"
 
-        return view
+        return binding.root
     }
 }

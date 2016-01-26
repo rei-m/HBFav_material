@@ -6,11 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import me.rei_m.hbfavmaterial.R
+import com.squareup.picasso.Picasso
+import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
-import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
-import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
+import me.rei_m.hbfavmaterial.events.EventBusHolder
+import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.show
+import me.rei_m.hbfavmaterial.extensions.toggle
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 class BookmarkFragment : Fragment(), IFragmentAnimation {
 
@@ -37,24 +44,60 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        
+        val binding = FragmentBookmarkBinding.inflate(inflater, container, false)
 
-        val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
+        // 全体
+        binding.let {
+            it.bookmarkEntity = mBookmarkEntity
 
-        val bookmarkHeaderLayout = view.findViewById(R.id.fragment_bookmark_layout_header) as BookmarkHeaderLayout
+            // コンテンツ部分を押した時のイベント
+            it.layoutBookmarkContents.setOnClickListener {
+                EventBusHolder.EVENT_BUS.post(BookmarkClickedEvent(mBookmarkEntity))
+            }
 
-        val bookmarkContents = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
+            // ブックマークユーザー数を押した時のイベント
+            it.fragmentBookmarkTextBookmarkCount.setOnClickListener {
+                EventBusHolder.EVENT_BUS.post(BookmarkCountClickedEvent(mBookmarkEntity))
+            }
+        }
 
-        val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
+        // ヘッダ部分
+        binding.fragmentBookmarkLayoutHeader.let {
+            Picasso.with(context)
+                    .load(mBookmarkEntity.bookmarkIconUrl)
+                    .transform(RoundedTransformation())
+                    .into(it.layoutBookmarkHeaderImageUserIcon)
+            it.root.setOnClickListener {
+                EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(mBookmarkEntity.creator))
+            }
+        }
 
-        mBookmarkEntity.apply {
-            bookmarkHeaderLayout.bindView(this)
-            bookmarkContents.bindView(this)
-            bookmarkCountTextView.bindView(this)
+        // ブックマーク部分
+        binding.layoutBookmarkContentsLayoutBookmark.let {
+            it.layoutBookmarkTextDescription.toggle(!mBookmarkEntity.description.isEmpty())
+            Picasso.with(context)
+                    .load(mBookmarkEntity.articleEntity.iconUrl)
+                    .transform(RoundedTransformation())
+                    .into(it.layoutBookmarkImageArticleIcon)
+        }
+
+        // 記事部分
+        binding.layoutBookmarkContentsLayoutArticle.let {
+            if (mBookmarkEntity.articleEntity.bodyImageUrl.isEmpty()) {
+                it.layoutArticleImageBody.hide()
+            } else {
+                it.layoutArticleImageBody.show()
+                Picasso.with(context)
+                        .load(mBookmarkEntity.articleEntity.bodyImageUrl)
+                        .into(it.layoutArticleImageBody)
+            }
+            it.layoutArticleTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(mBookmarkEntity.date)
         }
 
         setContainerWidth(container!!)
 
-        return view
+        return binding.root
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

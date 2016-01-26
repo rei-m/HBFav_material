@@ -1,19 +1,19 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
+import me.rei_m.hbfavmaterial.databinding.FragmentSettingBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
@@ -54,46 +54,41 @@ class SettingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_setting, container, false)
+        val binding = FragmentSettingBinding.inflate(inflater, container, false)
 
-        val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
-        textUserId.text = userModel.userEntity?.id
-
-        val layoutUserId = view.findViewById(R.id.fragment_setting_layout_text_hatena_id) as LinearLayout
-        layoutUserId.setOnClickListener { v ->
+        binding.fragmentSettingTextUserId.text = userModel.userEntity?.id
+        binding.fragmentSettingLayoutTextHatenaId.setOnClickListener { v ->
             EditUserIdDialogFragment
                     .newInstance()
                     .show(childFragmentManager, EditUserIdDialogFragment.TAG)
         }
 
-        val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
         val oauthTextId = if (hatenaModel.isAuthorised())
             R.string.text_hatena_account_connect_ok else
             R.string.text_hatena_account_connect_no
-        textHatenaOAuth.text = resources.getString(oauthTextId)
+        binding.fragmentSettingTextUserOauth.text = resources.getString(oauthTextId)
 
-        val layoutHatenaOAuth = view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth) as LinearLayout
-        layoutHatenaOAuth.setOnClickListener { v ->
+        binding.fragmentSettingLayoutTextHatenaOauth.setOnClickListener { v ->
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
         }
 
-        val layoutTwitterOAuth = view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth) as LinearLayout
-        layoutTwitterOAuth.setOnClickListener { v ->
+        binding.fragmentSettingLayoutTextTwitterOauth.setOnClickListener { v ->
             twitterModel.authorize(activity)
         }
 
-        return view
+        return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val textTwitterOAuth = view.findViewById(R.id.fragment_setting_text_twitter_oauth) as AppCompatTextView
+        val binding = DataBindingUtil.getBinding<FragmentSettingBinding>(view)
+
         val twitterOAuthTextId = if (twitterModel.isAuthorised())
             R.string.text_hatena_account_connect_ok else
             R.string.text_hatena_account_connect_no
-        textTwitterOAuth.text = resources.getString(twitterOAuthTextId)
+        binding.fragmentSettingTextTwitterOauth.text = resources.getString(twitterOAuthTextId)
     }
 
     override fun onPause() {
@@ -123,12 +118,14 @@ class SettingFragment : Fragment() {
             AppCompatActivity.RESULT_OK -> {
                 // 認可の可否が選択されたかチェック
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+
+                    val binding = DataBindingUtil.getBinding<FragmentSettingBinding>(view)
+
                     // 認可の結果により表示を更新する.
-                    val textHatenaOAuth = view.findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
                     val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
                         R.string.text_hatena_account_connect_ok else
                         R.string.text_hatena_account_connect_no
-                    textHatenaOAuth.text = resources.getString(oauthTextId)
+                    binding.fragmentSettingTextUserOauth.text = resources.getString(oauthTextId)
                 } else {
                     // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
                     (activity as AppCompatActivity).showSnackbarNetworkError(view)
@@ -147,8 +144,9 @@ class SettingFragment : Fragment() {
     fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
             userModel.userEntity?.apply {
-                val textUserId = view.findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
-                textUserId.text = id
+
+                val binding = DataBindingUtil.getBinding<FragmentSettingBinding>(view)
+                binding.fragmentSettingTextUserId.text = id
                 EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(id))
             }
         }
