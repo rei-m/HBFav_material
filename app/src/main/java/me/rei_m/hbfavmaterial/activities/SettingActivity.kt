@@ -29,7 +29,7 @@ class SettingActivity : BaseActivityWithDrawer() {
 
         binding.activityMainApp.pager.hide()
         binding.activityMainApp.content.show()
-        binding.activityMainNav.setCheckedItem(R.id.nav_explain_app)
+        binding.activityMainNav.setCheckedItem(R.id.nav_setting)
 
         if (savedInstanceState == null) {
             setFragment(SettingFragment.newInstance(), SettingFragment.TAG)
