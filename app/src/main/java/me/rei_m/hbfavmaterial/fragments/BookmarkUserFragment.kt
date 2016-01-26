@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
+import android.widget.ListView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
@@ -98,7 +99,7 @@ class BookmarkUserFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = DataBindingUtil.inflate<FragmentListBinding>(inflater, R.layout.fragment_list, container, false)
+        val binding = FragmentListBinding.inflate(inflater, container, false)
 
         val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
         binding.fragmentListList.addFooterView(footerView, null, false)
@@ -155,7 +156,7 @@ class BookmarkUserFragment : Fragment() {
             if (displayedCount != bookmarkUserModel.bookmarkList.size) {
                 // 表示済の件数とModel内で保持している件数をチェックし、
                 // 差分があれば未表示のブックマークがあるのでリストに表示する
-                displayListContents()
+                displayListContents(binding.fragmentListList)
                 binding.fragmentListProgressList.hide()
             } else if (displayedCount === 0) {
                 // 1件も表示していなければブックマーク情報をRSSから取得する
@@ -204,7 +205,7 @@ class BookmarkUserFragment : Fragment() {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
-                displayListContents()
+                displayListContents(binding.fragmentListList)
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 読込結果がなかった場合はFooterViewを非表示にする
@@ -237,9 +238,7 @@ class BookmarkUserFragment : Fragment() {
     /**
      * ListViewのコンテンツを表示する
      */
-    private fun displayListContents() {
-
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+    private fun displayListContents(listView: ListView) {
 
         // コンテンツを表示する
         mListAdapter.apply {
@@ -250,8 +249,8 @@ class BookmarkUserFragment : Fragment() {
         }
 
         // FooterViewを表示する
-        if (0 < binding.fragmentListList.footerViewsCount) {
-            binding.root.findViewById(R.id.list_footer_loading_layout).show()
+        if (0 < listView.footerViewsCount) {
+            listView.findViewById(R.id.list_footer_loading_layout).show()
         }
     }
 

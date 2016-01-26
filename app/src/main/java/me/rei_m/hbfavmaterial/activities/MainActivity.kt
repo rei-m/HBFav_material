@@ -22,7 +22,6 @@ import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 import javax.inject.Inject
 
 /**
@@ -54,17 +53,15 @@ class MainActivity : BaseActivityWithDrawer() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        val pager = binding.activityMainApp.pager as BookmarkViewPager
-        pager.initialize(supportFragmentManager, this)
-        pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
+        binding.activityMainApp.pager.initialize(supportFragmentManager, this)
+        binding.activityMainApp.pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         mMenu = menu
 
-        val pager = binding.activityMainApp.pager as BookmarkViewPager
-        pager.postCurrentPageDisplayEvent()
+        binding.activityMainApp.pager.postCurrentPageDisplayEvent()
 
         return true
     }
@@ -99,10 +96,8 @@ class MainActivity : BaseActivityWithDrawer() {
                 return super.onOptionsItemSelected(item)
         }
 
-        val pager = binding.activityMainApp.pager as BookmarkViewPager
-
         // イベントを飛ばしてFragment側でカテゴリに合わせた表示に切り替える
-        val target = if (pager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
+        val target = if (binding.activityMainApp.pager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
             EntryCategoryChangedEvent.Companion.Target.HOT
         else
             EntryCategoryChangedEvent.Companion.Target.NEW
@@ -110,7 +105,7 @@ class MainActivity : BaseActivityWithDrawer() {
         EventBusHolder.EVENT_BUS.post(EntryCategoryChangedEvent(entryType, target))
 
         // Activityのタイトルも切り替える
-        val currentPageTitle = pager.getCurrentPageTitle().toString()
+        val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
         val entryTypeString = BookmarkUtil.getEntryTypeString(applicationContext, entryType)
         supportActionBar.title = "$currentPageTitle - $entryTypeString"
 
@@ -169,8 +164,6 @@ class MainActivity : BaseActivityWithDrawer() {
         val title: String
         val navItemId: Int
 
-        val pager = binding.activityMainApp.pager as BookmarkViewPager
-
         when (event.kind) {
             Kind.BOOKMARK_FAVORITE -> {
                 mMenu.hide()
@@ -184,14 +177,14 @@ class MainActivity : BaseActivityWithDrawer() {
             }
             Kind.HOT_ENTRY -> {
                 mMenu.show()
-                val mainTitle = pager.getCurrentPageTitle().toString()
+                val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_hot_entry
             }
             Kind.NEW_ENTRY -> {
                 mMenu.show()
-                val mainTitle = pager.getCurrentPageTitle().toString()
+                val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_new_entry

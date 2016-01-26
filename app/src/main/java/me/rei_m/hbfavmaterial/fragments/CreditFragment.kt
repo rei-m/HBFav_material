@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -22,7 +21,7 @@ class CreditFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding = DataBindingUtil.inflate<FragmentLicenceBinding>(inflater, R.layout.fragment_licence, container, false)
+        val binding = FragmentLicenceBinding.inflate(inflater, container, false)
 
         binding.fragmentLicenceWebView.loadUrl(getString(R.string.url_credit))
 

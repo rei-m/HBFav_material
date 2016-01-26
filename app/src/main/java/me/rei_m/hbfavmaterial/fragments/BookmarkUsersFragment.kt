@@ -77,7 +77,7 @@ public class BookmarkUsersFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = DataBindingUtil.inflate<FragmentListBinding>(inflater, R.layout.fragment_list, container, false)
+        val binding = FragmentListBinding.inflate(inflater, container, false)
 
         binding.fragmentListList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity

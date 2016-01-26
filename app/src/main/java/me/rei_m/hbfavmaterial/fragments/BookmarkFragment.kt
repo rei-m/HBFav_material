@@ -44,7 +44,7 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
+        
         val binding = FragmentBookmarkBinding.inflate(inflater, container, false)
 
         // 全体
