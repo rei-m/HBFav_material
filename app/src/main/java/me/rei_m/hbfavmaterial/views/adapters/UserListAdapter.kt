@@ -22,7 +22,7 @@ class UserListAdapter(context: Context,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView?.apply {
+        return convertView?.apply {
             val binding = DataBindingUtil.getBinding<ListItemUserBinding>(this)
             bindEntity(binding, getItem(position))
         } ?: let {
@@ -30,8 +30,6 @@ class UserListAdapter(context: Context,
             bindEntity(binding, getItem(position))
             return binding.root
         }
-
-        return view
     }
 
     private fun bindEntity(binding: ListItemUserBinding, bookmarkEntity: BookmarkEntity) {
