@@ -11,6 +11,5 @@
 /app/src/debug/AndroidManifest.xml
 /app/src/release/
 /app/app-release.apk
-/gradle.properties
 /fabric.properties
 /app/fabric.properties

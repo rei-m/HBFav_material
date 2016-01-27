@@ -1,0 +1,24 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
+    JAVA_OPTS: "-Xmx2048m -XX:MaxMetaspaceSize=1024m"
+test:
+  override:
+    - ./gradlew assembleDebug -PpreDexEnable=false -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" -Dorg.gradle.daemon=true
+
+# test:
+#   override:
+#     # start the emulator
+#     - emulator -avd circleci-android22 -no-audio -no-window:
+#         background: true
+#         parallel: true
+#     # wait for it to have booted
+#     - circle-android wait-for-boot
+#     # run tests  against the emulator.
+#     - ./gradlew connectedAndroidTest
+#     # copy the build outputs to artifacts
+#     - cp -r my-project/build/outputs $CIRCLE_ARTIFACTS
+#     # copy the test results to the test results directory.
+#     - cp -r my-project/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS

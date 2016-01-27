@@ -27,7 +27,7 @@ class EntryListAdapter(context: Context,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView?.apply {
+        return convertView?.apply {
             val binding = DataBindingUtil.getBinding<ListItemEntryBinding>(this)
             bindEntity(binding, getItem(position))
         } ?: let {
@@ -35,8 +35,6 @@ class EntryListAdapter(context: Context,
             bindEntity(binding, getItem(position))
             return binding.root
         }
-
-        return view
     }
 
     private fun bindEntity(binding: ListItemEntryBinding, entryEntity: EntryEntity) {
