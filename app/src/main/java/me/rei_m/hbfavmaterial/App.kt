@@ -8,7 +8,6 @@ import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
 import me.rei_m.hbfavmaterial.di.*
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
 import me.rei_m.hbfavmaterial.models.BookmarkUserModel
 import me.rei_m.hbfavmaterial.models.HotEntryModel
@@ -54,9 +53,8 @@ class App : Application() {
         }
 
         // Set up Fabric
-        val twitterJson = getAssetToJson("twitter.json")
         val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
-        val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
+        val authConfig = TwitterAuthConfig(getString(R.string.api_key_twitter_consumer_key), getString(R.string.api_key_twitter_consumer_secret))
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))
     }
 

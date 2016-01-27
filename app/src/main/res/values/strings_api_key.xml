@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_key_twitter_consumer_key">XXXXXXXXXXXXXXXXXXXXXXXX</string>
+    <string name="api_key_twitter_consumer_secret">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</string>
+</resources>
