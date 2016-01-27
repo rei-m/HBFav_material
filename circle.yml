@@ -4,29 +4,3 @@ machine:
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
     JAVA_OPTS: "-Xmx2048m -XX:MaxPermSize=1024m"
-# dependencies:
-#  cache_directories:
-#    - ~/.android
-#  override:
-#    - ./gradlew dependencies
-test:
-  post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
-  override:
-    - ./gradlew assembleDebug
-
-# test:
-#   override:
-#     # start the emulator
-#     - emulator -avd circleci-android22 -no-audio -no-window:
-#         background: true
-#         parallel: true
-#     # wait for it to have booted
-#     - circle-android wait-for-boot
-#     # run tests  against the emulator.
-#     - ./gradlew connectedAndroidTest
-#     # copy the build outputs to artifacts
-#     - cp -r my-project/build/outputs $CIRCLE_ARTIFACTS
-#     # copy the test results to the test results directory.
-#     - cp -r my-project/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
