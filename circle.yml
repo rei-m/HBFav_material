@@ -3,10 +3,10 @@ machine:
     version: oraclejdk8
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
-    JAVA_OPTS: "-Xmx2048m -XX:MaxPermSize=1024m"
+    JAVA_OPTS: "-Xmx2048m -XX:MaxMetaspaceSize=1024m"
 test:
   override:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleDebug -PpreDexEnable=false -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" -Dorg.gradle.daemon=false
 
 # test:
 #   override:
