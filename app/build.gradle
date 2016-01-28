@@ -59,6 +59,7 @@ android {
     dataBinding {
         enabled = true
     }
+    testBuildType "debug"
 }
 
 kapt {

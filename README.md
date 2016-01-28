@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/rei-m/HBFav_material.svg?style=svg&circle-token=f1c812cd4fbad8b0a630aa1603525e4faeae33a4)](https://circleci.com/gh/rei-m/HBFav_material)
+
 HBFav Material
 ========
 

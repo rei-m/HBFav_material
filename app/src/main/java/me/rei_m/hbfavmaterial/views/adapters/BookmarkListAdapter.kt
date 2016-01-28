@@ -23,7 +23,7 @@ class BookmarkListAdapter(context: Context,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView?.apply {
+        return convertView?.apply {
             val binding = DataBindingUtil.getBinding<ListItemBookmarkBinding>(this)
             bindEntity(binding, getItem(position))
         } ?: let {
@@ -31,8 +31,6 @@ class BookmarkListAdapter(context: Context,
             bindEntity(binding, getItem(position))
             return binding.root
         }
-
-        return view
     }
 
     val nextIndex: Int
