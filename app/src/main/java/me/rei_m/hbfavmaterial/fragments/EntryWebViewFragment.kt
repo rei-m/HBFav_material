@@ -45,6 +45,9 @@ class EntryWebViewFragment : Fragment() {
         binding.fragmentBookmarkWebviewView.apply {
             settings.apply {
                 javaScriptEnabled = true
+                builtInZoomControls = true
+                loadWithOverviewMode = true
+                useWideViewPort = true
                 setGeolocationEnabled(true)
                 setSupportMultipleWindows(true)
             }
