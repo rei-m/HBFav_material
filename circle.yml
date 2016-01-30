@@ -5,7 +5,6 @@ general:
     - "app/build/reports/tests/"
 
 machine:
-  timezone: Asia/Tokyo
   java:
     version: oraclejdk8
   environment:
