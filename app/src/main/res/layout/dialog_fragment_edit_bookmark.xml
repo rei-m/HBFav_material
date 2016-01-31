@@ -82,6 +82,19 @@
             android:textColor="@color/text_color_middle" />
 
         <android.support.v7.widget.SwitchCompat
+            android:id="@+id/dialog_fragment_edit_bookmark_switch_read_after"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:background="@null"
+            android:checked="false"
+            android:text="@string/text_read_after"
+            android:textColor="@color/text_color_middle" />
+
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/dialog_fragment_edit_bookmark_switch_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

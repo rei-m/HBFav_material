@@ -41,7 +41,7 @@ class MockHatenaErrorRepository(context: Context) : HatenaRepository(context) {
         }
     }
 
-    override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean): Observable<BookmarkEditEntity> {
+    override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean, tags: List<String>): Observable<BookmarkEditEntity> {
         return Observable.create { t ->
             t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
         }

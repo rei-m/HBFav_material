@@ -26,6 +26,7 @@ import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
+import java.util.*
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
@@ -87,7 +88,20 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
         val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)
 
-        val isAdd = (arguments.getSerializable(ARG_BOOKMARK) == null)
+        val bookmarkEdit: BookmarkEditEntity? = arguments.getSerializable(ARG_BOOKMARK)?.let {
+            it as BookmarkEditEntity
+        }
+
+        val tags: ArrayList<String>
+        val isAdd: Boolean
+
+        if (bookmarkEdit == null) {
+            tags = ArrayList<String>()
+            isAdd = true
+        } else {
+            isAdd = false
+            tags = bookmarkEdit.tags
+        }
 
         binding.dialogFragmentEditBookmarkTextTitle.text = getString(R.string.dialog_title_add_bookmark)
 
@@ -121,9 +135,12 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             }
         }
 
+        // TODO TAGSにあとで読むがあったらチェックを有効にする
+
         binding.dialogFragmentEditBookmarkSwitchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
             binding.dialogFragmentEditBookmarkSwitchOpen.isEnabled = !isChecked
             binding.dialogFragmentEditBookmarkSwitchShareTwitter.isEnabled = !isChecked
+            binding.dialogFragmentEditBookmarkSwitchReadAfter.isEnabled = !isChecked
             binding.dialogFragmentEditBookmarkEditBookmark.isEnabled = !isChecked
         }
 
@@ -136,7 +153,18 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
                 hatenaModel.deleteBookmark(bookmarkUrl)
             } else {
                 val inputtedComment = binding.dialogFragmentEditBookmarkEditBookmark.editableText.toString()
-                hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, binding.dialogFragmentEditBookmarkSwitchOpen.isChecked)
+
+                if (binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked) {
+                    // TODO TAGSにあとで読むが無かったら追加する.
+                    tags.add("あとで読む")
+                } else {
+                    // TODO TAGSにあとで読むがあったら削除する.
+                }
+
+                hatenaModel.registerBookmark(bookmarkUrl,
+                        inputtedComment,
+                        binding.dialogFragmentEditBookmarkSwitchOpen.isChecked,
+                        tags)
                 if (binding.dialogFragmentEditBookmarkSwitchShareTwitter.isChecked) {
                     twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
                 }

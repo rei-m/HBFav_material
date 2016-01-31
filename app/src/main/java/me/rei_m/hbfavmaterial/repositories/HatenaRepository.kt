@@ -58,7 +58,8 @@ open class HatenaRepository {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
                             comment = response.comment,
-                            isPrivate = response.private)
+                            isPrivate = response.private,
+                            tags = response.tags)
                 }
     }
 
@@ -81,7 +82,8 @@ open class HatenaRepository {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
                             comment = response.comment,
-                            isPrivate = response.private)
+                            isPrivate = response.private,
+                            tags = response.tags)
                 }
     }
 

@@ -15,6 +15,7 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -182,7 +183,7 @@ class HatenaModel {
     /**
      * ブックマーク情報を登録する.
      */
-    fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
+    fun registerBookmark(url: String, comment: String, isOpen: Boolean, tags: List<String>) {
 
         if (isBusy) {
             return
@@ -209,7 +210,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
+        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen, tags)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

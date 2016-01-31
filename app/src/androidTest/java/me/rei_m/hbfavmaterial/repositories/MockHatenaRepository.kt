@@ -25,7 +25,7 @@ class MockHatenaRepository(context: Context) : HatenaRepository(context) {
         return Observable.just(BookmarkEditEntity("", "", false))
     }
 
-    override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean): Observable<BookmarkEditEntity> {
+    override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean, tags: List<String>): Observable<BookmarkEditEntity> {
         return Observable.just(BookmarkEditEntity("", "", false))
     }
 
