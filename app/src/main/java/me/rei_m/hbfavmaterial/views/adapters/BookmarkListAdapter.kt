@@ -54,7 +54,7 @@ class BookmarkListAdapter(context: Context,
         binding.listItemBookmarkLayoutBookmark.let {
             it.layoutBookmarkTextDescription.toggle(!bookmarkEntity.description.isEmpty())
             Picasso.with(context)
-                    .load(bookmarkEntity.bookmarkIconUrl)
+                    .load(bookmarkEntity.articleEntity.iconUrl)
                     .transform(RoundedTransformation())
                     .into(it.layoutBookmarkImageArticleIcon)
         }
