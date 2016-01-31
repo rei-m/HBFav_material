@@ -5,7 +5,6 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 import rx.Observable
 import javax.inject.Inject
