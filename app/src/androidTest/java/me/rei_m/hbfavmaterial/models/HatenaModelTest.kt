@@ -14,6 +14,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -201,7 +202,7 @@ class HatenaModelTest : TestCase() {
 
         // リクエスト開始
         eventCatcher.initCountDown()
-        hatenaModel.registerBookmark(url = "url", comment = "comment", isOpen = true)
+        hatenaModel.registerBookmark(url = "url", comment = "comment", isOpen = true, tags = ArrayList())
 
         // リクエスト中はBusy
         Assert.assertThat(hatenaModel.isBusy, `is`(true))
@@ -227,7 +228,7 @@ class HatenaModelTest : TestCase() {
 
         // リクエスト開始
         eventCatcher.initCountDown()
-        hatenaModel.registerBookmark(url = "url", comment = "comment", isOpen = true)
+        hatenaModel.registerBookmark(url = "url", comment = "comment", isOpen = true, tags = ArrayList())
         eventCatcher.startCountDown()
 
         // ERROR
