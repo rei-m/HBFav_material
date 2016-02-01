@@ -19,6 +19,10 @@ import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 class BookmarkListAdapter(context: Context,
                           resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
 
+    companion object {
+        private val BOOKMARK_COUNT_PER_PAGE = 20
+    }
+
     private val mLayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
@@ -35,7 +39,11 @@ class BookmarkListAdapter(context: Context,
 
     val nextIndex: Int
         get() {
-            return count + 1
+            if (BOOKMARK_COUNT_PER_PAGE <= (count + 1)) {
+                return count + 1
+            } else {
+                return BOOKMARK_COUNT_PER_PAGE + 1
+            }
         }
 
     private fun bindEntity(binding: ListItemBookmarkBinding, bookmarkEntity: BookmarkEntity) {

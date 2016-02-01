@@ -15,7 +15,6 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -32,6 +31,9 @@ class HatenaModel {
     private val mHatenaRepository: HatenaRepository
 
     companion object {
+
+        public val TAG_READ_AFTER = "あとで読む"
+
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 

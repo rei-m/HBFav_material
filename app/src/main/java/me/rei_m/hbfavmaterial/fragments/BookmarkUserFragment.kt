@@ -20,6 +20,7 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.ReadAfterFilterChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -194,6 +195,11 @@ class BookmarkUserFragment : Fragment() {
         }
     }
 
+    @Subscribe
+    fun subscribe(event: ReadAfterFilterChangedEvent) {
+        bookmarkUserModelForSelf.fetch(mUserId, event.type)
+    }
+
     /**
      * ブックマーク情報のロード完了イベント
      */
@@ -206,6 +212,7 @@ class BookmarkUserFragment : Fragment() {
             LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
                 displayListContents(binding.fragmentListList)
+                // TODO Footer
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 読込結果がなかった場合はFooterViewを非表示にする

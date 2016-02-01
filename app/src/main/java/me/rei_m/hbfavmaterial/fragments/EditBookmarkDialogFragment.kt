@@ -135,7 +135,8 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             }
         }
 
-        // TODO TAGSにあとで読むがあったらチェックを有効にする
+        // あとで読むタグが登録済だったらチェックを有効にする
+        binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked = tags.contains(HatenaModel.TAG_READ_AFTER)
 
         binding.dialogFragmentEditBookmarkSwitchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
             binding.dialogFragmentEditBookmarkSwitchOpen.isEnabled = !isChecked
@@ -155,10 +156,13 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
                 val inputtedComment = binding.dialogFragmentEditBookmarkEditBookmark.editableText.toString()
 
                 if (binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked) {
-                    // TODO TAGSにあとで読むが無かったら追加する.
-                    tags.add("あとで読む")
+                    if (!tags.contains(HatenaModel.TAG_READ_AFTER)) {
+                        tags.add(HatenaModel.TAG_READ_AFTER)
+                    }
                 } else {
-                    // TODO TAGSにあとで読むがあったら削除する.
+                    if (tags.contains(HatenaModel.TAG_READ_AFTER)) {
+                        tags.remove(HatenaModel.TAG_READ_AFTER)
+                    }
                 }
 
                 hatenaModel.registerBookmark(bookmarkUrl,
