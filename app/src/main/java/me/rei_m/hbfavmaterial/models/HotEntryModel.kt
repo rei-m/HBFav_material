@@ -10,14 +10,13 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * ホットエントリー情報を取得するModel.
  */
-class HotEntryModel {
-
-    private val entryRepository = EntryRepository()
-
+class HotEntryModel @Inject constructor(private val entryRepository: EntryRepository) {
+    
     var isBusy = false
         private set
 
@@ -43,10 +42,12 @@ class HotEntryModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -55,7 +56,6 @@ class HotEntryModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

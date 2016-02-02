@@ -5,17 +5,17 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * ユーザーのブックマーク情報を管理するModel.
  */
-class BookmarkUserModel {
-
-    private val bookmarkRepository = BookmarkRepository()
+class BookmarkUserModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     private var userId = ""
 
@@ -23,6 +23,9 @@ class BookmarkUserModel {
         private set
 
     val bookmarkList = ArrayList<BookmarkEntity>()
+
+    var readAfterType = ReadAfterType.ALL
+        private set
 
     fun isSameUser(userId: String): Boolean = (this.userId == userId)
 
@@ -57,6 +60,7 @@ class BookmarkUserModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
@@ -65,15 +69,20 @@ class BookmarkUserModel {
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(BookmarkUserLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
-        bookmarkRepository.findByUserId(userId, requestIndex)
+        bookmarkRepository.findByUserId(userId, readAfterType, requestIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
+    }
+
+    fun fetch(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0) {
+        this.readAfterType = readAfterType
+        fetch(userId, startIndex)
     }
 }

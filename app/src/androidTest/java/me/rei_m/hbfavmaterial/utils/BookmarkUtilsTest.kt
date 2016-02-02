@@ -41,62 +41,63 @@ class BookmarkUtilsTest {
     @Test
     public fun testGetPastTimeString() {
 
-        // 現在時間設定
-        val now = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
-        now.set(2015, Calendar.OCTOBER, 15, 10, 0, 0)
-
         // 比較時間作成
         val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
 
+        // 現在時間作成
+        val nowCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
+        nowCal.set(2015, Calendar.OCTOBER, 15, 10, 0, 0)
+
         // 秒前
-        cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 58)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2秒前"))
+        //        cal.set(2015, Calendar.OCTOBER, 15, 9, 59, 55)
+        //        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("5秒前"))
 
         // 分前
         cal.set(2015, Calendar.OCTOBER, 15, 9, 57, 58)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2分前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("2分前"))
 
         // 時間前
         cal.set(2015, Calendar.OCTOBER, 15, 8, 59, 59)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("1時間前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("1時間前"))
 
         // 昨日
         cal.set(2015, Calendar.OCTOBER, 14, 8, 59, 59)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("昨日"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("昨日"))
 
         // 日前
         cal.set(2015, Calendar.OCTOBER, 13, 8, 59, 59)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2日前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("2日前"))
 
         // 先週
         cal.set(2015, Calendar.OCTOBER, 8, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("先週"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("先週"))
 
         // 週間前
         cal.set(2015, Calendar.OCTOBER, 1, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2週間前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("2週間前"))
 
         // 先月
         cal.set(2015, Calendar.SEPTEMBER, 8, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("先月"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("先月"))
 
         // ヶ月前
         cal.set(2015, Calendar.AUGUST, 15, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2ヶ月前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("2ヶ月前"))
 
         // 昨年
         cal.set(2014, Calendar.OCTOBER, 15, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("昨年"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("昨年"))
 
         // 年前
         cal.set(2013, Calendar.OCTOBER, 15, 10, 0, 0)
-        assertThat(BookmarkUtil.getPastTimeString(cal.time, now.time), `is`("2年前"))
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, nowCal), `is`("2年前"))
 
         // 時差がある場合
         val calAtForeign = Calendar.getInstance(TimeZone.getTimeZone("Asia/Taipei"))
+        calAtForeign.set(2015, Calendar.OCTOBER, 15, 10, 0, 0)
 
         // 分前
-        calAtForeign.set(2015, Calendar.OCTOBER, 15, 8, 57, 58)
-        assertThat(BookmarkUtil.getPastTimeString(calAtForeign.time, now.time), `is`("2分前"))
+        cal.set(2015, Calendar.OCTOBER, 15, 10, 0, 0)
+        assertThat(BookmarkUtil.getPastTimeString(cal.time, calAtForeign), `is`("2時間前"))
     }
 }

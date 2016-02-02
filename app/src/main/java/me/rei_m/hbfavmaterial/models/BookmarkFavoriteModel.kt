@@ -9,13 +9,12 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * お気に入りのBookmarkを管理するModel.
  */
-class BookmarkFavoriteModel {
-
-    private val bookmarkRepository = BookmarkRepository()
+class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     var isBusy = false
         private set
@@ -43,6 +42,7 @@ class BookmarkFavoriteModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isEmpty) {
                     EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.NOT_FOUND))
                 } else {
@@ -51,6 +51,7 @@ class BookmarkFavoriteModel {
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -59,7 +60,6 @@ class BookmarkFavoriteModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

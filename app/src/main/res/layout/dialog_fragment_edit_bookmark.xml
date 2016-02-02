@@ -1,125 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/dialog_fragment_edit_bookmark_text_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_dialog_title_bottom"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:layout_marginTop="@dimen/margin_outline_dialog"
-        android:textColor="@color/text_color_strong"
-        android:textSize="@dimen/text_size_title" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/dialog_fragment_edit_bookmark_text_article_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_outline_dialog"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/dialog_fragment_edit_bookmark_layout_edit_bookmark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:textColorHint="@color/app_accent_color">
-
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/dialog_fragment_edit_bookmark_edit_bookmark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_add_comment"
-            android:inputType="textMultiLine"
-            android:maxLines="5"
-            android:textColorHint="@color/app_accent_color" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/dialog_fragment_edit_bookmark_text_comment_char_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:gravity="end"
-        android:textColor="@color/text_color_thin" />
-
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/dialog_fragment_edit_bookmark_switch_open"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginBottom="@dimen/margin"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:background="@null"
-        android:checked="true"
-        android:text="@string/text_open"
-        android:textColor="@color/text_color_middle" />
-
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/dialog_fragment_edit_bookmark_switch_share_twitter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginBottom="@dimen/margin"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:background="@null"
-        android:checked="false"
-        android:text="@string/text_share_twitter"
-        android:textColor="@color/text_color_middle" />
-
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/dialog_fragment_edit_bookmark_switch_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginBottom="@dimen/margin"
-        android:layout_marginLeft="@dimen/margin_outline_dialog"
-        android:layout_marginRight="@dimen/margin_outline_dialog"
-        android:background="@null"
-        android:checked="false"
-        android:text="@string/text_delete"
-        android:textColor="@color/text_color_middle" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_dialog_layout_buttons"
-        android:layout_marginBottom="@dimen/margin_half"
-        android:layout_marginLeft="@dimen/margin_outline_dialog_buttons"
-        android:layout_marginRight="@dimen/margin_outline_dialog_buttons"
-        android:gravity="end">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/dialog_fragment_edit_bookmark_button_cancel"
-            style="@style/ActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_button"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_half"
-            android:layout_marginRight="@dimen/margin_half"
-            android:layout_marginTop="@dimen/margin_dialog_button"
-            android:text="@string/button_cancel" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/dialog_fragment_edit_bookmark_text_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_dialog_title_bottom"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:layout_marginTop="@dimen/margin_outline_dialog"
+            android:textColor="@color/text_color_strong"
+            android:textSize="@dimen/text_size_title" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/dialog_fragment_edit_bookmark_button_ok"
-            style="@style/ActionButton"
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/dialog_fragment_edit_bookmark_text_article_title"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_button"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/margin_dialog_button"
-            android:text="@string/button_add" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_outline_dialog"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/dialog_fragment_edit_bookmark_layout_edit_bookmark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:textColorHint="@color/app_accent_color">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/dialog_fragment_edit_bookmark_edit_bookmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_add_comment"
+                android:inputType="textMultiLine"
+                android:maxLines="5"
+                android:textColorHint="@color/app_accent_color" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/dialog_fragment_edit_bookmark_text_comment_char_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:gravity="end"
+            android:textColor="@color/text_color_thin" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/dialog_fragment_edit_bookmark_switch_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:background="@null"
+            android:checked="true"
+            android:text="@string/text_open"
+            android:textColor="@color/text_color_middle" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/dialog_fragment_edit_bookmark_switch_share_twitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:background="@null"
+            android:checked="false"
+            android:text="@string/text_share_twitter"
+            android:textColor="@color/text_color_middle" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/dialog_fragment_edit_bookmark_switch_read_after"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:background="@null"
+            android:checked="false"
+            android:text="@string/text_read_after"
+            android:textColor="@color/text_color_middle" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/dialog_fragment_edit_bookmark_switch_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin_outline_dialog"
+            android:layout_marginRight="@dimen/margin_outline_dialog"
+            android:background="@null"
+            android:checked="false"
+            android:text="@string/text_delete"
+            android:textColor="@color/text_color_middle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_dialog_layout_buttons"
+            android:layout_marginBottom="@dimen/margin_half"
+            android:layout_marginLeft="@dimen/margin_outline_dialog_buttons"
+            android:layout_marginRight="@dimen/margin_outline_dialog_buttons"
+            android:gravity="end">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/dialog_fragment_edit_bookmark_button_cancel"
+                style="@style/ActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_half"
+                android:layout_marginRight="@dimen/margin_half"
+                android:layout_marginTop="@dimen/margin_dialog_button"
+                android:text="@string/button_cancel" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/dialog_fragment_edit_bookmark_button_ok"
+                style="@style/ActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/margin_dialog_button"
+                android:text="@string/button_add" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
+</layout>

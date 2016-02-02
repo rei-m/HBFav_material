@@ -5,8 +5,8 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentFromDeveloperBinding
 
 /**
  * 開発者からのコメントを表示するFragment.
@@ -21,11 +21,9 @@ class FromDeveloperFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_from_developer, container, false)
+        val binding = FragmentFromDeveloperBinding.inflate(inflater, container, false)
+        binding.fragmentFromDeveloperWebView.loadUrl(getString(R.string.url_from_developer))
 
-        val webView = view.findViewById(R.id.fragment_from_developer_web_view) as WebView
-        webView.loadUrl(getString(R.string.url_from_developer))
-
-        return view
+        return binding.root
     }
 }

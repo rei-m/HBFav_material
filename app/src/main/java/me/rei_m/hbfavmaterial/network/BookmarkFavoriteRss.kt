@@ -1,10 +1,9 @@
 package me.rei_m.hbfavmaterial.network
 
-import com.squareup.okhttp.CacheControl
-import com.squareup.okhttp.HttpUrl
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.Request
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import okhttp3.CacheControl
+import okhttp3.HttpUrl
+import okhttp3.Request
 import rx.Observable
 import java.net.HttpURLConnection
 
@@ -30,7 +29,7 @@ class BookmarkFavoriteRss() {
                     .cacheControl(CacheControl.FORCE_NETWORK)
                     .build()
 
-            val response = OkHttpClient().newCall(request).execute()
+            val response = HttpClient.instance.newCall(request).execute()
             if (response.code() == HttpURLConnection.HTTP_OK) {
                 t.onNext(response.body().string())
             } else {

@@ -48,4 +48,16 @@
         android:title="@string/category_title_comedy"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_filter_bookmark_all"
+        android:orderInCategory="109"
+        android:title="@string/filter_bookmark_users_all"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_filter_bookmark_read_after"
+        android:orderInCategory="110"
+        android:title="@string/text_read_after"
+        app:showAsAction="never" />
+
 </menu>

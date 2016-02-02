@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.models
 
 import android.content.Context
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
@@ -8,28 +9,19 @@ import me.rei_m.hbfavmaterial.repositories.UserRepository
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * ユーザー情報を管理するModel.
  */
-class UserModel {
-
-    private val userRepository = UserRepository()
+class UserModel @Inject constructor(@ForApplication context: Context, private val userRepository: UserRepository) {
 
     var isBusy = false
         private set
 
-    var userEntity: UserEntity? = null
+    var userEntity: UserEntity? = userRepository.find(context)
         private set
-
-    /**
-     * コンストラクタ.
-     */
-    constructor(context: Context) {
-        // 端末に保存しているユーザー情報を復元する.
-        userEntity = userRepository.find(context)
-    }
-
+    
     /**
      * ユーザー情報が設定済か判定する.
      */
@@ -63,6 +55,7 @@ class UserModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 if (isSuccess) {
                     EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
                 } else {
@@ -71,6 +64,7 @@ class UserModel {
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.ERROR))
             }
         }
@@ -79,7 +73,6 @@ class UserModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 

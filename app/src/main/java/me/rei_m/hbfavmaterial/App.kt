@@ -7,17 +7,45 @@ import com.squareup.leakcanary.LeakCanary
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
-import me.rei_m.hbfavmaterial.managers.ModelLocator
-import me.rei_m.hbfavmaterial.managers.ModelLocator.Companion.Tag
-import me.rei_m.hbfavmaterial.models.*
+import me.rei_m.hbfavmaterial.di.*
+import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
+import me.rei_m.hbfavmaterial.models.BookmarkUserModel
+import me.rei_m.hbfavmaterial.models.HotEntryModel
+import me.rei_m.hbfavmaterial.models.NewEntryModel
+import javax.inject.Inject
+import javax.inject.Named
 
 class App : Application() {
+
+    @Inject
+    lateinit var bookmarkFavoriteModel: BookmarkFavoriteModel
+
+    @field:[Inject Named("bookmarkUserModelForSelf")]
+    lateinit var bookmarkUserModel: BookmarkUserModel
+
+    @Inject
+    lateinit var hotEntryModel: HotEntryModel
+
+    @Inject
+    lateinit var newEntryModel: NewEntryModel
+
+    companion object {
+        // platformStatic allow access it from java code
+        @JvmStatic lateinit public var graph: ApplicationComponent
+    }
 
     override fun onCreate() {
         super.onCreate()
 
         // Application起動時に実行される。アプリの初期処理など
+
+        // Dagger2
+        graph = DaggerApplicationComponent.builder()
+                .applicationModule(ApplicationModule(this))
+                .appLayerModule(AppLayerModule())
+                .infraLayerModule(InfraLayerModule())
+                .build()
+        graph.inject(this)
 
         // LeakCanaryの設定
         if (BuildConfig.DEBUG) {
@@ -25,34 +53,15 @@ class App : Application() {
         }
 
         // Set up Fabric
-        val twitterJson = getAssetToJson("twitter.json")
         val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
-        val authConfig = TwitterAuthConfig(twitterJson.getString("consumer_key"), twitterJson.getString("consumer_secret"))
+        val authConfig = TwitterAuthConfig(getString(R.string.api_key_twitter_consumer_key),
+                getString(R.string.api_key_twitter_consumer_secret))
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))
-
-        // ModelLocatorにModelの参照を登録
-        ModelLocator.apply {
-            register(Tag.FAVORITE, BookmarkFavoriteModel())
-            register(Tag.OWN_BOOKMARK, BookmarkUserModel())
-            register(Tag.HOT_ENTRY, HotEntryModel())
-            register(Tag.NEW_ENTRY, NewEntryModel())
-            register(Tag.USER, UserModel(applicationContext))
-            register(Tag.OTHERS_BOOKMARK, BookmarkUserModel())
-            register(Tag.USER_REGISTER_BOOKMARK, UserRegisterBookmarkModel())
-            register(Tag.HATENA, HatenaModel(applicationContext))
-            register(Tag.TWITTER, TwitterModel(applicationContext))
-        }
     }
 
     fun resetBookmarks() {
-
-        val favoriteModel = ModelLocator.get(Tag.FAVORITE) as BookmarkFavoriteModel
-        val ownModel = ModelLocator.get(Tag.OWN_BOOKMARK) as BookmarkUserModel
-        val hotEntryModel = ModelLocator.get(Tag.HOT_ENTRY) as HotEntryModel
-        val newEntryModel = ModelLocator.get(Tag.NEW_ENTRY) as NewEntryModel
-
-        favoriteModel.bookmarkList.clear()
-        ownModel.bookmarkList.clear()
+        bookmarkFavoriteModel.bookmarkList.clear()
+        bookmarkUserModel.bookmarkList.clear()
         hotEntryModel.entryList.clear()
         newEntryModel.entryList.clear()
     }

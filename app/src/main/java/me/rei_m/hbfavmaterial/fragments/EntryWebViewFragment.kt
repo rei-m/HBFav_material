@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,14 +9,14 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkWebviewBinding
 
 /**
  * 記事のコンテンツをWebViewに表示するFragment.
  */
 class EntryWebViewFragment : Fragment() {
 
-    private var mEntryUrl: String? = null
+    lateinit private var mEntryUrl: String
 
     companion object {
 
@@ -39,12 +40,14 @@ class EntryWebViewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_bookmark_webview, container, false)
+        val binding = FragmentBookmarkWebviewBinding.inflate(inflater, container, false)
 
-        val webView = view.findViewById(R.id.fragment_bookmark_webview_view) as WebView
-        webView.apply {
+        binding.fragmentBookmarkWebviewView.apply {
             settings.apply {
                 javaScriptEnabled = true
+                builtInZoomControls = true
+                loadWithOverviewMode = true
+                useWideViewPort = true
                 setGeolocationEnabled(true)
                 setSupportMultipleWindows(true)
             }
@@ -57,12 +60,7 @@ class EntryWebViewFragment : Fragment() {
             loadUrl(mEntryUrl)
         }
 
-        return view
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        mEntryUrl = null
+        return binding.root
     }
 
     /**
@@ -71,11 +69,12 @@ class EntryWebViewFragment : Fragment() {
      * @return ヒストリバックしない場合 true, した場合 false
      */
     fun backHistory(): Boolean {
-        val view = view?.findViewById(R.id.fragment_bookmark_webview_view)
-        view ?: return true
-        view as WebView
-        if (view.canGoBack()) {
-            view.goBack()
+
+        val binding = DataBindingUtil.getBinding<FragmentBookmarkWebviewBinding>(view)
+
+        binding.fragmentBookmarkWebviewView ?: return true
+        if (binding.fragmentBookmarkWebviewView.canGoBack()) {
+            binding.fragmentBookmarkWebviewView.goBack()
             return false
         } else {
             return true

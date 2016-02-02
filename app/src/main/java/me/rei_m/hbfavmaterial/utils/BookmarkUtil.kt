@@ -31,6 +31,14 @@ public class BookmarkUtil private constructor() {
         private val HATENA_CDN_DOMAIN = "http://cdn1.www.st-hatena.com"
 
         /**
+         * 後で見るのフィルタ.
+         */
+        enum class ReadAfterType {
+            ALL,
+            AFTER_READ
+        }
+
+        /**
          * ブックマークのフィルタ.
          */
         enum class FilterType {
@@ -149,20 +157,16 @@ public class BookmarkUtil private constructor() {
          * 日付の差分を計算し表示用に整形する.
          */
         fun getPastTimeString(bookmarkAddedDatetime: Date,
-                              cal: Date = Calendar.getInstance(TimeZone.getDefault()).time): String {
+                              nowCalendar: Calendar = Calendar.getInstance(TimeZone.getDefault())): String {
 
             // 時差を考慮してブックマーク追加時間と現在時間の差分を計算.
             val bookmarkCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
             bookmarkCal.time = bookmarkAddedDatetime
 
+            val nowInMills = nowCalendar.timeInMillis - nowCalendar.timeZone.rawOffset
             val bookmarkInMills = bookmarkCal.timeInMillis - bookmarkCal.timeZone.rawOffset
 
-            val nowCal = Calendar.getInstance(TimeZone.getDefault())
-            nowCal.time = cal
-
-            val nowTimeInMillis = nowCal.timeInMillis - nowCal.timeZone.rawOffset
-
-            val diffSec = (nowTimeInMillis - bookmarkInMills) / COUNT_MILLIS_AT_SECOND
+            val diffSec = (nowInMills - bookmarkInMills) / COUNT_MILLIS_AT_SECOND
 
             if (diffSec < COUNT_SECONDS_AT_MINUTE) {
                 return "${diffSec.toString()}秒前"

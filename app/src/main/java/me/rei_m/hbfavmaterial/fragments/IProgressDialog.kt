@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.fragments
 import android.app.ProgressDialog
 import android.content.Context
 
-interface ProgressDialogI {
+interface IProgressDialog {
 
     var mProgressDialog: ProgressDialog?
 

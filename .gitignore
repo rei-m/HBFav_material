@@ -5,8 +5,6 @@
 .DS_Store
 /build
 /captures
-/app/src/main/assets/hatena.json
-/app/src/main/assets/twitter.json
 /app/keystore/
 /app/src/debug/AndroidManifest.xml
 /app/src/release/

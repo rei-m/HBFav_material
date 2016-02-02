@@ -1,142 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
-        android:id="@+id/fragment_setting_layout_icon_hatena_id"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_item_two_column">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/fragment_setting_image_icon_hatena_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_outline"
-            android:src="@drawable/ic_person_grey_500_36dp" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/fragment_setting_layout_text_hatena_id"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_item_two_column"
-        android:layout_marginLeft="@dimen/margin_content_from_screen"
-        android:layout_marginStart="@dimen/margin_content_from_screen"
-        android:background="@drawable/bg_border_bottom_accent"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingEnd="@dimen/margin_outline"
-        android:paddingLeft="0dp"
-        android:paddingRight="@dimen/margin_outline"
-        android:paddingStart="0dp">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_title_user_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_hatena_account"
-            android:textSize="@dimen/text_size_caption" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_user_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_title" />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment_setting_layout_icon_hatena_oauth"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/fragment_setting_layout_icon_hatena_id">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/fragment_setting_image_icon_hatena_oauth"
+        <FrameLayout
+            android:id="@+id/fragment_setting_layout_icon_hatena_id"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_outline"
-            android:src="@drawable/ic_sync_grey_500_36dp" />
-    </FrameLayout>
+            android:layout_height="@dimen/height_item_two_column">
 
-    <LinearLayout
-        android:id="@+id/fragment_setting_layout_text_hatena_oauth"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/fragment_setting_layout_text_hatena_id"
-        android:layout_marginLeft="@dimen/margin_content_from_screen"
-        android:layout_marginStart="@dimen/margin_content_from_screen"
-        android:background="@drawable/bg_border_bottom_accent"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingEnd="@dimen/margin_outline"
-        android:paddingLeft="0dp"
-        android:paddingRight="@dimen/margin_outline"
-        android:paddingStart="0dp">
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/fragment_setting_image_icon_hatena_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_outline"
+                android:layout_marginStart="@dimen/margin_outline"
+                android:src="@drawable/ic_person_grey_500_36dp" />
+        </FrameLayout>
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_title_user_oauth"
+        <LinearLayout
+            android:id="@+id/fragment_setting_layout_text_hatena_id"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_hatena_account_connect"
-            android:textSize="@dimen/text_size_caption" />
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_marginLeft="@dimen/margin_content_from_screen"
+            android:layout_marginStart="@dimen/margin_content_from_screen"
+            android:background="@drawable/bg_border_bottom_accent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/margin_outline"
+            android:paddingLeft="0dp"
+            android:paddingRight="@dimen/margin_outline"
+            android:paddingStart="0dp">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_user_oauth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_title" />
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_title_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_hatena_account"
+                android:textSize="@dimen/text_size_caption" />
 
-    </LinearLayout>
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_title" />
 
-    <FrameLayout
-        android:id="@+id/fragment_setting_layout_icon_twitter_oauth"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/fragment_setting_layout_icon_hatena_oauth">
+        </LinearLayout>
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/fragment_setting_image_icon_twitter_oauth"
+        <FrameLayout
+            android:id="@+id/fragment_setting_layout_icon_hatena_oauth"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_outline"
-            android:src="@drawable/ic_sync_grey_500_36dp" />
-    </FrameLayout>
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_below="@id/fragment_setting_layout_icon_hatena_id">
 
-    <LinearLayout
-        android:id="@+id/fragment_setting_layout_text_twitter_oauth"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_item_two_column"
-        android:layout_below="@id/fragment_setting_layout_text_hatena_oauth"
-        android:layout_marginLeft="@dimen/margin_content_from_screen"
-        android:layout_marginStart="@dimen/margin_content_from_screen"
-        android:background="@drawable/bg_border_bottom_accent"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingEnd="@dimen/margin_outline"
-        android:paddingLeft="0dp"
-        android:paddingRight="@dimen/margin_outline"
-        android:paddingStart="0dp">
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/fragment_setting_image_icon_hatena_oauth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_outline"
+                android:layout_marginStart="@dimen/margin_outline"
+                android:src="@drawable/ic_sync_grey_500_36dp" />
+        </FrameLayout>
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_title_twitter_oauth"
+        <LinearLayout
+            android:id="@+id/fragment_setting_layout_text_hatena_oauth"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_twitter_account_connect"
-            android:textSize="@dimen/text_size_caption" />
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_below="@id/fragment_setting_layout_text_hatena_id"
+            android:layout_marginLeft="@dimen/margin_content_from_screen"
+            android:layout_marginStart="@dimen/margin_content_from_screen"
+            android:background="@drawable/bg_border_bottom_accent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/margin_outline"
+            android:paddingLeft="0dp"
+            android:paddingRight="@dimen/margin_outline"
+            android:paddingStart="0dp">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/fragment_setting_text_twitter_oauth"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_title_user_oauth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_hatena_account_connect"
+                android:textSize="@dimen/text_size_caption" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_user_oauth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_title" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment_setting_layout_icon_twitter_oauth"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_below="@id/fragment_setting_layout_icon_hatena_oauth">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/fragment_setting_image_icon_twitter_oauth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_outline"
+                android:layout_marginStart="@dimen/margin_outline"
+                android:src="@drawable/ic_sync_grey_500_36dp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/fragment_setting_layout_text_twitter_oauth"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_title" />
+            android:layout_height="@dimen/height_item_two_column"
+            android:layout_below="@id/fragment_setting_layout_text_hatena_oauth"
+            android:layout_marginLeft="@dimen/margin_content_from_screen"
+            android:layout_marginStart="@dimen/margin_content_from_screen"
+            android:background="@drawable/bg_border_bottom_accent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/margin_outline"
+            android:paddingLeft="0dp"
+            android:paddingRight="@dimen/margin_outline"
+            android:paddingStart="0dp">
 
-    </LinearLayout>
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_title_twitter_oauth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_twitter_account_connect"
+                android:textSize="@dimen/text_size_caption" />
 
-</RelativeLayout>
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fragment_setting_text_twitter_oauth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_title" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

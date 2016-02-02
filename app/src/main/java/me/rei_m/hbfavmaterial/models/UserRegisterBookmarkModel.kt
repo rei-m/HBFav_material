@@ -9,13 +9,12 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * ブックマークしているユーザーを管理するModel.
  */
-class UserRegisterBookmarkModel {
-
-    private val bookmarkRepository = BookmarkRepository()
+class UserRegisterBookmarkModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     var isBusy = false
         private set
@@ -51,10 +50,12 @@ class UserRegisterBookmarkModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
@@ -63,7 +64,6 @@ class UserRegisterBookmarkModel {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 }

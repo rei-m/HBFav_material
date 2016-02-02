@@ -123,7 +123,8 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     fun postBookmark(oauthToken: OAuthTokenEntity,
                      urlString: String,
                      comment: String,
-                     isOpen: Boolean): Observable<HatenaRestApiBookmarkResponse> {
+                     isOpen: Boolean,
+                     tags: List<String> = ArrayList<String>()): Observable<HatenaRestApiBookmarkResponse> {
 
         mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
@@ -138,6 +139,11 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             sb.append(createFormDataParameter("url", urlString))
                     .append(createFormDataParameter("comment", comment))
                     .append(createFormDataParameter("private", if (isOpen) "0" else "1"))
+
+            // TAGを設定.
+            tags.forEach { tag ->
+                sb.append(createFormDataParameter("tags", tag))
+            }
 
             // RequestHeaderに設定するためPostデータのLengthを取得
             var contentLength = sb.toString().toByteArray(CHARSET).size

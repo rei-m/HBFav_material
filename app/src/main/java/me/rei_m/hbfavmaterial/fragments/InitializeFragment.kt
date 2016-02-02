@@ -1,37 +1,38 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.app.ProgressDialog
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
-import android.support.v7.widget.AppCompatEditText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentInitializeBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hideKeyBoard
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.UserModel
 import rx.Subscription
+import javax.inject.Inject
 
 /**
  * アプリの初期処理を行うFragment.
  */
-class InitializeFragment : Fragment(), ProgressDialogI {
+class InitializeFragment : Fragment(), IProgressDialog {
+
+    @Inject
+    lateinit var userModel: UserModel
 
     override var mProgressDialog: ProgressDialog? = null
 
-    private var mLayoutUserId: TextInputLayout? = null
-
-    private var mSubscription: Subscription? = null
+    lateinit private var mSubscription: Subscription
 
     companion object {
         fun newInstance(): InitializeFragment {
@@ -39,31 +40,30 @@ class InitializeFragment : Fragment(), ProgressDialogI {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.graph.inject(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_initialize, container, false)
 
-        val editId = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as AppCompatEditText
+        val binding = FragmentInitializeBinding.inflate(inflater, container, false)
 
-        val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
-
-        mLayoutUserId = view.findViewById(R.id.fragment_initialize_layout_hatena_id) as TextInputLayout
-
-        mSubscription = RxTextView.textChanges(editId)
+        mSubscription = RxTextView.textChanges(binding.fragmentInitializeEditHatenaId)
                 .map { v -> 0 < v.length }
-                .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled }
+                .subscribe { isEnabled -> binding.fragmentInitializeButtonSetHatenaId.isEnabled = isEnabled }
 
-        buttonSetId.setOnClickListener { v ->
-            val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
-            userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
+        binding.fragmentInitializeButtonSetHatenaId.setOnClickListener { v ->
+            userModel.checkAndSaveUserId(getAppContext(), binding.fragmentInitializeEditHatenaId.editableText.toString())
             showProgressDialog(activity)
         }
 
-        return view
+        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mSubscription?.unsubscribe()
+        mSubscription.unsubscribe()
     }
 
     override fun onResume() {
@@ -71,7 +71,6 @@ class InitializeFragment : Fragment(), ProgressDialogI {
         EventBusHolder.EVENT_BUS.register(this)
 
         // ユーザー情報が設定済かチェックする
-        val userModel = ModelLocator.get(ModelLocator.Companion.Tag.USER) as UserModel
         if (userModel.isSetUserSetting()) {
             EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.OK))
         }
@@ -93,7 +92,8 @@ class InitializeFragment : Fragment(), ProgressDialogI {
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                mLayoutUserId?.error = getString(R.string.message_error_input_user_id)
+                val binding = DataBindingUtil.getBinding<FragmentInitializeBinding>(view)
+                binding.fragmentInitializeLayoutHatenaId.error = getString(R.string.message_error_input_user_id)
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

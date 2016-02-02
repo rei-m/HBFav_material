@@ -7,6 +7,7 @@ import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
 import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import me.rei_m.hbfavmaterial.network.EntryApi
 import me.rei_m.hbfavmaterial.utils.ApiUtil
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.util.*
@@ -14,12 +15,12 @@ import java.util.*
 /**
  * ブックマーク情報のリポジトリ.
  */
-class BookmarkRepository() {
+open class BookmarkRepository() {
 
     /**
      * お気に入りのユーザーのブックマーク情報を取得する.
      */
-    fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
+    open fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
         return BookmarkFavoriteRss()
                 .request(userId, startIndex)
                 .map { response -> parseRssResponse(response) }
@@ -28,16 +29,16 @@ class BookmarkRepository() {
     /**
      * ユーザーのブックマーク情報を取得する.
      */
-    fun findByUserId(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
+    open fun findByUserId(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
         return BookmarkOwnRss()
-                .request(userId, startIndex)
+                .request(userId, readAfterType, startIndex)
                 .map { response -> parseRssResponse(response) }
     }
 
     /**
      * URLをキーにブックマーク情報を取得する.
      */
-    fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>> {
+    open fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>> {
         return EntryApi()
                 .request(articleUrl)
                 .map { response ->

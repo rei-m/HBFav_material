@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -14,6 +15,7 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
+import javax.inject.Inject
 
 /**
  * はてなのOAuth関連の情報を管理するModel.
@@ -26,19 +28,20 @@ class HatenaModel {
     var oauthTokenEntity: OAuthTokenEntity? = null
         private set
 
-    private var mHatenaRepository: HatenaRepository? = null
+    private val mHatenaRepository: HatenaRepository
 
     companion object {
+
+        public val TAG_READ_AFTER = "あとで読む"
+
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 
-    /**
-     * コンストラクタ.
-     */
-    constructor(context: Context) {
+    @Inject
+    constructor(@ForApplication context: Context, hatenaRepository: HatenaRepository) {
 
         // Repositoryを作成する.
-        mHatenaRepository = HatenaRepository(context)
+        this.mHatenaRepository = hatenaRepository
 
         // Preferencesからアクセストークンを復元する.
         val pref = getPreferences(context)
@@ -75,19 +78,20 @@ class HatenaModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.OK, requestUrl))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
-        mHatenaRepository!!.fetchRequestToken()
+        mHatenaRepository.fetchRequestToken()
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
@@ -109,21 +113,22 @@ class HatenaModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 // 成功した場合はTokenをPreferencesに保存.
                 saveToken(context)
                 EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
-        mHatenaRepository!!.fetchAccessToken(requestToken)
+        mHatenaRepository.fetchAccessToken(requestToken)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
@@ -155,10 +160,12 @@ class HatenaModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(bookmark, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 val error = e as HTTPException
                 if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
                     EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
@@ -168,18 +175,17 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.findBookmarkByUrl(oauthTokenEntity!!, url)
+        mHatenaRepository.findBookmarkByUrl(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
     /**
      * ブックマーク情報を登録する.
      */
-    fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
+    fun registerBookmark(url: String, comment: String, isOpen: Boolean, tags: List<String>) {
 
         if (isBusy) {
             return
@@ -196,19 +202,20 @@ class HatenaModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(bookmark, LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaPostBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
             }
         }
 
-        mHatenaRepository!!.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
+        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen, tags)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
     }
 
@@ -229,10 +236,12 @@ class HatenaModel {
             }
 
             override fun onCompleted() {
+                isBusy = false
                 EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.OK))
             }
 
             override fun onError(e: Throwable?) {
+                isBusy = false
                 val error = e as HTTPException
                 if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
                     EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.NOT_FOUND))
@@ -242,13 +251,11 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository!!.deleteBookmark(oauthTokenEntity!!, url)
+        mHatenaRepository.deleteBookmark(oauthTokenEntity!!, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo { isBusy = false }
                 .subscribe(observer)
-
     }
 
     /**

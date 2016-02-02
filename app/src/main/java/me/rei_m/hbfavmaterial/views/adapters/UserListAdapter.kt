@@ -1,25 +1,47 @@
 package me.rei_m.hbfavmaterial.views.adapters
 
 import android.content.Context
+import android.databinding.DataBindingUtil
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import me.rei_m.hbfavmaterial.R
+import com.squareup.picasso.Picasso
+import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.views.widgets.list.UserItemLayout
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 /**
  * ユーザー一覧を管理するAdaptor.
  */
-class UserListAdapter constructor(context: Context, resource: Int) :
-        ArrayAdapter<BookmarkEntity>(context, resource) {
+class UserListAdapter(context: Context,
+                      resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
+
+    private val mLayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView ?: View.inflate(context, R.layout.list_item_user, null)
+        return convertView?.apply {
+            val binding = DataBindingUtil.getBinding<ListItemUserBinding>(this)
+            bindEntity(binding, getItem(position))
+        } ?: let {
+            val binding = ListItemUserBinding.inflate(mLayoutInflater, parent, false)
+            bindEntity(binding, getItem(position))
+            return binding.root
+        }
+    }
 
-        (view as UserItemLayout).bindView(getItem(position))
+    private fun bindEntity(binding: ListItemUserBinding, bookmarkEntity: BookmarkEntity) {
 
-        return view
+        binding.bookmarkEntity = bookmarkEntity
+
+        // TODO XMLの中で書きたいところだけど、XML側でimportしてもstaticメソッドがいないと言われるので、いったんこっちに
+        binding.listItemUserTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+
+        Picasso.with(context)
+                .load(BookmarkUtil.getIconImageUrlFromId(bookmarkEntity.creator))
+                .transform(RoundedTransformation())
+                .into(binding.listItemUserImageIcon)
     }
 }

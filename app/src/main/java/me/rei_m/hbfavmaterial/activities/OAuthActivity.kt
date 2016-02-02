@@ -8,21 +8,23 @@ import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.FrameLayout
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthAccessTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthRequestTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.managers.ModelLocator
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
+import javax.inject.Inject
 
 class OAuthActivity : BaseActivity() {
 
-    private var mWebView: WebView? = null;
+    @Inject
+    lateinit var hatenaModel: HatenaModel
+
+    lateinit var mWebView: WebView
 
     companion object {
 
@@ -36,17 +38,15 @@ class OAuthActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.graph.inject(this)
 
         mWebView = WebView(this)
-        mWebView?.apply {
+        mWebView.apply {
             clearCache(true)
             settings.javaScriptEnabled = true
             setWebChromeClient(WebChromeClient())
             setWebViewClient(object : WebViewClient() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-
-                    val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
-
                     if (url?.startsWith(HatenaOAuthApi.CALLBACK) ?: false) {
                         stopLoading()
                         hide()
@@ -69,15 +69,12 @@ class OAuthActivity : BaseActivity() {
             })
         }
 
-        val content = findViewById(R.id.content) as FrameLayout
-        content.addView(mWebView)
-
-        findViewById(R.id.fab).hide()
+        binding.content.addView(mWebView)
+        binding.fab.hide()
     }
 
     override fun onResume() {
         super.onResume()
-        val hatenaModel = ModelLocator.get(ModelLocator.Companion.Tag.HATENA) as HatenaModel
         hatenaModel.fetchRequestToken()
     }
 
@@ -85,10 +82,10 @@ class OAuthActivity : BaseActivity() {
     fun subscribe(event: HatenaOAuthRequestTokenLoadedEvent) {
         when (event.status) {
             LoadedEventStatus.OK -> {
-                mWebView?.loadUrl(event.authUrl)
+                mWebView.loadUrl(event.authUrl)
             }
             else -> {
-                showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                showSnackbarNetworkError(binding.activityLayout)
             }
         }
     }
