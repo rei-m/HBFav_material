@@ -40,7 +40,13 @@ class BookmarkListAdapter(context: Context,
     val nextIndex: Int
         get() {
             if (BOOKMARK_COUNT_PER_PAGE <= (count + 1)) {
-                return count + 1
+                val pageCnt = (count / BOOKMARK_COUNT_PER_PAGE)
+                val mod = (count % BOOKMARK_COUNT_PER_PAGE)
+                return if (mod == 0) {
+                    pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
+                } else {
+                    (pageCnt + 1) * BOOKMARK_COUNT_PER_PAGE + 1
+                }
             } else {
                 return BOOKMARK_COUNT_PER_PAGE + 1
             }

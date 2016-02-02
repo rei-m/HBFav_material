@@ -197,6 +197,13 @@ class BookmarkUserFragment : Fragment() {
 
     @Subscribe
     fun subscribe(event: ReadAfterFilterChangedEvent) {
+
+        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        if (binding.fragmentListList.footerViewsCount == 0) {
+            val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
+            binding.fragmentListList.addFooterView(footerView, null, false)
+            footerView.hide()
+        }
         bookmarkUserModelForSelf.fetch(mUserId, event.type)
     }
 
@@ -212,7 +219,6 @@ class BookmarkUserFragment : Fragment() {
             LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
                 displayListContents(binding.fragmentListList)
-                // TODO Footer
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 読込結果がなかった場合はFooterViewを非表示にする
