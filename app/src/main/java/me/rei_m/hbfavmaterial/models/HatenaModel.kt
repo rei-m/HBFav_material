@@ -31,6 +31,9 @@ class HatenaModel {
     private val mHatenaRepository: HatenaRepository
 
     companion object {
+
+        public val TAG_READ_AFTER = "あとで読む"
+
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 
@@ -182,7 +185,7 @@ class HatenaModel {
     /**
      * ブックマーク情報を登録する.
      */
-    fun registerBookmark(url: String, comment: String, isOpen: Boolean) {
+    fun registerBookmark(url: String, comment: String, isOpen: Boolean, tags: List<String>) {
 
         if (isBusy) {
             return
@@ -209,7 +212,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen)
+        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen, tags)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -7,6 +7,7 @@ import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
 import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import me.rei_m.hbfavmaterial.network.EntryApi
 import me.rei_m.hbfavmaterial.utils.ApiUtil
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.util.*
@@ -28,9 +29,9 @@ open class BookmarkRepository() {
     /**
      * ユーザーのブックマーク情報を取得する.
      */
-    open fun findByUserId(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
+    open fun findByUserId(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
         return BookmarkOwnRss()
-                .request(userId, startIndex)
+                .request(userId, readAfterType, startIndex)
                 .map { response -> parseRssResponse(response) }
     }
 

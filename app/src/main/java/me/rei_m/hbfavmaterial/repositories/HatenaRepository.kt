@@ -5,12 +5,16 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.extensions.getAssetToJson
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
 import rx.Observable
+import java.util.*
 import javax.inject.Inject
 
 open class HatenaRepository {
+
+    companion object {
+        private val MAX_TAGS_COUNT = 10
+    }
 
     /**
      * HatenaのOAuth認証が必要なAPIにアクセスするモジュール.
@@ -54,7 +58,8 @@ open class HatenaRepository {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
                             comment = response.comment,
-                            isPrivate = response.private)
+                            isPrivate = response.private,
+                            tags = response.tags)
                 }
     }
 
@@ -64,13 +69,21 @@ open class HatenaRepository {
     open fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
                             urlString: String,
                             comment: String,
-                            isOpen: Boolean): Observable<BookmarkEditEntity> {
-        return mHatenaOAuthApi.postBookmark(oauthTokenEntity, urlString, comment, isOpen)
+                            isOpen: Boolean,
+                            tags: List<String> = ArrayList<String>()): Observable<BookmarkEditEntity> {
+
+        // Tagに登録できる上限を超えていたら例外.
+        if (MAX_TAGS_COUNT < tags.size) {
+            throw IllegalArgumentException("登録可能なタグは $MAX_TAGS_COUNT 個までです。")
+        }
+
+        return mHatenaOAuthApi.postBookmark(oauthTokenEntity, urlString, comment, isOpen, tags)
                 .map {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
                             comment = response.comment,
-                            isPrivate = response.private)
+                            isPrivate = response.private,
+                            tags = response.tags)
                 }
     }
 

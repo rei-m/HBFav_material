@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.network
 
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.Request
@@ -12,20 +13,23 @@ import java.net.HttpURLConnection
  */
 class BookmarkOwnRss {
 
-    fun request(userId: String, startIndex: Int = 0): Observable<String> {
+    fun request(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0): Observable<String> {
 
         return Observable.create { t ->
 
-            val url = HttpUrl.Builder()
+            val builder = HttpUrl.Builder()
                     .scheme("http")
                     .host("b.hatena.ne.jp")
                     .addPathSegment(userId)
                     .addPathSegment("rss")
                     .addQueryParameter("of", startIndex.toString())
-                    .build()
+
+            if (readAfterType == ReadAfterType.AFTER_READ) {
+                builder.addQueryParameter("tag", "あとで読む")
+            }
 
             val request = Request.Builder()
-                    .url(url)
+                    .url(builder.build())
                     .cacheControl(CacheControl.FORCE_NETWORK)
                     .build()
 

@@ -31,6 +31,14 @@ public class BookmarkUtil private constructor() {
         private val HATENA_CDN_DOMAIN = "http://cdn1.www.st-hatena.com"
 
         /**
+         * 後で見るのフィルタ.
+         */
+        enum class ReadAfterType {
+            ALL,
+            AFTER_READ
+        }
+
+        /**
          * ブックマークのフィルタ.
          */
         enum class FilterType {

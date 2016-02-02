@@ -20,6 +20,7 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.events.ui.ReadAfterFilterChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -192,6 +193,18 @@ class BookmarkUserFragment : Fragment() {
         if (binding.fragmentListRefresh.isRefreshing) {
             RxSwipeRefreshLayout.refreshing(binding.fragmentListRefresh).call(false)
         }
+    }
+
+    @Subscribe
+    fun subscribe(event: ReadAfterFilterChangedEvent) {
+
+        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        if (binding.fragmentListList.footerViewsCount == 0) {
+            val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
+            binding.fragmentListList.addFooterView(footerView, null, false)
+            footerView.hide()
+        }
+        bookmarkUserModelForSelf.fetch(mUserId, event.type)
     }
 
     /**

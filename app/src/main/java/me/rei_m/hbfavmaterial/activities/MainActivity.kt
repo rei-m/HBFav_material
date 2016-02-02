@@ -9,10 +9,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.EntryCategoryChangedEvent
-import me.rei_m.hbfavmaterial.events.ui.EntryListItemClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent
+import me.rei_m.hbfavmaterial.events.ui.*
 import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
@@ -21,6 +18,7 @@ import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import javax.inject.Inject
 
@@ -92,6 +90,10 @@ class MainActivity : BaseActivityWithDrawer() {
                 entryType = EntryType.ANIMATION_AND_GAME
             R.id.menu_category_comedy ->
                 entryType = EntryType.COMEDY
+            R.id.menu_filter_bookmark_read_after ->
+                return onOptionBookmarkFilterSelected(item)
+            R.id.menu_filter_bookmark_all ->
+                return onOptionBookmarkFilterSelected(item)
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -108,6 +110,33 @@ class MainActivity : BaseActivityWithDrawer() {
         val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
         val entryTypeString = BookmarkUtil.getEntryTypeString(applicationContext, entryType)
         supportActionBar.title = "$currentPageTitle - $entryTypeString"
+
+        return true
+    }
+
+    private fun onOptionBookmarkFilterSelected(item: MenuItem?): Boolean {
+
+        val id = item?.itemId;
+        
+        val subTitle: String
+
+        when (id) {
+            R.id.menu_filter_bookmark_read_after -> {
+                EventBusHolder.EVENT_BUS.post(ReadAfterFilterChangedEvent(ReadAfterType.AFTER_READ))
+                subTitle = getString(R.string.text_read_after)
+            }
+            R.id.menu_filter_bookmark_all -> {
+                EventBusHolder.EVENT_BUS.post(ReadAfterFilterChangedEvent(ReadAfterType.ALL))
+                subTitle = getString(R.string.filter_bookmark_users_all)
+            }
+            else -> {
+                subTitle = ""
+            }
+        }
+
+        val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
+
+        supportActionBar.title = "$currentPageTitle - $subTitle"
 
         return true
     }
@@ -172,11 +201,15 @@ class MainActivity : BaseActivityWithDrawer() {
             }
             Kind.BOOKMARK_OWN -> {
                 mMenu.hide()
+                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(true);
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(true);
                 title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_own
             }
             Kind.HOT_ENTRY -> {
                 mMenu.show()
+                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(false);
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(false);
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
@@ -184,6 +217,8 @@ class MainActivity : BaseActivityWithDrawer() {
             }
             Kind.NEW_ENTRY -> {
                 mMenu.show()
+                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(false);
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(false);
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"

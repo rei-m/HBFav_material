@@ -26,6 +26,7 @@ import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
+import java.util.*
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
@@ -87,7 +88,20 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
         val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)
 
-        val isAdd = (arguments.getSerializable(ARG_BOOKMARK) == null)
+        val bookmarkEdit: BookmarkEditEntity? = arguments.getSerializable(ARG_BOOKMARK)?.let {
+            it as BookmarkEditEntity
+        }
+
+        val tags: ArrayList<String>
+        val isAdd: Boolean
+
+        if (bookmarkEdit == null) {
+            tags = ArrayList<String>()
+            isAdd = true
+        } else {
+            isAdd = false
+            tags = bookmarkEdit.tags
+        }
 
         binding.dialogFragmentEditBookmarkTextTitle.text = getString(R.string.dialog_title_add_bookmark)
 
@@ -121,9 +135,13 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             }
         }
 
+        // あとで読むタグが登録済だったらチェックを有効にする
+        binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked = tags.contains(HatenaModel.TAG_READ_AFTER)
+
         binding.dialogFragmentEditBookmarkSwitchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
             binding.dialogFragmentEditBookmarkSwitchOpen.isEnabled = !isChecked
             binding.dialogFragmentEditBookmarkSwitchShareTwitter.isEnabled = !isChecked
+            binding.dialogFragmentEditBookmarkSwitchReadAfter.isEnabled = !isChecked
             binding.dialogFragmentEditBookmarkEditBookmark.isEnabled = !isChecked
         }
 
@@ -136,7 +154,21 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
                 hatenaModel.deleteBookmark(bookmarkUrl)
             } else {
                 val inputtedComment = binding.dialogFragmentEditBookmarkEditBookmark.editableText.toString()
-                hatenaModel.registerBookmark(bookmarkUrl, inputtedComment, binding.dialogFragmentEditBookmarkSwitchOpen.isChecked)
+
+                if (binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked) {
+                    if (!tags.contains(HatenaModel.TAG_READ_AFTER)) {
+                        tags.add(HatenaModel.TAG_READ_AFTER)
+                    }
+                } else {
+                    if (tags.contains(HatenaModel.TAG_READ_AFTER)) {
+                        tags.remove(HatenaModel.TAG_READ_AFTER)
+                    }
+                }
+
+                hatenaModel.registerBookmark(bookmarkUrl,
+                        inputtedComment,
+                        binding.dialogFragmentEditBookmarkSwitchOpen.isChecked,
+                        tags)
                 if (binding.dialogFragmentEditBookmarkSwitchShareTwitter.isChecked) {
                     twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
                 }

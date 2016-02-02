@@ -5,6 +5,7 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
+import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -15,13 +16,16 @@ import javax.inject.Inject
  * ユーザーのブックマーク情報を管理するModel.
  */
 class BookmarkUserModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
-    
+
     private var userId = ""
 
     var isBusy = false
         private set
 
     val bookmarkList = ArrayList<BookmarkEntity>()
+
+    var readAfterType = ReadAfterType.ALL
+        private set
 
     fun isSameUser(userId: String): Boolean = (this.userId == userId)
 
@@ -70,10 +74,15 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
             }
         }
 
-        bookmarkRepository.findByUserId(userId, requestIndex)
+        bookmarkRepository.findByUserId(userId, readAfterType, requestIndex)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
+    }
+
+    fun fetch(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0) {
+        this.readAfterType = readAfterType
+        fetch(userId, startIndex)
     }
 }
