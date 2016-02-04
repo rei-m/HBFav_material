@@ -109,7 +109,7 @@ class MainActivity : BaseActivityWithDrawer() {
         // Activityのタイトルも切り替える
         val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
         val entryTypeString = BookmarkUtil.getEntryTypeString(applicationContext, entryType)
-        supportActionBar.title = "$currentPageTitle - $entryTypeString"
+        supportActionBar?.title = "$currentPageTitle - $entryTypeString"
 
         return true
     }
@@ -136,7 +136,7 @@ class MainActivity : BaseActivityWithDrawer() {
 
         val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
 
-        supportActionBar.title = "$currentPageTitle - $subTitle"
+        supportActionBar?.title = "$currentPageTitle - $subTitle"
 
         return true
     }
@@ -201,15 +201,15 @@ class MainActivity : BaseActivityWithDrawer() {
             }
             Kind.BOOKMARK_OWN -> {
                 mMenu.hide()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(true);
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(true);
+                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = true;
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
                 title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_own
             }
             Kind.HOT_ENTRY -> {
                 mMenu.show()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(false);
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(false);
+                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
@@ -217,8 +217,8 @@ class MainActivity : BaseActivityWithDrawer() {
             }
             Kind.NEW_ENTRY -> {
                 mMenu.show()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).setVisible(false);
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).setVisible(false);
+                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
@@ -229,7 +229,7 @@ class MainActivity : BaseActivityWithDrawer() {
         }
 
         // タイトルを切り替え、ナビゲーションView内のメニューの選択中の項目をチェック状態にする
-        supportActionBar.title = title
+        supportActionBar?.title = title
         binding.activityMainNav.setCheckedItem(navItemId)
     }
 }

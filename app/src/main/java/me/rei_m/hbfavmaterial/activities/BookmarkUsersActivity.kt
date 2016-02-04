@@ -93,6 +93,6 @@ class BookmarkUsersActivity : BaseActivity() {
     private fun displayTitle(filterType: FilterType) {
         val bookmarkCountString = mBookmarkEntity.articleEntity.bookmarkCount.toString()
         val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
-        supportActionBar.title = "$bookmarkCountString users - $filterTypeString"
+        supportActionBar?.title = "$bookmarkCountString users - $filterTypeString"
     }
 }

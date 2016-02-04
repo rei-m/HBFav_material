@@ -19,8 +19,8 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity)
         setSupportActionBar(binding.toolbar)
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
-        supportActionBar.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
     }
 
     override fun onResume() {

@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.R
  * Activityのスタックを削除したうえで新しくIntentを起動する.
  */
 fun AppCompatActivity.startActivityWithClearTop(intent: Intent) {
-    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
     startActivity(intent)
     finish()
 }
@@ -72,7 +72,10 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment,
 /**
  * キーボードを隠す.
  */
-fun AppCompatActivity.hideKeyBoard(view: View) {
+fun AppCompatActivity.hideKeyBoard(view: View?) {
+
+    view ?: return
+
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 }
@@ -80,6 +83,9 @@ fun AppCompatActivity.hideKeyBoard(view: View) {
 /**
  * ネットワークエラー通知ののSnackbarを表示する
  */
-fun AppCompatActivity.showSnackbarNetworkError(view: View) {
+fun AppCompatActivity.showSnackbarNetworkError(view: View?) {
+
+    view ?: return
+
     Snackbar.make(view, getString(R.string.message_error_network), Snackbar.LENGTH_LONG).setAction("Action", null).show()
 }

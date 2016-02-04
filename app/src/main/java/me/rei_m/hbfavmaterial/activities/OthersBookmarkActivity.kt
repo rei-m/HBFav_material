@@ -30,7 +30,7 @@ class OthersBookmarkActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val userId = intent.getStringExtra(ARG_USER_ID)
-        supportActionBar.title = userId
+        supportActionBar?.title = userId
 
         binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
         binding.fab.setOnClickListener {

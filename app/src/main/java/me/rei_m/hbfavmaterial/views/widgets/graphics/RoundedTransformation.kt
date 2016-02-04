@@ -13,7 +13,7 @@ class RoundedTransformation(private val radius: Int = 50,
     override fun transform(source: Bitmap): Bitmap {
         val paint = Paint().apply {
             isAntiAlias = true
-            setShader(BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
+            shader = BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
         }
 
         val output = Bitmap.createBitmap(source.width, source.height, Config.ARGB_8888)

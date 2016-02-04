@@ -75,7 +75,7 @@ class BookmarkActivity : BaseActivity() {
                 mEntryLink = entryEntity.articleEntity.url
                 setFragment(EntryWebViewFragment.newInstance(mEntryLink), EntryWebViewFragment.TAG)
             }
-            supportActionBar.title = mEntryTitle
+            supportActionBar?.title = mEntryTitle
         }
 
         binding.fab.setOnClickListener {
@@ -92,7 +92,7 @@ class BookmarkActivity : BaseActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         mEntryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
         mEntryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
-        supportActionBar.title = mEntryTitle
+        supportActionBar?.title = mEntryTitle
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
