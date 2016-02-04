@@ -28,7 +28,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
     companion object {
 
-        public val CALLBACK = "https://github.com/rei-m/HBFav_material"
+        val CALLBACK = "https://github.com/rei-m/HBFav_material"
 
         private val REQUEST_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/initiate?scope=read_public,write_public"
 
@@ -38,7 +38,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
         private val BOOKMARK_ENDPOINT_URL = "http://api.b.hatena.ne.jp/1/my/bookmark"
 
-        public val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+        val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
 
         private val TWO_HYPHEN = "--"
         private val EOL = "\r\n"
@@ -146,7 +146,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             }
 
             // RequestHeaderに設定するためPostデータのLengthを取得
-            var contentLength = sb.toString().toByteArray(CHARSET).size
+            var contentLength = sb.toString().toByteArray(charset(CHARSET)).size
 
             // Postデータにフッタ追加
             sb.append("$TWO_HYPHEN$BOUNDARY$TWO_HYPHEN$EOL")
@@ -159,7 +159,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             // Postデータ書き込み
             DataOutputStream(connection.outputStream).apply {
-                write(sb.toString().toByteArray(CHARSET))
+                write(sb.toString().toByteArray(charset(CHARSET)))
                 flush()
                 close()
             }
