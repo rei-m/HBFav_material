@@ -190,7 +190,7 @@ class BookmarkUsersFragment : Fragment() {
     }
 
     private fun displayListContents(listView: ListView) {
-        mListAdapter.run {
+        with(mListAdapter) {
             clear()
             if (mFilterType == FilterType.COMMENT) {
                 addAll(userRegisterBookmarkModel.bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })

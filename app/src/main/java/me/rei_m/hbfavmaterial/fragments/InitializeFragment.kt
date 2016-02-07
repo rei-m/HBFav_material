@@ -97,7 +97,7 @@ class InitializeFragment : Fragment(), IProgressDialog {
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {
-                (activity as AppCompatActivity).run {
+                with(activity as AppCompatActivity) {
                     hideKeyBoard(view)
                     showSnackbarNetworkError(view)
                 }
