@@ -29,9 +29,8 @@ class BookmarkUsersActivity : BaseActivity() {
         private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            return Intent(context, BookmarkUsersActivity::class.java).apply {
-                putExtra(ARG_BOOKMARK, bookmarkEntity)
-            }
+            return Intent(context, BookmarkUsersActivity::class.java)
+                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
         }
     }
 

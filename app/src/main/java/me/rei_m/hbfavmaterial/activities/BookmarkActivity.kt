@@ -47,9 +47,8 @@ class BookmarkActivity : BaseActivity() {
         private val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            return Intent(context, BookmarkActivity::class.java).apply {
-                putExtra(ARG_BOOKMARK, bookmarkEntity)
-            }
+            return Intent(context, BookmarkActivity::class.java)
+                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
         }
 
         fun createIntent(context: Context, entryEntity: EntryEntity): Intent {

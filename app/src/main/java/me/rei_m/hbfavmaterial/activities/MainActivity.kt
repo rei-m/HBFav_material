@@ -41,9 +41,8 @@ class MainActivity : BaseActivityWithDrawer() {
 
         fun createIntent(context: Context,
                          index: Int = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE): Intent {
-            return Intent(context, MainActivity::class.java).apply {
-                putExtra(ARG_PAGER_INDEX, index)
-            }
+            return Intent(context, MainActivity::class.java)
+                    .putExtra(ARG_PAGER_INDEX, index)
         }
     }
 
@@ -117,7 +116,7 @@ class MainActivity : BaseActivityWithDrawer() {
     private fun onOptionBookmarkFilterSelected(item: MenuItem?): Boolean {
 
         val id = item?.itemId;
-        
+
         val subTitle: String
 
         when (id) {

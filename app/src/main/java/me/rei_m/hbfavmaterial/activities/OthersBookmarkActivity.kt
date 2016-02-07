@@ -20,9 +20,8 @@ class OthersBookmarkActivity : BaseActivity() {
         private val ARG_USER_ID = "ARG_USER_ID"
 
         fun createIntent(context: Context, userId: String): Intent {
-            return Intent(context, OthersBookmarkActivity::class.java).apply {
-                putExtra(ARG_USER_ID, userId)
-            }
+            return Intent(context, OthersBookmarkActivity::class.java)
+                    .putExtra(ARG_USER_ID, userId)
         }
     }
 
