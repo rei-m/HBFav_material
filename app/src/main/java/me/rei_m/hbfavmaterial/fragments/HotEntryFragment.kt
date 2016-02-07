@@ -143,7 +143,7 @@ class HotEntryFragment : Fragment() {
     }
 
     private fun displayListContents(listView: ListView) {
-        mListAdapter.apply {
+        mListAdapter.run {
             clear()
             addAll(hotEntryModel.entryList)
             notifyDataSetChanged()

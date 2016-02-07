@@ -42,8 +42,8 @@ class EntryWebViewFragment : Fragment() {
 
         val binding = FragmentBookmarkWebviewBinding.inflate(inflater, container, false)
 
-        binding.fragmentBookmarkWebviewView.apply {
-            settings.apply {
+        binding.fragmentBookmarkWebviewView.run {
+            settings.run {
                 javaScriptEnabled = true
                 builtInZoomControls = true
                 loadWithOverviewMode = true

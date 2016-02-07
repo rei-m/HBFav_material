@@ -143,7 +143,7 @@ class SettingFragment : Fragment() {
     @Subscribe
     fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
-            userModel.userEntity?.apply {
+            userModel.userEntity?.run {
 
                 val binding = DataBindingUtil.getBinding<FragmentSettingBinding>(view)
                 binding.fragmentSettingTextUserId.text = id

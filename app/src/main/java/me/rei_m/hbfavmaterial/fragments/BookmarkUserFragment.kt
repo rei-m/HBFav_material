@@ -254,7 +254,7 @@ class BookmarkUserFragment : Fragment() {
     private fun displayListContents(listView: ListView) {
 
         // コンテンツを表示する
-        mListAdapter.apply {
+        mListAdapter.run {
             val bookmarkUserModel = getBookmarkModel()
             clear()
             addAll(bookmarkUserModel.bookmarkList)

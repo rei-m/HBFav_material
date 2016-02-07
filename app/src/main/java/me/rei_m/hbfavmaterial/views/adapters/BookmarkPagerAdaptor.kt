@@ -19,7 +19,7 @@ class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
     private val mTitleList = ArrayList<String>()
 
     constructor(fm: FragmentManager, context: Context) : super(fm) {
-        mTitleList.apply {
+        mTitleList.run {
             add(INDEX_PAGER_BOOKMARK_FAVORITE, context.getString(R.string.fragment_title_bookmark_favorite))
             add(INDEX_PAGER_BOOKMARK_OWN, context.getString(R.string.fragment_title_bookmark_own))
             add(INDEX_PAGER_HOT_ENTRY, context.getString(R.string.fragment_title_hot_entry))

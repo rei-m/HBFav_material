@@ -158,7 +158,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             mOAuthConsumer.sign(connection)
 
             // Postデータ書き込み
-            DataOutputStream(connection.outputStream).apply {
+            DataOutputStream(connection.outputStream).run {
                 write(sb.toString().toByteArray(charset(CHARSET)))
                 flush()
                 close()

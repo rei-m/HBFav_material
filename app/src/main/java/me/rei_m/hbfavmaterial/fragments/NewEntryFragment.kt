@@ -143,7 +143,7 @@ class NewEntryFragment : Fragment() {
     }
 
     private fun displayListContents(listView: ListView) {
-        mListAdapter.apply {
+        mListAdapter.run {
             clear()
             addAll(newEntryModel.entryList)
             notifyDataSetChanged()
