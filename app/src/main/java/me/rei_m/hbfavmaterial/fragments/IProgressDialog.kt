@@ -13,7 +13,7 @@ interface IProgressDialog {
             setCanceledOnTouchOutside(false)
         }
 
-        mProgressDialog?.apply {
+        mProgressDialog?.run {
             if (!isShowing) {
                 show()
             }

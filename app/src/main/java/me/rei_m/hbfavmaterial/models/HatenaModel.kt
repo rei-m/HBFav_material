@@ -32,7 +32,7 @@ class HatenaModel {
 
     companion object {
 
-        public val TAG_READ_AFTER = "あとで読む"
+        val TAG_READ_AFTER = "あとで読む"
 
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }

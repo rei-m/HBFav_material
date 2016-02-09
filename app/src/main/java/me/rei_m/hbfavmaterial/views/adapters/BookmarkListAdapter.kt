@@ -52,25 +52,25 @@ class BookmarkListAdapter(context: Context,
             }
         }
 
-    private fun bindEntity(binding: ListItemBookmarkBinding, bookmarkEntity: BookmarkEntity) {
+    private fun bindEntity(binding: ListItemBookmarkBinding, item: BookmarkEntity) {
 
-        binding.let {
-            it.bookmarkEntity = bookmarkEntity
+        with(binding) {
+            bookmarkEntity = item
 
-            it.listItemBookmarkTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+            listItemBookmarkTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(item.date)
 
             Picasso.with(context)
-                    .load(BookmarkUtil.getIconImageUrlFromId(bookmarkEntity.creator))
+                    .load(BookmarkUtil.getIconImageUrlFromId(item.creator))
                     .transform(RoundedTransformation())
-                    .into(it.listItemBookmarkImageUserIcon)
+                    .into(listItemBookmarkImageUserIcon)
         }
 
-        binding.listItemBookmarkLayoutBookmark.let {
-            it.layoutBookmarkTextDescription.toggle(!bookmarkEntity.description.isEmpty())
+        with(binding.listItemBookmarkLayoutBookmark) {
+            layoutBookmarkTextDescription.toggle(!item.description.isEmpty())
             Picasso.with(context)
-                    .load(bookmarkEntity.articleEntity.iconUrl)
+                    .load(item.articleEntity.iconUrl)
                     .transform(RoundedTransformation())
-                    .into(it.layoutBookmarkImageArticleIcon)
+                    .into(layoutBookmarkImageArticleIcon)
         }
     }
 }

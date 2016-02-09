@@ -31,11 +31,11 @@ class FrameActivity : BaseActivity() {
             when (tag) {
                 Tag.FROM_DEVELOPER -> {
                     setFragment(FromDeveloperFragment.newInstance())
-                    supportActionBar.title = getString(R.string.fragment_title_from_developer)
+                    supportActionBar?.title = getString(R.string.fragment_title_from_developer)
                 }
                 Tag.CREDIT -> {
                     setFragment(CreditFragment.newInstance())
-                    supportActionBar.title = getString(R.string.fragment_title_credit)
+                    supportActionBar?.title = getString(R.string.fragment_title_credit)
                 }
                 else -> {
 

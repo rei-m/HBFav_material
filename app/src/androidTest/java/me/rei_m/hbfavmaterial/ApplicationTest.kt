@@ -13,7 +13,7 @@ class ApplicationTest : ApplicationTestCase<Application>(Application::class.java
 
     companion object {
         // platformStatic allow access it from java code
-        @JvmStatic lateinit public var graph: ApplicationComponent
+        @JvmStatic lateinit var graph: ApplicationComponent
     }
 
     @Before

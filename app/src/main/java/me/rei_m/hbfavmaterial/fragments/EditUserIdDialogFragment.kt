@@ -43,7 +43,7 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
             window.requestFeature(Window.FEATURE_NO_TITLE)
         }

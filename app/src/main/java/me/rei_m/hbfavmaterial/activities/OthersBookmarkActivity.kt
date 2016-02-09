@@ -20,9 +20,8 @@ class OthersBookmarkActivity : BaseActivity() {
         private val ARG_USER_ID = "ARG_USER_ID"
 
         fun createIntent(context: Context, userId: String): Intent {
-            return Intent(context, OthersBookmarkActivity::class.java).apply {
-                putExtra(ARG_USER_ID, userId)
-            }
+            return Intent(context, OthersBookmarkActivity::class.java)
+                    .putExtra(ARG_USER_ID, userId)
         }
     }
 
@@ -30,7 +29,7 @@ class OthersBookmarkActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val userId = intent.getStringExtra(ARG_USER_ID)
-        supportActionBar.title = userId
+        supportActionBar?.title = userId
 
         binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
         binding.fab.setOnClickListener {

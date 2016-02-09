@@ -37,27 +37,27 @@ class EntryListAdapter(context: Context,
         }
     }
 
-    private fun bindEntity(binding: ListItemEntryBinding, entryEntity: EntryEntity) {
+    private fun bindEntity(binding: ListItemEntryBinding, item: EntryEntity) {
 
-        binding.entryEntity = entryEntity
+        binding.entryEntity = item
 
         val mlp = binding.listItemEntryTextArticleTitle.layoutParams as ViewGroup.MarginLayoutParams
-        if (entryEntity.articleEntity.bodyImageUrl.isEmpty()) {
+        if (item.articleEntity.bodyImageUrl.isEmpty()) {
             binding.listItemEntryImageBody.hide()
             mlp.rightMargin = mMarginTitleRight
         } else {
             binding.listItemEntryImageBody.show()
             mlp.rightMargin = 0
             Picasso.with(context)
-                    .load(entryEntity.articleEntity.bodyImageUrl)
+                    .load(item.articleEntity.bodyImageUrl)
                     .into(binding.listItemEntryImageBody)
         }
 
         Picasso.with(context)
-                .load(entryEntity.articleEntity.iconUrl)
+                .load(item.articleEntity.iconUrl)
                 .transform(RoundedTransformation())
                 .into(binding.listItemEntryImageArticleIcon)
 
-        binding.listItemEntryTextEntryFooterTiming.text = BookmarkUtil.getPastTimeString(entryEntity.date)
+        binding.listItemEntryTextEntryFooterTiming.text = BookmarkUtil.getPastTimeString(item.date)
     }
 }

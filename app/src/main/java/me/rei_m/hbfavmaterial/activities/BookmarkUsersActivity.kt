@@ -29,9 +29,8 @@ class BookmarkUsersActivity : BaseActivity() {
         private val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            return Intent(context, BookmarkUsersActivity::class.java).apply {
-                putExtra(ARG_BOOKMARK, bookmarkEntity)
-            }
+            return Intent(context, BookmarkUsersActivity::class.java)
+                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
         }
     }
 
@@ -93,6 +92,6 @@ class BookmarkUsersActivity : BaseActivity() {
     private fun displayTitle(filterType: FilterType) {
         val bookmarkCountString = mBookmarkEntity.articleEntity.bookmarkCount.toString()
         val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
-        supportActionBar.title = "$bookmarkCountString users - $filterTypeString"
+        supportActionBar?.title = "$bookmarkCountString users - $filterTypeString"
     }
 }

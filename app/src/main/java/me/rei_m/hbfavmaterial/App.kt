@@ -31,7 +31,7 @@ class App : Application() {
 
     companion object {
         // platformStatic allow access it from java code
-        @JvmStatic lateinit public var graph: ApplicationComponent
+        @JvmStatic lateinit var graph: ApplicationComponent
     }
 
     override fun onCreate() {

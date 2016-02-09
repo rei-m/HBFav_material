@@ -32,15 +32,15 @@ class UserListAdapter(context: Context,
         }
     }
 
-    private fun bindEntity(binding: ListItemUserBinding, bookmarkEntity: BookmarkEntity) {
+    private fun bindEntity(binding: ListItemUserBinding, item: BookmarkEntity) {
 
-        binding.bookmarkEntity = bookmarkEntity
+        binding.bookmarkEntity = item
 
         // TODO XMLの中で書きたいところだけど、XML側でimportしてもstaticメソッドがいないと言われるので、いったんこっちに
-        binding.listItemUserTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
+        binding.listItemUserTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(item.date)
 
         Picasso.with(context)
-                .load(BookmarkUtil.getIconImageUrlFromId(bookmarkEntity.creator))
+                .load(BookmarkUtil.getIconImageUrlFromId(item.creator))
                 .transform(RoundedTransformation())
                 .into(binding.listItemUserImageIcon)
     }

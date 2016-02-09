@@ -33,7 +33,7 @@ import javax.inject.Inject
 /**
  * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
  */
-public class BookmarkUsersFragment : Fragment() {
+class BookmarkUsersFragment : Fragment() {
 
     @Inject
     lateinit var userRegisterBookmarkModel: UserRegisterBookmarkModel
@@ -153,7 +153,7 @@ public class BookmarkUsersFragment : Fragment() {
      * ブックマークユーザ情報のロード完了イベント
      */
     @Subscribe
-    public fun subscribe(event: UserRegisterBookmarkLoadedEvent) {
+    fun subscribe(event: UserRegisterBookmarkLoadedEvent) {
 
         val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
 
@@ -181,7 +181,7 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     @Subscribe
-    public fun subscribe(event: BookmarkUsersFilteredEvent) {
+    fun subscribe(event: BookmarkUsersFilteredEvent) {
         mFilterType = event.filterType
 
         val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
@@ -190,7 +190,7 @@ public class BookmarkUsersFragment : Fragment() {
     }
 
     private fun displayListContents(listView: ListView) {
-        mListAdapter.apply {
+        with(mListAdapter) {
             clear()
             if (mFilterType == FilterType.COMMENT) {
                 addAll(userRegisterBookmarkModel.bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })

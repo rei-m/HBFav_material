@@ -39,7 +39,7 @@ class BookmarkUtilsTest {
     }
 
     @Test
-    public fun testGetPastTimeString() {
+    fun testGetPastTimeString() {
 
         // 比較時間作成
         val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))

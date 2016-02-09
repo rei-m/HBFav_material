@@ -31,7 +31,7 @@ fun Context.getAssetToJson(fileName: String): JSONObject {
  */
 fun Context.openUrl(url: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     startActivity(intent)
 }

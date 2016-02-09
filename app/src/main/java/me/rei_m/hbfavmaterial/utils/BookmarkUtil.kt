@@ -4,7 +4,7 @@ import android.content.Context
 import me.rei_m.hbfavmaterial.R
 import java.util.*
 
-public class BookmarkUtil private constructor() {
+class BookmarkUtil private constructor() {
 
     companion object {
 

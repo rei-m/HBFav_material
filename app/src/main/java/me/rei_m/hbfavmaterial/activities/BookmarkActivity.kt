@@ -47,9 +47,8 @@ class BookmarkActivity : BaseActivity() {
         private val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
-            return Intent(context, BookmarkActivity::class.java).apply {
-                putExtra(ARG_BOOKMARK, bookmarkEntity)
-            }
+            return Intent(context, BookmarkActivity::class.java)
+                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
         }
 
         fun createIntent(context: Context, entryEntity: EntryEntity): Intent {
@@ -75,7 +74,7 @@ class BookmarkActivity : BaseActivity() {
                 mEntryLink = entryEntity.articleEntity.url
                 setFragment(EntryWebViewFragment.newInstance(mEntryLink), EntryWebViewFragment.TAG)
             }
-            supportActionBar.title = mEntryTitle
+            supportActionBar?.title = mEntryTitle
         }
 
         binding.fab.setOnClickListener {
@@ -92,7 +91,7 @@ class BookmarkActivity : BaseActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         mEntryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
         mEntryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
-        supportActionBar.title = mEntryTitle
+        supportActionBar?.title = mEntryTitle
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
