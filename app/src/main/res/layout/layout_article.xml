@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View" />
+
+        <import type="me.rei_m.hbfavmaterial.utils.DataBindingUtil" />
 
         <variable
             name="bookmarkEntity"
@@ -22,7 +27,9 @@
             android:layout_marginLeft="@dimen/margin_half"
             android:layout_marginRight="@dimen/margin_half"
             android:layout_marginStart="@dimen/margin_half"
-            android:layout_marginTop="@dimen/margin" />
+            android:layout_marginTop="@dimen/margin"
+            android:visibility="@{bookmarkEntity.articleEntity.bodyImageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
+            app:imageUrl="@{bookmarkEntity.articleEntity.bodyImageUrl}" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/layout_article_text_body"
@@ -50,6 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/layout_article_text_url"
             android:layout_marginTop="@dimen/margin"
+            android:text="@{DataBindingUtil.getPastTimeString(bookmarkEntity.date)}"
             android:textSize="@dimen/text_size_caption" />
 
     </RelativeLayout>
