@@ -22,8 +22,7 @@ import javax.inject.Inject
 /**
  * Drawer付きActivityの基底クラス.
  */
-abstract class BaseActivityWithDrawer : AppCompatActivity(),
-        NavigationView.OnNavigationItemSelectedListener {
+abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var userModel: UserModel
@@ -38,14 +37,14 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(),
 
         setSupportActionBar(binding.activityMainApp.toolbar)
 
-        val toggle = ActionBarDrawerToggle(this,
+        with(ActionBarDrawerToggle(this,
                 binding.activityMainLayoutDrawer,
                 binding.activityMainApp.toolbar,
                 R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-
-        binding.activityMainLayoutDrawer.setDrawerListener(toggle)
-        toggle.syncState()
+                R.string.navigation_drawer_close)) {
+            binding.activityMainLayoutDrawer.setDrawerListener(this@with)
+            syncState()
+        }
 
         binding.activityMainNav.setNavigationItemSelectedListener(this)
 
