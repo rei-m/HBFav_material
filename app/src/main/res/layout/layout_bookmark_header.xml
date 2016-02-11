@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -20,7 +21,8 @@
             android:layout_width="@dimen/icon_size_list"
             android:layout_height="@dimen/icon_size_list"
             android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_outline" />
+            android:layout_marginStart="@dimen/margin_outline"
+            app:roundImageUrl="@{bookmarkEntity.bookmarkIconUrl}" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/layout_bookmark_header_text_user_name"

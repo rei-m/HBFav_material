@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
+        <import type="android.view.View" />
+        
         <variable
             name="bookmarkEntity"
             type="me.rei_m.hbfavmaterial.entities.BookmarkEntity" />
@@ -18,7 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin"
             android:text="@{bookmarkEntity.description}"
-            android:textColor="@color/text_color_strong" />
+            android:textColor="@color/text_color_strong"
+            android:visibility="@{bookmarkEntity.description.isEmpty() ? View.GONE : View.VISIBLE}" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/layout_bookmark_image_article_icon"
@@ -27,7 +31,8 @@
             android:layout_below="@+id/layout_bookmark_text_description"
             android:layout_marginEnd="@dimen/margin_half"
             android:layout_marginRight="@dimen/margin_half"
-            android:layout_marginTop="@dimen/margin" />
+            android:layout_marginTop="@dimen/margin"
+            app:roundImageUrl="@{bookmarkEntity.articleEntity.iconUrl}" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/layout_bookmark_text_article_title"
