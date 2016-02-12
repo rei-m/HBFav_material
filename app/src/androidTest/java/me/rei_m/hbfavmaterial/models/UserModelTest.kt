@@ -32,7 +32,7 @@ class UserModelTest : TestCase() {
 
     @After
     public override fun tearDown() {
-
+        super.tearDown()
     }
 
     @Test

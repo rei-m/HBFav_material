@@ -33,7 +33,7 @@ class HotEntryModelTest : TestCase() {
 
     @After
     public override fun tearDown() {
-
+        super.tearDown()
     }
 
     @Test

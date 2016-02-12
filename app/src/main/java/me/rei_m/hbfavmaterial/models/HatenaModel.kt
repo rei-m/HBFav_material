@@ -25,7 +25,7 @@ class HatenaModel {
     var isBusy = false
         private set
 
-    var oauthTokenEntity: OAuthTokenEntity? = null
+    var oauthTokenEntity: OAuthTokenEntity = OAuthTokenEntity()
         private set
 
     private val mHatenaRepository: HatenaRepository
@@ -55,7 +55,7 @@ class HatenaModel {
      * OAuth認証済か判定する.
      */
     fun isAuthorised(): Boolean {
-        return (!(oauthTokenEntity?.token.isNullOrEmpty() || oauthTokenEntity?.secretToken.isNullOrEmpty()))
+        return (!(oauthTokenEntity.token.isNullOrEmpty() || oauthTokenEntity.secretToken.isNullOrEmpty()))
     }
 
     /**
@@ -109,7 +109,7 @@ class HatenaModel {
         val observer = object : Observer<OAuthTokenEntity> {
 
             override fun onNext(t: OAuthTokenEntity?) {
-                oauthTokenEntity = t
+                oauthTokenEntity = t!!
             }
 
             override fun onCompleted() {
@@ -175,7 +175,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository.findBookmarkByUrl(oauthTokenEntity!!, url)
+        mHatenaRepository.findBookmarkByUrl(oauthTokenEntity, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -212,7 +212,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository.upsertBookmark(oauthTokenEntity!!, url, comment, isOpen, tags)
+        mHatenaRepository.upsertBookmark(oauthTokenEntity, url, comment, isOpen, tags)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -251,7 +251,7 @@ class HatenaModel {
             }
         }
 
-        mHatenaRepository.deleteBookmark(oauthTokenEntity!!, url)
+        mHatenaRepository.deleteBookmark(oauthTokenEntity, url)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
