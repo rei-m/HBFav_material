@@ -33,7 +33,7 @@ class HatenaModelTest : TestCase() {
 
     @After
     public override fun tearDown() {
-
+        super.tearDown()
     }
 
     @Test
@@ -81,6 +81,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testFetchAndDeleteAccessToken() {
 
         val eventCatcher = EventCatcher()
@@ -88,6 +89,9 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.register(eventCatcher)
 
         val hatenaModel = HatenaModel(InstrumentationRegistry.getTargetContext(), hatenaRepository)
+
+        // Model作成直後の認証は通らない
+        Assert.assertThat(hatenaModel.isAuthorised(), `is`(false))
 
         // リクエスト開始
         eventCatcher.initCountDown()
@@ -99,8 +103,8 @@ class HatenaModelTest : TestCase() {
 
         // 取得できた
         Assert.assertThat(eventCatcher.accessTokenLoadedEvent.status, `is`(LoadedEventStatus.OK))
-        Assert.assertThat(hatenaModel.oauthTokenEntity?.token, `is`(MockHatenaRepository.TOKEN))
-        Assert.assertThat(hatenaModel.oauthTokenEntity?.secretToken, `is`(MockHatenaRepository.SECRET_TOKEN))
+        Assert.assertThat(hatenaModel.oauthTokenEntity.token, `is`(MockHatenaRepository.TOKEN))
+        Assert.assertThat(hatenaModel.oauthTokenEntity.secretToken, `is`(MockHatenaRepository.SECRET_TOKEN))
 
         // 取得できたらBusyではない
         Assert.assertThat(hatenaModel.isBusy, `is`(false))
@@ -110,8 +114,8 @@ class HatenaModelTest : TestCase() {
 
         // AccessTokenを削除
         hatenaModel.deleteAccessToken(InstrumentationRegistry.getTargetContext())
-        Assert.assertThat(hatenaModel.oauthTokenEntity?.token, `is`(""))
-        Assert.assertThat(hatenaModel.oauthTokenEntity?.secretToken, `is`(""))
+        Assert.assertThat(hatenaModel.oauthTokenEntity.token, `is`(""))
+        Assert.assertThat(hatenaModel.oauthTokenEntity.secretToken, `is`(""))
 
         // 削除後の認証は通らない
         Assert.assertThat(hatenaModel.isAuthorised(), `is`(false))
@@ -137,6 +141,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testFetchBookmark() {
 
         val eventCatcher = EventCatcher()
@@ -163,6 +168,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testFetchBookmarkError() {
 
         val eventCatcher = EventCatcher()
@@ -192,6 +198,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testRegisterBookmark() {
 
         val eventCatcher = EventCatcher()
@@ -218,6 +225,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testRegisterBookmarkError() {
 
         val eventCatcher = EventCatcher()
@@ -238,6 +246,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testDeleteBookmark() {
 
         val eventCatcher = EventCatcher()
@@ -263,6 +272,7 @@ class HatenaModelTest : TestCase() {
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
 
+    @Test
     fun testDeleteBookmarkError() {
 
         val eventCatcher = EventCatcher()
