@@ -8,6 +8,8 @@ class BookmarkUtil private constructor() {
 
     companion object {
 
+        private val calendar = Calendar.getInstance(TimeZone.getDefault())
+
         private val COUNT_MONTHS_AT_YEAR = 12
 
         private val COUNT_DAYS_AT_MONTH = 30
@@ -157,7 +159,7 @@ class BookmarkUtil private constructor() {
          * 日付の差分を計算し表示用に整形する.
          */
         fun getPastTimeString(bookmarkAddedDatetime: Date,
-                              nowCalendar: Calendar = Calendar.getInstance(TimeZone.getDefault())): String {
+                              nowCalendar: Calendar = calendar): String {
 
             // 時差を考慮してブックマーク追加時間と現在時間の差分を計算.
             val bookmarkCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
