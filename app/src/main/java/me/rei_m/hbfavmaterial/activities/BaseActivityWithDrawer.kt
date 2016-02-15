@@ -30,6 +30,7 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNa
         App.graph.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        DataBindingUtil.bind<NavHeaderMainBinding>(binding.activityMainNav.getHeaderView(0))
 
         setSupportActionBar(binding.activityMainApp.toolbar)
 
@@ -72,7 +73,7 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNa
     }
 
     protected fun displayUserIconAndName(id: String) {
-        val navBinding = DataBindingUtil.bind<NavHeaderMainBinding>(binding.activityMainNav.getHeaderView(0))
+        val navBinding = DataBindingUtil.getBinding<NavHeaderMainBinding>(binding.activityMainNav.getHeaderView(0))
         navBinding.userId = id
     }
 }

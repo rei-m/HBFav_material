@@ -62,11 +62,11 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
         binding.dialogFragmentEditUserIdEditUserId.setText(userModel.userEntity?.id)
 
-        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener { v ->
+        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener {
             dismiss()
         }
 
-        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener { v ->
+        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener {
             val inputtedUserId = binding.dialogFragmentEditUserIdEditUserId.editableText.toString()
             if (inputtedUserId != userModel.userEntity?.id) {
                 userModel.checkAndSaveUserId(getAppContext(), binding.dialogFragmentEditUserIdEditUserId.editableText.toString())
