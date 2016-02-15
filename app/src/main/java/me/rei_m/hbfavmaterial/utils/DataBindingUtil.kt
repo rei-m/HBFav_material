@@ -15,16 +15,6 @@ object DataBindingUtil {
     fun getPastTimeString(bookmarkAddedDatetime: Date): String = BookmarkUtil.getPastTimeString(bookmarkAddedDatetime)
 
     @JvmStatic
-    @BindingAdapter("marginRightWithLeftImage")
-    fun setMarginRightWithLeftImage(view: View, imageUrl: String) {
-        (view.layoutParams as ViewGroup.MarginLayoutParams).rightMargin =
-                if (imageUrl.isEmpty())
-                    view.resources.getDimensionPixelSize(R.dimen.margin_outline)
-                else
-                    0
-    }
-
-    @JvmStatic
     @BindingAdapter("imageUrl")
     fun setImageUrl(imageView: AppCompatImageView, imageUrl: String) {
         if (imageUrl.isNotEmpty()) {
@@ -52,5 +42,15 @@ object DataBindingUtil {
                 .load(BookmarkUtil.getIconImageUrlFromId(creator))
                 .transform(RoundedTransformation())
                 .into(imageView)
+    }
+
+    @JvmStatic
+    @BindingAdapter("marginRightWithLeftImage")
+    fun setMarginRightWithLeftImage(view: View, imageUrl: String) {
+        (view.layoutParams as ViewGroup.MarginLayoutParams).rightMargin =
+                if (imageUrl.isEmpty())
+                    view.resources.getDimensionPixelSize(R.dimen.margin_outline)
+                else
+                    0
     }
 }
