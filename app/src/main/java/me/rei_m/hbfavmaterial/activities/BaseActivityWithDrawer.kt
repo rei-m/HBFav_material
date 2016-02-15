@@ -6,17 +6,13 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.AppCompatTextView
 import android.view.MenuItem
-import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
+import me.rei_m.hbfavmaterial.databinding.NavHeaderMainBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.models.UserModel
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 import javax.inject.Inject
 
 /**
@@ -34,6 +30,7 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNa
         App.graph.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        DataBindingUtil.bind<NavHeaderMainBinding>(binding.activityMainNav.getHeaderView(0))
 
         setSupportActionBar(binding.activityMainApp.toolbar)
 
@@ -76,17 +73,7 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNa
     }
 
     protected fun displayUserIconAndName(id: String) {
-
-        val headerView = binding.activityMainNav.getHeaderView(0)
-
-        val imageOwnerIcon = headerView.findViewById(R.id.nav_header_main_image_owner_icon) as AppCompatImageView
-        Picasso.with(this)
-                .load(BookmarkUtil.getLargeIconImageUrlFromId(id))
-                .resizeDimen(R.dimen.icon_size_nav_crop, R.dimen.icon_size_nav_crop).centerCrop()
-                .transform(RoundedTransformation())
-                .into(imageOwnerIcon)
-
-        val textOwnerId = headerView.findViewById(R.id.nav_header_main_text_owner_name) as AppCompatTextView
-        textOwnerId.text = id
+        val navBinding = DataBindingUtil.getBinding<NavHeaderMainBinding>(binding.activityMainNav.getHeaderView(0))
+        navBinding.userId = id
     }
 }
