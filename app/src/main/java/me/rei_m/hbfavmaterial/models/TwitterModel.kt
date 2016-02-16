@@ -14,10 +14,12 @@ import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Twitter関連の情報を管理するModel.
  */
+@Singleton
 class TwitterModel {
 
     var isBusy = false
@@ -45,7 +47,7 @@ class TwitterModel {
         val twitterSessionJsonString = pref.getString(KEY_PREF_TWITTER_SESSION, null)
         if (twitterSessionJsonString != null) {
             twitterSessionEntity = Gson().fromJson(twitterSessionJsonString, TwitterSessionEntity::class.java)
-            twitterSessionEntity?.apply {
+            twitterSessionEntity?.run {
                 val token = TwitterAuthToken(oAuthTokenEntity.token, oAuthTokenEntity.secretToken)
                 Twitter.getSessionManager().activeSession = TwitterSession(token, userId, userName)
             }

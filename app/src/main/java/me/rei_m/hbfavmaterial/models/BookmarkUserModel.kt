@@ -11,10 +11,12 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * ユーザーのブックマーク情報を管理するModel.
  */
+@Singleton
 class BookmarkUserModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     private var userId = ""

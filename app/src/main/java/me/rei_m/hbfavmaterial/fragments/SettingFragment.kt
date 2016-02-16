@@ -57,7 +57,7 @@ class SettingFragment : Fragment() {
         val binding = FragmentSettingBinding.inflate(inflater, container, false)
 
         binding.fragmentSettingTextUserId.text = userModel.userEntity?.id
-        binding.fragmentSettingLayoutTextHatenaId.setOnClickListener { v ->
+        binding.fragmentSettingLayoutTextHatenaId.setOnClickListener {
             EditUserIdDialogFragment
                     .newInstance()
                     .show(childFragmentManager, EditUserIdDialogFragment.TAG)
@@ -68,11 +68,11 @@ class SettingFragment : Fragment() {
             R.string.text_hatena_account_connect_no
         binding.fragmentSettingTextUserOauth.text = resources.getString(oauthTextId)
 
-        binding.fragmentSettingLayoutTextHatenaOauth.setOnClickListener { v ->
+        binding.fragmentSettingLayoutTextHatenaOauth.setOnClickListener {
             startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
         }
 
-        binding.fragmentSettingLayoutTextTwitterOauth.setOnClickListener { v ->
+        binding.fragmentSettingLayoutTextTwitterOauth.setOnClickListener {
             twitterModel.authorize(activity)
         }
 
@@ -143,8 +143,7 @@ class SettingFragment : Fragment() {
     @Subscribe
     fun subscribe(event: UserIdCheckedEvent) {
         if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
-            userModel.userEntity?.apply {
-
+            userModel.userEntity?.run {
                 val binding = DataBindingUtil.getBinding<FragmentSettingBinding>(view)
                 binding.fragmentSettingTextUserId.text = id
                 EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(id))

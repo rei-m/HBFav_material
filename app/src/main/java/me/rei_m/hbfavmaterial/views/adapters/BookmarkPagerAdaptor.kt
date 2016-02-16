@@ -19,7 +19,7 @@ class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
     private val mTitleList = ArrayList<String>()
 
     constructor(fm: FragmentManager, context: Context) : super(fm) {
-        mTitleList.apply {
+        with(mTitleList) {
             add(INDEX_PAGER_BOOKMARK_FAVORITE, context.getString(R.string.fragment_title_bookmark_favorite))
             add(INDEX_PAGER_BOOKMARK_OWN, context.getString(R.string.fragment_title_bookmark_own))
             add(INDEX_PAGER_HOT_ENTRY, context.getString(R.string.fragment_title_hot_entry))
@@ -29,10 +29,10 @@ class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
 
     companion object {
         private val PAGE_COUNT = 4
-        public val INDEX_PAGER_BOOKMARK_FAVORITE = 0
-        public val INDEX_PAGER_BOOKMARK_OWN = 1
-        public val INDEX_PAGER_HOT_ENTRY = 2
-        public val INDEX_PAGER_NEW_ENTRY = 3
+        val INDEX_PAGER_BOOKMARK_FAVORITE = 0
+        val INDEX_PAGER_BOOKMARK_OWN = 1
+        val INDEX_PAGER_HOT_ENTRY = 2
+        val INDEX_PAGER_NEW_ENTRY = 3
     }
 
     override fun getItem(position: Int): Fragment? {

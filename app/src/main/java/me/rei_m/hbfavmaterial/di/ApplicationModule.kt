@@ -6,9 +6,6 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-/**
- * A module for Android-specific dependencies which require a [android.content.Context] or [ ] to create.
- */
 @Module
 class ApplicationModule(private val application: Application) {
 

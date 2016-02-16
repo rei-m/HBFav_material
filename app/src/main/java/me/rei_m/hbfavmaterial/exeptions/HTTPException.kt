@@ -4,7 +4,7 @@ import java.net.ProtocolException
 
 class HTTPException : ProtocolException {
 
-    var statusCode: Int? = null
+    var statusCode: Int
         private set
 
     constructor(statusCode: Int) : super() {

@@ -43,7 +43,7 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
             window.requestFeature(Window.FEATURE_NO_TITLE)
         }
@@ -62,11 +62,11 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
         binding.dialogFragmentEditUserIdEditUserId.setText(userModel.userEntity?.id)
 
-        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener { v ->
+        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener {
             dismiss()
         }
 
-        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener { v ->
+        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener {
             val inputtedUserId = binding.dialogFragmentEditUserIdEditUserId.editableText.toString()
             if (inputtedUserId != userModel.userEntity?.id) {
                 userModel.checkAndSaveUserId(getAppContext(), binding.dialogFragmentEditUserIdEditUserId.editableText.toString())

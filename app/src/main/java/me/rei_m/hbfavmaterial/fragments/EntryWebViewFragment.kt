@@ -42,8 +42,8 @@ class EntryWebViewFragment : Fragment() {
 
         val binding = FragmentBookmarkWebviewBinding.inflate(inflater, container, false)
 
-        binding.fragmentBookmarkWebviewView.apply {
-            settings.apply {
+        with(binding.fragmentBookmarkWebviewView) {
+            with(settings) {
                 javaScriptEnabled = true
                 builtInZoomControls = true
                 loadWithOverviewMode = true
@@ -69,6 +69,8 @@ class EntryWebViewFragment : Fragment() {
      * @return ヒストリバックしない場合 true, した場合 false
      */
     fun backHistory(): Boolean {
+
+        view ?: return true
 
         val binding = DataBindingUtil.getBinding<FragmentBookmarkWebviewBinding>(view)
 

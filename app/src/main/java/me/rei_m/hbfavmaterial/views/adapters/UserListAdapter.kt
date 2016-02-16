@@ -6,11 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 /**
  * ユーザー一覧を管理するAdaptor.
@@ -23,25 +20,13 @@ class UserListAdapter(context: Context,
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
         return convertView?.apply {
-            val binding = DataBindingUtil.getBinding<ListItemUserBinding>(this)
-            bindEntity(binding, getItem(position))
+            DataBindingUtil.getBinding<ListItemUserBinding>(this).apply {
+                bookmarkEntity = getItem(position)
+            }
         } ?: let {
-            val binding = ListItemUserBinding.inflate(mLayoutInflater, parent, false)
-            bindEntity(binding, getItem(position))
-            return binding.root
+            return ListItemUserBinding.inflate(mLayoutInflater, parent, false).apply {
+                bookmarkEntity = getItem(position)
+            }.root
         }
-    }
-
-    private fun bindEntity(binding: ListItemUserBinding, bookmarkEntity: BookmarkEntity) {
-
-        binding.bookmarkEntity = bookmarkEntity
-
-        // TODO XMLの中で書きたいところだけど、XML側でimportしてもstaticメソッドがいないと言われるので、いったんこっちに
-        binding.listItemUserTextAddBookmarkTiming.text = BookmarkUtil.getPastTimeString(bookmarkEntity.date)
-
-        Picasso.with(context)
-                .load(BookmarkUtil.getIconImageUrlFromId(bookmarkEntity.creator))
-                .transform(RoundedTransformation())
-                .into(binding.listItemUserImageIcon)
     }
 }

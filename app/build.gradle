@@ -12,8 +12,8 @@ android {
         applicationId "me.rei_m.hbfavmaterial"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 7
-        versionName "1.2.0"
+        versionCode 8
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -68,7 +68,7 @@ kapt {
 
 dependencies {
     ext.rx_android_kotlin_version = '0.3.0'
-    ext.kotlinx_dom_version = '0.0.5'
+    ext.kotlinx_dom_version = '0.0.8'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.jakewharton.rxbinding:rxbinding-kotlin:$rx_android_kotlin_version"
     compile "com.jakewharton.rxbinding:rxbinding-support-v4-kotlin:$rx_android_kotlin_version"
@@ -106,7 +106,7 @@ dependencies {
     }
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-4589'
+    ext.kotlin_version = '1.0.0'
     repositories {
         mavenCentral()
         maven {

@@ -8,7 +8,7 @@ import android.view.Menu
 fun Menu.hide() {
     for (i_menu in 0..size() - 1) {
         val item = getItem(i_menu)
-        item.setVisible(false)
+        item.isVisible = false
     }
 }
 
@@ -18,6 +18,6 @@ fun Menu.hide() {
 fun Menu.show() {
     for (i_menu in 0..size() - 1) {
         val item = getItem(i_menu)
-        item.setVisible(true)
+        item.isVisible = true
     }
 }
