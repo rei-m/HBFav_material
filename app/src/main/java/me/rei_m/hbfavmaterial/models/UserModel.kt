@@ -10,10 +10,12 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * ユーザー情報を管理するModel.
  */
+@Singleton
 class UserModel @Inject constructor(@ForApplication context: Context, private val userRepository: UserRepository) {
 
     var isBusy = false
