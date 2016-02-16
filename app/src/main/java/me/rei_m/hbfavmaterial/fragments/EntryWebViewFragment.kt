@@ -70,6 +70,8 @@ class EntryWebViewFragment : Fragment() {
      */
     fun backHistory(): Boolean {
 
+        view ?: return true
+
         val binding = DataBindingUtil.getBinding<FragmentBookmarkWebviewBinding>(view)
 
         binding.fragmentBookmarkWebviewView ?: return true
