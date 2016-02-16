@@ -16,10 +16,12 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * はてなのOAuth関連の情報を管理するModel.
  */
+@Singleton
 class HatenaModel {
 
     var isBusy = false

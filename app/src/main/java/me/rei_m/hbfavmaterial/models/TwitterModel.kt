@@ -14,10 +14,12 @@ import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.entities.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Twitter関連の情報を管理するModel.
  */
+@Singleton
 class TwitterModel {
 
     var isBusy = false

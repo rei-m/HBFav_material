@@ -11,10 +11,12 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * 新着エントリー情報を取得するModel.
  */
+@Singleton
 class NewEntryModel @Inject constructor(private val entryRepository: EntryRepository) {
     
     var isBusy = false

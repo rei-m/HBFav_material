@@ -10,10 +10,12 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * お気に入りのBookmarkを管理するModel.
  */
+@Singleton
 class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
     var isBusy = false
