@@ -91,18 +91,18 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/beta/1.1.4/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics-core/2.3.8/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics/2.5.5/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.digits.sdk.android/digits/1.9.2/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-appcompat-v7-kotlin/0.3.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-appcompat-v7/0.3.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-kotlin/0.3.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-support-v4-kotlin/0.3.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-support-v4/0.3.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding/0.3.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.digits.sdk.android/digits/1.9.3/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-appcompat-v7-kotlin/0.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-appcompat-v7/0.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-kotlin/0.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-support-v4-kotlin/0.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding-support-v4/0.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.jakewharton.rxbinding/rxbinding/0.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.squareup.leakcanary/leakcanary-android/1.3.1/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/tweet-composer/1.0.2/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/tweet-ui/1.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/twitter-core/1.6.2/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/twitter/1.11.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/tweet-composer/1.0.3/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/tweet-ui/1.9.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/twitter-core/1.6.4/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.twitter.sdk.android/twitter/1.12.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.fabric.sdk.android/fabric/1.3.10/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
@@ -124,59 +124,59 @@
     <orderEntry type="library" exported="" name="juniversalchardet-1.0.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.3" level="project" />
     <orderEntry type="library" exported="" name="retrofit-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="digits-1.9.2" level="project" />
+    <orderEntry type="library" exported="" name="digits-1.9.3" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.1.1" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-appcompat-v7-0.3.0" level="project" />
+    <orderEntry type="library" exported="" name="tweet-ui-1.9.1" level="project" />
     <orderEntry type="library" exported="" name="library-1.0-rc3" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-support-v4-kotlin-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="runner-0.4.1" level="project" />
     <orderEntry type="library" exported="" name="compiler-1.0-rc5" level="project" />
     <orderEntry type="library" exported="" name="commons-codec-1.3" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-kotlin-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="baseLibrary-1.0-rc5" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />
     <orderEntry type="library" exported="" name="beta-1.1.4" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-support-v4-0.3.0" level="project" />
+    <orderEntry type="library" exported="" name="dagger-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="kotlin-stdlib-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="leakcanary-android-1.3.1" level="project" />
     <orderEntry type="library" exported="" name="leakcanary-watcher-1.3.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javawriter-2.1.1" level="project" />
     <orderEntry type="library" exported="" name="signpost-core-1.2.1.2" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-0.3.0" level="project" />
-    <orderEntry type="library" exported="" name="tweet-composer-1.0.2" level="project" />
-    <orderEntry type="library" exported="" name="twitter-core-1.6.2" level="project" />
+    <orderEntry type="library" exported="" name="tweet-composer-1.0.3" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-3.1.2" level="project" />
     <orderEntry type="library" exported="" name="answers-1.3.6" level="project" />
-    <orderEntry type="library" exported="" name="twitter-1.11.0" level="project" />
-    <orderEntry type="library" exported="" name="dagger-2.0" level="project" />
-    <orderEntry type="library" exported="" name="kotlinx.dom-0.0.8" level="project" />
-    <orderEntry type="library" exported="" name="jsoup-1.8.3" level="project" />
+    <orderEntry type="library" exported="" name="twitter-core-1.6.4" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.6.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
+    <orderEntry type="library" exported="" name="kotlinx.dom-0.0.9" level="project" />
+    <orderEntry type="library" exported="" name="jsoup-1.8.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-integration-1.3" level="project" />
-    <orderEntry type="library" exported="" name="tweet-ui-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="javax.annotation-10.0-b28" level="project" />
     <orderEntry type="library" exported="" name="leakcanary-analyzer-1.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-support-v4-kotlin-0.3.0" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-appcompat-v7-kotlin-0.3.0" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-appcompat-v7-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="otto-1.3.8" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="jsr305-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="adapters-1.0-rc3" level="project" />
     <orderEntry type="library" exported="" name="fabric-1.3.10" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-core-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.4" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-kotlin-0.3.0" level="project" />
     <orderEntry type="library" exported="" name="crashlytics-2.5.5" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-3.0.1" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-appcompat-v7-kotlin-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="crashlytics-core-2.3.8" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-support-v4-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="rules-0.4.1" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.1.0" level="project" />
+    <orderEntry type="library" exported="" name="rxjava-1.1.1" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="twitter-text-1.13.0" level="project" />
+    <orderEntry type="library" exported="" name="rxbinding-0.4.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="exposed-instrumentation-api-publish-0.4.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" name="kotlin-runtime-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="twitter-1.12.1" level="project" />
   </component>
 </module>
