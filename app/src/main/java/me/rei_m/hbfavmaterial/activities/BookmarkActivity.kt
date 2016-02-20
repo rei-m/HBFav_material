@@ -178,13 +178,15 @@ class BookmarkActivity : BaseActivity() {
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 更新用ダイアログを表示
-                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle, mEntryLink, event.bookmarkEditEntity!!)
-                dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+                EditBookmarkDialogFragment
+                        .newInstance(mEntryTitle, mEntryLink, event.bookmarkEditEntity!!)
+                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 新規用ダイアログを表示
-                val dialog = EditBookmarkDialogFragment.newInstance(mEntryTitle, mEntryLink)
-                dialog.show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+                EditBookmarkDialogFragment
+                        .newInstance(mEntryTitle, mEntryLink)
+                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.ERROR -> {
                 showSnackbarNetworkError(binding.content)
