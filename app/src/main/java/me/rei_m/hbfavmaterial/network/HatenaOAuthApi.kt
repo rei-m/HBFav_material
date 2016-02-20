@@ -54,11 +54,10 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             if (authUrl != null) {
                 t.onNext(authUrl)
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
-
-            t.onCompleted()
         }
     }
 
@@ -73,11 +72,10 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
             if (mOAuthConsumer.token != null && mOAuthConsumer.tokenSecret != null) {
                 t.onNext(OAuthTokenEntity(mOAuthConsumer.token, mOAuthConsumer.tokenSecret))
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
-
-            t.onCompleted()
         }
     }
 
@@ -92,26 +90,28 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         return Observable.create { t ->
 
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
-            val connection = url.openConnection() as HttpURLConnection
 
             try {
+
+                val connection = url.openConnection() as HttpURLConnection
+
                 mOAuthConsumer.sign(connection)
 
                 connection.connect()
-
-                when (connection.responseCode) {
-                    HttpURLConnection.HTTP_OK -> {
-                        val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
-                        connection.disconnect()
-                        t.onNext(response)
+                try {
+                    when (connection.responseCode) {
+                        HttpURLConnection.HTTP_OK -> {
+                            val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                            t.onNext(response)
+                            t.onCompleted()
+                        }
+                        else -> {
+                            t.onError(HTTPException(connection.responseCode))
+                        }
                     }
-                    else -> {
-                        connection.disconnect()
-                        t.onError(HTTPException(connection.responseCode))
-                    }
+                } finally {
+                    connection.disconnect()
                 }
-
-                t.onCompleted()
             } catch (e: IOException) {
                 t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
             }
@@ -152,32 +152,38 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             // Postデータにフッタ追加
             sb.append("$TWO_HYPHEN$BOUNDARY$TWO_HYPHEN$EOL")
 
-            // コネクション取得
-            val connection = createPostConnection(BOOKMARK_ENDPOINT_URL, contentLength)
 
-            // OAuth認証
-            mOAuthConsumer.sign(connection)
+            try {
+                // コネクション取得
+                val connection = createPostConnection(BOOKMARK_ENDPOINT_URL, contentLength)
 
-            // Postデータ書き込み
-            DataOutputStream(connection.outputStream).run {
-                write(sb.toString().toByteArray(charset(CHARSET)))
-                flush()
-                close()
-            }
+                // OAuth認証
+                mOAuthConsumer.sign(connection)
 
-            when (connection.responseCode) {
-                HttpURLConnection.HTTP_OK -> {
-                    val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                try {
+                    // Postデータ書き込み
+                    DataOutputStream(connection.outputStream).run {
+                        write(sb.toString().toByteArray(charset(CHARSET)))
+                        flush()
+                        close()
+                    }
+
+                    when (connection.responseCode) {
+                        HttpURLConnection.HTTP_OK -> {
+                            val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                            t.onNext(response)
+                            t.onCompleted()
+                        }
+                        else -> {
+                            t.onError(HTTPException(connection.responseCode))
+                        }
+                    }
+                } finally {
                     connection.disconnect()
-                    t.onNext(response)
                 }
-                else -> {
-                    connection.disconnect()
-                    t.onError(HTTPException(connection.responseCode))
-                }
+            } catch (e: IOException) {
+                t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
             }
-
-            t.onCompleted()
         }
     }
 
@@ -191,26 +197,32 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
         return Observable.create { t ->
 
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
-            val connection = url.openConnection() as HttpURLConnection
 
-            connection.requestMethod = "DELETE"
+            try {
+                val connection = url.openConnection() as HttpURLConnection
 
-            mOAuthConsumer.sign(connection)
+                connection.requestMethod = "DELETE"
 
-            connection.connect()
+                mOAuthConsumer.sign(connection)
 
-            when (connection.responseCode) {
-                HttpURLConnection.HTTP_NO_CONTENT -> {
+                try {
+                    connection.connect()
+
+                    when (connection.responseCode) {
+                        HttpURLConnection.HTTP_NO_CONTENT -> {
+                            t.onNext(true)
+                            t.onCompleted()
+                        }
+                        else -> {
+                            t.onError(HTTPException(connection.responseCode))
+                        }
+                    }
+                } finally {
                     connection.disconnect()
-                    t.onNext(true)
                 }
-                else -> {
-                    connection.disconnect()
-                    t.onError(HTTPException(connection.responseCode))
-                }
+            } catch (e: IOException) {
+                t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
             }
-
-            t.onCompleted()
         }
     }
 

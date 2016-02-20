@@ -37,11 +37,10 @@ class UserCheckRequest {
                 t.onNext(!isFetchedTop)
             } else if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 t.onNext(false)
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(response.code()))
             }
-
-            t.onCompleted()
         }
     }
 }

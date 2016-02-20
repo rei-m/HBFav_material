@@ -36,11 +36,10 @@ class BookmarkOwnRss {
             val response = HttpClient.instance.newCall(request).execute()
             if (response.code() == HttpURLConnection.HTTP_OK) {
                 t.onNext(response.body().string())
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(response.code()))
             }
-
-            t.onCompleted()
         }
     }
 }
