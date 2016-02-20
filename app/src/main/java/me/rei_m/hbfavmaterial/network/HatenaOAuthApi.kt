@@ -7,10 +7,7 @@ import me.rei_m.hbfavmaterial.network.response.HatenaRestApiBookmarkResponse
 import oauth.signpost.basic.DefaultOAuthConsumer
 import oauth.signpost.basic.DefaultOAuthProvider
 import rx.Observable
-import java.io.BufferedReader
-import java.io.DataOutputStream
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -97,23 +94,27 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
             val connection = url.openConnection() as HttpURLConnection
 
-            mOAuthConsumer.sign(connection)
+            try {
+                mOAuthConsumer.sign(connection)
 
-            connection.connect()
+                connection.connect()
 
-            when (connection.responseCode) {
-                HttpURLConnection.HTTP_OK -> {
-                    val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
-                    connection.disconnect()
-                    t.onNext(response)
+                when (connection.responseCode) {
+                    HttpURLConnection.HTTP_OK -> {
+                        val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
+                        connection.disconnect()
+                        t.onNext(response)
+                    }
+                    else -> {
+                        connection.disconnect()
+                        t.onError(HTTPException(connection.responseCode))
+                    }
                 }
-                else -> {
-                    connection.disconnect()
-                    t.onError(HTTPException(connection.responseCode))
-                }
+
+                t.onCompleted()
+            } catch (e: IOException) {
+                t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
             }
-
-            t.onCompleted()
         }
     }
 
