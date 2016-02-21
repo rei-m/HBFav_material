@@ -46,13 +46,15 @@ class BookmarkUserFragment : Fragment() {
     @Inject
     lateinit var userModel: UserModel
 
+    private val mListAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark)
+    }
+
     lateinit private var mUserId: String
 
-    lateinit private var mListAdapter: BookmarkListAdapter
+    private var mIsOwner: Boolean = true
 
     lateinit private var mCompositeSubscription: CompositeSubscription
-
-    private var mIsOwner: Boolean = true
 
     companion object {
 
@@ -93,7 +95,6 @@ class BookmarkUserFragment : Fragment() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
         mIsOwner = arguments.getBoolean(ARG_OWNER_FLAG)
         mUserId = if (mIsOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)
     }

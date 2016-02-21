@@ -33,7 +33,7 @@ class MainActivity : BaseActivityWithDrawer() {
     @Inject
     lateinit var newEntryModel: NewEntryModel
 
-    lateinit private var mMenu: Menu
+    private var mMenu: Menu? = null
 
     companion object {
 
@@ -188,36 +188,44 @@ class MainActivity : BaseActivityWithDrawer() {
     @Subscribe
     fun subscribe(event: MainPageDisplayEvent) {
 
+        mMenu ?: return
+
         // ページの種類に応じてActivityのタイトル表示とメニューの表示/非表示を切り替える
         val title: String
         val navItemId: Int
 
         when (event.kind) {
             Kind.BOOKMARK_FAVORITE -> {
-                mMenu.hide()
+                mMenu?.hide()
                 title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_favorite
             }
             Kind.BOOKMARK_OWN -> {
-                mMenu.hide()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = true;
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
+                mMenu?.run {
+                    hide()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = true;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
+                }
                 title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 navItemId = R.id.nav_bookmark_own
             }
             Kind.HOT_ENTRY -> {
-                mMenu.show()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                mMenu?.run {
+                    show()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                }
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
                 title = "$mainTitle - $subTitle"
                 navItemId = R.id.nav_hot_entry
             }
             Kind.NEW_ENTRY -> {
-                mMenu.show()
-                mMenu.findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                mMenu.findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                mMenu?.run {
+                    show()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                }
                 val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
                 val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
                 title = "$mainTitle - $subTitle"

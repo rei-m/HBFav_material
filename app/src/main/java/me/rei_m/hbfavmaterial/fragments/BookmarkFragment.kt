@@ -15,7 +15,9 @@ import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 
 class BookmarkFragment : Fragment(), IFragmentAnimation {
 
-    lateinit private var mBookmarkEntity: BookmarkEntity
+    private val mBookmarkEntity: BookmarkEntity by lazy {
+        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+    }
 
     override var mContainerWidth: Float = 0.0f
 
@@ -34,7 +36,6 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -69,7 +70,7 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
                 EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(mBookmarkEntity.creator))
             }
         }
-        
+
         setContainerWidth(container!!)
 
         return binding.root

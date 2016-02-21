@@ -37,7 +37,9 @@ class NewEntryFragment : Fragment() {
     @Inject
     lateinit var newEntryModel: NewEntryModel
 
-    lateinit private var mListAdapter: EntryListAdapter
+    private val mListAdapter: EntryListAdapter by lazy {
+        EntryListAdapter(activity, R.layout.list_item_entry)
+    }
 
     lateinit private var mCompositeSubscription: CompositeSubscription
 
@@ -50,8 +52,6 @@ class NewEntryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
-
-        mListAdapter = EntryListAdapter(activity, R.layout.list_item_entry)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

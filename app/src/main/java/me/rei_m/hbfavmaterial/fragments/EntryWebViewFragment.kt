@@ -16,7 +16,9 @@ import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkWebviewBinding
  */
 class EntryWebViewFragment : Fragment() {
 
-    lateinit private var mEntryUrl: String
+    private val mEntryUrl: String by lazy {
+        arguments.getString(ARG_ENTRY_URL)
+    }
 
     companion object {
 
@@ -32,12 +34,7 @@ class EntryWebViewFragment : Fragment() {
             }
         }
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mEntryUrl = arguments.getString(ARG_ENTRY_URL)
-    }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding = FragmentBookmarkWebviewBinding.inflate(inflater, container, false)
