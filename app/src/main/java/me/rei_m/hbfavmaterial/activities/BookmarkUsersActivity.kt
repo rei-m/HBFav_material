@@ -18,7 +18,9 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
 class BookmarkUsersActivity : BaseActivity() {
 
-    lateinit private var mBookmarkEntity: BookmarkEntity
+    private val mBookmarkEntity: BookmarkEntity by lazy {
+        intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
+    }
 
     private var mFilterType: FilterType = FilterType.ALL
 
@@ -36,8 +38,6 @@ class BookmarkUsersActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
 
         if (savedInstanceState == null) {
             setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity))

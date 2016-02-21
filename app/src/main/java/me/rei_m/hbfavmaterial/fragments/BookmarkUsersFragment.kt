@@ -38,11 +38,15 @@ class BookmarkUsersFragment : Fragment() {
     @Inject
     lateinit var userRegisterBookmarkModel: UserRegisterBookmarkModel
 
-    lateinit private var mBookmarkEntity: BookmarkEntity
+    private val mBookmarkEntity: BookmarkEntity by lazy {
+        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+    }
+
+    private val mListAdapter: UserListAdapter by lazy {
+        UserListAdapter(activity, R.layout.list_item_user)
+    }
 
     private var mFilterType: FilterType = FilterType.ALL
-
-    lateinit private var mListAdapter: UserListAdapter
 
     lateinit private var mCompositeSubscription: CompositeSubscription
 
@@ -64,10 +68,7 @@ class BookmarkUsersFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
-
-        mListAdapter = UserListAdapter(activity, R.layout.list_item_user)
-        mBookmarkEntity = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
-
+        
         if (savedInstanceState != null) {
             mFilterType = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as FilterType
         } else {

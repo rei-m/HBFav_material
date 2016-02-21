@@ -41,7 +41,9 @@ class BookmarkFavoriteFragment : Fragment() {
     @Inject
     lateinit var userModel: UserModel
 
-    lateinit private var mListAdapter: BookmarkListAdapter
+    private val mListAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark)
+    }
 
     lateinit private var mCompositeSubscription: CompositeSubscription
 
@@ -54,8 +56,6 @@ class BookmarkFavoriteFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
-
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

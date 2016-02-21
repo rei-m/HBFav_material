@@ -24,7 +24,9 @@ class OAuthActivity : BaseActivity() {
     @Inject
     lateinit var hatenaModel: HatenaModel
 
-    lateinit var mWebView: WebView
+    private val mWebView: WebView by lazy {
+        WebView(this)
+    }
 
     companion object {
 
@@ -40,7 +42,6 @@ class OAuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        mWebView = WebView(this)
         mWebView.apply {
             clearCache(true)
             settings.javaScriptEnabled = true
