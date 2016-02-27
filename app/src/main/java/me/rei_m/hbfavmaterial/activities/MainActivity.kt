@@ -10,9 +10,6 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.*
-import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.models.HotEntryModel
 import me.rei_m.hbfavmaterial.models.NewEntryModel
@@ -40,7 +37,7 @@ class MainActivity : BaseActivityWithDrawer() {
         private val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
 
         fun createIntent(context: Context,
-                         index: Int = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE): Intent {
+                         index: Int = BookmarkPagerAdaptor.BookmarkPage.BOOKMARK_FAVORITE.index): Intent {
             return Intent(context, MainActivity::class.java)
                     .putExtra(ARG_PAGER_INDEX, index)
         }
@@ -50,8 +47,8 @@ class MainActivity : BaseActivityWithDrawer() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        binding.activityMainApp.pager.initialize(supportFragmentManager, this)
-        binding.activityMainApp.pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE)
+        binding.activityMainApp.pager.initialize(supportFragmentManager)
+        binding.activityMainApp.pager.currentItem = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.BookmarkPage.BOOKMARK_FAVORITE.index)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -98,7 +95,7 @@ class MainActivity : BaseActivityWithDrawer() {
         }
 
         // イベントを飛ばしてFragment側でカテゴリに合わせた表示に切り替える
-        val target = if (binding.activityMainApp.pager.currentItem === BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY)
+        val target = if (binding.activityMainApp.pager.currentItem === BookmarkPagerAdaptor.BookmarkPage.HOT_ENTRY.index)
             EntryCategoryChangedEvent.Companion.Target.HOT
         else
             EntryCategoryChangedEvent.Companion.Target.NEW
@@ -106,9 +103,9 @@ class MainActivity : BaseActivityWithDrawer() {
         EventBusHolder.EVENT_BUS.post(EntryCategoryChangedEvent(entryType, target))
 
         // Activityのタイトルも切り替える
-        val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
+        val page = BookmarkPagerAdaptor.BookmarkPage.values()[binding.activityMainApp.pager.currentItem]
         val entryTypeString = BookmarkUtil.getEntryTypeString(applicationContext, entryType)
-        supportActionBar?.title = "$currentPageTitle - $entryTypeString"
+        supportActionBar?.title = page.title(applicationContext, entryTypeString)
 
         return true
     }
@@ -132,10 +129,9 @@ class MainActivity : BaseActivityWithDrawer() {
                 subTitle = ""
             }
         }
+        val page = BookmarkPagerAdaptor.BookmarkPage.values()[binding.activityMainApp.pager.currentItem]
 
-        val currentPageTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
-
-        supportActionBar?.title = "$currentPageTitle - $subTitle"
+        supportActionBar?.title = page.title(applicationContext, subTitle)
 
         return true
     }
@@ -144,23 +140,13 @@ class MainActivity : BaseActivityWithDrawer() {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         // Drawer内のメニュー選択時のイベント
-
         when (item.itemId) {
-            R.id.nav_bookmark_favorite ->
-                binding.activityMainApp.pager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE
-            R.id.nav_bookmark_own ->
-                binding.activityMainApp.pager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN
-            R.id.nav_hot_entry ->
-                binding.activityMainApp.pager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY
-            R.id.nav_new_entry ->
-                binding.activityMainApp.pager.currentItem = BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY
             R.id.nav_setting ->
                 startActivityWithClearTop(SettingActivity.createIntent(this))
             R.id.nav_explain_app ->
                 startActivityWithClearTop(ExplainAppActivity.createIntent(this))
-            else -> {
-                return super.onNavigationItemSelected(item)
-            }
+            else ->
+                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.BookmarkPage.forMenuId(item.itemId).index))
         }
 
         return super.onNavigationItemSelected(item)
@@ -188,55 +174,26 @@ class MainActivity : BaseActivityWithDrawer() {
     @Subscribe
     fun subscribe(event: MainPageDisplayEvent) {
 
-        mMenu ?: return
+        val menu = mMenu ?: return
 
-        // ページの種類に応じてActivityのタイトル表示とメニューの表示/非表示を切り替える
-        val title: String
-        val navItemId: Int
-
-        when (event.kind) {
-            Kind.BOOKMARK_FAVORITE -> {
-                mMenu?.hide()
-                title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
-                navItemId = R.id.nav_bookmark_favorite
+        val subTitle = when (event.page) {
+            BookmarkPagerAdaptor.BookmarkPage.BOOKMARK_FAVORITE -> {
+                ""
             }
-            Kind.BOOKMARK_OWN -> {
-                mMenu?.run {
-                    hide()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = true;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
-                }
-                title = binding.activityMainApp.pager.getCurrentPageTitle().toString()
-                navItemId = R.id.nav_bookmark_own
+            BookmarkPagerAdaptor.BookmarkPage.BOOKMARK_OWN -> {
+                ""
             }
-            Kind.HOT_ENTRY -> {
-                mMenu?.run {
-                    show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
-                }
-                val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
-                val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
-                title = "$mainTitle - $subTitle"
-                navItemId = R.id.nav_hot_entry
+            BookmarkPagerAdaptor.BookmarkPage.HOT_ENTRY -> {
+                BookmarkUtil.getEntryTypeString(applicationContext, hotEntryModel.entryType)
             }
-            Kind.NEW_ENTRY -> {
-                mMenu?.run {
-                    show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
-                }
-                val mainTitle = binding.activityMainApp.pager.getCurrentPageTitle().toString()
-                val subTitle = BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
-                title = "$mainTitle - $subTitle"
-                navItemId = R.id.nav_new_entry
+            BookmarkPagerAdaptor.BookmarkPage.NEW_ENTRY -> {
+                BookmarkUtil.getEntryTypeString(applicationContext, newEntryModel.entryType)
             }
-            else ->
-                return
         }
 
         // タイトルを切り替え、ナビゲーションView内のメニューの選択中の項目をチェック状態にする
-        supportActionBar?.title = title
-        binding.activityMainNav.setCheckedItem(navItemId)
+        supportActionBar?.title = event.page.title(applicationContext, subTitle)
+        event.page.toggleMenu(menu)
+        binding.activityMainNav.setCheckedItem(event.page.menuId)
     }
 }

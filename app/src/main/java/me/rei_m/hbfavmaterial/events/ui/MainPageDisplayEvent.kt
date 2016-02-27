@@ -1,12 +1,5 @@
 package me.rei_m.hbfavmaterial.events.ui
 
-class MainPageDisplayEvent(val kind: MainPageDisplayEvent.Companion.Kind) {
-    companion object {
-        enum class Kind {
-            BOOKMARK_FAVORITE,
-            BOOKMARK_OWN,
-            HOT_ENTRY,
-            NEW_ENTRY,
-        }
-    }
-}
+import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
+
+class MainPageDisplayEvent(val page: BookmarkPagerAdaptor.BookmarkPage)

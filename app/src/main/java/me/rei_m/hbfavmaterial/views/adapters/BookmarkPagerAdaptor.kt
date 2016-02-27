@@ -4,52 +4,84 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.view.Menu
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.extensions.hide
+import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.fragments.BookmarkFavoriteFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
 import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
-import java.util.*
 
 /**
  * メインページのフラグメントを管理するAdaptor.
  */
-class BookmarkPagerAdaptor : FragmentStatePagerAdapter {
+class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-    private val mTitleList = ArrayList<String>()
+    enum class BookmarkPage(val menuId: Int,
+                            val titleResId: Int) {
+        BOOKMARK_FAVORITE(R.id.nav_bookmark_favorite, R.string.fragment_title_bookmark_favorite) {
+            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance()
 
-    constructor(fm: FragmentManager, context: Context) : super(fm) {
-        with(mTitleList) {
-            add(INDEX_PAGER_BOOKMARK_FAVORITE, context.getString(R.string.fragment_title_bookmark_favorite))
-            add(INDEX_PAGER_BOOKMARK_OWN, context.getString(R.string.fragment_title_bookmark_own))
-            add(INDEX_PAGER_HOT_ENTRY, context.getString(R.string.fragment_title_hot_entry))
-            add(INDEX_PAGER_NEW_ENTRY, context.getString(R.string.fragment_title_new_entry))
+            override fun toggleMenu(menu: Menu) {
+                menu.hide()
+            }
+        },
+        BOOKMARK_OWN(R.id.nav_bookmark_own, R.string.fragment_title_bookmark_own) {
+            override fun newInstance(): Fragment = BookmarkUserFragment.newInstance()
+
+            override fun toggleMenu(menu: Menu) {
+                with(menu) {
+                    hide()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = true;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
+                }
+            }
+        },
+        HOT_ENTRY(R.id.nav_hot_entry, R.string.fragment_title_hot_entry) {
+            override fun newInstance(): Fragment = HotEntryFragment.newInstance()
+
+            override fun toggleMenu(menu: Menu) {
+                with(menu) {
+                    show()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                }
+            }
+        },
+        NEW_ENTRY(R.id.nav_new_entry, R.string.fragment_title_new_entry) {
+            override fun newInstance(): Fragment = NewEntryFragment.newInstance()
+
+            override fun toggleMenu(menu: Menu) {
+                menu.hide()
+            }
+        };
+
+        companion object {
+            fun forMenuId(menuId: Int): BookmarkPage {
+                for (page: BookmarkPage in values()) {
+                    if (page.menuId == menuId) {
+                        return page
+                    }
+                }
+                throw AssertionError("no menu enum found for the id. you forgot to implement?")
+            }
         }
-    }
 
-    companion object {
-        private val PAGE_COUNT = 4
-        val INDEX_PAGER_BOOKMARK_FAVORITE = 0
-        val INDEX_PAGER_BOOKMARK_OWN = 1
-        val INDEX_PAGER_HOT_ENTRY = 2
-        val INDEX_PAGER_NEW_ENTRY = 3
+        val index: Int = this.ordinal
+        
+        fun title(context: Context, subTitle: String) = context.getString(titleResId) + if (subTitle.isNotEmpty()) " - $subTitle" else ""
+
+        abstract fun toggleMenu(menu: Menu)
+
+        abstract fun newInstance(): Fragment
     }
 
     override fun getItem(position: Int): Fragment? {
-        return when (position) {
-            INDEX_PAGER_BOOKMARK_FAVORITE -> BookmarkFavoriteFragment.newInstance()
-            INDEX_PAGER_BOOKMARK_OWN -> BookmarkUserFragment.newInstance()
-            INDEX_PAGER_HOT_ENTRY -> HotEntryFragment.newInstance()
-            INDEX_PAGER_NEW_ENTRY -> NewEntryFragment.newInstance()
-            else -> BookmarkFavoriteFragment.newInstance()
-        }
+        return BookmarkPage.values()[position].newInstance()
     }
 
     override fun getCount(): Int {
-        return PAGE_COUNT
-    }
-
-    override fun getPageTitle(position: Int): CharSequence? {
-        return mTitleList[position]
+        return BookmarkPage.values().count()
     }
 }

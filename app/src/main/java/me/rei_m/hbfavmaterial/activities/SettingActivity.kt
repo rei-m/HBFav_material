@@ -40,18 +40,13 @@ class SettingActivity : BaseActivityWithDrawer() {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.nav_bookmark_favorite ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE))
-            R.id.nav_bookmark_own ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN))
-            R.id.nav_hot_entry ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY))
-            R.id.nav_new_entry ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY))
-            R.id.nav_explain_app ->
-                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
-            else -> {
+            R.id.nav_setting -> {
             }
+            R.id.nav_explain_app -> {
+                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
+            }
+            else ->
+                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.BookmarkPage.forMenuId(item.itemId).index))
         }
 
         return super.onNavigationItemSelected(item)
