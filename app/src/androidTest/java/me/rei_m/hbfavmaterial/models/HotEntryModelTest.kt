@@ -3,12 +3,12 @@ package me.rei_m.hbfavmaterial.models
 import android.support.test.runner.AndroidJUnit4
 import com.squareup.otto.Subscribe
 import junit.framework.TestCase
+import me.rei_m.hbfavmaterial.enums.EntryType
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.MockEntryErrorRepository
 import me.rei_m.hbfavmaterial.repositories.MockEntryRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert
@@ -53,7 +53,7 @@ class HotEntryModelTest : TestCase() {
 
         // 取得開始
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(BookmarkUtil.Companion.EntryType.ALL)
+        hotEntryModel.fetch(EntryType.ALL)
 
         // リクエスト中はBusy
         Assert.assertThat(hotEntryModel.isBusy, `is`(true))
@@ -62,16 +62,16 @@ class HotEntryModelTest : TestCase() {
         // 取得したあとは25件取れている
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.OK))
         Assert.assertThat(hotEntryModel.entryList.size, `is`(25))
-        Assert.assertThat(hotEntryModel.entryType, `is`(BookmarkUtil.Companion.EntryType.ALL))
+        Assert.assertThat(hotEntryModel.entryType, `is`(EntryType.ALL))
 
         // 違うカテゴリで取得し直す
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(BookmarkUtil.Companion.EntryType.ENTERTAINMENT)
+        hotEntryModel.fetch(EntryType.ENTERTAINMENT)
         eventCatcher.startCountDown()
 
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.OK))
         Assert.assertThat(hotEntryModel.entryList.size, `is`(25))
-        Assert.assertThat(hotEntryModel.entryType, `is`(BookmarkUtil.Companion.EntryType.ENTERTAINMENT))
+        Assert.assertThat(hotEntryModel.entryType, `is`(EntryType.ENTERTAINMENT))
 
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
@@ -87,7 +87,7 @@ class HotEntryModelTest : TestCase() {
 
         // エラーの場合
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(BookmarkUtil.Companion.EntryType.ALL)
+        hotEntryModel.fetch(EntryType.ALL)
         eventCatcher.startCountDown()
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.ERROR))
 

@@ -3,11 +3,11 @@ package me.rei_m.hbfavmaterial.repositories
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.ReadAfterType
 import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
 import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import me.rei_m.hbfavmaterial.network.EntryApi
 import me.rei_m.hbfavmaterial.utils.ApiUtil
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.util.*

@@ -1,11 +1,11 @@
 package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.ReadAfterType
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

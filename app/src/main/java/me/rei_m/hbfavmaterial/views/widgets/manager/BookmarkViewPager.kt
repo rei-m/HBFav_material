@@ -34,7 +34,7 @@ class BookmarkViewPager : ViewPager {
             }
 
             override fun onPageSelected(position: Int) {
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.BookmarkPage.values()[position]))
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[position]))
             }
         })
     }
@@ -43,6 +43,6 @@ class BookmarkViewPager : ViewPager {
      * 表示中のページが表示されたイベントをPOSTする.
      */
     fun postCurrentPageDisplayEvent() {
-        EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.BookmarkPage.values()[currentItem]))
+        EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[currentItem]))
     }
 }

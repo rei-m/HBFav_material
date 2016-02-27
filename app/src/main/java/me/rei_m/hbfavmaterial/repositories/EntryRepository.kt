@@ -2,9 +2,9 @@ package me.rei_m.hbfavmaterial.repositories
 
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.EntryEntity
+import me.rei_m.hbfavmaterial.enums.EntryType
 import me.rei_m.hbfavmaterial.network.HotEntryRss
 import me.rei_m.hbfavmaterial.network.NewEntryRss
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.util.*

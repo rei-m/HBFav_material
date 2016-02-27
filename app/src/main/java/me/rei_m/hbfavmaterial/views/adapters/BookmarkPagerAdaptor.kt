@@ -18,8 +18,9 @@ import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
  */
 class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-    enum class BookmarkPage(val menuId: Int,
-                            val titleResId: Int) {
+    enum class Page(val navId: Int,
+                    val titleResId: Int) {
+
         BOOKMARK_FAVORITE(R.id.nav_bookmark_favorite, R.string.fragment_title_bookmark_favorite) {
             override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance()
 
@@ -58,9 +59,9 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
         };
 
         companion object {
-            fun forMenuId(menuId: Int): BookmarkPage {
-                for (page: BookmarkPage in values()) {
-                    if (page.menuId == menuId) {
+            fun forMenuId(menuId: Int): Page {
+                for (page: Page in values()) {
+                    if (page.navId == menuId) {
                         return page
                     }
                 }
@@ -69,7 +70,7 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
         }
 
         val index: Int = this.ordinal
-        
+
         fun title(context: Context, subTitle: String) = context.getString(titleResId) + if (subTitle.isNotEmpty()) " - $subTitle" else ""
 
         abstract fun toggleMenu(menu: Menu)
@@ -78,10 +79,10 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
     }
 
     override fun getItem(position: Int): Fragment? {
-        return BookmarkPage.values()[position].newInstance()
+        return Page.values()[position].newInstance()
     }
 
     override fun getCount(): Int {
-        return BookmarkPage.values().count()
+        return Page.values().count()
     }
 }

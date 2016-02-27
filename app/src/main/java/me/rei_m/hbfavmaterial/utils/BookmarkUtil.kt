@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.utils
 
 import android.content.Context
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.enums.MyBookmarkType
 import java.util.*
 
 class BookmarkUtil private constructor() {
@@ -29,37 +30,6 @@ class BookmarkUtil private constructor() {
         private val MAX_LENGTH_TITLE_AT_TWITTER = MAX_LENGTH_COMMENT_AT_TWITTER + MAX_LENGTH_TITLE_WITH_COMMENT_AT_TWITTER
 
         private val HATENA_CDN_DOMAIN = "http://cdn1.www.st-hatena.com"
-
-        /**
-         * 後で見るのフィルタ.
-         */
-        enum class ReadAfterType {
-            ALL,
-            AFTER_READ
-        }
-
-        /**
-         * ブックマークのフィルタ.
-         */
-        enum class FilterType {
-            ALL,
-            COMMENT
-        }
-
-        /**
-         * エントリーの種類.
-         */
-        enum class EntryType {
-            ALL,
-            WORLD,
-            POLITICS_AND_ECONOMY,
-            LIFE,
-            ENTERTAINMENT,
-            STUDY,
-            TECHNOLOGY,
-            ANIMATION_AND_GAME,
-            COMEDY
-        }
 
         /**
          * Twitterのシェア用のテキストを作成する.
@@ -98,42 +68,13 @@ class BookmarkUtil private constructor() {
         /**
          * フィルタに対応した文字列を取得する.
          */
-        fun getFilterTypeString(context: Context, filterType: FilterType): String {
+        fun getFilterTypeString(context: Context, filterType: MyBookmarkType): String {
 
             val id = when (filterType) {
-                FilterType.ALL ->
+                MyBookmarkType.ALL ->
                     R.string.filter_bookmark_users_all
-                FilterType.COMMENT ->
+                MyBookmarkType.COMMENT ->
                     R.string.filter_bookmark_users_comment
-            }
-
-            return context.getString(id)
-        }
-
-        /**
-         * エントリタイプに応じた文字列を取得する.
-         */
-        fun getEntryTypeString(context: Context, entryType: EntryType): String {
-
-            val id = when (entryType) {
-                EntryType.ALL ->
-                    R.string.category_title_all
-                EntryType.WORLD ->
-                    R.string.category_title_world
-                EntryType.POLITICS_AND_ECONOMY ->
-                    R.string.category_title_politics_and_economy
-                EntryType.LIFE ->
-                    R.string.category_title_life
-                EntryType.ENTERTAINMENT ->
-                    R.string.category_title_entertainment
-                EntryType.STUDY ->
-                    R.string.category_title_study
-                EntryType.TECHNOLOGY ->
-                    R.string.category_title_technology
-                EntryType.ANIMATION_AND_GAME ->
-                    R.string.category_title_animation_and_game
-                EntryType.COMEDY ->
-                    R.string.category_title_comedy
             }
 
             return context.getString(id)

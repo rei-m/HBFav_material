@@ -2,8 +2,8 @@ package me.rei_m.hbfavmaterial.repositories
 
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.ReadAfterType
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import rx.Observable
 import java.net.HttpURLConnection
 import java.util.*

@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.network
 
+import me.rei_m.hbfavmaterial.enums.ReadAfterType
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.Request

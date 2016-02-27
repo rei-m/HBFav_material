@@ -46,7 +46,7 @@ class SettingActivity : BaseActivityWithDrawer() {
                 startActivityWithClearTop(ExplainAppActivity.createIntent(this))
             }
             else ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.BookmarkPage.forMenuId(item.itemId).index))
+                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.Page.forMenuId(item.itemId).index))
         }
 
         return super.onNavigationItemSelected(item)

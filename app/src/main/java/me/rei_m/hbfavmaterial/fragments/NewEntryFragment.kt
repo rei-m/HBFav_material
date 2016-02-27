@@ -109,7 +109,7 @@ class NewEntryFragment : Fragment() {
 
     @Subscribe
     fun subscribe(event: EntryCategoryChangedEvent) {
-        if (event.target == EntryCategoryChangedEvent.Companion.Target.NEW) {
+        if (event.target == EntryCategoryChangedEvent.Target.NEW) {
             newEntryModel.fetch(event.type)
         }
     }

@@ -1,5 +1,5 @@
 package me.rei_m.hbfavmaterial.events.ui
 
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.enums.ReadAfterType
 
-class ReadAfterFilterChangedEvent(val type: BookmarkUtil.Companion.ReadAfterType)
+class ReadAfterFilterChangedEvent(val type: ReadAfterType) : AbsMainPageFilterChangedEvent()

@@ -8,13 +8,13 @@ import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.MyBookmarkType
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
 class BookmarkUsersActivity : BaseActivity() {
 
@@ -22,7 +22,7 @@ class BookmarkUsersActivity : BaseActivity() {
         intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
     }
 
-    private var mFilterType: FilterType = FilterType.ALL
+    private var mFilterType: MyBookmarkType = MyBookmarkType.ALL
 
     companion object {
 
@@ -51,7 +51,7 @@ class BookmarkUsersActivity : BaseActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         val filterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE)
-        mFilterType = filterType?.let { it as FilterType } ?: FilterType.ALL
+        mFilterType = filterType?.let { it as MyBookmarkType } ?: MyBookmarkType.ALL
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -70,9 +70,9 @@ class BookmarkUsersActivity : BaseActivity() {
 
         when (id) {
             R.id.menu_filter_users_all ->
-                mFilterType = FilterType.ALL
+                mFilterType = MyBookmarkType.ALL
             R.id.menu_filter_users_comment ->
-                mFilterType = FilterType.COMMENT
+                mFilterType = MyBookmarkType.COMMENT
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -89,7 +89,7 @@ class BookmarkUsersActivity : BaseActivity() {
         startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
     }
 
-    private fun displayTitle(filterType: FilterType) {
+    private fun displayTitle(filterType: MyBookmarkType) {
         val bookmarkCountString = mBookmarkEntity.articleEntity.bookmarkCount.toString()
         val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
         supportActionBar?.title = "$bookmarkCountString users - $filterTypeString"

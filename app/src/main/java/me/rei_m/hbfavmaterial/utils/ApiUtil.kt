@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.utils
 
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryType
 import java.text.SimpleDateFormat
 import java.util.*
 

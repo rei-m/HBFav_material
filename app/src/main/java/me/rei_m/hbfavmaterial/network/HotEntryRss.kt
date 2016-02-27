@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.network
 
+import me.rei_m.hbfavmaterial.enums.EntryType
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.utils.ApiUtil
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.Request

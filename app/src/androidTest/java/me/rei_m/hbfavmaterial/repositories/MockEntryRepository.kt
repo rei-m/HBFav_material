@@ -2,17 +2,17 @@ package me.rei_m.hbfavmaterial.repositories
 
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.enums.EntryType
 import rx.Observable
 import java.util.*
 
 class MockEntryRepository : EntryRepository() {
 
-    override fun findByEntryTypeForHot(entryType: BookmarkUtil.Companion.EntryType): Observable<List<EntryEntity>> {
+    override fun findByEntryTypeForHot(entryType: EntryType): Observable<List<EntryEntity>> {
         return createTestEntitiesObservable()
     }
 
-    override fun findByEntryTypeForNew(entryType: BookmarkUtil.Companion.EntryType): Observable<List<EntryEntity>> {
+    override fun findByEntryTypeForNew(entryType: EntryType): Observable<List<EntryEntity>> {
         return createTestEntitiesObservable()
     }
 

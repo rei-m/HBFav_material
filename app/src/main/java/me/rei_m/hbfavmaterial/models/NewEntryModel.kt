@@ -1,11 +1,11 @@
 package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.EntryEntity
+import me.rei_m.hbfavmaterial.enums.EntryType
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.network.NewEntryLoadedEvent
 import me.rei_m.hbfavmaterial.repositories.EntryRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
