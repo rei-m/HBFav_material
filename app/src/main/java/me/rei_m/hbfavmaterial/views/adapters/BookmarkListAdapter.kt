@@ -12,11 +12,8 @@ import me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout
  * ブックマーク一覧を管理するAdaptor.
  */
 class BookmarkListAdapter(context: Context,
-                          resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
-
-    companion object {
-        private val BOOKMARK_COUNT_PER_PAGE = 20
-    }
+                          resource: Int,
+                          val countPerPage:Int ) : ArrayAdapter<BookmarkEntity>(context, resource) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
@@ -29,16 +26,13 @@ class BookmarkListAdapter(context: Context,
 
     val nextIndex: Int
         get() {
-            if (BOOKMARK_COUNT_PER_PAGE <= (count + 1)) {
-                val pageCnt = (count / BOOKMARK_COUNT_PER_PAGE)
-                val mod = (count % BOOKMARK_COUNT_PER_PAGE)
-                return if (mod == 0) {
-                    pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
-                } else {
-                    (pageCnt + 1) * BOOKMARK_COUNT_PER_PAGE + 1
-                }
+            val pageCnt = (count / countPerPage)
+            val mod = (count % countPerPage)
+
+            return if (mod == 0) {
+                pageCnt * countPerPage + 1
             } else {
-                return BOOKMARK_COUNT_PER_PAGE + 1
+                (pageCnt + 1) * countPerPage + 1
             }
         }
 }

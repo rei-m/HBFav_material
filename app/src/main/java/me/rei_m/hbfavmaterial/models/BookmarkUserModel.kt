@@ -19,6 +19,10 @@ import javax.inject.Singleton
 @Singleton
 class BookmarkUserModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
+    companion object {
+        const val BOOKMARK_COUNT_PER_PAGE = 20
+    }
+
     private var userId = ""
 
     var isBusy = false

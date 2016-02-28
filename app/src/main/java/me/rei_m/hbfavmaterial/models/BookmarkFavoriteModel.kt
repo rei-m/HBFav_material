@@ -18,6 +18,10 @@ import javax.inject.Singleton
 @Singleton
 class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: BookmarkRepository) {
 
+    companion object {
+        const val BOOKMARK_COUNT_PER_PAGE = 25
+    }
+
     var isBusy = false
         private set
 
