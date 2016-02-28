@@ -5,8 +5,8 @@ import me.rei_m.hbfavmaterial.R
 /**
  * エントリーの種類.
  */
-enum class EntryType(override val menuId: Int,
-                     override val titleResId: Int) : FilterItemI {
+enum class EntryTypeFilter(override val menuId: Int,
+                           override val titleResId: Int) : FilterItemI {
     ALL(
             R.id.menu_category_all,
             R.string.category_title_all

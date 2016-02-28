@@ -110,7 +110,7 @@ class HotEntryFragment : Fragment() {
     @Subscribe
     fun subscribe(event: EntryCategoryChangedEvent) {
         if (event.target == EntryCategoryChangedEvent.Target.HOT) {
-            hotEntryModel.fetch(event.type)
+            hotEntryModel.fetch(event.typeFilter)
         }
     }
 

@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.models
 import android.support.test.runner.AndroidJUnit4
 import com.squareup.otto.Subscribe
 import junit.framework.TestCase
-import me.rei_m.hbfavmaterial.enums.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.network.NewEntryLoadedEvent
@@ -53,7 +53,7 @@ class NewEntryModelTest : TestCase() {
 
         // 取得開始
         eventCatcher.initCountDown()
-        newEntryModel.fetch(EntryType.ALL)
+        newEntryModel.fetch(EntryTypeFilter.ALL)
 
         // リクエスト中はBusy
         Assert.assertThat(newEntryModel.isBusy, CoreMatchers.`is`(true))
@@ -62,16 +62,16 @@ class NewEntryModelTest : TestCase() {
         // 取得したあとは25件取れている
         Assert.assertThat(eventCatcher.event.status, CoreMatchers.`is`(LoadedEventStatus.OK))
         Assert.assertThat(newEntryModel.entryList.size, CoreMatchers.`is`(25))
-        Assert.assertThat(newEntryModel.entryType, CoreMatchers.`is`(EntryType.ALL))
+        Assert.assertThat(newEntryModel.entryType, CoreMatchers.`is`(EntryTypeFilter.ALL))
 
         // 違うカテゴリで取得し直す
         eventCatcher.initCountDown()
-        newEntryModel.fetch(EntryType.ENTERTAINMENT)
+        newEntryModel.fetch(EntryTypeFilter.ENTERTAINMENT)
         eventCatcher.startCountDown()
 
         Assert.assertThat(eventCatcher.event.status, CoreMatchers.`is`(LoadedEventStatus.OK))
         Assert.assertThat(newEntryModel.entryList.size, CoreMatchers.`is`(25))
-        Assert.assertThat(newEntryModel.entryType, CoreMatchers.`is`(EntryType.ENTERTAINMENT))
+        Assert.assertThat(newEntryModel.entryType, CoreMatchers.`is`(EntryTypeFilter.ENTERTAINMENT))
 
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
@@ -87,7 +87,7 @@ class NewEntryModelTest : TestCase() {
 
         // エラーの場合
         eventCatcher.initCountDown()
-        newEntryModel.fetch(EntryType.ALL)
+        newEntryModel.fetch(EntryTypeFilter.ALL)
         eventCatcher.startCountDown()
         Assert.assertThat(eventCatcher.event.status, CoreMatchers.`is`(LoadedEventStatus.ERROR))
 

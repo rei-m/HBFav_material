@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.models
 import android.support.test.runner.AndroidJUnit4
 import com.squareup.otto.Subscribe
 import junit.framework.TestCase
-import me.rei_m.hbfavmaterial.enums.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
@@ -53,7 +53,7 @@ class HotEntryModelTest : TestCase() {
 
         // 取得開始
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(EntryType.ALL)
+        hotEntryModel.fetch(EntryTypeFilter.ALL)
 
         // リクエスト中はBusy
         Assert.assertThat(hotEntryModel.isBusy, `is`(true))
@@ -62,16 +62,16 @@ class HotEntryModelTest : TestCase() {
         // 取得したあとは25件取れている
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.OK))
         Assert.assertThat(hotEntryModel.entryList.size, `is`(25))
-        Assert.assertThat(hotEntryModel.entryType, `is`(EntryType.ALL))
+        Assert.assertThat(hotEntryModel.entryType, `is`(EntryTypeFilter.ALL))
 
         // 違うカテゴリで取得し直す
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(EntryType.ENTERTAINMENT)
+        hotEntryModel.fetch(EntryTypeFilter.ENTERTAINMENT)
         eventCatcher.startCountDown()
 
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.OK))
         Assert.assertThat(hotEntryModel.entryList.size, `is`(25))
-        Assert.assertThat(hotEntryModel.entryType, `is`(EntryType.ENTERTAINMENT))
+        Assert.assertThat(hotEntryModel.entryType, `is`(EntryTypeFilter.ENTERTAINMENT))
 
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
     }
@@ -87,7 +87,7 @@ class HotEntryModelTest : TestCase() {
 
         // エラーの場合
         eventCatcher.initCountDown()
-        hotEntryModel.fetch(EntryType.ALL)
+        hotEntryModel.fetch(EntryTypeFilter.ALL)
         eventCatcher.startCountDown()
         Assert.assertThat(eventCatcher.event.status, `is`(LoadedEventStatus.ERROR))
 

@@ -1,5 +1,5 @@
 package me.rei_m.hbfavmaterial.events.ui
 
-import me.rei_m.hbfavmaterial.enums.ReadAfterType
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 
-class ReadAfterFilterChangedEvent(val type: ReadAfterType) : AbsMainPageFilterChangedEvent()
+class ReadAfterFilterChangedEvent(val filter: ReadAfterFilter)

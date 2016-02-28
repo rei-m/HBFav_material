@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.repositories
 
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.enums.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.network.HotEntryRss
 import me.rei_m.hbfavmaterial.network.NewEntryRss
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
@@ -17,18 +17,18 @@ open class EntryRepository {
     /**
      * ホッテントリ情報を取得する.
      */
-    open fun findByEntryTypeForHot(entryType: EntryType): Observable<List<EntryEntity>> {
+    open fun findByEntryTypeForHot(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
         return HotEntryRss()
-                .request(entryType)
+                .request(entryTypeFilter)
                 .map { response -> parseRssResponse(response) }
     }
 
     /**
      * 新着エントリ情報を取得する.
      */
-    open fun findByEntryTypeForNew(entryType: EntryType): Observable<List<EntryEntity>> {
+    open fun findByEntryTypeForNew(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
         return NewEntryRss()
-                .request(entryType)
+                .request(entryTypeFilter)
                 .map { response -> parseRssResponse(response) }
     }
 

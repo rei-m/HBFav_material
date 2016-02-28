@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.FragmentListBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.MyBookmarkType
+import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.network.UserRegisterBookmarkLoadedEvent
@@ -46,7 +46,7 @@ class BookmarkUsersFragment : Fragment() {
         UserListAdapter(activity, R.layout.list_item_user)
     }
 
-    private var mFilterType: MyBookmarkType = MyBookmarkType.ALL
+    private var mFilterCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
 
     lateinit private var mCompositeSubscription: CompositeSubscription
 
@@ -70,9 +70,9 @@ class BookmarkUsersFragment : Fragment() {
         App.graph.inject(this)
         
         if (savedInstanceState != null) {
-            mFilterType = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as MyBookmarkType
+            mFilterCommentFilter = savedInstanceState.getSerializable(KEY_FILTER_TYPE) as BookmarkCommentFilter
         } else {
-            mFilterType = MyBookmarkType.ALL
+            mFilterCommentFilter = BookmarkCommentFilter.ALL
         }
     }
 
@@ -147,7 +147,7 @@ class BookmarkUsersFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(KEY_FILTER_TYPE, mFilterType)
+        outState?.putSerializable(KEY_FILTER_TYPE, mFilterCommentFilter)
     }
 
     /**
@@ -183,7 +183,7 @@ class BookmarkUsersFragment : Fragment() {
 
     @Subscribe
     fun subscribe(event: BookmarkUsersFilteredEvent) {
-        mFilterType = event.filterType
+        mFilterCommentFilter = event.filterCommentFilter
 
         val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
 
@@ -193,7 +193,7 @@ class BookmarkUsersFragment : Fragment() {
     private fun displayListContents(listView: ListView) {
         with(mListAdapter) {
             clear()
-            if (mFilterType == MyBookmarkType.COMMENT) {
+            if (mFilterCommentFilter == BookmarkCommentFilter.COMMENT) {
                 addAll(userRegisterBookmarkModel.bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
             } else {
                 addAll(userRegisterBookmarkModel.bookmarkList)

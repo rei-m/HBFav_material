@@ -5,8 +5,8 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 後で見るのフィルタ.
  */
-enum class ReadAfterType(override val menuId: Int,
-                         override val titleResId: Int) : FilterItemI {
+enum class ReadAfterFilter(override val menuId: Int,
+                           override val titleResId: Int) : FilterItemI {
     ALL(
             R.id.menu_filter_bookmark_all,
             R.string.filter_bookmark_users_all

@@ -8,9 +8,9 @@ import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.enums.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.enums.FilterItemI
-import me.rei_m.hbfavmaterial.enums.ReadAfterType
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.*
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
@@ -74,10 +74,10 @@ class MainActivity : BaseActivityWithDrawer() {
 
         // イベントを飛ばしてFragment側でカテゴリに合わせた表示に切り替える
         when (filterType) {
-            is ReadAfterType -> {
+            is ReadAfterFilter -> {
                 EventBusHolder.EVENT_BUS.post(ReadAfterFilterChangedEvent(filterType))
             }
-            is EntryType -> {
+            is EntryTypeFilter -> {
                 val target = if (binding.activityMainApp.pager.currentItem === BookmarkPagerAdaptor.Page.HOT_ENTRY.index)
                     EntryCategoryChangedEvent.Target.HOT
                 else

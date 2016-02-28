@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.repositories
 
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.ReadAfterType
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import rx.Observable
 import java.net.HttpURLConnection
@@ -21,7 +21,7 @@ class MockBookmarkRepository : BookmarkRepository() {
         return createTestEntitiesObservable(userId, startIndex)
     }
 
-    override fun findByUserId(userId: String, readAfterType: ReadAfterType, startIndex: Int): Observable<List<BookmarkEntity>> {
+    override fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int): Observable<List<BookmarkEntity>> {
         return createTestEntitiesObservable(userId, startIndex)
     }
 

@@ -1,8 +1,5 @@
 package me.rei_m.hbfavmaterial.utils
 
-import android.content.Context
-import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.enums.MyBookmarkType
 import java.util.*
 
 class BookmarkUtil private constructor() {
@@ -63,21 +60,6 @@ class BookmarkUtil private constructor() {
                 }
                 "\"$postTitle\" $url"
             }
-        }
-
-        /**
-         * フィルタに対応した文字列を取得する.
-         */
-        fun getFilterTypeString(context: Context, filterType: MyBookmarkType): String {
-
-            val id = when (filterType) {
-                MyBookmarkType.ALL ->
-                    R.string.filter_bookmark_users_all
-                MyBookmarkType.COMMENT ->
-                    R.string.filter_bookmark_users_comment
-            }
-
-            return context.getString(id)
         }
 
         /**
