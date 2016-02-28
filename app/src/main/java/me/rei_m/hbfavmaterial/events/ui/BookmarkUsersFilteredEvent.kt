@@ -1,5 +1,5 @@
 package me.rei_m.hbfavmaterial.events.ui
 
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
 
-class BookmarkUsersFilteredEvent(val filterType: BookmarkUtil.Companion.FilterType)
+class BookmarkUsersFilteredEvent(val filterCommentFilter: BookmarkCommentFilter)

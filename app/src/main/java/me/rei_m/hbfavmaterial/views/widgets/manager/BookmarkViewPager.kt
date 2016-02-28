@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent.Companion.Kind as pageKind
 
 /**
  * MainActivityのメインコンテンツを管理するViewPager.
@@ -21,9 +20,9 @@ class BookmarkViewPager : ViewPager {
     /**
      * 初期設定を行う.
      */
-    fun initialize(supportFragmentManager: FragmentManager, context: Context) {
+    fun initialize(supportFragmentManager: FragmentManager) {
 
-        adapter = BookmarkPagerAdaptor(supportFragmentManager, context)
+        adapter = BookmarkPagerAdaptor(supportFragmentManager)
 
         addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -35,36 +34,15 @@ class BookmarkViewPager : ViewPager {
             }
 
             override fun onPageSelected(position: Int) {
-                postPageDisplayEvent(position)
+                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[position]))
             }
         })
     }
 
     /**
-     * 表示中のページ対応するタイトルを取得する.
-     */
-    fun getCurrentPageTitle() = adapter.getPageTitle(currentItem)
-
-    /**
      * 表示中のページが表示されたイベントをPOSTする.
      */
     fun postCurrentPageDisplayEvent() {
-        postPageDisplayEvent(currentItem)
-    }
-
-    /**
-     * ページが表示されたイベントをPOSTする.
-     */
-    private fun postPageDisplayEvent(position: Int) {
-        when (position) {
-            BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_FAVORITE ->
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.BOOKMARK_FAVORITE))
-            BookmarkPagerAdaptor.INDEX_PAGER_BOOKMARK_OWN ->
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.BOOKMARK_OWN))
-            BookmarkPagerAdaptor.INDEX_PAGER_HOT_ENTRY ->
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.HOT_ENTRY))
-            BookmarkPagerAdaptor.INDEX_PAGER_NEW_ENTRY ->
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(pageKind.NEW_ENTRY))
-        }
+        EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[currentItem]))
     }
 }

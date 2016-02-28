@@ -1,13 +1,11 @@
 package me.rei_m.hbfavmaterial.events.ui
 
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 
-class EntryCategoryChangedEvent(val type: BookmarkUtil.Companion.EntryType,
-                                       val target: EntryCategoryChangedEvent.Companion.Target) {
-    companion object {
-        enum class Target {
-            HOT,
-            NEW
-        }
+class EntryCategoryChangedEvent(val typeFilter: EntryTypeFilter,
+                                val target: EntryCategoryChangedEvent.Target) {
+    enum class Target {
+        HOT,
+        NEW
     }
 }

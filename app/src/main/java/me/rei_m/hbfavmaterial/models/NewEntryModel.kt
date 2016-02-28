@@ -1,11 +1,11 @@
 package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.EntryEntity
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.network.NewEntryLoadedEvent
 import me.rei_m.hbfavmaterial.repositories.EntryRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -24,10 +24,10 @@ class NewEntryModel @Inject constructor(private val entryRepository: EntryReposi
 
     val entryList = ArrayList<EntryEntity>()
 
-    var entryType = EntryType.ALL
+    var entryType = EntryTypeFilter.ALL
         private set
 
-    fun fetch(entryType: EntryType) {
+    fun fetch(entryTypeFilter: EntryTypeFilter) {
 
         if (isBusy) {
             return
@@ -40,7 +40,7 @@ class NewEntryModel @Inject constructor(private val entryRepository: EntryReposi
                 t ?: return
                 entryList.clear()
                 entryList.addAll(t)
-                this@NewEntryModel.entryType = entryType
+                this@NewEntryModel.entryType = entryTypeFilter
             }
 
             override fun onCompleted() {
@@ -54,7 +54,7 @@ class NewEntryModel @Inject constructor(private val entryRepository: EntryReposi
             }
         }
 
-        entryRepository.findByEntryTypeForNew(entryType)
+        entryRepository.findByEntryTypeForNew(entryTypeFilter)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

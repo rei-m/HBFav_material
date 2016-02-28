@@ -205,7 +205,7 @@ class BookmarkUserFragment : Fragment() {
             binding.fragmentListList.addFooterView(footerView, null, false)
             footerView.hide()
         }
-        bookmarkUserModelForSelf.fetch(mUserId, event.type)
+        bookmarkUserModelForSelf.fetch(mUserId, event.filter)
     }
 
     /**

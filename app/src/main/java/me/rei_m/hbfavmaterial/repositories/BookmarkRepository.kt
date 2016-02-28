@@ -3,11 +3,11 @@ package me.rei_m.hbfavmaterial.repositories
 import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
 import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import me.rei_m.hbfavmaterial.network.EntryApi
 import me.rei_m.hbfavmaterial.utils.ApiUtil
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import rx.Observable
 import java.util.*
@@ -29,9 +29,9 @@ open class BookmarkRepository() {
     /**
      * ユーザーのブックマーク情報を取得する.
      */
-    open fun findByUserId(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
+    open fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
         return BookmarkOwnRss()
-                .request(userId, readAfterType, startIndex)
+                .request(userId, readAfterFilter, startIndex)
                 .map { response -> parseRssResponse(response) }
     }
 

@@ -1,11 +1,11 @@
 package me.rei_m.hbfavmaterial.models
 
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -26,7 +26,7 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
 
     val bookmarkList = ArrayList<BookmarkEntity>()
 
-    var readAfterType = ReadAfterType.ALL
+    var readAfterType = ReadAfterFilter.ALL
         private set
 
     fun isSameUser(userId: String): Boolean = (this.userId == userId)
@@ -83,8 +83,8 @@ class BookmarkUserModel @Inject constructor(private val bookmarkRepository: Book
                 .subscribe(observer)
     }
 
-    fun fetch(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0) {
-        this.readAfterType = readAfterType
+    fun fetch(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0) {
+        this.readAfterType = readAfterFilter
         fetch(userId, startIndex)
     }
 }
