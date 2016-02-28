@@ -1,70 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/dialog_fragment_edit_user_id_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_dialog_title_bottom"
+        android:layout_marginLeft="@dimen/margin_outline_dialog"
+        android:layout_marginRight="@dimen/margin_outline_dialog"
+        android:layout_marginTop="@dimen/margin_outline_dialog"
+        android:textColor="@color/text_color_strong"
+        android:textSize="@dimen/text_size_title" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/dialog_fragment_edit_user_id_layout_edit_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_outline_dialog"
+        android:layout_marginLeft="@dimen/margin_outline_dialog"
+        android:layout_marginRight="@dimen/margin_outline_dialog"
+        android:textColorHint="@color/app_accent_color">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/dialog_fragment_edit_user_id_edit_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/text_hatena_account"
+            android:inputType="text"
+            android:lines="1"
+            android:textColorHint="@color/app_accent_color" />
+    </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/height_dialog_layout_buttons"
+        android:layout_marginBottom="@dimen/margin_half"
+        android:layout_marginLeft="@dimen/margin_outline_dialog_buttons"
+        android:layout_marginRight="@dimen/margin_outline_dialog_buttons"
+        android:gravity="end">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/dialog_fragment_edit_user_id_text_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_dialog_title_bottom"
-            android:layout_marginLeft="@dimen/margin_outline_dialog"
-            android:layout_marginRight="@dimen/margin_outline_dialog"
-            android:layout_marginTop="@dimen/margin_outline_dialog"
-            android:textColor="@color/text_color_strong"
-            android:textSize="@dimen/text_size_title" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/dialog_fragment_edit_user_id_button_cancel"
+            style="@style/ActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_button"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/margin_half"
+            android:layout_marginRight="@dimen/margin_half"
+            android:layout_marginTop="@dimen/margin_dialog_button"
+            android:text="@string/button_cancel" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/dialog_fragment_edit_user_id_layout_edit_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_outline_dialog"
-            android:layout_marginLeft="@dimen/margin_outline_dialog"
-            android:layout_marginRight="@dimen/margin_outline_dialog"
-            android:textColorHint="@color/app_accent_color">
-
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/dialog_fragment_edit_user_id_edit_user_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/text_hatena_account"
-                android:inputType="text"
-                android:lines="1"
-                android:textColorHint="@color/app_accent_color" />
-        </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_dialog_layout_buttons"
-            android:layout_marginBottom="@dimen/margin_half"
-            android:layout_marginLeft="@dimen/margin_outline_dialog_buttons"
-            android:layout_marginRight="@dimen/margin_outline_dialog_buttons"
-            android:gravity="end">
-
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/dialog_fragment_edit_user_id_button_cancel"
-                style="@style/ActionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_button"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/margin_half"
-                android:layout_marginRight="@dimen/margin_half"
-                android:layout_marginTop="@dimen/margin_dialog_button"
-                android:text="@string/button_cancel" />
-
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/dialog_fragment_edit_user_id_button_ok"
-                style="@style/ActionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_button"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/margin_dialog_button"
-                android:text="@string/button_setting" />
-
-        </LinearLayout>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/dialog_fragment_edit_user_id_button_ok"
+            style="@style/ActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_button"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/margin_dialog_button"
+            android:text="@string/button_setting" />
 
     </LinearLayout>
-</layout>
+
+</LinearLayout>

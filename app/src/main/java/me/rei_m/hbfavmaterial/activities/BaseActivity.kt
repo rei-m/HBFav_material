@@ -1,11 +1,10 @@
 package me.rei_m.hbfavmaterial.activities
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.ActivityBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 
 /**
@@ -13,12 +12,11 @@ import me.rei_m.hbfavmaterial.events.EventBusHolder
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected lateinit var binding: ActivityBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity)
-        setSupportActionBar(binding.toolbar)
+        setContentView(R.layout.activity)
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
     }

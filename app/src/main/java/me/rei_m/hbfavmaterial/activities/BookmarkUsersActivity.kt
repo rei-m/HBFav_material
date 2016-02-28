@@ -13,6 +13,7 @@ import me.rei_m.hbfavmaterial.enums.FilterItemI
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 
@@ -45,7 +46,7 @@ class BookmarkUsersActivity : BaseActivity() {
 
         displayTitle(mCommentFilter)
 
-        binding.fab.hide()
+        findViewById(R.id.fab).hide()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

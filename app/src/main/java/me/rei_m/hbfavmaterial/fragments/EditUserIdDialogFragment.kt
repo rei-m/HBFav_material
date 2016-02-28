@@ -2,19 +2,21 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.app.Dialog
 import android.app.ProgressDialog
-import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatButton
+import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditUserIdBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.adjustScreenWidth
@@ -56,35 +58,37 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = DialogFragmentEditUserIdBinding.inflate(inflater, container, false)
-        
-        binding.dialogFragmentEditUserIdTextTitle.text = getString(R.string.dialog_title_set_user)
+        val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
 
-        binding.dialogFragmentEditUserIdEditUserId.setText(userModel.userEntity?.id)
+        with(view.findViewById(R.id.dialog_fragment_edit_user_id_text_title)) {
+            this as AppCompatTextView
+            text = getString(R.string.dialog_title_set_user)
+        }
 
-        binding.dialogFragmentEditUserIdButtonCancel.setOnClickListener {
+        val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
+        editUserId.setText(userModel.userEntity?.id)
+
+        val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
+        buttonCancel.setOnClickListener { v ->
             dismiss()
         }
 
-        binding.dialogFragmentEditUserIdButtonOk.setOnClickListener {
-            val inputtedUserId = binding.dialogFragmentEditUserIdEditUserId.editableText.toString()
+        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
+        buttonOk.setOnClickListener { v ->
+            val inputtedUserId = editUserId.editableText.toString()
             if (inputtedUserId != userModel.userEntity?.id) {
-                userModel.checkAndSaveUserId(getAppContext(), binding.dialogFragmentEditUserIdEditUserId.editableText.toString())
+                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
                 showProgressDialog(activity)
             } else {
                 dismiss()
             }
         }
 
-        mSubscription = RxTextView.textChanges(binding.dialogFragmentEditUserIdEditUserId)
-                .map { v ->
-                    0 < v.length
-                }
-                .subscribe { isEnabled ->
-                    binding.dialogFragmentEditUserIdButtonOk.toggle(isEnabled)
-                }
+        mSubscription = RxTextView.textChanges(editUserId)
+                .map { v -> 0 < v.length }
+                .subscribe { isEnabled -> buttonOk.toggle(isEnabled) }
 
-        return binding.root
+        return view
     }
 
     override fun onDestroyView() {
@@ -110,18 +114,20 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
     @Subscribe
     fun subscribe(event: UserIdCheckedEvent) {
 
-        val binding = DataBindingUtil.getBinding<DialogFragmentEditUserIdBinding>(view)
-
         closeProgressDialog()
+
+        val view = view ?: return
+
+        val editUserIdLayout = view.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user) as TextInputLayout
 
         when (event.type) {
             UserIdCheckedEvent.Companion.Type.OK -> {
-                binding.dialogFragmentEditUserIdLayoutEditUser.isErrorEnabled = false
+                editUserIdLayout.isErrorEnabled = false
                 dismiss()
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                binding.dialogFragmentEditUserIdLayoutEditUser.error = getString(R.string.message_error_input_user_id)
+                editUserIdLayout.error = getString(R.string.message_error_input_user_id)
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

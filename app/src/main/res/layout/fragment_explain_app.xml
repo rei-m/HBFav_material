@@ -1,112 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_app_name"
+        style="@style/LinearLayoutRow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/margin_half"
+        android:paddingTop="@dimen/margin_half">
 
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_app_name"
-            style="@style/LinearLayoutRow"
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_app_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/ic_launcher"
+            android:drawablePadding="@dimen/margin"
+            android:drawableStart="@drawable/ic_launcher"
             android:gravity="center_vertical"
-            android:paddingBottom="@dimen/margin_half"
-            android:paddingTop="@dimen/margin_half">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_app_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawableLeft="@drawable/ic_launcher"
-                android:drawablePadding="@dimen/margin"
-                android:drawableStart="@drawable/ic_launcher"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textSize="@dimen/text_size_title" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin"
-            android:background="@color/border" />
-
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_review"
-            style="@style/LinearLayoutRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_item_one_column">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_review"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_review" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_opinion"
-            style="@style/LinearLayoutRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_item_one_column">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_opinion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_opinion" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_from_developer"
-            style="@style/LinearLayoutRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_item_one_column">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_from_developer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/fragment_title_from_developer" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_credit"
-            style="@style/LinearLayoutRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_item_one_column">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_credit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/fragment_title_credit" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin"
-            android:background="@color/border" />
-
-        <LinearLayout
-            android:id="@+id/fragment_explain_app_layout_version"
-            style="@style/LinearLayoutRow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_item_one_column">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/fragment_explain_app_text_version"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_version" />
-
-        </LinearLayout>
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_size_title" />
 
     </LinearLayout>
-</layout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin"
+        android:background="@color/border" />
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_review"
+        style="@style/LinearLayoutRow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_review" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_opinion"
+        style="@style/LinearLayoutRow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_opinion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_opinion" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_from_developer"
+        style="@style/LinearLayoutRow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_from_developer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_title_from_developer" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_credit"
+        style="@style/LinearLayoutRow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_credit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_title_credit" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin"
+        android:background="@color/border" />
+
+    <LinearLayout
+        android:id="@+id/fragment_explain_app_layout_version"
+        style="@style/LinearLayoutRow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_item_one_column">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/fragment_explain_app_text_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_version" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -28,10 +29,11 @@ class ExplainAppActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        findViewById(R.id.pager).hide()
+        findViewById(R.id.content).show()
 
-        binding.activityMainApp.pager.hide()
-        binding.activityMainApp.content.show()
-        binding.activityMainNav.setCheckedItem(R.id.nav_explain_app)
+        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
+        navigationView.setCheckedItem(R.id.nav_explain_app)
 
         if (savedInstanceState == null) {
             setFragment(ExplainAppFragment.newInstance())
