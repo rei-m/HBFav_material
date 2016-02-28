@@ -1,49 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <data>
-
-        <import type="android.view.View" />
-        
-        <variable
-            name="bookmarkEntity"
-            type="me.rei_m.hbfavmaterial.entities.BookmarkEntity" />
-    </data>
-
-    <RelativeLayout
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/layout_bookmark_text_description"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:textColor="@color/text_color_strong" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/layout_bookmark_text_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:text="@{bookmarkEntity.description}"
-            android:textColor="@color/text_color_strong"
-            android:visibility="@{bookmarkEntity.description.isEmpty() ? View.GONE : View.VISIBLE}" />
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/layout_bookmark_image_article_icon"
+        android:layout_width="@dimen/icon_size_article"
+        android:layout_height="@dimen/icon_size_article"
+        android:layout_below="@+id/layout_bookmark_text_description"
+        android:layout_marginEnd="@dimen/margin_half"
+        android:layout_marginRight="@dimen/margin_half"
+        android:layout_marginTop="@dimen/margin" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/layout_bookmark_image_article_icon"
-            android:layout_width="@dimen/icon_size_article"
-            android:layout_height="@dimen/icon_size_article"
-            android:layout_below="@+id/layout_bookmark_text_description"
-            android:layout_marginEnd="@dimen/margin_half"
-            android:layout_marginRight="@dimen/margin_half"
-            android:layout_marginTop="@dimen/margin"
-            app:roundImageUrl="@{bookmarkEntity.articleEntity.iconUrl}" />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/layout_bookmark_text_article_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_bookmark_text_description"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_toEndOf="@id/layout_bookmark_image_article_icon"
+        android:layout_toRightOf="@id/layout_bookmark_image_article_icon"
+        android:textColor="@color/colorPrimaryDark" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/layout_bookmark_text_article_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layout_bookmark_text_description"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_toEndOf="@id/layout_bookmark_image_article_icon"
-            android:layout_toRightOf="@id/layout_bookmark_image_article_icon"
-            android:text="@{bookmarkEntity.articleEntity.title}"
-            android:textColor="@color/colorPrimaryDark" />
-
-    </RelativeLayout>
-</layout>
+</me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkLayout>

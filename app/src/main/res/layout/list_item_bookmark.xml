@@ -1,67 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
+<me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/margin_outline">
 
-        <import type="me.rei_m.hbfavmaterial.utils.DataBindingUtil" />
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/list_item_bookmark_image_user_icon"
+        android:layout_width="@dimen/icon_size_list"
+        android:layout_height="@dimen/icon_size_list"
+        android:layout_margin="@dimen/margin_outline" />
 
-        <variable
-            name="bookmarkEntity"
-            type="me.rei_m.hbfavmaterial.entities.BookmarkEntity" />
-    </data>
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_bookmark_text_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginStart="@dimen/margin_content_from_screen"
+        android:layout_marginTop="@dimen/margin_outline"
+        android:textStyle="bold" />
 
-    <RelativeLayout
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_bookmark_text_add_bookmark_timing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginTop="@dimen/margin_outline"
+        android:textColor="@color/text_color_thin"
+        android:textSize="@dimen/text_size_caption" />
+
+    <include
+        android:id="@+id/list_item_bookmark_layout_bookmark"
+        layout="@layout/layout_bookmark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/margin_outline">
+        android:layout_below="@id/list_item_bookmark_text_user_name"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginLeft="@dimen/margin_content_from_screen"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_marginStart="@dimen/margin_content_from_screen" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/list_item_bookmark_image_user_icon"
-            android:layout_width="@dimen/icon_size_list"
-            android:layout_height="@dimen/icon_size_list"
-            android:layout_margin="@dimen/margin_outline"
-            app:userIconImageUrl="@{bookmarkEntity.creator}" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_bookmark_text_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_outline"
-            android:layout_marginLeft="@dimen/margin_content_from_screen"
-            android:layout_marginRight="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_content_from_screen"
-            android:layout_marginTop="@dimen/margin_outline"
-            android:text="@{bookmarkEntity.creator}"
-            android:textStyle="bold" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_bookmark_text_add_bookmark_timing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="@dimen/margin_outline"
-            android:layout_marginRight="@dimen/margin_outline"
-            android:layout_marginTop="@dimen/margin_outline"
-            android:text="@{DataBindingUtil.getPastTimeString(bookmarkEntity.date)}"
-            android:textColor="@color/text_color_thin"
-            android:textSize="@dimen/text_size_caption"
-            tools:ignore="RelativeOverlap" />
-
-        <include
-            android:id="@+id/list_item_bookmark_layout_bookmark"
-            layout="@layout/layout_bookmark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_bookmark_text_user_name"
-            android:layout_marginEnd="@dimen/margin_outline"
-            android:layout_marginLeft="@dimen/margin_content_from_screen"
-            android:layout_marginRight="@dimen/margin_outline"
-            android:layout_marginStart="@dimen/margin_content_from_screen"
-            bind:bookmarkEntity="@{bookmarkEntity}" />
-
-    </RelativeLayout>
-</layout>
+</me.rei_m.hbfavmaterial.views.widgets.list.BookmarkItemLayout>

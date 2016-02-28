@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.CreditFragment
 import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
@@ -42,6 +43,6 @@ class FrameActivity : BaseActivity() {
                 }
             }
         }
-        binding.fab.hide()
+        findViewById(R.id.fab).hide()
     }
 }

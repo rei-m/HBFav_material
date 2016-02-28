@@ -1,19 +1,19 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.FragmentListBinding
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
@@ -56,47 +56,55 @@ class HotEntryFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = FragmentListBinding.inflate(inflater, container, false)
+        val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
-        binding.fragmentListList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
             EventBusHolder.EVENT_BUS.post(EntryListItemClickedEvent(entryEntity))
         }
 
-        binding.fragmentListList.adapter = mListAdapter
+        listView.adapter = mListAdapter
 
-        binding.fragmentListRefresh.setColorSchemeResources(R.color.pull_to_refresh_1,
-                R.color.pull_to_refresh_2,
-                R.color.pull_to_refresh_3)
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
+            setColorSchemeResources(R.color.pull_to_refresh_1,
+                    R.color.pull_to_refresh_2,
+                    R.color.pull_to_refresh_3)
+        }
 
-        binding.fragmentListViewEmpty.text = getString(R.string.message_text_empty_entry)
+        with(view.findViewById(R.id.fragment_list_view_empty) as TextView) {
+            text = getString(R.string.message_text_empty_entry)
+        }
 
-        return binding.root
+        return view
     }
 
     override fun onResume() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        val view = view ?: return
 
         val displayedCount = mListAdapter.count
 
         if (displayedCount != hotEntryModel.entryList.size) {
             // 表示済の件数とModel内で保持している件数をチェックし、
             // 差分があれば未表示のエントリがあるのでリストに表示する
-            displayListContents(binding.fragmentListList)
-            binding.fragmentListProgressList.hide()
+            displayListContents(view.findViewById(R.id.fragment_list_list) as ListView)
+            view.findViewById(R.id.fragment_list_progress_list).hide()
         } else if (displayedCount === 0) {
             // 1件も表示していなければエントリ情報を取得する
             hotEntryModel.fetch(hotEntryModel.entryType)
-            binding.fragmentListProgressList.show()
+            view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
-        binding.fragmentListViewEmpty.hide()
+        view.findViewById(R.id.fragment_list_view_empty).hide()
 
+        // Pull to refreshのイベントをセット
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(binding.fragmentListRefresh).subscribe {
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             hotEntryModel.fetch(hotEntryModel.entryType)
         })
     }
@@ -117,11 +125,11 @@ class HotEntryFragment : Fragment() {
     @Subscribe
     fun subscribe(event: HotEntryLoadedEvent) {
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        val view = view ?: return
 
         when (event.status) {
             LoadedEventStatus.OK -> {
-                displayListContents(binding.fragmentListList)
+                displayListContents(view.findViewById(R.id.fragment_list_list) as ListView)
             }
             LoadedEventStatus.ERROR -> {
                 val thisActivity = activity as AppCompatActivity
@@ -133,12 +141,15 @@ class HotEntryFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        binding.fragmentListViewEmpty.toggle(mListAdapter.isEmpty)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
-        binding.fragmentListProgressList.hide()
+        view.findViewById(R.id.fragment_list_progress_list).hide()
 
-        if (binding.fragmentListRefresh.isRefreshing) {
-            RxSwipeRefreshLayout.refreshing(binding.fragmentListRefresh).call(false)
+        with(view.findViewById(R.id.fragment_list_refresh)) {
+            this as SwipeRefreshLayout
+            if (isRefreshing) {
+                RxSwipeRefreshLayout.refreshing(this).call(false)
+            }
         }
     }
 

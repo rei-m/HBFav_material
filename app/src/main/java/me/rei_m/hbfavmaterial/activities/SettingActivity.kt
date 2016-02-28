@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
@@ -27,9 +28,12 @@ class SettingActivity : BaseActivityWithDrawer() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.activityMainApp.pager.hide()
-        binding.activityMainApp.content.show()
-        binding.activityMainNav.setCheckedItem(R.id.nav_setting)
+        findViewById(R.id.pager).hide()
+        findViewById(R.id.content).show()
+
+        with(findViewById(R.id.activity_main_nav) as NavigationView) {
+            setCheckedItem(R.id.nav_setting)
+        }
 
         if (savedInstanceState == null) {
             setFragment(SettingFragment.newInstance(), SettingFragment.TAG)

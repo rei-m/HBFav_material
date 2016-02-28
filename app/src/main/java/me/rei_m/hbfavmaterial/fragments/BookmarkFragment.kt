@@ -6,12 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkBinding
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
+import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
+import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
+import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
 class BookmarkFragment : Fragment(), IFragmentAnimation {
 
@@ -40,40 +39,23 @@ class BookmarkFragment : Fragment(), IFragmentAnimation {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding = FragmentBookmarkBinding.inflate(inflater, container, false)
+        val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
 
-        // 全体
-        with(binding) {
-            bookmarkEntity = mBookmarkEntity
+        val bookmarkHeaderLayout = view.findViewById(R.id.fragment_bookmark_layout_header) as BookmarkHeaderLayout
 
-            // ヘッダ部分
-            fragmentBookmarkLayoutHeader.bookmarkEntity = mBookmarkEntity
+        val bookmarkContents = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
 
-            // ブックマーク部分
-            layoutBookmarkContentsLayoutBookmark.bookmarkEntity = mBookmarkEntity
+        val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 
-            // 記事部分
-            layoutBookmarkContentsLayoutArticle.bookmarkEntity = mBookmarkEntity
-
-            // コンテンツ部分を押した時のイベント
-            layoutBookmarkContents.setOnClickListener {
-                EventBusHolder.EVENT_BUS.post(BookmarkClickedEvent(mBookmarkEntity))
-            }
-
-            // ブックマークユーザー数を押した時のイベント
-            fragmentBookmarkTextBookmarkCount.setOnClickListener {
-                EventBusHolder.EVENT_BUS.post(BookmarkCountClickedEvent(mBookmarkEntity))
-            }
-
-            // ヘッダ部分を押した時のイベント
-            fragmentBookmarkLayoutHeader.root.setOnClickListener {
-                EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(mBookmarkEntity.creator))
-            }
+        with(mBookmarkEntity) {
+            bookmarkHeaderLayout.bindView(this)
+            bookmarkContents.bindView(this)
+            bookmarkCountTextView.bindView(this)
         }
 
         setContainerWidth(container!!)
 
-        return binding.root
+        return view
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
@@ -31,12 +32,14 @@ class OthersBookmarkActivity : BaseActivity() {
         val userId = intent.getStringExtra(ARG_USER_ID)
         supportActionBar?.title = userId
 
-        binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
-        binding.fab.setOnClickListener {
-            val url = getString(R.string.url_web_hatena_bookmark).replace("{{0}}", userId)
-            applicationContext.openUrl(url)
+        with(findViewById(R.id.fab) as FloatingActionButton) {
+            setImageResource(R.drawable.ic_add_white_24dp)
+            setOnClickListener {
+                val url = getString(R.string.url_web_hatena_bookmark).replace("{{0}}", userId)
+                applicationContext.openUrl(url)
+            }
         }
-
+        
         if (savedInstanceState == null) {
             setFragment(BookmarkUserFragment.newInstance(userId))
         }
