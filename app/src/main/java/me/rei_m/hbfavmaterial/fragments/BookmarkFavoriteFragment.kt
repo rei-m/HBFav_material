@@ -42,7 +42,7 @@ class BookmarkFavoriteFragment : Fragment() {
     lateinit var userModel: UserModel
 
     private val mListAdapter: BookmarkListAdapter by lazy {
-        BookmarkListAdapter(activity, R.layout.list_item_bookmark)
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BookmarkFavoriteModel.BOOKMARK_COUNT_PER_PAGE)
     }
 
     lateinit private var mCompositeSubscription: CompositeSubscription
