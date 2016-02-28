@@ -1,110 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
+<me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/margin_outline">
 
-        <import type="android.view.View" />
-
-        <import type="me.rei_m.hbfavmaterial.utils.DataBindingUtil" />
-
-        <variable
-            name="entryEntity"
-            type="me.rei_m.hbfavmaterial.entities.EntryEntity" />
-    </data>
-
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/list_item_entry_layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/margin_outline">
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin"
+        android:paddingTop="@dimen/margin_outline">
 
-        <LinearLayout
-            android:id="@+id/list_item_entry_layout_header"
-            android:layout_width="match_parent"
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/list_item_entry_text_article_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/margin"
-            android:paddingTop="@dimen/margin_outline">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/list_item_entry_text_article_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_outline"
-                android:layout_marginStart="@dimen/margin_outline"
-                android:layout_weight="1"
-                android:text="@{entryEntity.articleEntity.title}"
-                android:textColor="@color/colorPrimaryDark"
-                app:marginRightWithLeftImage="@{entryEntity.articleEntity.bodyImageUrl}" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/list_item_entry_image_body"
-                android:layout_width="@dimen/image_size_article"
-                android:layout_height="@dimen/image_size_article"
-                android:layout_marginEnd="@dimen/margin_outline"
-                android:layout_marginLeft="@dimen/margin_half"
-                android:layout_marginRight="@dimen/margin_outline"
-                android:layout_marginStart="@dimen/margin_half"
-                android:visibility="@{entryEntity.articleEntity.bodyImageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
-                app:imageUrl="@{entryEntity.articleEntity.bodyImageUrl}" />
-        </LinearLayout>
+            android:layout_marginLeft="@dimen/margin_outline"
+            android:layout_marginStart="@dimen/margin_outline"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimaryDark" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/list_item_entry_image_article_icon"
-            android:layout_width="@dimen/icon_size_article"
-            android:layout_height="@dimen/icon_size_article"
-            android:layout_below="@id/list_item_entry_layout_header"
-            android:layout_marginEnd="@dimen/margin_half"
-            android:layout_marginLeft="@dimen/margin_outline"
-            android:layout_marginRight="@dimen/margin_half"
-            android:layout_marginStart="@dimen/margin_outline"
-            app:roundImageUrl="@{entryEntity.articleEntity.iconUrl}" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_entry_text_article_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_entry_layout_header"
+            android:id="@+id/list_item_entry_image_body"
+            android:layout_width="@dimen/image_size_article"
+            android:layout_height="@dimen/image_size_article"
             android:layout_marginEnd="@dimen/margin_outline"
+            android:layout_marginLeft="@dimen/margin_half"
             android:layout_marginRight="@dimen/margin_outline"
-            android:layout_toEndOf="@id/list_item_entry_image_article_icon"
-            android:layout_toRightOf="@id/list_item_entry_image_article_icon"
-            android:text="@{entryEntity.articleEntity.url}"
-            android:textSize="@dimen/text_size_caption" />
+            android:layout_marginStart="@dimen/margin_half" />
+    </LinearLayout>
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_entry_text_entry_footer_user_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_entry_text_article_url"
-            android:layout_marginTop="@dimen/margin_half"
-            android:layout_toEndOf="@id/list_item_entry_image_article_icon"
-            android:layout_toRightOf="@id/list_item_entry_image_article_icon"
-            android:text="@{entryEntity.articleEntity.bookmarkCount + &quot; users&quot;}"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="@dimen/text_size_caption" />
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/list_item_entry_image_article_icon"
+        android:layout_width="@dimen/icon_size_article"
+        android:layout_height="@dimen/icon_size_article"
+        android:layout_below="@id/list_item_entry_layout_header"
+        android:layout_marginEnd="@dimen/margin_half"
+        android:layout_marginLeft="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_half"
+        android:layout_marginStart="@dimen/margin_outline" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_entry_text_entry_footer_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_entry_text_article_url"
-            android:layout_marginTop="@dimen/margin_half"
-            android:layout_toEndOf="@id/list_item_entry_text_entry_footer_user_count"
-            android:layout_toRightOf="@id/list_item_entry_text_entry_footer_user_count"
-            android:text="@{&quot; - &quot; + entryEntity.subject + &quot; - &quot;}"
-            android:textSize="@dimen/text_size_caption" />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_article_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_layout_header"
+        android:layout_marginEnd="@dimen/margin_outline"
+        android:layout_marginRight="@dimen/margin_outline"
+        android:layout_toEndOf="@id/list_item_entry_image_article_icon"
+        android:layout_toRightOf="@id/list_item_entry_image_article_icon"
+        android:textSize="@dimen/text_size_caption" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/list_item_entry_text_entry_footer_timing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_entry_text_article_url"
-            android:layout_marginTop="@dimen/margin_half"
-            android:layout_toEndOf="@id/list_item_entry_text_entry_footer_category"
-            android:layout_toRightOf="@id/list_item_entry_text_entry_footer_category"
-            android:text="@{DataBindingUtil.getPastTimeString(entryEntity.date)}"
-            android:textSize="@dimen/text_size_caption" />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_entry_footer_user_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_text_article_url"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/list_item_entry_image_article_icon"
+        android:layout_toRightOf="@id/list_item_entry_image_article_icon"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/text_size_caption" />
 
-    </RelativeLayout>
-</layout>
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_entry_footer_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_text_article_url"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/list_item_entry_text_entry_footer_user_count"
+        android:layout_toRightOf="@id/list_item_entry_text_entry_footer_user_count"
+        android:textSize="@dimen/text_size_caption" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/list_item_entry_text_entry_footer_timing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_entry_text_article_url"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_toEndOf="@id/list_item_entry_text_entry_footer_category"
+        android:layout_toRightOf="@id/list_item_entry_text_entry_footer_category"
+        android:textSize="@dimen/text_size_caption" />
+
+</me.rei_m.hbfavmaterial.views.widgets.list.EntryItemLayout>

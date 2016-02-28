@@ -44,11 +44,10 @@ class EntryApi {
             val response = HttpClient.instance.newCall(request).execute()
             if (response.code() == HttpURLConnection.HTTP_OK) {
                 t.onNext(Gson().fromJson(response.body().string(), Response::class.java))
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(response.code()))
             }
-
-            t.onCompleted()
         }
     }
 }

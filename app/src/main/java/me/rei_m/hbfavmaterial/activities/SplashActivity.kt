@@ -1,13 +1,13 @@
 package me.rei_m.hbfavmaterial.activities
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.ActivityBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.InitializeFragment
@@ -19,9 +19,10 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityBinding>(this, R.layout.activity)
-        setSupportActionBar(binding.toolbar)
-        binding.fab.hide()
+        setContentView(R.layout.activity)
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        findViewById(R.id.fab).hide()
         if (savedInstanceState == null) {
             setFragment(InitializeFragment.newInstance())
         }

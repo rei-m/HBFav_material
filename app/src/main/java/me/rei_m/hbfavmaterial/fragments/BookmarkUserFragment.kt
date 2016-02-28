@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +10,11 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.FragmentListBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.BookmarkUserLoadedEvent
@@ -46,13 +46,15 @@ class BookmarkUserFragment : Fragment() {
     @Inject
     lateinit var userModel: UserModel
 
+    private val mListAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BookmarkUserModel.BOOKMARK_COUNT_PER_PAGE)
+    }
+
     lateinit private var mUserId: String
 
-    lateinit private var mListAdapter: BookmarkListAdapter
+    private var mIsOwner: Boolean = true
 
     lateinit private var mCompositeSubscription: CompositeSubscription
-
-    private var mIsOwner: Boolean = true
 
     companion object {
 
@@ -93,27 +95,29 @@ class BookmarkUserFragment : Fragment() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        mListAdapter = BookmarkListAdapter(activity, R.layout.list_item_bookmark)
         mIsOwner = arguments.getBoolean(ARG_OWNER_FLAG)
         mUserId = if (mIsOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = FragmentListBinding.inflate(inflater, container, false)
+        val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
-        val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-        binding.fragmentListList.addFooterView(footerView, null, false)
-        footerView.hide()
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
-        binding.fragmentListList.setOnScrollListener(object : AbsListView.OnScrollListener {
+        with(View.inflate(context, R.layout.list_fotter_loading, null)) {
+            listView.addFooterView(this, null, false)
+            hide()
+        }
+
+        listView.setOnScrollListener(object : AbsListView.OnScrollListener {
 
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     val bookmarkUserModel = getBookmarkModel()
                     // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
-                    if (!bookmarkUserModel.isBusy && 0 < binding.fragmentListList.footerViewsCount) {
+                    if (!bookmarkUserModel.isBusy && 0 < listView.footerViewsCount) {
                         bookmarkUserModel.fetch(mUserId, mListAdapter.nextIndex)
                     }
                 }
@@ -124,27 +128,33 @@ class BookmarkUserFragment : Fragment() {
             }
         })
 
-        binding.fragmentListList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
             EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
         }
 
-        binding.fragmentListList.adapter = mListAdapter
+        listView.adapter = mListAdapter
 
-        binding.fragmentListRefresh.setColorSchemeResources(R.color.pull_to_refresh_1,
-                R.color.pull_to_refresh_2,
-                R.color.pull_to_refresh_3)
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
+            setColorSchemeResources(R.color.pull_to_refresh_1,
+                    R.color.pull_to_refresh_2,
+                    R.color.pull_to_refresh_3)
+        }
 
-        binding.fragmentListViewEmpty.text = getString(R.string.message_text_empty_bookmark_user)
+        with(view.findViewById(R.id.fragment_list_view_empty) as TextView) {
+            text = getString(R.string.message_text_empty_bookmark_user)
+        }
 
-        return binding.root
+        return view
     }
 
     override fun onResume() {
         super.onResume()
         EventBusHolder.EVENT_BUS.register(this)
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        val view = view ?: return
+
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
         val bookmarkUserModel = getBookmarkModel()
 
@@ -157,26 +167,27 @@ class BookmarkUserFragment : Fragment() {
             if (displayedCount != bookmarkUserModel.bookmarkList.size) {
                 // 表示済の件数とModel内で保持している件数をチェックし、
                 // 差分があれば未表示のブックマークがあるのでリストに表示する
-                displayListContents(binding.fragmentListList)
-                binding.fragmentListProgressList.hide()
+                displayListContents(listView)
+                view.findViewById(R.id.fragment_list_progress_list).hide()
             } else if (displayedCount === 0) {
                 // 1件も表示していなければブックマーク情報をRSSから取得する
                 bookmarkUserModel.fetch(mUserId)
-                binding.fragmentListProgressList.show()
+                view.findViewById(R.id.fragment_list_progress_list).show()
             }
         } else {
 
             // Model内の情報と表示対象のユーザーIDが異なる場合は
             // 他人のブックマークを表示するので1件目から再取得する
             bookmarkUserModel.fetch(mUserId)
-            binding.fragmentListProgressList.show()
+            view.findViewById(R.id.fragment_list_progress_list).show()
         }
 
-        binding.fragmentListViewEmpty.hide()
+        view.findViewById(R.id.fragment_list_view_empty).hide()
 
         // Pull to refreshのイベントをセット
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(binding.fragmentListRefresh).subscribe {
+        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
             bookmarkUserModel.fetch(mUserId)
         })
@@ -187,24 +198,30 @@ class BookmarkUserFragment : Fragment() {
         EventBusHolder.EVENT_BUS.unregister(this)
         mCompositeSubscription.unsubscribe()
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        val view = view ?: return
 
         // Pull to Refresh中であれば解除する
-        if (binding.fragmentListRefresh.isRefreshing) {
-            RxSwipeRefreshLayout.refreshing(binding.fragmentListRefresh).call(false)
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
+            if (isRefreshing) {
+                RxSwipeRefreshLayout.refreshing(this).call(false)
+            }
         }
     }
 
     @Subscribe
     fun subscribe(event: ReadAfterFilterChangedEvent) {
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
-        if (binding.fragmentListList.footerViewsCount == 0) {
-            val footerView = View.inflate(context, R.layout.list_fotter_loading, null)
-            binding.fragmentListList.addFooterView(footerView, null, false)
-            footerView.hide()
+        val view = view ?: return
+
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+
+        if (listView.footerViewsCount == 0) {
+            with(View.inflate(context, R.layout.list_fotter_loading, null)) {
+                listView.addFooterView(this, null, false)
+                hide()
+            }
         }
-        bookmarkUserModelForSelf.fetch(mUserId, event.type)
+        bookmarkUserModelForSelf.fetch(mUserId, event.filter)
     }
 
     /**
@@ -213,18 +230,21 @@ class BookmarkUserFragment : Fragment() {
     @Subscribe
     fun subscribe(event: BookmarkUserLoadedEvent) {
 
-        val binding = DataBindingUtil.getBinding<FragmentListBinding>(view)
+        val view = view ?: return
+
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
         when (event.status) {
             LoadedEventStatus.OK -> {
                 // 正常に完了した場合、リストに追加して表示を更新
-                displayListContents(binding.fragmentListList)
+                displayListContents(listView)
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 読込結果がなかった場合はFooterViewを非表示にする
-                if (0 < binding.fragmentListList.footerViewsCount) {
-                    val footerView = binding.root.findViewById(R.id.list_footer_loading_layout)
-                    binding.fragmentListList.removeFooterView(footerView)
+                if (0 < listView.footerViewsCount) {
+                    with(view.findViewById(R.id.list_footer_loading_layout)) {
+                        listView.removeFooterView(this)
+                    }
                 }
             }
             LoadedEventStatus.ERROR -> {
@@ -237,14 +257,16 @@ class BookmarkUserFragment : Fragment() {
         }
 
         // リストが空の場合はEmptyViewを表示する
-        binding.fragmentListViewEmpty.toggle(mListAdapter.isEmpty)
+        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
 
         // プログレスを非表示にする
-        binding.fragmentListProgressList.hide()
+        view.findViewById(R.id.fragment_list_progress_list).hide()
 
         // Pull to refresh中だった場合は解除する
-        if (binding.fragmentListRefresh.isRefreshing) {
-            RxSwipeRefreshLayout.refreshing(binding.fragmentListRefresh).call(false)
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
+            if (isRefreshing) {
+                RxSwipeRefreshLayout.refreshing(this).call(false)
+            }
         }
     }
 

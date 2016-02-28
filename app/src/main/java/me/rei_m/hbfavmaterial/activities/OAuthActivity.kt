@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthAccessTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthRequestTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
@@ -24,7 +26,9 @@ class OAuthActivity : BaseActivity() {
     @Inject
     lateinit var hatenaModel: HatenaModel
 
-    lateinit var mWebView: WebView
+    private val mWebView: WebView by lazy {
+        WebView(this)
+    }
 
     companion object {
 
@@ -40,7 +44,6 @@ class OAuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         App.graph.inject(this)
 
-        mWebView = WebView(this)
         mWebView.apply {
             clearCache(true)
             settings.javaScriptEnabled = true
@@ -69,8 +72,10 @@ class OAuthActivity : BaseActivity() {
             })
         }
 
-        binding.content.addView(mWebView)
-        binding.fab.hide()
+        with(findViewById(R.id.content) as FrameLayout) {
+            addView(mWebView)
+        }
+        findViewById(R.id.fab).hide()
     }
 
     override fun onResume() {
@@ -85,7 +90,7 @@ class OAuthActivity : BaseActivity() {
                 mWebView.loadUrl(event.authUrl)
             }
             else -> {
-                showSnackbarNetworkError(binding.activityLayout)
+                showSnackbarNetworkError(findViewById(R.id.activity_layout))
             }
         }
     }

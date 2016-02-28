@@ -1,10 +1,12 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.app.ProgressDialog
-import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatButton
+import android.support.v7.widget.AppCompatEditText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,6 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.FragmentInitializeBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -47,18 +48,22 @@ class InitializeFragment : Fragment(), IProgressDialog {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding = FragmentInitializeBinding.inflate(inflater, container, false)
+        val view = inflater.inflate(R.layout.fragment_initialize, container, false)
 
-        mSubscription = RxTextView.textChanges(binding.fragmentInitializeEditHatenaId)
+        val editId = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as AppCompatEditText
+
+        val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
+
+        mSubscription = RxTextView.textChanges(editId)
                 .map { v -> 0 < v.length }
-                .subscribe { isEnabled -> binding.fragmentInitializeButtonSetHatenaId.isEnabled = isEnabled }
+                .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled }
 
-        binding.fragmentInitializeButtonSetHatenaId.setOnClickListener { v ->
-            userModel.checkAndSaveUserId(getAppContext(), binding.fragmentInitializeEditHatenaId.editableText.toString())
+        buttonSetId.setOnClickListener {
+            userModel.checkAndSaveUserId(getAppContext(), editId.editableText.toString())
             showProgressDialog(activity)
         }
 
-        return binding.root
+        return view
     }
 
     override fun onDestroyView() {
@@ -86,14 +91,18 @@ class InitializeFragment : Fragment(), IProgressDialog {
 
         closeProgressDialog()
 
+        val view = view ?: return
+
         when (event.type) {
             UserIdCheckedEvent.Companion.Type.OK -> {
                 // 何もしない。Activity側に処理を委ねる
             }
 
             UserIdCheckedEvent.Companion.Type.NG -> {
-                val binding = DataBindingUtil.getBinding<FragmentInitializeBinding>(view)
-                binding.fragmentInitializeLayoutHatenaId.error = getString(R.string.message_error_input_user_id)
+                with(view.findViewById(R.id.fragment_initialize_layout_hatena_id)) {
+                    this as TextInputLayout
+                    error = getString(R.string.message_error_input_user_id)
+                }
             }
 
             UserIdCheckedEvent.Companion.Type.ERROR -> {

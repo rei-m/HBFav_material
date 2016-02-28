@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.network
 
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.ReadAfterType
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.Request
@@ -13,7 +13,7 @@ import java.net.HttpURLConnection
  */
 class BookmarkOwnRss {
 
-    fun request(userId: String, readAfterType: ReadAfterType, startIndex: Int = 0): Observable<String> {
+    fun request(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Observable<String> {
 
         return Observable.create { t ->
 
@@ -24,7 +24,7 @@ class BookmarkOwnRss {
                     .addPathSegment("rss")
                     .addQueryParameter("of", startIndex.toString())
 
-            if (readAfterType == ReadAfterType.AFTER_READ) {
+            if (readAfterFilter == ReadAfterFilter.AFTER_READ) {
                 builder.addQueryParameter("tag", "あとで読む")
             }
 
@@ -36,11 +36,10 @@ class BookmarkOwnRss {
             val response = HttpClient.instance.newCall(request).execute()
             if (response.code() == HttpURLConnection.HTTP_OK) {
                 t.onNext(response.body().string())
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(response.code()))
             }
-
-            t.onCompleted()
         }
     }
 }

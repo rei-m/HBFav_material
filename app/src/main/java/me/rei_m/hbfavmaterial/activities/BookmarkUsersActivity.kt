@@ -8,19 +8,22 @@ import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.enums.FilterItemI
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
+import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.FilterType
 
 class BookmarkUsersActivity : BaseActivity() {
 
-    lateinit private var mBookmarkEntity: BookmarkEntity
+    private val mBookmarkEntity: BookmarkEntity by lazy {
+        intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
+    }
 
-    private var mFilterType: FilterType = FilterType.ALL
+    private var mCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
 
     companion object {
 
@@ -37,26 +40,24 @@ class BookmarkUsersActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-
         if (savedInstanceState == null) {
             setFragment(BookmarkUsersFragment.newInstance(mBookmarkEntity))
         }
 
-        displayTitle(mFilterType)
+        displayTitle(mCommentFilter)
 
-        binding.fab.hide()
+        findViewById(R.id.fab).hide()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         val filterType = savedInstanceState?.getSerializable(KEY_FILTER_TYPE)
-        mFilterType = filterType?.let { it as FilterType } ?: FilterType.ALL
+        mCommentFilter = filterType?.let { it as BookmarkCommentFilter } ?: BookmarkCommentFilter.ALL
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(KEY_FILTER_TYPE, mFilterType)
+        outState?.putSerializable(KEY_FILTER_TYPE, mCommentFilter)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,20 +67,18 @@ class BookmarkUsersActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        val id = item?.itemId;
+        item ?: return false
 
-        when (id) {
-            R.id.menu_filter_users_all ->
-                mFilterType = FilterType.ALL
-            R.id.menu_filter_users_comment ->
-                mFilterType = FilterType.COMMENT
-            else ->
-                return super.onOptionsItemSelected(item)
+        val id = item.itemId;
+
+        if (id == android.R.id.home) {
+            return super.onOptionsItemSelected(item)
         }
+        mCommentFilter = FilterItemI.forMenuId(id) as BookmarkCommentFilter
 
-        EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mFilterType))
+        EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mCommentFilter))
 
-        displayTitle(mFilterType)
+        displayTitle(mCommentFilter)
 
         return true
     }
@@ -89,9 +88,8 @@ class BookmarkUsersActivity : BaseActivity() {
         startActivity(OthersBookmarkActivity.createIntent(this, event.bookmarkEntity.creator))
     }
 
-    private fun displayTitle(filterType: FilterType) {
+    private fun displayTitle(commentFilter: BookmarkCommentFilter) {
         val bookmarkCountString = mBookmarkEntity.articleEntity.bookmarkCount.toString()
-        val filterTypeString = BookmarkUtil.getFilterTypeString(applicationContext, filterType)
-        supportActionBar?.title = "$bookmarkCountString users - $filterTypeString"
+        supportActionBar?.title = "$bookmarkCountString users - ${commentFilter.title(applicationContext)}"
     }
 }

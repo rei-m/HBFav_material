@@ -2,11 +2,11 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.databinding.FragmentExplainAppBinding
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -26,27 +26,30 @@ class ExplainAppFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val binding = FragmentExplainAppBinding.inflate(inflater, container, false)
+        val view = inflater.inflate(R.layout.fragment_explain_app, container, false)
 
-        binding.fragmentExplainAppLayoutReview.setOnClickListener { v ->
+        view.findViewById(R.id.fragment_explain_app_layout_review).setOnClickListener {
             getAppContext().openUrl(getString(R.string.url_review))
         }
 
-        binding.fragmentExplainAppLayoutOpinion.setOnClickListener { v ->
+        view.findViewById(R.id.fragment_explain_app_layout_opinion).setOnClickListener {
             getAppContext().openUrl(getString(R.string.url_opinion))
         }
 
-        binding.fragmentExplainAppLayoutFromDeveloper.setOnClickListener { v ->
+        view.findViewById(R.id.fragment_explain_app_layout_from_developer).setOnClickListener {
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.FROM_DEVELOPER))
         }
 
-        binding.fragmentExplainAppLayoutCredit.setOnClickListener { v ->
+        view.findViewById(R.id.fragment_explain_app_layout_credit).setOnClickListener {
             EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
         }
 
         val versionName = AppUtil.getVersionName(activity.applicationContext)
-        binding.fragmentExplainAppTextVersion.text = "${getString(R.string.text_version)} : $versionName"
+        with(view.findViewById(R.id.fragment_explain_app_text_version)) {
+            this as AppCompatTextView
+            text = "${getString(R.string.text_version)} : $versionName"
+        }
 
-        return binding.root
+        return view
     }
 }

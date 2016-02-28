@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.utils
 
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil.Companion.EntryType
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,22 +14,22 @@ class ApiUtil private constructor() {
             return dateFormat.parse(dateString)
         }
 
-        fun getEntryTypeRss(entryType: EntryType): String = when (entryType) {
-            EntryType.WORLD ->
+        fun getEntryTypeRss(entryTypeFilter: EntryTypeFilter): String = when (entryTypeFilter) {
+            EntryTypeFilter.WORLD ->
                 "social.rss"
-            EntryType.POLITICS_AND_ECONOMY ->
+            EntryTypeFilter.POLITICS_AND_ECONOMY ->
                 "economics.rss"
-            EntryType.LIFE ->
+            EntryTypeFilter.LIFE ->
                 "life.rss"
-            EntryType.ENTERTAINMENT ->
+            EntryTypeFilter.ENTERTAINMENT ->
                 "entertainment.rss"
-            EntryType.STUDY ->
+            EntryTypeFilter.STUDY ->
                 "knowledge.rss"
-            EntryType.TECHNOLOGY ->
+            EntryTypeFilter.TECHNOLOGY ->
                 "it.rss"
-            EntryType.ANIMATION_AND_GAME ->
+            EntryTypeFilter.ANIMATION_AND_GAME ->
                 "game.rss"
-            EntryType.COMEDY ->
+            EntryTypeFilter.COMEDY ->
                 "fun.rss"
             else ->
                 ""

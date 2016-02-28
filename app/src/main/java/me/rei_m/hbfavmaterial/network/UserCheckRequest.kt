@@ -35,13 +35,13 @@ class UserCheckRequest {
                 // 存在しないユーザー = 404として扱う
                 val isFetchedTop = response.body().string().contains("<title>はてなブックマーク</title>")
                 t.onNext(!isFetchedTop)
+                t.onCompleted()
             } else if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 t.onNext(false)
+                t.onCompleted()
             } else {
                 t.onError(HTTPException(response.code()))
             }
-
-            t.onCompleted()
         }
     }
 }

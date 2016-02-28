@@ -6,16 +6,19 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatButton
+import android.support.v7.widget.AppCompatTextView
+import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.SettingActivity
-import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
@@ -83,7 +86,7 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = DialogFragmentEditBookmarkBinding.inflate(inflater, container, false)
+        val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
 
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
         val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)
@@ -103,13 +106,19 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             tags = bookmarkEdit.tags
         }
 
-        binding.dialogFragmentEditBookmarkTextTitle.text = getString(R.string.dialog_title_add_bookmark)
+        val textTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_title) as AppCompatTextView
+        textTitle.text = getString(R.string.dialog_title_add_bookmark)
 
-        binding.dialogFragmentEditBookmarkTextArticleTitle.text = bookmarkTitle
+        with(view.findViewById(R.id.dialog_fragment_edit_bookmark_text_article_title) as AppCompatTextView) {
+            text = bookmarkTitle
+        }
 
+        val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
+
+        val switchOpen = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open) as SwitchCompat
         val textOpen = context.resources.getString(R.string.text_open)
         val textNotOpen = context.resources.getString(R.string.text_not_open)
-        binding.dialogFragmentEditBookmarkSwitchOpen.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchOpen.setOnCheckedChangeListener { buttonView, isChecked ->
             buttonView.text = if (isChecked) {
                 textOpen
             } else {
@@ -117,13 +126,14 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             }
         }
 
-        binding.dialogFragmentEditBookmarkSwitchShareTwitter.let {
+        val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
+        with(switchShareTwitter) {
             if (twitterModel.isAuthorised()) {
-                it.isChecked = twitterModel.isShare
+                isChecked = twitterModel.isShare
             } else {
-                it.isChecked = false
+                isChecked = false
             }
-            it.setOnCheckedChangeListener { buttonView, isChecked ->
+            setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     if (!twitterModel.isAuthorised()) {
                         startActivity(SettingActivity.createIntent(activity))
@@ -136,26 +146,32 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         }
 
         // あとで読むタグが登録済だったらチェックを有効にする
-        binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked = tags.contains(HatenaModel.TAG_READ_AFTER)
+        val switchReadAfter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_read_after) as SwitchCompat
 
-        binding.dialogFragmentEditBookmarkSwitchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
-            binding.dialogFragmentEditBookmarkSwitchOpen.isEnabled = !isChecked
-            binding.dialogFragmentEditBookmarkSwitchShareTwitter.isEnabled = !isChecked
-            binding.dialogFragmentEditBookmarkSwitchReadAfter.isEnabled = !isChecked
-            binding.dialogFragmentEditBookmarkEditBookmark.isEnabled = !isChecked
+        switchReadAfter.isChecked = tags.contains(HatenaModel.TAG_READ_AFTER)
+
+        val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
+
+        switchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
+            switchOpen.isEnabled = !isChecked
+            switchShareTwitter.isEnabled = !isChecked
+            switchReadAfter.isEnabled = !isChecked
+            editBookmark.isEnabled = !isChecked
         }
 
-        binding.dialogFragmentEditBookmarkButtonCancel.setOnClickListener { v ->
+        val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
+        buttonCancel.setOnClickListener { v ->
             dismiss()
         }
 
-        binding.dialogFragmentEditBookmarkButtonOk.setOnClickListener { v ->
-            if (binding.dialogFragmentEditBookmarkSwitchDelete.isChecked) {
+        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
+        buttonOk.setOnClickListener { v ->
+            if (switchDelete.isChecked) {
                 hatenaModel.deleteBookmark(bookmarkUrl)
             } else {
-                val inputtedComment = binding.dialogFragmentEditBookmarkEditBookmark.editableText.toString()
+                val inputtedComment = editBookmark.editableText.toString()
 
-                if (binding.dialogFragmentEditBookmarkSwitchReadAfter.isChecked) {
+                if (switchReadAfter.isChecked) {
                     if (!tags.contains(HatenaModel.TAG_READ_AFTER)) {
                         tags.add(HatenaModel.TAG_READ_AFTER)
                     }
@@ -167,45 +183,47 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
                 hatenaModel.registerBookmark(bookmarkUrl,
                         inputtedComment,
-                        binding.dialogFragmentEditBookmarkSwitchOpen.isChecked,
+                        switchOpen.isChecked,
                         tags)
-                if (binding.dialogFragmentEditBookmarkSwitchShareTwitter.isChecked) {
+                if (switchShareTwitter.isChecked) {
                     twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
                 }
             }
             showProgressDialog(activity)
         }
 
+        val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
+
         val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
 
-        mSubscription = RxTextView.textChanges(binding.dialogFragmentEditBookmarkEditBookmark)
+        mSubscription = RxTextView.textChanges(editBookmark)
                 .map { v ->
                     Math.ceil(v.toString().toByteArray().size / 3.0).toInt()
                 }
                 .subscribe { size ->
-                    binding.dialogFragmentEditBookmarkTextCommentCharCount.let {
+                    textCommentCount.let {
                         it.text = "$size / $commentLength"
                         if (commentLength < size) {
                             it.setTextColor(Color.RED)
-                            binding.dialogFragmentEditBookmarkButtonOk.disable()
+                            buttonOk.disable()
                         } else {
                             it.setTextColor(R.color.text_color_thin)
-                            binding.dialogFragmentEditBookmarkButtonOk.enable()
+                            buttonOk.enable()
                         }
                     }
                 }
 
         if (!isAdd) {
             val bookmark = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEditEntity
-            binding.dialogFragmentEditBookmarkTextTitle.text = resources.getString(R.string.dialog_title_update_bookmark)
-            binding.dialogFragmentEditBookmarkEditBookmark.setText(bookmark.comment)
-            binding.dialogFragmentEditBookmarkSwitchOpen.isChecked = !bookmark.isPrivate
-            binding.dialogFragmentEditBookmarkButtonOk.text = resources.getString(R.string.button_update)
+            textTitle.text = resources.getString(R.string.dialog_title_update_bookmark)
+            editBookmark.setText(bookmark.comment)
+            switchOpen.isChecked = !bookmark.isPrivate
+            buttonOk.text = resources.getString(R.string.button_update)
         } else {
-            binding.dialogFragmentEditBookmarkSwitchDelete.hide()
+            switchDelete.hide()
         }
 
-        return binding.root
+        return view
     }
 
     override fun onDestroyView() {
