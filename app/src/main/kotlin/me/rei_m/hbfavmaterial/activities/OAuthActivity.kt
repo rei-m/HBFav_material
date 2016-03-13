@@ -75,7 +75,7 @@ class OAuthActivity : BaseActivity() {
         with(findViewById(R.id.content) as FrameLayout) {
             addView(mWebView)
         }
-        findViewById(R.id.fab).hide()
+        findViewById(R.id.fab)?.hide()
     }
 
     override fun onResume() {

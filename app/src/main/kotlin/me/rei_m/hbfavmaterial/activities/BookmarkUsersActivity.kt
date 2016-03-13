@@ -46,7 +46,7 @@ class BookmarkUsersActivity : BaseActivity() {
 
         displayTitle(mCommentFilter)
 
-        findViewById(R.id.fab).hide()
+        findViewById(R.id.fab)?.hide()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

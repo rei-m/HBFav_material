@@ -43,6 +43,6 @@ class FrameActivity : BaseActivity() {
                 }
             }
         }
-        findViewById(R.id.fab).hide()
+        findViewById(R.id.fab)?.hide()
     }
 }

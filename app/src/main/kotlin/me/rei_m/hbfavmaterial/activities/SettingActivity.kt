@@ -28,8 +28,8 @@ class SettingActivity : BaseActivityWithDrawer() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        findViewById(R.id.pager).hide()
-        findViewById(R.id.content).show()
+        findViewById(R.id.pager)?.hide()
+        findViewById(R.id.content)?.show()
 
         with(findViewById(R.id.activity_main_nav) as NavigationView) {
             setCheckedItem(R.id.nav_setting)

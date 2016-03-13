@@ -22,7 +22,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-        findViewById(R.id.fab).hide()
+        findViewById(R.id.fab)?.hide()
         if (savedInstanceState == null) {
             setFragment(InitializeFragment.newInstance())
         }
