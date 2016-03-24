@@ -54,7 +54,11 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
             override fun newInstance(): Fragment = NewEntryFragment.newInstance()
 
             override fun toggleMenu(menu: Menu) {
-                menu.hide()
+                with(menu) {
+                    show()
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                }
             }
         };
 
