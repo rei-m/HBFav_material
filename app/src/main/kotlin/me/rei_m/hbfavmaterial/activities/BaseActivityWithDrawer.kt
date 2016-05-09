@@ -43,7 +43,7 @@ abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNa
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
 
-        drawer.setDrawerListener(toggle)
+        drawer.addDrawerListener(toggle)
         toggle.syncState()
 
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
