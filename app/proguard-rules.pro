@@ -78,3 +78,7 @@
 -dontnote org.apache.**
 -dontnote android.**
 -dontnote com.android.**
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
