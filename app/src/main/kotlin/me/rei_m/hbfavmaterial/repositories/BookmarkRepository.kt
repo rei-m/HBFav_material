@@ -37,7 +37,7 @@ open class BookmarkRepository() {
         return adapter.create(HatenaRssService::class.java)
                 .favorite(userId, startIndex)
                 .map { response ->
-                    println(response)
+                    println(response.getList().size)
                     arrayListOf<BookmarkEntity>()
                 }
     }
