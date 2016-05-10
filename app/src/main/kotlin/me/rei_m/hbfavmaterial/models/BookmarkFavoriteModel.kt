@@ -58,6 +58,7 @@ class BookmarkFavoriteModel @Inject constructor(private val bookmarkRepository: 
 
             override fun onError(e: Throwable?) {
                 isBusy = false
+                println(e)
                 EventBusHolder.EVENT_BUS.post(BookmarkFavoriteLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
