@@ -4,10 +4,7 @@ import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
-import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
-import me.rei_m.hbfavmaterial.network.EntryApi
-import me.rei_m.hbfavmaterial.network.HatenaRssService
-import me.rei_m.hbfavmaterial.network.HttpClient
+import me.rei_m.hbfavmaterial.network.*
 import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import retrofit2.Retrofit
@@ -25,9 +22,9 @@ open class BookmarkRepository() {
      * お気に入りのユーザーのブックマーク情報を取得する.
      */
     open fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
-        //        return BookmarkFavoriteRss()
-        //                .request(userId, startIndex)
-        //                .map { response -> parseRssResponse(response) }
+//                return BookmarkFavoriteRss()
+//                        .request(userId, startIndex)
+//                        .map { response -> parseRssResponse(response) }
         val adapter = Retrofit.Builder()
                 .baseUrl("http://b.hatena.ne.jp")
                 .client(HttpClient.instance)
@@ -37,7 +34,13 @@ open class BookmarkRepository() {
         return adapter.create(HatenaRssService::class.java)
                 .favorite(userId, startIndex)
                 .map { response ->
-                    println(response.getList().size)
+                    response.list ?: return@map arrayListOf<BookmarkEntity>()
+                    println(response.list!![0].title)
+                    println(response.list!![0].creator)
+                    println(response.list!![0].dateString)
+                    println(response.list!![0].bookmarkCount)
+                    println(response.list!![0].content)
+
                     arrayListOf<BookmarkEntity>()
                 }
     }
