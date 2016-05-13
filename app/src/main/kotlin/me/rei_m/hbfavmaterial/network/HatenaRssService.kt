@@ -10,4 +10,10 @@ interface HatenaRssService {
 
     @GET("{userId}/favorite.rss")
     fun favorite(@Path("userId") userId: String, @Query("of") startIndex: Int): Observable<HatenaRssXml>
+
+    @GET("{userId}/rss")
+    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int): Observable<HatenaRssXml>
+
+    @GET("{userId}/rss")
+    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int, @Query("tag") tag: String): Observable<HatenaRssXml>
 }
