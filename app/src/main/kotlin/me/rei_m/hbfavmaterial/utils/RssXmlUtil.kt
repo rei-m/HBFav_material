@@ -110,32 +110,36 @@ class RssXmlUtil private constructor() {
                     subject = subject)
         }
 
-        private fun extractProfileIcon(content: Document): String = content
+        fun parseStringToDate(dateString: String): Date {
+            return dateFormat.parse(dateString)
+        }
+
+        fun extractProfileIcon(content: Document): String = content
                 .getElementsByClass("profile-image")
                 .first()
                 .attr("src")
                 .replace("profile_s", "profile", true)
 
-        private fun extractArticleIcon(content: Document): String = content
+        fun extractArticleIcon(content: Document): String = content
                 .getElementsByTag("cite")
                 .first()
                 .getElementsByTag("img")
                 .first()
                 .attr("src")
 
-        private fun extractArticleBodyForBookmark(content: Document): String {
+        fun extractArticleBodyForBookmark(content: Document): String {
             val pTags = content.getElementsByTag("p")
             val bodyIndex = pTags.size - 3
             return pTags.eq(bodyIndex).text()
         }
 
-        private fun extractArticleBodyForEntry(content: Document): String {
+        fun extractArticleBodyForEntry(content: Document): String {
             val pTags = content.getElementsByTag("p")
             val bodyIndex = pTags.size - 2
             return pTags.eq(bodyIndex).text()
         }
 
-        private fun extractArticleImageUrl(content: Document): String {
+        fun extractArticleImageUrl(content: Document): String {
             val articleImageElement = content
                     .getElementsByClass("entry-image")
                     .first()

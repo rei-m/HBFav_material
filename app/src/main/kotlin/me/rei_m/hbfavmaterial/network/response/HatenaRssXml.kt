@@ -7,5 +7,5 @@ import org.simpleframework.xml.Root
 class HatenaRssXml {
     @set:ElementList(inline = true)
     @get:ElementList(inline = true)
-    var list: List<HatenaRssItemXml>? = null
+    var list: List<HatenaRssItemXml> = arrayListOf()
 }
