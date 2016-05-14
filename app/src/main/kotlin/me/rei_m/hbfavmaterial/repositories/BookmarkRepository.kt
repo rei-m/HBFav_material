@@ -1,14 +1,14 @@
 package me.rei_m.hbfavmaterial.repositories
 
-import kotlinx.dom.parseXml
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
-import me.rei_m.hbfavmaterial.network.BookmarkFavoriteRss
-import me.rei_m.hbfavmaterial.network.BookmarkOwnRss
 import me.rei_m.hbfavmaterial.network.EntryApi
+import me.rei_m.hbfavmaterial.network.HatenaRssService
+import me.rei_m.hbfavmaterial.network.RssRetrofit
 import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
+import org.jsoup.Jsoup
 import rx.Observable
 import java.util.*
 
@@ -21,18 +21,58 @@ open class BookmarkRepository() {
      * お気に入りのユーザーのブックマーク情報を取得する.
      */
     open fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
-        return BookmarkFavoriteRss()
-                .request(userId, startIndex)
-                .map { response -> parseRssResponse(response) }
+        return RssRetrofit.newInstance()
+                .create(HatenaRssService::class.java)
+                .favorite(userId, startIndex)
+                .map { response ->
+                    response.list.map {
+                        val parsedContent = Jsoup.parse(it.content)
+                        val articleEntity = ArticleEntity(
+                                title = it.title,
+                                url = it.link,
+                                bookmarkCount = it.bookmarkCount,
+                                iconUrl = RssXmlUtil.extractArticleIcon(parsedContent),
+                                body = RssXmlUtil.extractArticleBodyForBookmark(parsedContent),
+                                bodyImageUrl = RssXmlUtil.extractArticleImageUrl(parsedContent))
+                        BookmarkEntity(
+                                articleEntity = articleEntity,
+                                description = it.description,
+                                creator = it.creator,
+                                date = RssXmlUtil.parseStringToDate(it.dateString),
+                                bookmarkIconUrl = RssXmlUtil.extractProfileIcon(parsedContent))
+                    }
+                }
     }
 
     /**
      * ユーザーのブックマーク情報を取得する.
      */
     open fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
-        return BookmarkOwnRss()
-                .request(userId, readAfterFilter, startIndex)
-                .map { response -> parseRssResponse(response) }
+
+        val rss = if (readAfterFilter == ReadAfterFilter.AFTER_READ) {
+            RssRetrofit.newInstance().create(HatenaRssService::class.java).user(userId, startIndex, "あとで読む")
+        } else {
+            RssRetrofit.newInstance().create(HatenaRssService::class.java).user(userId, startIndex)
+        }
+
+        return rss.map { response ->
+            response.list.map {
+                val parsedContent = Jsoup.parse(it.content)
+                val articleEntity = ArticleEntity(
+                        title = it.title,
+                        url = it.link,
+                        bookmarkCount = it.bookmarkCount,
+                        iconUrl = RssXmlUtil.extractArticleIcon(parsedContent),
+                        body = RssXmlUtil.extractArticleBodyForBookmark(parsedContent),
+                        bodyImageUrl = RssXmlUtil.extractArticleImageUrl(parsedContent))
+                BookmarkEntity(
+                        articleEntity = articleEntity,
+                        description = it.description,
+                        creator = it.creator,
+                        date = RssXmlUtil.parseStringToDate(it.dateString),
+                        bookmarkIconUrl = RssXmlUtil.extractProfileIcon(parsedContent))
+            }
+        }
     }
 
     /**
@@ -62,19 +102,5 @@ open class BookmarkRepository() {
                         }
                     }
                 }
-    }
-
-    /**
-     * RSSのレスポンスをパースしてブックマーク情報に変換する.
-     */
-    private fun parseRssResponse(response: String): List<BookmarkEntity> {
-        return ArrayList<BookmarkEntity>().apply {
-            val document = parseXml(response.byteInputStream())
-            val feeds = document.getElementsByTagName("item")
-            val feedCount = feeds.length
-            for (i_feed in 0..feedCount - 1) {
-                add(RssXmlUtil.createBookmarkFromFeed(feeds.item(i_feed)))
-            }
-        }
     }
 }
