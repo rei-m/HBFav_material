@@ -50,6 +50,7 @@ class HotEntryModel @Inject constructor(private val entryRepository: EntryReposi
 
             override fun onError(e: Throwable?) {
                 isBusy = false
+                println(e)
                 EventBusHolder.EVENT_BUS.post(HotEntryLoadedEvent(LoadedEventStatus.ERROR))
             }
         }

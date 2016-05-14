@@ -48,6 +48,7 @@ open class BookmarkRepository() {
      * ユーザーのブックマーク情報を取得する.
      */
     open fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Observable<List<BookmarkEntity>> {
+
         val rss = if (readAfterFilter == ReadAfterFilter.AFTER_READ) {
             RssRetrofit.newInstance().create(HatenaRssService::class.java).user(userId, startIndex, "あとで読む")
         } else {

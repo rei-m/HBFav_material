@@ -4,8 +4,8 @@ import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 
 @Root(name = "rdf:RDF", strict = false)
-class HatenaRssXml {
+class EntryRssXml {
     @set:ElementList(inline = true)
     @get:ElementList(inline = true)
-    var list: List<HatenaRssItemXml> = arrayListOf()
+    var list: List<EntryRssItemXml> = arrayListOf()
 }

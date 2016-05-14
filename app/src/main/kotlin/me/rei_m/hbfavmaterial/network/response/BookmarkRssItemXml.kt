@@ -5,7 +5,7 @@ import org.simpleframework.xml.Path
 import org.simpleframework.xml.Root
 
 @Root(name = "item", strict = false)
-class HatenaRssItemXml {
+class BookmarkRssItemXml {
 
     @set:Element
     @get:Element
