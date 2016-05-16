@@ -100,6 +100,7 @@ dependencies {
         exclude module: 'stax-api'
         exclude module: 'xpp3'
     }
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'org.jsoup:jsoup:1.9.1'
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'

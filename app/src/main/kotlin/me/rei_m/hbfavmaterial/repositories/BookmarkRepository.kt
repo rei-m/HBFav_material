@@ -3,7 +3,8 @@ package me.rei_m.hbfavmaterial.repositories
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
-import me.rei_m.hbfavmaterial.network.EntryApi
+import me.rei_m.hbfavmaterial.network.ApiRetrofit
+import me.rei_m.hbfavmaterial.network.HatenaApiService
 import me.rei_m.hbfavmaterial.network.HatenaRssService
 import me.rei_m.hbfavmaterial.network.RssRetrofit
 import me.rei_m.hbfavmaterial.utils.ApiUtil
@@ -79,9 +80,14 @@ open class BookmarkRepository() {
      * URLをキーにブックマーク情報を取得する.
      */
     open fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>> {
-        return EntryApi()
-                .request(articleUrl)
+        return ApiRetrofit.newInstance()
+                .create(HatenaApiService::class.java)
+                .entry(articleUrl)
                 .map { response ->
+
+                    println(response.count)
+                    println(response.bookmarks)
+
                     return@map ArrayList<BookmarkEntity>().apply {
                         response.bookmarks.forEach { v ->
                             val articleEntity = ArticleEntity(
