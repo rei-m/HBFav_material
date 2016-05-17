@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.network.HatenaApiService
-import me.rei_m.hbfavmaterial.network.RequestRetrofit
+import me.rei_m.hbfavmaterial.network.RetrofitManager
 import rx.Observable
 
 open class UserRepository {
@@ -47,7 +47,7 @@ open class UserRepository {
      * ユーザーIDの有効性をチェックする.
      */
     open fun checkId(id: String): Observable<Boolean> {
-        return RequestRetrofit.newInstance().create(HatenaApiService::class.java).userCheck(id)
+        return RetrofitManager.scalar.create(HatenaApiService::class.java).userCheck(id)
                 .map {
                     // 原因はわからないがカンマ等の記号が入っている場合にTopページを取得しているケースがある
                     // 基本的には入力時に弾く予定だが、Modelの仕様としては考慮してトップページが返ってきたら
