@@ -54,8 +54,6 @@ open class UserRepository {
                     // 存在しないユーザー = 404として扱う
                     return@map !it.contains("<title>はてなブックマーク</title>")
                 }
-
-//        return UserCheckRequest().request(id)
     }
 
     /**
