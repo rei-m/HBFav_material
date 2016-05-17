@@ -147,7 +147,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             }
 
             // RequestHeaderに設定するためPostデータのLengthを取得
-            var contentLength = sb.toString().toByteArray(charset(CHARSET)).size
+            val contentLength = sb.toString().toByteArray(charset(CHARSET)).size
 
             // Postデータにフッタ追加
             sb.append("$TWO_HYPHEN$BOUNDARY$TWO_HYPHEN$EOL")
