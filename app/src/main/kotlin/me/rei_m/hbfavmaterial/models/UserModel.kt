@@ -6,9 +6,11 @@ import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.repositories.UserRepository
+import retrofit2.adapter.rxjava.HttpException
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.net.HttpURLConnection
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,6 +69,12 @@ class UserModel @Inject constructor(@ForApplication context: Context, private va
 
             override fun onError(e: Throwable?) {
                 isBusy = false
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.NG))
+                        return
+                    }
+                }
                 EventBusHolder.EVENT_BUS.post(UserIdCheckedEvent(UserIdCheckedEvent.Companion.Type.ERROR))
             }
         }
