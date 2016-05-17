@@ -4,7 +4,7 @@ import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.network.HatenaRssService
-import me.rei_m.hbfavmaterial.network.RssRetrofit
+import me.rei_m.hbfavmaterial.network.RetrofitManager
 import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import org.jsoup.Jsoup
@@ -21,9 +21,9 @@ open class EntryRepository {
     open fun findByEntryTypeForHot(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
 
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL)
-            RssRetrofit.newInstance(baseUrl = RssRetrofit.BASE_URL_HOT_ENTRY_NO_TYPE).create(HatenaRssService::class.java).hotentry()
+            RetrofitManager.xmlForHotEntryAll.create(HatenaRssService::class.java).hotentry()
         else
-            RssRetrofit.newInstance().create(HatenaRssService::class.java).hotentry(ApiUtil.getEntryTypeRss(entryTypeFilter))
+            RetrofitManager.xml.create(HatenaRssService::class.java).hotentry(ApiUtil.getEntryTypeRss(entryTypeFilter))
 
         return rss.map { response ->
             response.list.map {
@@ -50,9 +50,9 @@ open class EntryRepository {
     open fun findByEntryTypeForNew(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
 
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL)
-            RssRetrofit.newInstance().create(HatenaRssService::class.java).new()
+            RetrofitManager.xml.create(HatenaRssService::class.java).new()
         else
-            RssRetrofit.newInstance().create(HatenaRssService::class.java).new(ApiUtil.getEntryTypeRss(entryTypeFilter))
+            RetrofitManager.xml.create(HatenaRssService::class.java).new(ApiUtil.getEntryTypeRss(entryTypeFilter))
 
         return rss.map { response ->
             response.list.map {
