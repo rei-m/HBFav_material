@@ -6,6 +6,7 @@ import retrofit2.http.Query
 import rx.Observable
 
 interface HatenaApiService {
+
     @GET("entry/jsonlite/")
     fun entry(@Query("url") entryUrl: String): Observable<BookmarkEntryResponse>
 }

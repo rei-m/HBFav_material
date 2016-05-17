@@ -84,10 +84,6 @@ open class BookmarkRepository() {
                 .create(HatenaApiService::class.java)
                 .entry(articleUrl)
                 .map { response ->
-
-                    println(response.count)
-                    println(response.bookmarks)
-
                     return@map ArrayList<BookmarkEntity>().apply {
                         response.bookmarks.forEach { v ->
                             val articleEntity = ArticleEntity(

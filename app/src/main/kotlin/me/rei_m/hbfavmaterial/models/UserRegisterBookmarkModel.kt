@@ -58,7 +58,6 @@ class UserRegisterBookmarkModel @Inject constructor(private val bookmarkReposito
 
             override fun onError(e: Throwable?) {
                 isBusy = false
-                println(e)
                 EventBusHolder.EVENT_BUS.post(UserRegisterBookmarkLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
