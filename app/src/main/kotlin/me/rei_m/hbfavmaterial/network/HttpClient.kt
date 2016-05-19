@@ -13,8 +13,7 @@ object HttpClient {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
 
-        instance = OkHttpClient
-                .Builder()
+        instance = HttpClientBuilder.instance.newBuilder()
                 .addInterceptor { chain ->
                     val original = chain.request()
                     val requestBuilder = original.newBuilder()

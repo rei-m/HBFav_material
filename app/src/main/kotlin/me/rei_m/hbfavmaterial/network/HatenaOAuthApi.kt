@@ -23,6 +23,8 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
             ACCESS_TOKEN_ENDPOINT_URL,
             AUTHORIZATION_WEBSITE_URL)
 
+    private val hatenaOAuthManager = HatenaOAuthManager(consumerKey, consumerSecret)
+
     companion object {
 
         val CALLBACK = "https://github.com/rei-m/HBFav_material"
@@ -50,7 +52,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
 
         return Observable.create { t ->
 
-            val authUrl = mOAuthProvider.retrieveRequestToken(mOAuthConsumer, CALLBACK)
+            val authUrl = hatenaOAuthManager.retrieveRequestToken()
 
             if (authUrl != null) {
                 t.onNext(authUrl)
@@ -67,11 +69,11 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     fun requestAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
 
         return Observable.create { t ->
+            
+            hatenaOAuthManager.retrieveAccessToken(requestToken)
 
-            mOAuthProvider.retrieveAccessToken(mOAuthConsumer, requestToken)
-
-            if (mOAuthConsumer.token != null && mOAuthConsumer.tokenSecret != null) {
-                t.onNext(OAuthTokenEntity(mOAuthConsumer.token, mOAuthConsumer.tokenSecret))
+            if (hatenaOAuthManager.hasToken) {
+                t.onNext(OAuthTokenEntity(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret))
                 t.onCompleted()
             } else {
                 t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
