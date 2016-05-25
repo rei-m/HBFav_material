@@ -168,12 +168,13 @@ class HatenaModel {
 
             override fun onError(e: Throwable?) {
                 isBusy = false
-                val error = e as HTTPException
-                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
-                } else {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
-                }
+
+//                val error = e as HTTPException
+//                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
+//                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
+//                } else {
+//                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
+//                }
             }
         }
 

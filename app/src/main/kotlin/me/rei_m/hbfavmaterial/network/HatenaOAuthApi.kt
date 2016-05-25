@@ -69,7 +69,7 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     fun requestAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
 
         return Observable.create { t ->
-            
+
             hatenaOAuthManager.retrieveAccessToken(requestToken)
 
             if (hatenaOAuthManager.hasToken) {
@@ -87,37 +87,12 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
     fun getBookmark(oauthToken: OAuthTokenEntity,
                     urlString: String): Observable<HatenaRestApiBookmarkResponse> {
 
-        mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
+        hatenaOAuthManager.consumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
-        return Observable.create { t ->
+        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
 
-            val url = URL("$BOOKMARK_ENDPOINT_URL?url=$urlString")
-
-            try {
-
-                val connection = url.openConnection() as HttpURLConnection
-
-                mOAuthConsumer.sign(connection)
-
-                connection.connect()
-                try {
-                    when (connection.responseCode) {
-                        HttpURLConnection.HTTP_OK -> {
-                            val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
-                            t.onNext(response)
-                            t.onCompleted()
-                        }
-                        else -> {
-                            t.onError(HTTPException(connection.responseCode))
-                        }
-                    }
-                } finally {
-                    connection.disconnect()
-                }
-            } catch (e: IOException) {
-                t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
-            }
-        }
+        return retrofit.create(HatenaOAuthApiService::class.java)
+                .getBookmark(urlString)
     }
 
     /**
