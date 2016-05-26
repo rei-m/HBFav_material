@@ -91,7 +91,7 @@ open class HatenaRepository {
      * ブックマーク情報を削除する.
      */
     open fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                            urlString: String): Observable<Boolean> {
+                            urlString: String): Observable<Void?> {
         return mHatenaOAuthApi.deleteBookmark(oauthTokenEntity, urlString)
     }
 }

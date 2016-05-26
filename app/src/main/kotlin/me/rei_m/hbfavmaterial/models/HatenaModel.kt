@@ -233,9 +233,9 @@ class HatenaModel {
 
         isBusy = true
 
-        val observer = object : Observer<Boolean> {
+        val observer = object : Observer<Void?> {
 
-            override fun onNext(t: Boolean?) {
+            override fun onNext(t: Void?) {
             }
 
             override fun onCompleted() {
