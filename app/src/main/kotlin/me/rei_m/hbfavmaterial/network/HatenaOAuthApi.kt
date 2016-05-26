@@ -1,13 +1,15 @@
 package me.rei_m.hbfavmaterial.network
 
-import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.network.response.HatenaRestApiBookmarkResponse
 import oauth.signpost.basic.DefaultOAuthConsumer
 import oauth.signpost.basic.DefaultOAuthProvider
 import rx.Observable
-import java.io.*
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -104,64 +106,15 @@ class HatenaOAuthApi(consumerKey: String, consumerSecret: String) {
                      isOpen: Boolean,
                      tags: List<String> = ArrayList<String>()): Observable<HatenaRestApiBookmarkResponse> {
 
-        mOAuthConsumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
+        hatenaOAuthManager.consumer.setTokenWithSecret(oauthToken.token, oauthToken.secretToken)
 
-        return Observable.create { t ->
+        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
 
-            // Content作成開始
-            val sb = StringBuilder()
-
-            sb.append(EOL)
-
-            // multipart/form-dataでパラメータ作成
-            sb.append(createFormDataParameter("url", urlString))
-                    .append(createFormDataParameter("comment", comment))
-                    .append(createFormDataParameter("private", if (isOpen) "0" else "1"))
-
-            // TAGを設定.
-            tags.forEach { tag ->
-                sb.append(createFormDataParameter("tags", tag))
-            }
-
-            // RequestHeaderに設定するためPostデータのLengthを取得
-            val contentLength = sb.toString().toByteArray(charset(CHARSET)).size
-
-            // Postデータにフッタ追加
-            sb.append("$TWO_HYPHEN$BOUNDARY$TWO_HYPHEN$EOL")
-
-
-            try {
-                // コネクション取得
-                val connection = createPostConnection(BOOKMARK_ENDPOINT_URL, contentLength)
-
-                // OAuth認証
-                mOAuthConsumer.sign(connection)
-
-                try {
-                    // Postデータ書き込み
-                    DataOutputStream(connection.outputStream).run {
-                        write(sb.toString().toByteArray(charset(CHARSET)))
-                        flush()
-                        close()
-                    }
-
-                    when (connection.responseCode) {
-                        HttpURLConnection.HTTP_OK -> {
-                            val response = Gson().fromJson(readStream(connection.inputStream), HatenaRestApiBookmarkResponse::class.java)
-                            t.onNext(response)
-                            t.onCompleted()
-                        }
-                        else -> {
-                            t.onError(HTTPException(connection.responseCode))
-                        }
-                    }
-                } finally {
-                    connection.disconnect()
-                }
-            } catch (e: IOException) {
-                t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
-            }
-        }
+        return retrofit.create(HatenaOAuthApiService::class.java)
+                .postBookmark(urlString,
+                        comment,
+                        if (isOpen) "0" else "1",
+                        tags.toTypedArray())
     }
 
     /**
