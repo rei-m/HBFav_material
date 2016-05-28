@@ -47,15 +47,15 @@ class MockHatenaErrorRepository(context: Context) : HatenaRepository(context) {
         }
     }
 
-    override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<Boolean> {
+    override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<Void?> {
         return when (urlString) {
             BOOKMARK_URL_NOT_FOUND -> {
-                Observable.create<Boolean> { t ->
+                Observable.create<Void?> { t ->
                     t.onError(HTTPException(HttpURLConnection.HTTP_NOT_FOUND))
                 }
             }
             else -> {
-                Observable.create<Boolean> { t ->
+                Observable.create<Void?> { t ->
                     t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
                 }
             }

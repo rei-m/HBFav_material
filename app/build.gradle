@@ -32,6 +32,13 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+
+        androidTest {
+            java.srcDirs = ['src/androidTest/kotlin']
+        }
+        test {
+            java.srcDirs = ['src/test/kotlin']
+        }
     }
 
     if (project.hasProperty('storeFile')) {
