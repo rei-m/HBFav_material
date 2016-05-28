@@ -18,14 +18,14 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         private val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
 
+        val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+
         val CALLBACK = "https://github.com/rei-m/HBFav_material"
     }
 
     var consumer = OkHttpOAuthConsumer(consumerKey, consumerSecret)
-
-    val hasToken: Boolean
-        get() = consumer.token != null && consumer.tokenSecret != null
-
+        private set
+    
     fun retrieveRequestToken(): String? {
 
         consumer = OkHttpOAuthConsumer(consumerKey, consumerSecret)
@@ -76,7 +76,7 @@ class HatenaOAuthManager(private val consumerKey: String,
                 .build().toString()
     }
 
-    fun retrieveAccessToken(requestToken: String) {
+    fun retrieveAccessToken(requestToken: String): Boolean {
 
         var oauthToken = consumer.token
 
@@ -107,7 +107,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         if (response.code() != HttpURLConnection.HTTP_OK) {
             consumer.setTokenWithSecret(null, null)
-            return
+            return false
         }
 
         response.body().string().split("&").forEach {
@@ -120,9 +120,10 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         if (oauthToken.isBlank() || oauthTokenSecret.isBlank()) {
             consumer.setTokenWithSecret(null, null)
-            return
+            return false
         }
 
         consumer.setTokenWithSecret(oauthToken, oauthTokenSecret)
+        return true
     }
 }

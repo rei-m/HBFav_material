@@ -5,8 +5,12 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
+import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import me.rei_m.hbfavmaterial.network.HatenaOAuthApiService
+import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
+import me.rei_m.hbfavmaterial.network.RetrofitManager
 import rx.Observable
+import java.net.HttpURLConnection
 import java.util.*
 import javax.inject.Inject
 
@@ -17,17 +21,16 @@ open class HatenaRepository {
     }
 
     /**
-     * HatenaのOAuth認証が必要なAPIにアクセスするモジュール.
+     * HatenaのOAuth認証を管理するモジュール.
      */
-    private val mHatenaOAuthApi: HatenaOAuthApi
+    private val hatenaOAuthManager: HatenaOAuthManager
 
     /**
      * コンストラクタ.
      */
     @Inject
     constructor(@ForApplication context: Context) {
-        // OAuth認証用のキーを作成し、OAuthAPIを作成する.
-        mHatenaOAuthApi = HatenaOAuthApi(context.getString(R.string.api_key_hatena_consumer_key),
+        hatenaOAuthManager = HatenaOAuthManager(context.getString(R.string.api_key_hatena_consumer_key),
                 context.getString(R.string.api_key_hatena_consumer_secret))
     }
 
@@ -35,16 +38,29 @@ open class HatenaRepository {
      * 認証用のRequestTokenを取得する.
      */
     open fun fetchRequestToken(): Observable<String> {
-        return mHatenaOAuthApi
-                .requestRequestToken()
+        return Observable.create { t ->
+            val authUrl = hatenaOAuthManager.retrieveRequestToken()
+            if (authUrl != null) {
+                t.onNext(authUrl)
+                t.onCompleted()
+            } else {
+                t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
+            }
+        }
     }
 
     /**
      * 認証用のAccessTokenを取得する.
      */
     open fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
-        return mHatenaOAuthApi
-                .requestAccessToken(requestToken)
+        return Observable.create { t ->
+            if (hatenaOAuthManager.retrieveAccessToken(requestToken)) {
+                t.onNext(OAuthTokenEntity(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret))
+                t.onCompleted()
+            } else {
+                t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
+            }
+        }
     }
 
     /**
@@ -52,8 +68,13 @@ open class HatenaRepository {
      */
     open fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
                                urlString: String): Observable<BookmarkEditEntity> {
-        return mHatenaOAuthApi
-                .getBookmark(oauthTokenEntity, urlString)
+
+        hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
+
+        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+
+        return retrofit.create(HatenaOAuthApiService::class.java)
+                .getBookmark(urlString)
                 .map {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
@@ -77,7 +98,12 @@ open class HatenaRepository {
             throw IllegalArgumentException("登録可能なタグは $MAX_TAGS_COUNT 個までです。")
         }
 
-        return mHatenaOAuthApi.postBookmark(oauthTokenEntity, urlString, comment, isOpen, tags)
+        hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
+
+        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+
+        return retrofit.create(HatenaOAuthApiService::class.java)
+                .postBookmark(urlString, comment, if (isOpen) "0" else "1", tags.toTypedArray())
                 .map {
                     response ->
                     return@map BookmarkEditEntity(url = urlString,
@@ -92,6 +118,12 @@ open class HatenaRepository {
      */
     open fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
                             urlString: String): Observable<Void?> {
-        return mHatenaOAuthApi.deleteBookmark(oauthTokenEntity, urlString)
+
+        hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
+
+        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+
+        return retrofit.create(HatenaOAuthApiService::class.java)
+                .deleteBookmark(urlString)
     }
 }
