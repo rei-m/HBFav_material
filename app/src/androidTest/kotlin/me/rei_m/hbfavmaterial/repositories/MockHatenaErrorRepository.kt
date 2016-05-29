@@ -4,14 +4,22 @@ import android.content.Context
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import okhttp3.MediaType
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.adapter.rxjava.HttpException
 import rx.Observable
 import java.net.HttpURLConnection
+import java.util.*
 
 class MockHatenaErrorRepository(context: Context) : HatenaRepository(context) {
 
     companion object {
         val BOOKMARK_URL_NOT_FOUND = "BOOKMARK_URL_NOT_FOUND"
         val BOOKMARK_URL_ERROR = "BOOKMARK_URL_ERROR"
+
+        private fun httpExceptionFactory(code: Int): HttpException =
+                HttpException(Response.error<Objects>(code, ResponseBody.create(MediaType.parse("test"), "")))
     }
 
     override fun fetchRequestToken(): Observable<String> {
@@ -30,20 +38,20 @@ class MockHatenaErrorRepository(context: Context) : HatenaRepository(context) {
         return when (urlString) {
             BOOKMARK_URL_NOT_FOUND -> {
                 Observable.create<BookmarkEditEntity> { t ->
-                    t.onError(HTTPException(HttpURLConnection.HTTP_NOT_FOUND))
+                    t.onError(httpExceptionFactory(HttpURLConnection.HTTP_NOT_FOUND))
                 }
             }
             else -> {
                 Observable.create<BookmarkEditEntity> { t ->
-                    t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
+                    t.onError(httpExceptionFactory(HttpURLConnection.HTTP_INTERNAL_ERROR))
                 }
             }
         }
     }
 
     override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean, tags: List<String>): Observable<BookmarkEditEntity> {
-        return Observable.create { t ->
-            t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
+        return Observable.create<BookmarkEditEntity> { t ->
+            t.onError(httpExceptionFactory(HttpURLConnection.HTTP_INTERNAL_ERROR))
         }
     }
 
@@ -51,12 +59,12 @@ class MockHatenaErrorRepository(context: Context) : HatenaRepository(context) {
         return when (urlString) {
             BOOKMARK_URL_NOT_FOUND -> {
                 Observable.create<Void?> { t ->
-                    t.onError(HTTPException(HttpURLConnection.HTTP_NOT_FOUND))
+                    t.onError(httpExceptionFactory(HttpURLConnection.HTTP_NOT_FOUND))
                 }
             }
             else -> {
                 Observable.create<Void?> { t ->
-                    t.onError(HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR))
+                    t.onError(httpExceptionFactory(HttpURLConnection.HTTP_INTERNAL_ERROR))
                 }
             }
         }

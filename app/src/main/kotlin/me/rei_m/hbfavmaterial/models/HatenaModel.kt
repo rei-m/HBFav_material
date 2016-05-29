@@ -246,6 +246,7 @@ class HatenaModel {
 
             override fun onError(e: Throwable?) {
                 isBusy = false
+
                 if (e is HttpException) {
                     if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                         EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.NOT_FOUND))
