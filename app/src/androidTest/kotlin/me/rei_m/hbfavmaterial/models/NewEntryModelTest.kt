@@ -89,7 +89,6 @@ class NewEntryModelTest : TestCase() {
         eventCatcher.initCountDown()
         newEntryModel.fetch(EntryTypeFilter.ALL)
         eventCatcher.startCountDown()
-
         Assert.assertThat(eventCatcher.event.status, CoreMatchers.`is`(LoadedEventStatus.ERROR))
 
         EventBusHolder.EVENT_BUS.unregister(eventCatcher)
