@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.network
 
 import android.net.Uri
+import oauth.signpost.OAuth
 import oauth.signpost.http.HttpParameters
 import okhttp3.HttpUrl
 import okhttp3.Request
@@ -25,13 +26,13 @@ class HatenaOAuthManager(private val consumerKey: String,
 
     var consumer = OkHttpOAuthConsumer(consumerKey, consumerSecret)
         private set
-    
+
     fun retrieveRequestToken(): String? {
 
         consumer = OkHttpOAuthConsumer(consumerKey, consumerSecret)
         HttpParameters().apply {
             put("realm", "")
-            put("oauth_callback", Uri.encode(CALLBACK))
+            put(OAuth.OAUTH_CALLBACK, Uri.encode(CALLBACK))
         }.let {
             consumer.setAdditionalParameters(it)
         }
@@ -59,8 +60,8 @@ class HatenaOAuthManager(private val consumerKey: String,
         response.body().string().split("&").forEach {
             val param = it.split("=")
             when (param[0]) {
-                "oauth_token" -> oauthToken = Uri.decode(param[1])
-                "oauth_token_secret" -> oauthTokenSecret = Uri.decode(param[1])
+                OAuth.OAUTH_TOKEN -> oauthToken = Uri.decode(param[1])
+                OAuth.OAUTH_TOKEN_SECRET -> oauthTokenSecret = Uri.decode(param[1])
             }
         }
 
@@ -72,7 +73,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         return HttpUrl.parse(AUTHORIZATION_WEBSITE_URL)
                 .newBuilder()
-                .addQueryParameter("oauth_token", oauthToken)
+                .addQueryParameter(OAuth.OAUTH_TOKEN, oauthToken)
                 .build().toString()
     }
 
@@ -88,7 +89,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         HttpParameters().apply {
             put("realm", "")
-            put("oauth_verifier", Uri.encode(requestToken))
+            put(OAuth.OAUTH_VERIFIER, Uri.encode(requestToken))
         }.let {
             consumer.setAdditionalParameters(it)
         }
@@ -113,8 +114,8 @@ class HatenaOAuthManager(private val consumerKey: String,
         response.body().string().split("&").forEach {
             val param = it.split("=")
             when (param[0]) {
-                "oauth_token" -> oauthToken = Uri.decode(param[1])
-                "oauth_token_secret" -> oauthTokenSecret = Uri.decode(param[1])
+                OAuth.OAUTH_TOKEN -> oauthToken = Uri.decode(param[1])
+                OAuth.OAUTH_TOKEN_SECRET -> oauthTokenSecret = Uri.decode(param[1])
             }
         }
 
