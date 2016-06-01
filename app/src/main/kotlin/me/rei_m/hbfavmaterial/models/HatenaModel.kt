@@ -8,9 +8,9 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.network.*
-import me.rei_m.hbfavmaterial.exeptions.HTTPException
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.repositories.HatenaRepository
+import retrofit2.adapter.rxjava.HttpException
 import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -168,12 +168,14 @@ class HatenaModel {
 
             override fun onError(e: Throwable?) {
                 isBusy = false
-                val error = e as HTTPException
-                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
-                } else {
-                    EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
+
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
+                        return
+                    }
                 }
+                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
             }
         }
 
@@ -232,9 +234,9 @@ class HatenaModel {
 
         isBusy = true
 
-        val observer = object : Observer<Boolean> {
+        val observer = object : Observer<Void?> {
 
-            override fun onNext(t: Boolean?) {
+            override fun onNext(t: Void?) {
             }
 
             override fun onCompleted() {
@@ -244,12 +246,14 @@ class HatenaModel {
 
             override fun onError(e: Throwable?) {
                 isBusy = false
-                val error = e as HTTPException
-                if (error.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                    EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.NOT_FOUND))
-                } else {
-                    EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.ERROR))
+
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.NOT_FOUND))
+                        return
+                    }
                 }
+                EventBusHolder.EVENT_BUS.post(HatenaDeleteBookmarkLoadedEvent(LoadedEventStatus.ERROR))
             }
         }
 
