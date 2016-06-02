@@ -71,7 +71,7 @@ open class HatenaRepository {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 
-        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
         return retrofit.create(HatenaOAuthApiService::class.java)
                 .getBookmark(urlString)
@@ -100,7 +100,7 @@ open class HatenaRepository {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 
-        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
         return retrofit.create(HatenaOAuthApiService::class.java)
                 .postBookmark(urlString, comment, if (isOpen) "0" else "1", tags.toTypedArray())
@@ -121,7 +121,7 @@ open class HatenaRepository {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 
-        val retrofit = RetrofitManager.oauthRetrofitFactory(hatenaOAuthManager.consumer)
+        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
         return retrofit.create(HatenaOAuthApiService::class.java)
                 .deleteBookmark(urlString)

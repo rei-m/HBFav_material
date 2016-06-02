@@ -1,13 +1,13 @@
 package me.rei_m.hbfavmaterial.network
 
-import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.OkHttpClient
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
-import se.akerfeldt.okhttp.signpost.SigningInterceptor
 
 object RetrofitManager {
 
@@ -25,59 +25,38 @@ object RetrofitManager {
 
     val scalar: Retrofit
 
-    fun oauthRetrofitFactory(consumer: OkHttpOAuthConsumer): Retrofit {
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
-
-        val client = HttpClientBuilder.instance.newBuilder()
-                .addInterceptor(SigningInterceptor(consumer))
-                .addInterceptor { chain ->
-                    val original = chain.request()
-                    val requestBuilder = original.newBuilder()
-                            .addHeader("Cache-Control", "no-cache")
-                            .addHeader("Cache-Control", "no-store")
-                            .method(original.method(), original.body())
-                    val request = requestBuilder.build()
-
-                    return@addInterceptor chain.proceed(request)
-                }
-                .addInterceptor(logging)
-                .build()
-        return Retrofit.Builder()
-                .baseUrl(BASE_URL_OAUTH)
-                .client(client)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+    fun createOAuthRetrofit(consumer: OkHttpOAuthConsumer): Retrofit {
+        return createRetrofit(BASE_URL_OAUTH,
+                HttpClientBuilder.newSignedBuilder(consumer).build(),
+                GsonConverterFactory.create())
     }
 
     init {
-        json = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(HttpClient.instance)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+        json = createRetrofit(BASE_URL,
+                HttpClient.instance,
+                GsonConverterFactory.create())
 
-        xml = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(HttpClient.instance)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build()
+        xml = createRetrofit(BASE_URL,
+                HttpClient.instance,
+                SimpleXmlConverterFactory.create())
 
-        xmlForHotEntryAll = Retrofit.Builder()
-                .baseUrl(BASE_URL_HOT_ENTRY_All)
-                .client(HttpClient.instance)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build()
+        xmlForHotEntryAll = createRetrofit(BASE_URL_HOT_ENTRY_All,
+                HttpClient.instance,
+                SimpleXmlConverterFactory.create())
 
-        scalar = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(HttpClient.instance)
+        scalar = createRetrofit(BASE_URL,
+                HttpClient.instance,
+                ScalarsConverterFactory.create())
+    }
+
+    private fun createRetrofit(baseUrl: String,
+                               client: OkHttpClient,
+                               converterFactory: Converter.Factory): Retrofit {
+        return Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(converterFactory)
                 .build()
     }
 }
