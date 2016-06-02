@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
@@ -147,3 +146,5 @@ repositories {
         url 'https://maven.fabric.io/public'
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
