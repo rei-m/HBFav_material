@@ -12,7 +12,9 @@ machine:
 
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23,build-tools-25.1.7"
+    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23,build-tools-25.1.7,extra-android-m2repository,extra-android-support"
+  cache_directories:
+    - ~/.android
   override:
     - ./gradlew dependencies
 
