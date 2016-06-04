@@ -11,6 +11,8 @@ machine:
     ANDROID_HOME: /usr/local/android-sdk-linux
 
 dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository"
   cache_directories:
     - ~/.android
   override:

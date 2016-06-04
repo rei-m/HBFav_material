@@ -18,7 +18,7 @@ import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.models.HatenaModel
-import me.rei_m.hbfavmaterial.network.HatenaOAuthApi
+import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import javax.inject.Inject
 
 class OAuthActivity : BaseActivity() {
@@ -50,13 +50,13 @@ class OAuthActivity : BaseActivity() {
             setWebChromeClient(WebChromeClient())
             setWebViewClient(object : WebViewClient() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    if (url?.startsWith(HatenaOAuthApi.CALLBACK) ?: false) {
+                    if (url?.startsWith(HatenaOAuthManager.CALLBACK) ?: false) {
                         stopLoading()
                         hide()
                         val oauthVerifier = Uri.parse(url).getQueryParameter("oauth_verifier")
                         oauthVerifier ?: finish()
                         hatenaModel.fetchAccessToken(applicationContext, oauthVerifier)
-                    } else if (url?.startsWith(HatenaOAuthApi.AUTHORIZATION_DENY_URL) ?: false) {
+                    } else if (url?.startsWith(HatenaOAuthManager.AUTHORIZATION_DENY_URL) ?: false) {
                         stopLoading()
                         hatenaModel.deleteAccessToken(applicationContext)
                         setAuthorizeResult(false, true)
@@ -75,7 +75,7 @@ class OAuthActivity : BaseActivity() {
         with(findViewById(R.id.content) as FrameLayout) {
             addView(mWebView)
         }
-        findViewById(R.id.fab).hide()
+        findViewById(R.id.fab)?.hide()
     }
 
     override fun onResume() {

@@ -29,8 +29,8 @@ class ExplainAppActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        findViewById(R.id.pager).hide()
-        findViewById(R.id.content).show()
+        findViewById(R.id.pager)?.hide()
+        findViewById(R.id.content)?.show()
 
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
         navigationView.setCheckedItem(R.id.nav_explain_app)

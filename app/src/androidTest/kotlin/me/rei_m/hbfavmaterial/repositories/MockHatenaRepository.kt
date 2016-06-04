@@ -30,7 +30,7 @@ class MockHatenaRepository(context: Context) : HatenaRepository(context) {
         return Observable.just(BookmarkEditEntity("", "", false, ArrayList()))
     }
 
-    override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<Boolean> {
-        return Observable.just(true)
+    override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<Void?> {
+        return Observable.just(null)
     }
 }

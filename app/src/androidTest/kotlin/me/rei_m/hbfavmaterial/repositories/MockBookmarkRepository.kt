@@ -3,7 +3,8 @@ package me.rei_m.hbfavmaterial.repositories
 import me.rei_m.hbfavmaterial.entities.ArticleEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
-import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import retrofit2.Response
+import retrofit2.adapter.rxjava.HttpException
 import rx.Observable
 import java.net.HttpURLConnection
 import java.util.*
@@ -42,7 +43,9 @@ class MockBookmarkRepository : BookmarkRepository() {
             }
             TEST_ID_NOT_FOUND -> {
                 Observable.create<List<BookmarkEntity>> { t ->
-                    t.onError(HTTPException(HttpURLConnection.HTTP_NOT_FOUND))
+                    HttpException(Response.error<Objects>(HttpURLConnection.HTTP_NOT_FOUND, null)).let {
+                        t.onError(it)
+                    }
                 }
             }
             TEST_ID_EMPTY -> {
