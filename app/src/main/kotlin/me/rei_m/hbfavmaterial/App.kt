@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial
 import android.app.Application
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
@@ -28,6 +29,8 @@ class App : Application() {
 
     @Inject
     lateinit var newEntryModel: NewEntryModel
+
+    private lateinit var analytics: FirebaseAnalytics
 
     companion object {
         // platformStatic allow access it from java code
@@ -57,6 +60,9 @@ class App : Application() {
         val authConfig = TwitterAuthConfig(getString(R.string.api_key_twitter_consumer_key),
                 getString(R.string.api_key_twitter_consumer_secret))
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))
+
+        // Set up FireBase Analytics
+        analytics = FirebaseAnalytics.getInstance(this)
     }
 
     fun resetBookmarks() {
