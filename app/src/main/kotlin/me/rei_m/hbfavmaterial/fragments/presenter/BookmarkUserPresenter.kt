@@ -36,7 +36,7 @@ class BookmarkUserPresenter(private val view: BookmarkUserContact.View,
 
         view.showProgress()
 
-        return fetchListContents(0)
+        return request(0)
     }
 
     override fun fetchListContents(nextIndex: Int): Subscription? {

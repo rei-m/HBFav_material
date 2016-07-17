@@ -16,7 +16,6 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoriteContact
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
@@ -96,13 +95,10 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
         if (listAdapter.count === 0) {
             // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.fetchListContents(0)?.let {
+            presenter.initializeListContents()?.let {
                 subscription?.add(it)
-                view.findViewById(R.id.fragment_list_progress_list).show()
             }
         }
-
-        view.findViewById(R.id.fragment_list_view_empty).hide()
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
@@ -133,21 +129,14 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
         val view = view ?: return
 
-        val listView = view.findViewById(R.id.fragment_list_list) as ListView
-
         with(listAdapter) {
             clear()
             addAll(bookmarkList)
             notifyDataSetChanged()
         }
 
-        // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(listAdapter.isEmpty)
+        view.findViewById(R.id.fragment_list_list).show()
 
-        // プログレスを非表示にする
-        view.findViewById(R.id.fragment_list_progress_list).hide()
-
-        // Pull to refresh中だった場合は解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
                 RxSwipeRefreshLayout.refreshing(this).call(false)
@@ -155,8 +144,25 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
         }
     }
 
+    override fun hideBookmarkList() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        listView.setSelection(0)
+        listView.hide()
+    }
+
     override fun showNetworkErrorMessage() {
         (activity as AppCompatActivity).showSnackbarNetworkError(view)
+    }
+
+    override fun showProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).show()
+    }
+
+    override fun hideProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).hide()
     }
 
     override fun startAutoLoading() {
@@ -177,5 +183,15 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
                 listView.removeFooterView(this)
             }
         }
+    }
+
+    override fun showEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).show()
+    }
+
+    override fun hideEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).hide()
     }
 }

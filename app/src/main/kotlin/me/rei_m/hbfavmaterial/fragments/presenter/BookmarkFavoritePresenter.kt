@@ -29,12 +29,25 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
         (view as BaseFragment).component.inject(this)
     }
 
+    override fun initializeListContents(): Subscription? {
+        if (isLoading) return null
+
+        view.showProgress()
+
+        return request(0)
+    }
+
     override fun fetchListContents(nextIndex: Int): Subscription? {
+
+        if (isLoading) return null
+
+        return request(nextIndex)
+    }
+
+    private fun request(nextIndex: Int): Subscription? {
 
         // TODO
         val userId = userModel.userEntity?.id!!
-
-        if (isLoading) return null
 
         isLoading = true
 
@@ -42,18 +55,24 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
             override fun onNext(t: List<BookmarkEntity>?) {
                 t ?: return
 
-                if (t.isEmpty()) {
-                    view.stopAutoLoading()
-                    return
-                }
                 if (nextIndex === 0) {
                     bookmarkList.clear()
                 }
                 bookmarkList.addAll(t)
 
-                view.showBookmarkList(bookmarkList)
+                if (bookmarkList.isEmpty()) {
+                    view.hideBookmarkList()
+                    view.showEmpty()
+                } else {
+                    view.hideEmpty()
+                    view.showBookmarkList(bookmarkList)
+                }
 
-                view.startAutoLoading()
+                if (t.isEmpty()) {
+                    view.stopAutoLoading()
+                } else {
+                    view.startAutoLoading()
+                }
             }
 
             override fun onCompleted() {
@@ -65,9 +84,10 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
         }
 
         return bookmarkService.findByUserIdForFavorite(userId, nextIndex)
-                .doOnCompleted { isLoading = false }
-                .doOnError { isLoading = false }
-                .doOnUnsubscribe { isLoading = false }
+                .doOnUnsubscribe {
+                    isLoading = false
+                    view.hideProgress()
+                }
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

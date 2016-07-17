@@ -8,15 +8,15 @@ interface BookmarkUserContact {
 
     interface View {
 
-        fun showProgress()
-
-        fun hideProgress()
-
         fun showBookmarkList(bookmarkList: List<BookmarkEntity>)
 
         fun hideBookmarkList()
 
         fun showNetworkErrorMessage()
+
+        fun showProgress()
+
+        fun hideProgress()
 
         fun startAutoLoading()
 

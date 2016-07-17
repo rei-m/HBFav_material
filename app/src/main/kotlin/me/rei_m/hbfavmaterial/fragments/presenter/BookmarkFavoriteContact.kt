@@ -9,14 +9,26 @@ interface BookmarkFavoriteContact {
 
         fun showBookmarkList(bookmarkList: List<BookmarkEntity>)
 
+        fun hideBookmarkList()
+
         fun showNetworkErrorMessage()
 
+        fun showProgress()
+
+        fun hideProgress()
+
         fun startAutoLoading()
-        
+
         fun stopAutoLoading()
+
+        fun showEmpty()
+
+        fun hideEmpty()
     }
 
     interface Actions {
+
+        fun initializeListContents(): Subscription?
 
         fun fetchListContents(nextIndex: Int): Subscription?
 

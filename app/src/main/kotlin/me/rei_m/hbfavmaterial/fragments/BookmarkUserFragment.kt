@@ -183,26 +183,6 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         }
     }
 
-    override fun showProgress() {
-        val view = view ?: return
-        view.findViewById(R.id.fragment_list_progress_list).show()
-    }
-
-    override fun hideProgress() {
-        val view = view ?: return
-        view.findViewById(R.id.fragment_list_progress_list).hide()
-    }
-
-    override fun showEmpty() {
-        val view = view ?: return
-        view.findViewById(R.id.fragment_list_view_empty).show()
-    }
-
-    override fun hideEmpty() {
-        val view = view ?: return
-        view.findViewById(R.id.fragment_list_view_empty).hide()
-    }
-
     override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
 
         val view = view ?: return
@@ -233,6 +213,16 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         (activity as AppCompatActivity).showSnackbarNetworkError(view)
     }
 
+    override fun showProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).show()
+    }
+
+    override fun hideProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).hide()
+    }
+
     override fun startAutoLoading() {
         val view = view ?: return
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
@@ -251,5 +241,15 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
                 listView.removeFooterView(this)
             }
         }
+    }
+
+    override fun showEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).show()
+    }
+
+    override fun hideEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).hide()
     }
 }
