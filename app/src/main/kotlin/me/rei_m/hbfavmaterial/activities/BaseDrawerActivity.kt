@@ -5,13 +5,11 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.picasso.Picasso
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.models.UserModel
@@ -22,15 +20,16 @@ import javax.inject.Inject
 /**
  * Drawer付きActivityの基底クラス.
  */
-abstract class BaseActivityWithDrawer : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var userModel: UserModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
 
+        component.inject(this)
+        
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)

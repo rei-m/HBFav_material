@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 /**
  * 他人のブックマークを表示するActivity.
  */
-class OthersBookmarkActivity : BaseActivity() {
+class OthersBookmarkActivity : BaseSingleActivity() {
 
     companion object {
 

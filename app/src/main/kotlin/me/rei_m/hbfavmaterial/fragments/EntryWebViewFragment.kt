@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 記事のコンテンツをWebViewに表示するFragment.
  */
-class EntryWebViewFragment : Fragment() {
+class EntryWebViewFragment : BaseFragment() {
 
     private val mEntryUrl: String by lazy {
         arguments.getString(ARG_ENTRY_URL)
@@ -68,7 +67,7 @@ class EntryWebViewFragment : Fragment() {
     fun backHistory(): Boolean {
 
         val view = view ?: return true
-        
+
         with(view.findViewById(R.id.fragment_bookmark_webview_view)) {
             this as WebView
             if (canGoBack()) {

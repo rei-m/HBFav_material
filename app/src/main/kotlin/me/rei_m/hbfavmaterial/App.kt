@@ -18,6 +18,14 @@ import javax.inject.Named
 
 class App : Application() {
 
+    val component: ApplicationComponent by lazy {
+        DaggerApplicationComponent.builder()
+                .applicationModule(ApplicationModule(this))
+                .appLayerModule(AppLayerModule())
+                .infraLayerModule(InfraLayerModule())
+                .build()
+    }
+
     @Inject
     lateinit var bookmarkFavoriteModel: BookmarkFavoriteModel
 
@@ -32,23 +40,13 @@ class App : Application() {
 
     private lateinit var analytics: FirebaseAnalytics
 
-    companion object {
-        // platformStatic allow access it from java code
-        @JvmStatic lateinit var graph: ApplicationComponent
-    }
-
     override fun onCreate() {
         super.onCreate()
 
         // Application起動時に実行される。アプリの初期処理など
 
         // Dagger2
-        graph = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this))
-                .appLayerModule(AppLayerModule())
-                .infraLayerModule(InfraLayerModule())
-                .build()
-        graph.inject(this)
+        component.inject(this)
 
         // LeakCanaryの設定
         if (BuildConfig.DEBUG) {

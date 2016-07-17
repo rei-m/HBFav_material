@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 
-class BookmarkUsersActivity : BaseActivity() {
+class BookmarkUsersActivity : BaseSingleActivity() {
 
     private val mBookmarkEntity: BookmarkEntity by lazy {
         intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity

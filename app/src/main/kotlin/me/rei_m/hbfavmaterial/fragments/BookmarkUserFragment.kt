@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -35,7 +33,7 @@ import javax.inject.Named
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
-class BookmarkUserFragment : Fragment() {
+class BookmarkUserFragment : BaseFragment() {
 
     @field:[Inject Named("bookmarkUserModelForSelf")]
     lateinit var bookmarkUserModelForSelf: BookmarkUserModel
@@ -93,7 +91,7 @@ class BookmarkUserFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
 
         mIsOwner = arguments.getBoolean(ARG_OWNER_FLAG)
         mUserId = if (mIsOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)

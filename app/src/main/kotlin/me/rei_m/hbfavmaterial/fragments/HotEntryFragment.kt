@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -32,7 +30,7 @@ import javax.inject.Inject
 /**
  * HotEntryを一覧で表示するFragment.
  */
-class HotEntryFragment : Fragment() {
+class HotEntryFragment : BaseFragment() {
 
     @Inject
     lateinit var hotEntryModel: HotEntryModel
@@ -51,7 +49,7 @@ class HotEntryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

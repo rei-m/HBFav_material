@@ -53,7 +53,7 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        (activity.application as App).component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

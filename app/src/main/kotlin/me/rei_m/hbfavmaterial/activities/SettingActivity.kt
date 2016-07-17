@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
-class SettingActivity : BaseActivityWithDrawer() {
+class SettingActivity : BaseDrawerActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {

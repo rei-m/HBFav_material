@@ -19,7 +19,7 @@ import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 /**
  * アプリについての情報を表示するActivity.
  */
-class ExplainAppActivity : BaseActivityWithDrawer() {
+class ExplainAppActivity : BaseDrawerActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {

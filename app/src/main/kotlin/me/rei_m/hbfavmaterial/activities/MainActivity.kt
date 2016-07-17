@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.enums.FilterItemI
@@ -24,7 +23,7 @@ import javax.inject.Inject
 /**
  * メインActivity.
  */
-class MainActivity : BaseActivityWithDrawer() {
+class MainActivity : BaseDrawerActivity() {
 
     @Inject
     lateinit var hotEntryModel: HotEntryModel
@@ -47,7 +46,7 @@ class MainActivity : BaseActivityWithDrawer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
 
         with(findViewById(R.id.pager) as BookmarkViewPager) {
             initialize(supportFragmentManager)

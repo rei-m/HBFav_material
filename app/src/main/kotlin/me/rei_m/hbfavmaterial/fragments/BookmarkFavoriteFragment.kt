@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -27,7 +26,7 @@ import rx.subscriptions.CompositeSubscription
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-class BookmarkFavoriteFragment : Fragment(), BookmarkFavoriteContact.View {
+class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
     private lateinit var presenter: BookmarkFavoritePresenter
 
@@ -44,7 +43,6 @@ class BookmarkFavoriteFragment : Fragment(), BookmarkFavoriteContact.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = BookmarkFavoritePresenter(this)
-        presenter.prepare()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,11 +50,6 @@ class BookmarkFavoriteFragment : Fragment(), BookmarkFavoriteContact.View {
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
-
-        with(View.inflate(context, R.layout.list_fotter_loading, null)) {
-            listView.addFooterView(this, null, false)
-            hide()
-        }
 
         listView.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
@@ -148,8 +141,11 @@ class BookmarkFavoriteFragment : Fragment(), BookmarkFavoriteContact.View {
             notifyDataSetChanged()
         }
 
-        if (0 < listView.footerViewsCount) {
-            listView.findViewById(R.id.list_footer_loading_layout).show()
+        // AutoLoading用のFooterViewを追加する
+        if (listView.footerViewsCount === 0) {
+            View.inflate(context, R.layout.list_fotter_loading, null).let {
+                listView.addFooterView(it, null, false)
+            }
         }
 
         // リストが空の場合はEmptyViewを表示する

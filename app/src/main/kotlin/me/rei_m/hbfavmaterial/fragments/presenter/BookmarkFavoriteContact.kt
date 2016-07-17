@@ -16,9 +16,7 @@ interface BookmarkFavoriteContact {
 
     interface Actions {
 
-        fun prepare()
-
-        fun fetchListContents(nextIndex: Int) : Subscription?
+        fun fetchListContents(nextIndex: Int): Subscription?
 
         fun clickBookmark(bookmarkEntity: BookmarkEntity)
     }

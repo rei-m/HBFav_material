@@ -1,12 +1,11 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.fragments.BaseFragment
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.service.BookmarkService
-import me.rei_m.hbfavmaterial.service.impl.BookmarkServiceImpl
 import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -19,21 +18,15 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
     @Inject
     lateinit var userModel: UserModel
 
-    //    @Inject
+    @Inject
     lateinit var bookmarkService: BookmarkService
 
-    private lateinit var bookmarkList: MutableList<BookmarkEntity>
+    private val bookmarkList: MutableList<BookmarkEntity> = ArrayList()
 
     private var isLoading = false
 
     init {
-        App.graph.inject(this)
-    }
-
-    override fun prepare() {
-        bookmarkService = BookmarkServiceImpl()
-        bookmarkList = ArrayList()
-        isLoading = false
+        (view as BaseFragment).component.inject(this)
     }
 
     override fun fetchListContents(nextIndex: Int): Subscription? {
@@ -70,7 +63,8 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
         }
 
         return bookmarkService.findByUserIdForFavorite(userId, nextIndex)
-                .doOnSubscribe { isLoading = false }
+                .doOnCompleted { isLoading = false }
+                .doOnError { isLoading = false }
                 .doOnUnsubscribe { isLoading = false }
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())

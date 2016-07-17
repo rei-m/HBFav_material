@@ -2,7 +2,6 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -26,7 +24,7 @@ import javax.inject.Inject
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment : Fragment() {
+class SettingFragment : BaseFragment() {
 
     @Inject
     lateinit var userModel: UserModel
@@ -48,7 +46,7 @@ class SettingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

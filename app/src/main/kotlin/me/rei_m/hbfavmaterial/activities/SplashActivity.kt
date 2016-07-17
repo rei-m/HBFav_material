@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
@@ -15,7 +14,7 @@ import me.rei_m.hbfavmaterial.fragments.InitializeFragment
 /**
  * 最初に起動するActivity.
  */
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
