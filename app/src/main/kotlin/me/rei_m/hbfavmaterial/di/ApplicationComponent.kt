@@ -2,8 +2,12 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Component
 import me.rei_m.hbfavmaterial.App
-import me.rei_m.hbfavmaterial.activities.*
+import me.rei_m.hbfavmaterial.activities.BaseActivityWithDrawer
+import me.rei_m.hbfavmaterial.activities.BookmarkActivity
+import me.rei_m.hbfavmaterial.activities.MainActivity
+import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.fragments.*
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
 import javax.inject.Singleton
 
 @Singleton
@@ -11,6 +15,8 @@ import javax.inject.Singleton
 interface ApplicationComponent {
 
     fun inject(application: App)
+
+    fun inject(presenter: BookmarkFavoritePresenter)
 
     fun inject(baseActivityWithDrawer: BaseActivityWithDrawer)
 
