@@ -3,11 +3,14 @@ package me.rei_m.hbfavmaterial.di
 import dagger.Subcomponent
 import me.rei_m.hbfavmaterial.fragments.*
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
 
 @Subcomponent(modules = arrayOf(FragmentModule::class))
 interface FragmentComponent {
 
     fun inject(presenter: BookmarkFavoritePresenter)
+
+    fun inject(presenter: BookmarkUserPresenter)
 
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 

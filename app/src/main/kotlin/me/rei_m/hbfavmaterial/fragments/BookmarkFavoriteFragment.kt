@@ -55,7 +55,7 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
+                    // FooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (0 < listView.footerViewsCount) {
                         presenter.fetchListContents(listAdapter.nextIndex)?.let {
                             subscription?.add(it)
@@ -131,7 +131,7 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
     override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
 
-        val view = this@BookmarkFavoriteFragment.view ?: return
+        val view = view ?: return
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
@@ -139,13 +139,6 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
             clear()
             addAll(bookmarkList)
             notifyDataSetChanged()
-        }
-
-        // AutoLoading用のFooterViewを追加する
-        if (listView.footerViewsCount === 0) {
-            View.inflate(context, R.layout.list_fotter_loading, null).let {
-                listView.addFooterView(it, null, false)
-            }
         }
 
         // リストが空の場合はEmptyViewを表示する
@@ -166,8 +159,18 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
         (activity as AppCompatActivity).showSnackbarNetworkError(view)
     }
 
+    override fun startAutoLoading() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        if (listView.footerViewsCount === 0) {
+            View.inflate(context, R.layout.list_fotter_loading, null).let {
+                listView.addFooterView(it, null, false)
+            }
+        }
+    }
+
     override fun stopAutoLoading() {
-        val view = this@BookmarkFavoriteFragment.view ?: return
+        val view = view ?: return
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
         if (0 < listView.footerViewsCount) {
             with(view.findViewById(R.id.list_footer_loading_layout)) {
