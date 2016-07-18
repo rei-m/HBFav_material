@@ -1,11 +1,10 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
@@ -27,6 +26,8 @@ import rx.subscriptions.CompositeSubscription
  */
 class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
+    private var listener: OnFragmentInteractionListener? = null
+
     private lateinit var presenter: BookmarkFavoritePresenter
 
     private val listAdapter: BookmarkListAdapter by lazy {
@@ -37,6 +38,14 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
     companion object {
         fun newInstance(): BookmarkFavoriteFragment = BookmarkFavoriteFragment()
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,6 +134,16 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        listener?.setTitle()
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
 
         val view = view ?: return
@@ -193,5 +212,9 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    interface OnFragmentInteractionListener {
+        fun setTitle()
     }
 }

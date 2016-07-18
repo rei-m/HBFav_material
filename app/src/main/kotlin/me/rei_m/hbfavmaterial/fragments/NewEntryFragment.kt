@@ -130,7 +130,7 @@ class NewEntryFragment : BaseFragment() {
             }
             LoadedEventStatus.ERROR -> {
                 val thisActivity = activity as AppCompatActivity
-                thisActivity.showSnackbarNetworkError(view)
+//                thisActivity.showSnackbarNetworkError(view)
             }
             else -> {
 

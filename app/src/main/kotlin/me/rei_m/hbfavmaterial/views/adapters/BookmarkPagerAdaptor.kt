@@ -34,8 +34,8 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     hide()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = true;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = true
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true
                 }
             }
         },
@@ -45,8 +45,8 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false
                 }
             }
         },
@@ -56,8 +56,8 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false
                 }
             }
         };
@@ -88,5 +88,32 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
 
     override fun getCount(): Int {
         return Page.values().count()
+    }
+
+    fun getPageTitle(fm: FragmentManager, position: Int): CharSequence {
+        Page.values()[position].
+        for (f in fm.fragments) {
+            when(f) {
+                is BookmarkFavoriteFragment -> {
+
+                }
+
+                is BookmarkUserFragment -> {
+
+                }
+
+                is HotEntryFragment -> {
+
+                }
+
+                is NewEntryFragment -> {
+
+                }
+                else -> {
+
+                }
+            }
+        }
+        return super.getPageTitle(position)
     }
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fragment_entry_menu_category_all"
+        android:orderInCategory="100"
+        android:title="@string/category_title_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_world"
+        android:orderInCategory="101"
+        android:title="@string/category_title_world"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_politics_and_economy"
+        android:orderInCategory="102"
+        android:title="@string/category_title_politics_and_economy"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_life"
+        android:orderInCategory="103"
+        android:title="@string/category_title_life"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_entertainment"
+        android:orderInCategory="104"
+        android:title="@string/category_title_entertainment"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_study"
+        android:orderInCategory="105"
+        android:title="@string/category_title_study"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_technology"
+        android:orderInCategory="106"
+        android:title="@string/category_title_technology"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_animation_and_game"
+        android:orderInCategory="107"
+        android:title="@string/category_title_animation_and_game"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/fragment_entry_menu_category_comedy"
+        android:orderInCategory="108"
+        android:title="@string/category_title_comedy"
+        app:showAsAction="never" />
+</menu>

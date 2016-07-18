@@ -3,53 +3,43 @@ package me.rei_m.hbfavmaterial.fragments
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
-import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.network.HotEntryLoadedEvent
-import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
-import me.rei_m.hbfavmaterial.events.ui.EntryCategoryChangedEvent
-import me.rei_m.hbfavmaterial.events.ui.EntryListItemClickedEvent
+import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.models.HotEntryModel
+import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryContact
+import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryPresenter
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
 /**
  * HotEntryを一覧で表示するFragment.
  */
-class HotEntryFragment : BaseFragment() {
+class HotEntryFragment : BaseFragment(), HotEntryContact.View {
 
-    @Inject
-    lateinit var hotEntryModel: HotEntryModel
+    private lateinit var presenter: HotEntryPresenter
 
-    private val mListAdapter: EntryListAdapter by lazy {
+    private val listAdapter: EntryListAdapter by lazy {
         EntryListAdapter(activity, R.layout.list_item_entry)
     }
 
-    lateinit private var mCompositeSubscription: CompositeSubscription
+    private var subscription: CompositeSubscription? = null
 
     companion object {
-        fun newInstance(): HotEntryFragment {
-            return HotEntryFragment()
-        }
+        fun newInstance(): HotEntryFragment = HotEntryFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
+        presenter = HotEntryPresenter(this, EntryTypeFilter.ALL)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,10 +50,10 @@ class HotEntryFragment : BaseFragment() {
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
-            EventBusHolder.EVENT_BUS.post(EntryListItemClickedEvent(entryEntity))
+            presenter.clickEntry(entryEntity)
         }
 
-        listView.adapter = mListAdapter
+        listView.adapter = listAdapter
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             setColorSchemeResources(R.color.pull_to_refresh_1,
@@ -80,83 +70,101 @@ class HotEntryFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
+        subscription = CompositeSubscription()
 
         val view = view ?: return
 
-        val displayedCount = mListAdapter.count
-
-        if (displayedCount != hotEntryModel.entryList.size) {
-            // 表示済の件数とModel内で保持している件数をチェックし、
-            // 差分があれば未表示のエントリがあるのでリストに表示する
-            displayListContents(view.findViewById(R.id.fragment_list_list) as ListView)
-            view.findViewById(R.id.fragment_list_progress_list).hide()
-        } else if (displayedCount === 0) {
-            // 1件も表示していなければエントリ情報を取得する
-            hotEntryModel.fetch(hotEntryModel.entryType)
-            view.findViewById(R.id.fragment_list_progress_list).show()
+        if (listAdapter.count === 0) {
+            // 1件も表示していなければブックマーク情報をRSSから取得する
+            presenter.initializeListContents()?.let {
+                subscription?.add(it)
+            }
         }
-
-        view.findViewById(R.id.fragment_list_view_empty).hide()
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            hotEntryModel.fetch(hotEntryModel.entryType)
+        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+            presenter.fetchListContents()?.let {
+                subscription?.add(it)
+            }
         })
     }
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription.unsubscribe()
-    }
-
-    @Subscribe
-    fun subscribe(event: EntryCategoryChangedEvent) {
-        if (event.target == EntryCategoryChangedEvent.Target.HOT) {
-            hotEntryModel.fetch(event.typeFilter)
-        }
-    }
-
-    @Subscribe
-    fun subscribe(event: HotEntryLoadedEvent) {
+        subscription?.unsubscribe()
+        subscription = null
 
         val view = view ?: return
 
-        when (event.status) {
-            LoadedEventStatus.OK -> {
-                displayListContents(view.findViewById(R.id.fragment_list_list) as ListView)
-            }
-            LoadedEventStatus.ERROR -> {
-                val thisActivity = activity as AppCompatActivity
-                thisActivity.showSnackbarNetworkError(view)
-            }
-            else -> {
-
-            }
-        }
-
-        // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
-
-        view.findViewById(R.id.fragment_list_progress_list).hide()
-
-        with(view.findViewById(R.id.fragment_list_refresh)) {
-            this as SwipeRefreshLayout
+        // Pull to Refresh中であれば解除する
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
                 RxSwipeRefreshLayout.refreshing(this).call(false)
             }
         }
     }
 
-    private fun displayListContents(listView: ListView) {
-        with(mListAdapter) {
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.fragment_entry, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item ?: return false
+        val filter = EntryTypeFilter.forMenuId(item.itemId)
+        presenter.toggleListContents(filter)?.let {
+            subscription?.add(it)
+        }
+
+        return true
+    }
+
+    override fun showEntryList(entryList: List<EntryEntity>) {
+        val view = view ?: return
+
+        with(listAdapter) {
             clear()
-            addAll(hotEntryModel.entryList)
+            addAll(entryList)
             notifyDataSetChanged()
         }
+
+        view.findViewById(R.id.fragment_list_list).show()
+
+        with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
+            if (isRefreshing) {
+                RxSwipeRefreshLayout.refreshing(this).call(false)
+            }
+        }
+    }
+
+    override fun hideEntryList() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
         listView.setSelection(0)
+        listView.hide()
+    }
+
+    override fun showNetworkErrorMessage() {
+        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+    }
+
+    override fun showProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).show()
+    }
+
+    override fun hideProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).hide()
+    }
+
+    override fun showEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).show()
+    }
+
+    override fun hideEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).hide()
     }
 }

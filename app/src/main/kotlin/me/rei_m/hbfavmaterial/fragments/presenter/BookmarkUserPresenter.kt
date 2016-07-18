@@ -112,6 +112,6 @@ class BookmarkUserPresenter(private val view: BookmarkUserContact.View,
 
     override fun clickBookmark(bookmarkEntity: BookmarkEntity) {
         val activity = (view as Fragment).activity
-        activity.startActivity(BookmarkActivity.Companion.createIntent(activity, bookmarkEntity))
+        activity.startActivity(BookmarkActivity.createIntent(activity, bookmarkEntity))
     }
 }

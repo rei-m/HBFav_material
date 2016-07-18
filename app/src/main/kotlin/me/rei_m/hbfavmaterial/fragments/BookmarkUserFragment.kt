@@ -1,21 +1,19 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
-import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.ReadAfterFilterChangedEvent
+import me.rei_m.hbfavmaterial.enums.FilterItem
+import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -31,6 +29,8 @@ import javax.inject.Inject
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
 class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
+
+    private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var presenter: BookmarkUserPresenter
 
@@ -82,9 +82,18 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         }
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
+        setHasOptionsMenu(true)
 
         isOwner = arguments.getBoolean(ARG_OWNER_FLAG)
         userId = if (isOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)
@@ -137,8 +146,6 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
 
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
-
         subscription = CompositeSubscription()
 
         val view = view ?: return
@@ -153,7 +160,6 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            // 上から引っ張りきったらbookmarkの更新を行う
             presenter.fetchListContents(0)?.let {
                 subscription?.add(it)
             }
@@ -162,7 +168,6 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
         subscription?.unsubscribe()
         subscription = null
 
@@ -176,11 +181,25 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         }
     }
 
-    @Subscribe
-    fun subscribe(event: ReadAfterFilterChangedEvent) {
-        presenter.toggleListContents(event.filter)?.let {
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.fragment_bookmark_user, menu)
+        listener?.setTitle(presenter.readAfterFilter)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item ?: return false
+        val filter = ReadAfterFilter.forMenuId(item.itemId)
+        presenter.toggleListContents(filter)?.let {
             subscription?.add(it)
+            listener?.setTitle(filter)
         }
+
+        return true
     }
 
     override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
@@ -251,5 +270,9 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    interface OnFragmentInteractionListener {
+        fun setTitle(filterItem: FilterItem)
     }
 }

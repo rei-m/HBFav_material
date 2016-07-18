@@ -2,20 +2,20 @@ package me.rei_m.hbfavmaterial.enums
 
 import android.content.Context
 
-interface FilterItemI {
+interface FilterItem {
     companion object {
-        fun forMenuId(menuId: Int): FilterItemI {
-            for (filter: FilterItemI in ReadAfterFilter.values()) {
+        fun forMenuId(menuId: Int): FilterItem {
+            for (filter: FilterItem in ReadAfterFilter.values()) {
                 if (filter.menuId == menuId) {
                     return filter
                 }
             }
-            for (filter: FilterItemI in EntryTypeFilter.values()) {
+            for (filter: FilterItem in EntryTypeFilter.values()) {
                 if (filter.menuId == menuId) {
                     return filter
                 }
             }
-            for (filter: FilterItemI in BookmarkCommentFilter.values()) {
+            for (filter: FilterItem in BookmarkCommentFilter.values()) {
                 if (filter.menuId == menuId) {
                     return filter
                 }

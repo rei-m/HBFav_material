@@ -22,21 +22,23 @@ class BookmarkViewPager : ViewPager {
      */
     fun initialize(supportFragmentManager: FragmentManager) {
 
+        offscreenPageLimit = BookmarkPagerAdaptor.Page.values().size
+
         adapter = BookmarkPagerAdaptor(supportFragmentManager)
 
-        addOnPageChangeListener(object : OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-            }
-
-            override fun onPageSelected(position: Int) {
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[position]))
-            }
-        })
+//        addOnPageChangeListener(object : OnPageChangeListener {
+//            override fun onPageScrollStateChanged(state: Int) {
+//
+//            }
+//
+//            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+//
+//            }
+//
+//            override fun onPageSelected(position: Int) {
+//                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[position]))
+//            }
+//        })
     }
 
     /**
