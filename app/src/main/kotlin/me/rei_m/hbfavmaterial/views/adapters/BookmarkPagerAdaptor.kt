@@ -22,7 +22,7 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
                     val titleResId: Int) {
 
         BOOKMARK_FAVORITE(R.id.nav_bookmark_favorite, R.string.fragment_title_bookmark_favorite) {
-            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance()
+            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 menu.hide()
@@ -91,9 +91,8 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
     }
 
     fun getPageTitle(fm: FragmentManager, position: Int): CharSequence {
-        Page.values()[position].
         for (f in fm.fragments) {
-            when(f) {
+            when (f) {
                 is BookmarkFavoriteFragment -> {
 
                 }

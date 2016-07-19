@@ -24,7 +24,9 @@ import rx.subscriptions.CompositeSubscription
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
+class BookmarkFavoriteFragment : BaseFragment(),
+        BookmarkFavoriteContact.View,
+        MainPageFragment {
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -36,8 +38,23 @@ class BookmarkFavoriteFragment : BaseFragment(), BookmarkFavoriteContact.View {
 
     private var subscription: CompositeSubscription? = null
 
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = context.getString(R.string.fragment_title_bookmark_favorite)
+
     companion object {
-        fun newInstance(): BookmarkFavoriteFragment = BookmarkFavoriteFragment()
+
+        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        fun newInstance(pageIndex: Int): BookmarkFavoriteFragment {
+            return BookmarkFavoriteFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_PAGE_INDEX, pageIndex)
+                }
+            }
+        }
     }
 
     override fun onAttach(context: Context?) {
