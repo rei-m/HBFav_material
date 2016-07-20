@@ -22,7 +22,9 @@ import rx.subscriptions.CompositeSubscription
 /**
  * HotEntryを一覧で表示するFragment.
  */
-class HotEntryFragment : BaseFragment(), HotEntryContact.View {
+class HotEntryFragment : BaseFragment(),
+        HotEntryContact.View,
+        MainPageFragment {
 
     private lateinit var presenter: HotEntryPresenter
 
@@ -32,8 +34,21 @@ class HotEntryFragment : BaseFragment(), HotEntryContact.View {
 
     private var subscription: CompositeSubscription? = null
 
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = "${context.applicationContext.getString(R.string.fragment_title_hot_entry)} - ${presenter.entryTypeFilter.title(context.applicationContext)}"
+
     companion object {
-        fun newInstance(): HotEntryFragment = HotEntryFragment()
+
+        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        fun newInstance(pageIndex: Int): HotEntryFragment = HotEntryFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_PAGE_INDEX, pageIndex)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

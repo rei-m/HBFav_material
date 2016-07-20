@@ -5,6 +5,7 @@ import me.rei_m.hbfavmaterial.fragments.*
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
 import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryPresenter
+import me.rei_m.hbfavmaterial.fragments.presenter.NewEntryPresenter
 
 @Subcomponent(modules = arrayOf(FragmentModule::class))
 interface FragmentComponent {
@@ -14,6 +15,8 @@ interface FragmentComponent {
     fun inject(presenter: BookmarkUserPresenter)
 
     fun inject(presenter: HotEntryPresenter)
+
+    fun inject(presenter: NewEntryPresenter)
 
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 

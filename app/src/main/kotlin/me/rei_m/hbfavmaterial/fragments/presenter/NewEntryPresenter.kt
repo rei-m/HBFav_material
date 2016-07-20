@@ -13,8 +13,8 @@ import rx.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
 
-class HotEntryPresenter(private val view: HotEntryContact.View,
-                        var entryTypeFilter: EntryTypeFilter) : HotEntryContact.Actions {
+class NewEntryPresenter(private val view: NewEntryContact.View,
+                        var entryTypeFilter: EntryTypeFilter) : NewEntryContact.Actions {
 
     @Inject
     lateinit var entryService: EntryService

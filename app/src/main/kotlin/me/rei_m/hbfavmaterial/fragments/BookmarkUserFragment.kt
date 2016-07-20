@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +11,6 @@ import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.FilterItem
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
@@ -28,9 +26,9 @@ import javax.inject.Inject
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
-class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
-
-    private var listener: OnFragmentInteractionListener? = null
+class BookmarkUserFragment : BaseFragment(),
+        BookmarkUserContact.View,
+        MainPageFragment {
 
     private lateinit var presenter: BookmarkUserPresenter
 
@@ -47,21 +45,30 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
 
     private var isOwner: Boolean = true
 
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = "${context.applicationContext.getString(R.string.fragment_title_bookmark_own)} - ${presenter.readAfterFilter.title(context.applicationContext)}"
+
     companion object {
 
-        private val ARG_USER_ID = "ARG_USER_ID"
+        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
 
-        private val ARG_OWNER_FLAG = "ARG_OWNER_FLAG"
+        private const val ARG_USER_ID = "ARG_USER_ID"
+
+        private const val ARG_OWNER_FLAG = "ARG_OWNER_FLAG"
 
         /**
          * 自分のブックマークを表示する
          *
          * @return Fragment
          */
-        fun newInstance(): BookmarkUserFragment {
+        fun newInstance(pageIndex: Int): BookmarkUserFragment {
             return BookmarkUserFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_OWNER_FLAG, true)
+                    putInt(ARG_PAGE_INDEX, pageIndex)
                 }
             }
         }
@@ -77,16 +84,9 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
                 arguments = Bundle().apply {
                     putString(ARG_USER_ID, userId)
                     putBoolean(ARG_OWNER_FLAG, false)
+                    putInt(ARG_PAGE_INDEX, 0)
                 }
             }
-        }
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        if (context is OnFragmentInteractionListener) {
-            listener = context
         }
     }
 
@@ -181,14 +181,8 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        listener = null
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_bookmark_user, menu)
-        listener?.setTitle(presenter.readAfterFilter)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -196,7 +190,6 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
         val filter = ReadAfterFilter.forMenuId(item.itemId)
         presenter.toggleListContents(filter)?.let {
             subscription?.add(it)
-            listener?.setTitle(filter)
         }
 
         return true
@@ -270,9 +263,5 @@ class BookmarkUserFragment : BaseFragment(), BookmarkUserContact.View {
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
-    }
-
-    interface OnFragmentInteractionListener {
-        fun setTitle(filterItem: FilterItem)
     }
 }
