@@ -87,7 +87,7 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
             }
         }
 
-        return entryService.findHotEntryByType(entryTypeFilter)
+        return entryService.findNewEntryByType(entryTypeFilter)
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

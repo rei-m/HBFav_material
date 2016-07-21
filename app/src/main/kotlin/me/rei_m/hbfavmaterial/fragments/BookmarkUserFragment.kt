@@ -12,6 +12,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -20,6 +21,7 @@ import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
 import me.rei_m.hbfavmaterial.models.BookmarkUserModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
@@ -49,8 +51,8 @@ class BookmarkUserFragment : BaseFragment(),
         get() = arguments.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = "${context.applicationContext.getString(R.string.fragment_title_bookmark_own)} - ${presenter.readAfterFilter.title(context.applicationContext)}"
-
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.readAfterFilter.title(getAppContext()))
+    
     companion object {
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"

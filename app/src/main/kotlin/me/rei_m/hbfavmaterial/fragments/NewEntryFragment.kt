@@ -11,11 +11,13 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.presenter.NewEntryContact
 import me.rei_m.hbfavmaterial.fragments.presenter.NewEntryPresenter
+import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
 
@@ -38,9 +40,8 @@ class NewEntryFragment : BaseFragment(),
         get() = arguments.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = "${context.applicationContext.getString(R.string.fragment_title_new_entry)} - ${presenter.entryTypeFilter.title(context.applicationContext)}"
-
-
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.entryTypeFilter.title(getAppContext()))
+    
     companion object {
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"

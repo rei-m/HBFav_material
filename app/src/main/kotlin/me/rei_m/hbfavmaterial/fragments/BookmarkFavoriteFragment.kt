@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -20,6 +21,7 @@ import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoriteContact
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
 
 /**
@@ -41,7 +43,7 @@ class BookmarkFavoriteFragment : BaseFragment(),
         get() = arguments.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = context.getString(R.string.fragment_title_bookmark_favorite)
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), "")
 
     companion object {
 
