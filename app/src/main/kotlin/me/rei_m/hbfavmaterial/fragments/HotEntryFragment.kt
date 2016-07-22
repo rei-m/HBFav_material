@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -28,6 +29,8 @@ class HotEntryFragment : BaseFragment(),
         HotEntryContact.View,
         MainPageFragment {
 
+    private var listener: OnFragmentInteractionListener? = null
+
     private lateinit var presenter: HotEntryPresenter
 
     private val listAdapter: EntryListAdapter by lazy {
@@ -41,7 +44,7 @@ class HotEntryFragment : BaseFragment(),
 
     override val pageTitle: String
         get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.entryTypeFilter.title(getAppContext()))
-    
+
     companion object {
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
@@ -50,6 +53,13 @@ class HotEntryFragment : BaseFragment(),
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)
             }
+        }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
         }
     }
 
@@ -122,6 +132,11 @@ class HotEntryFragment : BaseFragment(),
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_entry, menu)
     }
@@ -131,6 +146,7 @@ class HotEntryFragment : BaseFragment(),
         val filter = EntryTypeFilter.forMenuId(item.itemId)
         presenter.toggleListContents(filter)?.let {
             subscription?.add(it)
+            listener?.onChangeFilter(pageTitle)
         }
 
         return true
@@ -183,5 +199,9 @@ class HotEntryFragment : BaseFragment(),
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onChangeFilter(newPageTitle: String)
     }
 }

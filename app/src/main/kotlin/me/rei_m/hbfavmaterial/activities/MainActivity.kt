@@ -8,14 +8,20 @@ import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
+import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
+import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
 import me.rei_m.hbfavmaterial.fragments.MainPageFragment
+import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
 
 /**
  * メインActivity.
  */
-class MainActivity : BaseDrawerActivity() {
+class MainActivity : BaseDrawerActivity(),
+        BookmarkUserFragment.OnFragmentInteractionListener,
+        HotEntryFragment.OnFragmentInteractionListener,
+        NewEntryFragment.OnFragmentInteractionListener {
 
     companion object {
 
@@ -75,6 +81,10 @@ class MainActivity : BaseDrawerActivity() {
         }
 
         return super.onNavigationItemSelected(item)
+    }
+
+    override fun onChangeFilter(newPageTitle: String) {
+        supportActionBar?.title = newPageTitle
     }
 
     private fun setTitleAndMenu(position: Int) {
