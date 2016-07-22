@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
@@ -66,7 +65,6 @@ class SettingActivity : BaseDrawerActivity() {
 
     @Subscribe
     fun subscribe(event: UserIdChangedEvent) {
-        (applicationContext as App).resetBookmarks()
         displayUserIconAndName(event.newId)
     }
 }

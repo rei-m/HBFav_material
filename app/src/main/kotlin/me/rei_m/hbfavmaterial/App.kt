@@ -9,12 +9,6 @@ import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
 import me.rei_m.hbfavmaterial.di.*
-import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
-import me.rei_m.hbfavmaterial.models.BookmarkUserModel
-import me.rei_m.hbfavmaterial.models.HotEntryModel
-import me.rei_m.hbfavmaterial.models.NewEntryModel
-import javax.inject.Inject
-import javax.inject.Named
 
 class App : Application() {
 
@@ -25,18 +19,6 @@ class App : Application() {
                 .infraLayerModule(InfraLayerModule())
                 .build()
     }
-
-    @Inject
-    lateinit var bookmarkFavoriteModel: BookmarkFavoriteModel
-
-    @field:[Inject Named("bookmarkUserModelForSelf")]
-    lateinit var bookmarkUserModel: BookmarkUserModel
-
-    @Inject
-    lateinit var hotEntryModel: HotEntryModel
-
-    @Inject
-    lateinit var newEntryModel: NewEntryModel
 
     private lateinit var analytics: FirebaseAnalytics
 
@@ -61,12 +43,5 @@ class App : Application() {
 
         // Set up FireBase Analytics
         analytics = FirebaseAnalytics.getInstance(this)
-    }
-
-    fun resetBookmarks() {
-        bookmarkFavoriteModel.bookmarkList.clear()
-        bookmarkUserModel.bookmarkList.clear()
-        hotEntryModel.entryList.clear()
-        newEntryModel.entryList.clear()
     }
 }

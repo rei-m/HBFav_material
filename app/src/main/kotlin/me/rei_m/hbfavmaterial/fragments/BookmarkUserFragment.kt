@@ -19,7 +19,6 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserContact
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
-import me.rei_m.hbfavmaterial.models.BookmarkUserModel
 import me.rei_m.hbfavmaterial.models.UserModel
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
@@ -41,7 +40,7 @@ class BookmarkUserFragment : BaseFragment(),
     lateinit var userModel: UserModel
 
     private val listAdapter: BookmarkListAdapter by lazy {
-        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BookmarkUserModel.BOOKMARK_COUNT_PER_PAGE)
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
     }
 
     private var subscription: CompositeSubscription? = null
@@ -57,6 +56,8 @@ class BookmarkUserFragment : BaseFragment(),
         get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.readAfterFilter.title(getAppContext()))
 
     companion object {
+
+        private const val BOOKMARK_COUNT_PER_PAGE = 20
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
 
