@@ -89,30 +89,4 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
     override fun getCount(): Int {
         return Page.values().count()
     }
-
-    fun getPageTitle(fm: FragmentManager, position: Int): CharSequence {
-        for (f in fm.fragments) {
-            when (f) {
-                is BookmarkFavoriteFragment -> {
-
-                }
-
-                is BookmarkUserFragment -> {
-
-                }
-
-                is HotEntryFragment -> {
-
-                }
-
-                is NewEntryFragment -> {
-
-                }
-                else -> {
-
-                }
-            }
-        }
-        return super.getPageTitle(position)
-    }
 }
