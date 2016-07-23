@@ -10,7 +10,6 @@ import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.*
 import javax.inject.Inject
 
 class NewEntryPresenter(private val view: NewEntryContact.View,
@@ -19,7 +18,7 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
     @Inject
     lateinit var entryService: EntryService
 
-    private val entryList: MutableList<EntryEntity> = ArrayList()
+    private val entryList: MutableList<EntryEntity> = mutableListOf()
 
     private var isLoading = false
 

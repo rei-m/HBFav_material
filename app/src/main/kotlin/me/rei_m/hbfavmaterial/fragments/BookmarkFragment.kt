@@ -11,13 +11,7 @@ import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
-class BookmarkFragment : BaseFragment(), IFragmentAnimation {
-
-    private val mBookmarkEntity: BookmarkEntity by lazy {
-        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
-    }
-
-    override var mContainerWidth: Float = 0.0f
+class BookmarkFragment() : BaseFragment(), IFragmentAnimation {
 
     companion object {
 
@@ -31,6 +25,12 @@ class BookmarkFragment : BaseFragment(), IFragmentAnimation {
             }
         }
     }
+    
+    private val mBookmarkEntity: BookmarkEntity by lazy {
+        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+    }
+
+    override var mContainerWidth: Float = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -29,7 +29,6 @@ import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
-import java.util.*
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
@@ -46,7 +45,7 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     companion object {
 
-        val TAG = EditBookmarkDialogFragment::class.java.simpleName
+        val TAG: String = EditBookmarkDialogFragment::class.java.simpleName
 
         private val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
 
@@ -95,15 +94,15 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
             it as BookmarkEditEntity
         }
 
-        val tags: ArrayList<String>
+        val tags: MutableList<String>
         val isAdd: Boolean
 
         if (bookmarkEdit == null) {
-            tags = ArrayList<String>()
+            tags = arrayListOf<String>()
             isAdd = true
         } else {
             isAdd = false
-            tags = bookmarkEdit.tags
+            tags = bookmarkEdit.tags.toMutableList()
         }
 
         val textTitle = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_title) as AppCompatTextView

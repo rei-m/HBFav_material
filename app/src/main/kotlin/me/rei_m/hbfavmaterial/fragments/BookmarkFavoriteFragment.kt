@@ -26,23 +26,9 @@ import rx.subscriptions.CompositeSubscription
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-class BookmarkFavoriteFragment : BaseFragment(),
+class BookmarkFavoriteFragment() : BaseFragment(),
         BookmarkFavoriteContact.View,
         MainPageFragment {
-
-    private lateinit var presenter: BookmarkFavoritePresenter
-
-    private val listAdapter: BookmarkListAdapter by lazy {
-        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
-    }
-
-    private var subscription: CompositeSubscription? = null
-
-    override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
-
-    override val pageTitle: String
-        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), "")
 
     companion object {
 
@@ -58,6 +44,20 @@ class BookmarkFavoriteFragment : BaseFragment(),
             }
         }
     }
+
+    private lateinit var presenter: BookmarkFavoritePresenter
+
+    private val listAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
+    }
+
+    private var subscription: CompositeSubscription? = null
+
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

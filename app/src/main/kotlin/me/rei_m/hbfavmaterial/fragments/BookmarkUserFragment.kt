@@ -28,32 +28,9 @@ import javax.inject.Inject
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
-class BookmarkUserFragment : BaseFragment(),
+class BookmarkUserFragment() : BaseFragment(),
         BookmarkUserContact.View,
         MainPageFragment {
-
-    private var listener: OnFragmentInteractionListener? = null
-
-    private lateinit var presenter: BookmarkUserPresenter
-
-    @Inject
-    lateinit var userModel: UserModel
-
-    private val listAdapter: BookmarkListAdapter by lazy {
-        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
-    }
-
-    private var subscription: CompositeSubscription? = null
-
-    lateinit private var userId: String
-
-    private var isOwner: Boolean = true
-
-    override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
-
-    override val pageTitle: String
-        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.readAfterFilter.title(getAppContext()))
 
     companion object {
 
@@ -95,6 +72,29 @@ class BookmarkUserFragment : BaseFragment(),
             }
         }
     }
+
+    private var listener: OnFragmentInteractionListener? = null
+
+    private lateinit var presenter: BookmarkUserPresenter
+
+    @Inject
+    lateinit var userModel: UserModel
+
+    private val listAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
+    }
+
+    private var subscription: CompositeSubscription? = null
+
+    lateinit private var userId: String
+
+    private var isOwner: Boolean = true
+
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.readAfterFilter.title(getAppContext()))
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

@@ -4,7 +4,6 @@ import android.content.Context
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import rx.Observable
-import java.util.*
 
 class MockHatenaRepository(context: Context) : HatenaRepository(context) {
 
@@ -23,11 +22,11 @@ class MockHatenaRepository(context: Context) : HatenaRepository(context) {
     }
 
     override fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<BookmarkEditEntity> {
-        return Observable.just(BookmarkEditEntity("", "", false, ArrayList()))
+        return Observable.just(BookmarkEditEntity("", "", false, listOf<String>()))
     }
 
     override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String, comment: String, isOpen: Boolean, tags: List<String>): Observable<BookmarkEditEntity> {
-        return Observable.just(BookmarkEditEntity("", "", false, ArrayList()))
+        return Observable.just(BookmarkEditEntity("", "", false, listOf<String>()))
     }
 
     override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity, urlString: String): Observable<Void?> {
