@@ -10,51 +10,48 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
-import me.rei_m.hbfavmaterial.extensions.getAppContext
+import me.rei_m.hbfavmaterial.entities.BookmarkEntity
+import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.enums.FilterItem
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryContact
-import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryPresenter
-import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.views.adapters.EntryListAdapter
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkedUsersContact
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkedUsersPresenter
+import me.rei_m.hbfavmaterial.views.adapters.UserListAdapter
 import rx.subscriptions.CompositeSubscription
 
 /**
- * HotEntryを一覧で表示するFragment.
+ * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
  */
-class HotEntryFragment() : BaseFragment(),
-        HotEntryContact.View,
-        MainPageFragment {
+class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     companion object {
 
-        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+        private val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        fun newInstance(pageIndex: Int): HotEntryFragment = HotEntryFragment().apply {
-            arguments = Bundle().apply {
-                putInt(ARG_PAGE_INDEX, pageIndex)
+        fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkedUsersFragment {
+            return BookmarkedUsersFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_BOOKMARK, bookmarkEntity)
+                }
             }
         }
     }
-    
+
     private var listener: OnFragmentInteractionListener? = null
 
-    private lateinit var presenter: HotEntryPresenter
+    private lateinit var presenter: BookmarkedUsersPresenter
 
-    private val listAdapter: EntryListAdapter by lazy {
-        EntryListAdapter(activity, R.layout.list_item_entry)
+    private val bookmarkEntity: BookmarkEntity by lazy {
+        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+    }
+
+    private val listAdapter: UserListAdapter by lazy {
+        UserListAdapter(activity, R.layout.list_item_user)
     }
 
     private var subscription: CompositeSubscription? = null
-
-    override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
-
-    override val pageTitle: String
-        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.entryTypeFilter.title(getAppContext()))
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -65,7 +62,7 @@ class HotEntryFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = HotEntryPresenter(this, EntryTypeFilter.ALL)
+        presenter = BookmarkedUsersPresenter(this, bookmarkEntity)
         setHasOptionsMenu(true)
     }
 
@@ -76,8 +73,8 @@ class HotEntryFragment() : BaseFragment(),
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
-            presenter.clickEntry(entryEntity)
+            val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
+            presenter.clickUser(bookmarkEntity)
         }
 
         listView.adapter = listAdapter
@@ -89,7 +86,7 @@ class HotEntryFragment() : BaseFragment(),
         }
 
         with(view.findViewById(R.id.fragment_list_view_empty) as TextView) {
-            text = getString(R.string.message_text_empty_entry)
+            text = getString(R.string.message_text_empty_user)
         }
 
         return view
@@ -102,7 +99,6 @@ class HotEntryFragment() : BaseFragment(),
         val view = view ?: return
 
         if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
             presenter.initializeListContents()?.let {
                 subscription?.add(it)
             }
@@ -138,28 +134,39 @@ class HotEntryFragment() : BaseFragment(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.fragment_entry, menu)
+        inflater?.inflate(R.menu.fragment_bookmarked_users, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
         item ?: return false
-        val filter = EntryTypeFilter.forMenuId(item.itemId)
-        presenter.toggleListContents(filter)?.let {
-            subscription?.add(it)
-            listener?.onChangeFilter(pageTitle)
+
+        val id = item.itemId
+
+        if (id == android.R.id.home) {
+            return super.onOptionsItemSelected(item)
         }
+        val commentFilter = FilterItem.forMenuId(id) as BookmarkCommentFilter
+
+        presenter.toggleListContents(commentFilter)
+
+        listener?.onChangeFilter(commentFilter)
 
         return true
     }
 
-    override fun showEntryList(entryList: List<EntryEntity>) {
+    override fun showUserList(bookmarkList: List<BookmarkEntity>) {
+
         val view = view ?: return
 
         with(listAdapter) {
             clear()
-            addAll(entryList)
+            addAll(bookmarkList)
             notifyDataSetChanged()
         }
+
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        listView.setSelection(0)
 
         view.findViewById(R.id.fragment_list_list).show()
 
@@ -170,7 +177,7 @@ class HotEntryFragment() : BaseFragment(),
         }
     }
 
-    override fun hideEntryList() {
+    override fun hideUserList() {
         val view = view ?: return
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
         listView.setSelection(0)
@@ -202,6 +209,6 @@ class HotEntryFragment() : BaseFragment(),
     }
 
     interface OnFragmentInteractionListener {
-        fun onChangeFilter(newPageTitle: String)
+        fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter)
     }
 }

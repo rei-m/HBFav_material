@@ -34,7 +34,7 @@
             android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.BookmarkUsersActivity"
+            android:name=".activities.BookmarkedUsersActivity"
             android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

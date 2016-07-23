@@ -7,5 +7,5 @@ import org.simpleframework.xml.Root
 class BookmarkRssXml {
     @set:ElementList(inline = true, required = false)
     @get:ElementList(inline = true, required = false)
-    var list: List<BookmarkRssItemXml> = arrayListOf()
+    var list: MutableList<BookmarkRssItemXml> = arrayListOf()
 }

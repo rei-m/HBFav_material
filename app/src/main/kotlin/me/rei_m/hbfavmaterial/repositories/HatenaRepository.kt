@@ -11,7 +11,6 @@ import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.network.RetrofitManager
 import rx.Observable
 import java.net.HttpURLConnection
-import java.util.*
 import javax.inject.Inject
 
 open class HatenaRepository {
@@ -91,7 +90,7 @@ open class HatenaRepository {
                             urlString: String,
                             comment: String,
                             isOpen: Boolean,
-                            tags: List<String> = ArrayList<String>()): Observable<BookmarkEditEntity> {
+                            tags: List<String> = listOf()): Observable<BookmarkEditEntity> {
 
         // Tagに登録できる上限を超えていたら例外.
         if (MAX_TAGS_COUNT < tags.size) {

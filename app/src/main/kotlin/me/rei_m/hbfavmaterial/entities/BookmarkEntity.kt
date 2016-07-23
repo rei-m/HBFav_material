@@ -11,4 +11,4 @@ data class BookmarkEntity(val articleEntity: ArticleEntity,
                           val creator: String,
                           val date: Date,
                           val bookmarkIconUrl: String,
-                          val tags: List<String> = ArrayList()) : Serializable
+                          val tags: List<String> = listOf()) : Serializable

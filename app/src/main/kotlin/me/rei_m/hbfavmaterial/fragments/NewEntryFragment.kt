@@ -25,9 +25,20 @@ import rx.subscriptions.CompositeSubscription
 /**
  * 新着Entryを一覧で表示するFragment.
  */
-class NewEntryFragment : BaseFragment(),
+class NewEntryFragment() : BaseFragment(),
         NewEntryContact.View,
         MainPageFragment {
+
+    companion object {
+
+        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        fun newInstance(pageIndex: Int): NewEntryFragment = NewEntryFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_PAGE_INDEX, pageIndex)
+            }
+        }
+    }
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -44,17 +55,6 @@ class NewEntryFragment : BaseFragment(),
 
     override val pageTitle: String
         get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), presenter.entryTypeFilter.title(getAppContext()))
-
-    companion object {
-
-        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
-
-        fun newInstance(pageIndex: Int): NewEntryFragment = NewEntryFragment().apply {
-            arguments = Bundle().apply {
-                putInt(ARG_PAGE_INDEX, pageIndex)
-            }
-        }
-    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

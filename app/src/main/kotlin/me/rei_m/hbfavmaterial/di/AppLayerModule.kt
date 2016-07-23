@@ -6,8 +6,6 @@ import dagger.Provides
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.models.UserModel
-import me.rei_m.hbfavmaterial.models.UserRegisterBookmarkModel
-import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
 import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import javax.inject.Singleton
@@ -34,11 +32,5 @@ class AppLayerModule() {
     @ForApplication
     fun provideUserModel(context: Context, userRepository: UserRepository): UserModel {
         return UserModel(context, userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserRegisterBookmarkModel(bookmarkRepository: BookmarkRepository): UserRegisterBookmarkModel {
-        return UserRegisterBookmarkModel(bookmarkRepository)
     }
 }

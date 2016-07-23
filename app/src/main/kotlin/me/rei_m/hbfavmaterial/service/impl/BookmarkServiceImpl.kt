@@ -11,7 +11,6 @@ import me.rei_m.hbfavmaterial.utils.ApiUtil
 import me.rei_m.hbfavmaterial.utils.RssXmlUtil
 import org.jsoup.Jsoup
 import rx.Observable
-import java.util.*
 
 class BookmarkServiceImpl : BookmarkService {
 
@@ -71,7 +70,7 @@ class BookmarkServiceImpl : BookmarkService {
         return RetrofitManager.json.create(HatenaApiService::class.java)
                 .entry(articleUrl)
                 .map { response ->
-                    return@map ArrayList<BookmarkEntity>().apply {
+                    return@map arrayListOf<BookmarkEntity>().apply {
                         response.bookmarks.forEach { v ->
                             val articleEntity = ArticleEntity(
                                     title = "",

@@ -2,10 +2,7 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Subcomponent
 import me.rei_m.hbfavmaterial.fragments.*
-import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
-import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
-import me.rei_m.hbfavmaterial.fragments.presenter.HotEntryPresenter
-import me.rei_m.hbfavmaterial.fragments.presenter.NewEntryPresenter
+import me.rei_m.hbfavmaterial.fragments.presenter.*
 
 @Subcomponent(modules = arrayOf(FragmentModule::class))
 interface FragmentComponent {
@@ -18,11 +15,13 @@ interface FragmentComponent {
 
     fun inject(presenter: NewEntryPresenter)
 
+    fun inject(presenter: BookmarkedUsersPresenter)
+
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 
     fun inject(bookmarkUserFragment: BookmarkUserFragment)
 
-    fun inject(bookmarkUsersFragment: BookmarkUsersFragment)
+    fun inject(bookmarkedUsersFragment: BookmarkedUsersFragment)
 
     fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
 

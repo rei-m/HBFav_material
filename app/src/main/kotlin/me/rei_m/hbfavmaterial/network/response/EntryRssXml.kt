@@ -7,5 +7,5 @@ import org.simpleframework.xml.Root
 class EntryRssXml {
     @set:ElementList(inline = true)
     @get:ElementList(inline = true)
-    var list: List<EntryRssItemXml> = arrayListOf()
+    var list: MutableList<EntryRssItemXml> = arrayListOf()
 }

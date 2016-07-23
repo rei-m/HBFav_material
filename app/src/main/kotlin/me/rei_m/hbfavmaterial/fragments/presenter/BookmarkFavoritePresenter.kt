@@ -10,7 +10,6 @@ import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.*
 import javax.inject.Inject
 
 class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) : BookmarkFavoriteContact.Actions {
@@ -21,7 +20,7 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
     @Inject
     lateinit var bookmarkService: BookmarkService
 
-    private val bookmarkList: MutableList<BookmarkEntity> = ArrayList()
+    private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
 
     private var isLoading = false
 

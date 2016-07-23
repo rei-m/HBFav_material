@@ -31,13 +31,6 @@ import javax.inject.Inject
  */
 class BookmarkActivity : BaseSingleActivity() {
 
-    @Inject
-    lateinit var hatenaModel: HatenaModel
-
-    private var mEntryTitle: String = ""
-
-    private var mEntryLink: String = ""
-
     companion object {
 
         private val ARG_BOOKMARK = "ARG_BOOKMARK"
@@ -57,6 +50,13 @@ class BookmarkActivity : BaseSingleActivity() {
             }
         }
     }
+    
+    @Inject
+    lateinit var hatenaModel: HatenaModel
+
+    private var entryTitle: String = ""
+
+    private var entryLink: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,16 +65,16 @@ class BookmarkActivity : BaseSingleActivity() {
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
                 val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-                mEntryTitle = bookmarkEntity.articleEntity.title
-                mEntryLink = bookmarkEntity.articleEntity.url
+                entryTitle = bookmarkEntity.articleEntity.title
+                entryLink = bookmarkEntity.articleEntity.url
                 setFragment(BookmarkFragment.newInstance(bookmarkEntity))
             } else {
                 val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
-                mEntryTitle = entryEntity.articleEntity.title
-                mEntryLink = entryEntity.articleEntity.url
-                setFragment(EntryWebViewFragment.newInstance(mEntryLink), EntryWebViewFragment.TAG)
+                entryTitle = entryEntity.articleEntity.title
+                entryLink = entryEntity.articleEntity.url
+                setFragment(EntryWebViewFragment.newInstance(entryLink), EntryWebViewFragment.TAG)
             }
-            supportActionBar?.title = mEntryTitle
+            supportActionBar?.title = entryTitle
         }
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
@@ -84,22 +84,22 @@ class BookmarkActivity : BaseSingleActivity() {
             if (!hatenaModel.isAuthorised()) {
                 startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
             } else {
-                hatenaModel.fetchBookmark(mEntryLink)
+                hatenaModel.fetchBookmark(entryLink)
             }
         }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        mEntryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
-        mEntryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
-        supportActionBar?.title = mEntryTitle
+        entryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
+        entryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
+        supportActionBar?.title = entryTitle
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putString(KEY_ENTRY_TITLE, mEntryTitle)
-        outState?.putString(KEY_ENTRY_LINK, mEntryLink)
+        outState?.putString(KEY_ENTRY_TITLE, entryTitle)
+        outState?.putString(KEY_ENTRY_LINK, entryLink)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -115,8 +115,8 @@ class BookmarkActivity : BaseSingleActivity() {
             R.id.menu_share ->
                 ShareCompat.IntentBuilder.from(this)
                         .setChooserTitle("記事をシェアします")
-                        .setSubject(mEntryTitle)
-                        .setText(mEntryLink)
+                        .setSubject(entryTitle)
+                        .setText(entryLink)
                         .setType("text/plain")
                         .startChooser()
             else ->
@@ -148,7 +148,7 @@ class BookmarkActivity : BaseSingleActivity() {
             RESULT_OK -> {
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
                     if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
-                        hatenaModel.fetchBookmark(mEntryLink)
+                        hatenaModel.fetchBookmark(entryLink)
                     }
                 } else {
                     showSnackbarNetworkError(findViewById(R.id.activity_layout))
@@ -172,7 +172,7 @@ class BookmarkActivity : BaseSingleActivity() {
 
     @Subscribe
     fun subscribe(event: BookmarkCountClickedEvent) {
-        startActivity(BookmarkUsersActivity.createIntent(this, event.bookmarkEntity))
+        startActivity(BookmarkedUsersActivity.createIntent(this, event.bookmarkEntity))
     }
 
     @Subscribe
@@ -181,13 +181,13 @@ class BookmarkActivity : BaseSingleActivity() {
             LoadedEventStatus.OK -> {
                 // 更新用ダイアログを表示
                 EditBookmarkDialogFragment
-                        .newInstance(mEntryTitle, mEntryLink, event.bookmarkEditEntity!!)
+                        .newInstance(entryTitle, entryLink, event.bookmarkEditEntity!!)
                         .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.NOT_FOUND -> {
                 // 新規用ダイアログを表示
                 EditBookmarkDialogFragment
-                        .newInstance(mEntryTitle, mEntryLink)
+                        .newInstance(entryTitle, entryLink)
                         .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
             }
             LoadedEventStatus.ERROR -> {
