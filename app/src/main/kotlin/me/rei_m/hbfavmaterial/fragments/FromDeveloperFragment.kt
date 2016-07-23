@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 開発者からのコメントを表示するFragment.
  */
-class FromDeveloperFragment : Fragment() {
+class FromDeveloperFragment : BaseFragment() {
 
     companion object {
         fun newInstance(): FromDeveloperFragment {

@@ -81,12 +81,12 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        (activity.application as App).component.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val view = LayoutInflater.from(activity).inflate(R.layout.dialog_fragment_edit_bookmark, null)
+        val view = inflater.inflate(R.layout.dialog_fragment_edit_bookmark, container, false)
 
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
         val bookmarkTitle = arguments.getString(ARG_BOOKMARK_TITLE)

@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import me.rei_m.hbfavmaterial.utils.AppUtil
 /**
  * このアプリについてを表示するFragment.
  */
-class ExplainAppFragment : Fragment() {
+class ExplainAppFragment : BaseFragment() {
 
     companion object {
         fun newInstance(): ExplainAppFragment {

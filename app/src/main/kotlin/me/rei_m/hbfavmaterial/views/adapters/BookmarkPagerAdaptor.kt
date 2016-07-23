@@ -22,42 +22,42 @@ class BookmarkPagerAdaptor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
                     val titleResId: Int) {
 
         BOOKMARK_FAVORITE(R.id.nav_bookmark_favorite, R.string.fragment_title_bookmark_favorite) {
-            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance()
+            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 menu.hide()
             }
         },
         BOOKMARK_OWN(R.id.nav_bookmark_own, R.string.fragment_title_bookmark_own) {
-            override fun newInstance(): Fragment = BookmarkUserFragment.newInstance()
+            override fun newInstance(): Fragment = BookmarkUserFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     hide()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = true;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = true
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = true
                 }
             }
         },
         HOT_ENTRY(R.id.nav_hot_entry, R.string.fragment_title_hot_entry) {
-            override fun newInstance(): Fragment = HotEntryFragment.newInstance()
+            override fun newInstance(): Fragment = HotEntryFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false
                 }
             }
         },
         NEW_ENTRY(R.id.nav_new_entry, R.string.fragment_title_new_entry) {
-            override fun newInstance(): Fragment = NewEntryFragment.newInstance()
+            override fun newInstance(): Fragment = NewEntryFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {
                     show()
-                    findItem(R.id.menu_filter_bookmark_all).isVisible = false;
-                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false;
+                    findItem(R.id.menu_filter_bookmark_all).isVisible = false
+                    findItem(R.id.menu_filter_bookmark_read_after).isVisible = false
                 }
             }
         };

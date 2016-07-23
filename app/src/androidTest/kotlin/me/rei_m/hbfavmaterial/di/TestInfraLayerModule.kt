@@ -4,7 +4,6 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.repositories.BookmarkRepository
-import me.rei_m.hbfavmaterial.repositories.EntryRepository
 import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 
@@ -14,11 +13,6 @@ class TestInfraLayerModule() {
     @Provides
     fun provideBookmarkRepository(): BookmarkRepository {
         return BookmarkRepository()
-    }
-
-    @Provides
-    fun provideEntryRepository(): EntryRepository {
-        return EntryRepository()
     }
 
     @Provides

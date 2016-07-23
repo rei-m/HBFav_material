@@ -4,8 +4,6 @@ import android.content.Context
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.MainPageDisplayEvent
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
 /**
@@ -22,27 +20,8 @@ class BookmarkViewPager : ViewPager {
      */
     fun initialize(supportFragmentManager: FragmentManager) {
 
+        offscreenPageLimit = BookmarkPagerAdaptor.Page.values().size
+
         adapter = BookmarkPagerAdaptor(supportFragmentManager)
-
-        addOnPageChangeListener(object : OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-            }
-
-            override fun onPageSelected(position: Int) {
-                EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[position]))
-            }
-        })
-    }
-
-    /**
-     * 表示中のページが表示されたイベントをPOSTする.
-     */
-    fun postCurrentPageDisplayEvent() {
-        EventBusHolder.EVENT_BUS.post(MainPageDisplayEvent(BookmarkPagerAdaptor.Page.values()[currentItem]))
     }
 }

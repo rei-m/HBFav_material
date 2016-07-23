@@ -2,8 +2,8 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Component
 import me.rei_m.hbfavmaterial.App
-import me.rei_m.hbfavmaterial.activities.*
-import me.rei_m.hbfavmaterial.fragments.*
+import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
+import me.rei_m.hbfavmaterial.fragments.EditUserIdDialogFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -12,29 +12,9 @@ interface ApplicationComponent {
 
     fun inject(application: App)
 
-    fun inject(baseActivityWithDrawer: BaseActivityWithDrawer)
+    fun inject(dialog: EditBookmarkDialogFragment)
 
-    fun inject(bookmarkActivity: BookmarkActivity)
+    fun inject(dialog: EditUserIdDialogFragment)
 
-    fun inject(mainActivity: MainActivity)
-
-    fun inject(oAuthActivity: OAuthActivity)
-
-    fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
-
-    fun inject(bookmarkUserFragment: BookmarkUserFragment)
-
-    fun inject(bookmarkUsersFragment: BookmarkUsersFragment)
-
-    fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
-
-    fun inject(editUserIdDialogFragment: EditUserIdDialogFragment)
-
-    fun inject(hotEntryFragment: HotEntryFragment)
-
-    fun inject(initializeFragment: InitializeFragment)
-
-    fun inject(newEntryFragment: NewEntryFragment)
-
-    fun inject(settingFragment: SettingFragment)
+    fun plus(module: ActivityModule): ActivityComponent
 }

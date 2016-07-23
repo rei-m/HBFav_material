@@ -10,7 +10,7 @@ import me.rei_m.hbfavmaterial.fragments.CreditFragment
 import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
 import me.rei_m.hbfavmaterial.utils.FragmentUtil.Companion.Tag
 
-class FrameActivity : BaseActivity() {
+class FrameActivity : BaseSingleActivity() {
 
     companion object {
 

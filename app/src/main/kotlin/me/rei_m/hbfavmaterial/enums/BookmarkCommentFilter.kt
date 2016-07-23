@@ -6,7 +6,7 @@ import me.rei_m.hbfavmaterial.R
  * ブックマークのフィルタ.
  */
 enum class BookmarkCommentFilter(override val menuId: Int,
-                                 override val titleResId: Int) : FilterItemI {
+                                 override val titleResId: Int) : FilterItem {
     ALL(
             R.id.menu_filter_users_all,
             R.string.filter_bookmark_users_all

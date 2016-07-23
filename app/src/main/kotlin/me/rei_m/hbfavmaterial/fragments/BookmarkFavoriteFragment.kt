@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -12,50 +11,57 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
-import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.network.BookmarkFavoriteLoadedEvent
-import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
-import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.models.BookmarkFavoriteModel
-import me.rei_m.hbfavmaterial.models.UserModel
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoriteContact
+import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-class BookmarkFavoriteFragment : Fragment() {
+class BookmarkFavoriteFragment : BaseFragment(),
+        BookmarkFavoriteContact.View,
+        MainPageFragment {
 
-    @Inject
-    lateinit var bookmarkFavoriteModel: BookmarkFavoriteModel
+    private lateinit var presenter: BookmarkFavoritePresenter
 
-    @Inject
-    lateinit var userModel: UserModel
-
-    private val mListAdapter: BookmarkListAdapter by lazy {
-        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BookmarkFavoriteModel.BOOKMARK_COUNT_PER_PAGE)
+    private val listAdapter: BookmarkListAdapter by lazy {
+        BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
     }
 
-    lateinit private var mCompositeSubscription: CompositeSubscription
+    private var subscription: CompositeSubscription? = null
+
+    override val pageIndex: Int
+        get() = arguments.getInt(ARG_PAGE_INDEX)
+
+    override val pageTitle: String
+        get() = BookmarkPagerAdaptor.Page.values()[pageIndex].title(getAppContext(), "")
 
     companion object {
-        fun newInstance(): BookmarkFavoriteFragment {
-            return BookmarkFavoriteFragment()
+
+        private const val BOOKMARK_COUNT_PER_PAGE = 25
+
+        private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        fun newInstance(pageIndex: Int): BookmarkFavoriteFragment {
+            return BookmarkFavoriteFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_PAGE_INDEX, pageIndex)
+                }
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        presenter = BookmarkFavoritePresenter(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,18 +70,15 @@ class BookmarkFavoriteFragment : Fragment() {
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
-        with(View.inflate(context, R.layout.list_fotter_loading, null)) {
-            listView.addFooterView(this, null, false)
-            hide()
-        }
-
         listView.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
                 // 一番下までスクロールしたら次ページの読み込みを開始
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-                    // 読込中以外、かつFooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
-                    if (!bookmarkFavoriteModel.isBusy && 0 < listView.footerViewsCount) {
-                        bookmarkFavoriteModel.fetch(userModel.userEntity!!.id, mListAdapter.nextIndex)
+                    // FooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
+                    if (0 < listView.footerViewsCount) {
+                        presenter.fetchListContents(listAdapter.nextIndex)?.let {
+                            subscription?.add(it)
+                        }
                     }
                 }
             }
@@ -86,10 +89,10 @@ class BookmarkFavoriteFragment : Fragment() {
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            EventBusHolder.EVENT_BUS.post(BookmarkListItemClickedEvent(bookmarkEntity))
+            presenter.clickBookmark(bookmarkEntity)
         }
 
-        listView.adapter = mListAdapter
+        listView.adapter = listAdapter
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             setColorSchemeResources(R.color.pull_to_refresh_1,
@@ -106,38 +109,31 @@ class BookmarkFavoriteFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
+        subscription = CompositeSubscription()
 
         val view = view ?: return
 
-        val displayedCount = mListAdapter.count
-
-        if (displayedCount != bookmarkFavoriteModel.bookmarkList.size) {
-            // 表示済の件数とModel内で保持している件数をチェックし、
-            // 差分があれば未表示のブックマークがあるのでリストに表示する
-            displayListContents(view.findViewById(R.id.fragment_list_list) as ListView)
-            view.findViewById(R.id.fragment_list_progress_list).hide()
-        } else if (displayedCount === 0) {
+        if (listAdapter.count === 0) {
             // 1件も表示していなければブックマーク情報をRSSから取得する
-            bookmarkFavoriteModel.fetch(userModel.userEntity!!.id)
-            view.findViewById(R.id.fragment_list_progress_list).show()
+            presenter.initializeListContents()?.let {
+                subscription?.add(it)
+            }
         }
-
-        view.findViewById(R.id.fragment_list_view_empty).hide()
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        mCompositeSubscription = CompositeSubscription()
-        mCompositeSubscription.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             // 上から引っ張りきったらbookmarkの更新を行う
-            bookmarkFavoriteModel.fetch(userModel.userEntity!!.id)
+            presenter.fetchListContents(0)?.let {
+                subscription?.add(it)
+            }
         })
     }
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
-        mCompositeSubscription.unsubscribe()
+        subscription?.unsubscribe()
+        subscription = null
 
         val view = view ?: return
 
@@ -149,45 +145,18 @@ class BookmarkFavoriteFragment : Fragment() {
         }
     }
 
-    /**
-     * ブックマーク情報のロード完了イベント
-     */
-    @Subscribe
-    fun subscribe(event: BookmarkFavoriteLoadedEvent) {
+    override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
 
         val view = view ?: return
 
-        val listView = view.findViewById(R.id.fragment_list_list) as ListView
-
-        when (event.status) {
-            LoadedEventStatus.OK -> {
-                // 正常に完了した場合、リストに追加して表示を更新
-                displayListContents(listView)
-            }
-            LoadedEventStatus.NOT_FOUND -> {
-                // 読込結果がなかった場合はFooterViewを非表示にする
-                if (0 < listView.footerViewsCount) {
-                    with(view.findViewById(R.id.list_footer_loading_layout)) {
-                        listView.removeFooterView(this)
-                    }
-                }
-            }
-            LoadedEventStatus.ERROR -> {
-                // 読み込み出来なかった場合はSnackbarで通知する
-                (activity as AppCompatActivity).showSnackbarNetworkError(view)
-            }
-            else -> {
-
-            }
+        with(listAdapter) {
+            clear()
+            addAll(bookmarkList)
+            notifyDataSetChanged()
         }
 
-        // リストが空の場合はEmptyViewを表示する
-        view.findViewById(R.id.fragment_list_view_empty).toggle(mListAdapter.isEmpty)
+        view.findViewById(R.id.fragment_list_list).show()
 
-        // プログレスを非表示にする
-        view.findViewById(R.id.fragment_list_progress_list).hide()
-
-        // Pull to refresh中だった場合は解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
                 RxSwipeRefreshLayout.refreshing(this).call(false)
@@ -195,21 +164,54 @@ class BookmarkFavoriteFragment : Fragment() {
         }
     }
 
-    /**
-     * ListViewのコンテンツを表示する.
-     */
-    private fun displayListContents(listView: ListView) {
+    override fun hideBookmarkList() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        listView.setSelection(0)
+        listView.hide()
+    }
 
-        // コンテンツを表示する
-        with(mListAdapter) {
-            clear()
-            addAll(bookmarkFavoriteModel.bookmarkList)
-            notifyDataSetChanged()
+    override fun showNetworkErrorMessage() {
+        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+    }
+
+    override fun showProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).show()
+    }
+
+    override fun hideProgress() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_progress_list).hide()
+    }
+
+    override fun startAutoLoading() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
+        if (listView.footerViewsCount === 0) {
+            View.inflate(context, R.layout.list_fotter_loading, null).let {
+                listView.addFooterView(it, null, false)
+            }
         }
+    }
 
-        // FooterViewを表示する
+    override fun stopAutoLoading() {
+        val view = view ?: return
+        val listView = view.findViewById(R.id.fragment_list_list) as ListView
         if (0 < listView.footerViewsCount) {
-            listView.findViewById(R.id.list_footer_loading_layout).show()
+            with(view.findViewById(R.id.list_footer_loading_layout)) {
+                listView.removeFooterView(this)
+            }
         }
+    }
+
+    override fun showEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).show()
+    }
+
+    override fun hideEmpty() {
+        val view = view ?: return
+        view.findViewById(R.id.fragment_list_view_empty).hide()
     }
 }

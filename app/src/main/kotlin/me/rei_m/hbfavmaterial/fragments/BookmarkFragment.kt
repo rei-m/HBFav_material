@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
-class BookmarkFragment : Fragment(), IFragmentAnimation {
+class BookmarkFragment : BaseFragment(), IFragmentAnimation {
 
     private val mBookmarkEntity: BookmarkEntity by lazy {
         arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity

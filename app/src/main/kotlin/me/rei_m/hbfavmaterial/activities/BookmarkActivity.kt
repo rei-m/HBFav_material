@@ -8,7 +8,6 @@ import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
@@ -30,7 +29,7 @@ import javax.inject.Inject
 /**
  * ブックマークの詳細を表示するActivity.
  */
-class BookmarkActivity : BaseActivity() {
+class BookmarkActivity : BaseSingleActivity() {
 
     @Inject
     lateinit var hatenaModel: HatenaModel
@@ -61,7 +60,7 @@ class BookmarkActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {

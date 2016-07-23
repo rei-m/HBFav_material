@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fragment_bookmark_user_menu_filter_bookmark_all"
+        android:orderInCategory="100"
+        android:title="@string/filter_bookmark_users_all"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/fragment_bookmark_user_menu_filter_bookmark_read_after"
+        android:orderInCategory="101"
+        android:title="@string/text_read_after"
+        app:showAsAction="never" />
+
+</menu>

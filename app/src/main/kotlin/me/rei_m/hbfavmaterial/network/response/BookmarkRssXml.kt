@@ -5,7 +5,7 @@ import org.simpleframework.xml.Root
 
 @Root(name = "rdf:RDF", strict = false)
 class BookmarkRssXml {
-    @set:ElementList(inline = true)
-    @get:ElementList(inline = true)
+    @set:ElementList(inline = true, required = false)
+    @get:ElementList(inline = true, required = false)
     var list: List<BookmarkRssItemXml> = arrayListOf()
 }

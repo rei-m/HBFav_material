@@ -3,7 +3,6 @@ package me.rei_m.hbfavmaterial.fragments
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatEditText
@@ -12,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
@@ -26,7 +24,7 @@ import javax.inject.Inject
 /**
  * アプリの初期処理を行うFragment.
  */
-class InitializeFragment : Fragment(), IProgressDialog {
+class InitializeFragment : BaseFragment(), IProgressDialog {
 
     @Inject
     lateinit var userModel: UserModel
@@ -43,7 +41,7 @@ class InitializeFragment : Fragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

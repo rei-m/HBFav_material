@@ -10,7 +10,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthAccessTokenLoadedEvent
 import me.rei_m.hbfavmaterial.events.network.HatenaOAuthRequestTokenLoadedEvent
@@ -21,7 +20,7 @@ import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import javax.inject.Inject
 
-class OAuthActivity : BaseActivity() {
+class OAuthActivity : BaseSingleActivity() {
 
     @Inject
     lateinit var hatenaModel: HatenaModel
@@ -42,7 +41,7 @@ class OAuthActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.graph.inject(this)
+        component.inject(this)
 
         mWebView.apply {
             clearCache(true)

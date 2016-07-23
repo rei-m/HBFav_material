@@ -9,7 +9,7 @@ import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.enums.FilterItemI
+import me.rei_m.hbfavmaterial.enums.FilterItem
 import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUsersFilteredEvent
 import me.rei_m.hbfavmaterial.events.ui.UserListItemClickedEvent
@@ -17,7 +17,7 @@ import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUsersFragment
 
-class BookmarkUsersActivity : BaseActivity() {
+class BookmarkUsersActivity : BaseSingleActivity() {
 
     private val mBookmarkEntity: BookmarkEntity by lazy {
         intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
@@ -74,7 +74,7 @@ class BookmarkUsersActivity : BaseActivity() {
         if (id == android.R.id.home) {
             return super.onOptionsItemSelected(item)
         }
-        mCommentFilter = FilterItemI.forMenuId(id) as BookmarkCommentFilter
+        mCommentFilter = FilterItem.forMenuId(id) as BookmarkCommentFilter
 
         EventBusHolder.EVENT_BUS.post(BookmarkUsersFilteredEvent(mCommentFilter))
 
