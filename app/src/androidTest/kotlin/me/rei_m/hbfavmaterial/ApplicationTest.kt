@@ -19,10 +19,10 @@ class ApplicationTest : ApplicationTestCase<Application>(Application::class.java
     @Before
     override fun setUp() {
         super.setUp()
-        ApplicationTest.graph = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(InstrumentationRegistry.getTargetContext().applicationContext as Application))
-                .appLayerModule(AppLayerModule())
-                .infraLayerModule(InfraLayerModule())
-                .build()
+//        ApplicationTest.graph = DaggerApplicationComponent.builder()
+//                .applicationModule(ApplicationModule(InstrumentationRegistry.getTargetContext().applicationContext as Application))
+//                .appLayerModule(AppLayerModule())
+//                .infraLayerModule(InfraLayerModule())
+//                .build()
     }
 }

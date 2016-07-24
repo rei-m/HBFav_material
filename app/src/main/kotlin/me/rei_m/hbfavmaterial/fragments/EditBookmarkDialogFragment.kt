@@ -15,43 +15,53 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
-import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.activities.BaseActivity
 import me.rei_m.hbfavmaterial.activities.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.events.network.HatenaPostBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.*
-import me.rei_m.hbfavmaterial.models.HatenaModel
-import me.rei_m.hbfavmaterial.models.TwitterModel
+import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.service.HatenaService
+import me.rei_m.hbfavmaterial.service.TwitterService
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import rx.Subscription
+import retrofit2.adapter.rxjava.HttpException
+import rx.Observer
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
+class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
 
     @Inject
-    lateinit var hatenaModel: HatenaModel
+    lateinit var hatenaTokenRepository: HatenaTokenRepository
 
     @Inject
-    lateinit var twitterModel: TwitterModel
+    lateinit var hatenaService: HatenaService
 
-    override var mProgressDialog: ProgressDialog? = null
+    @Inject
+    lateinit var twitterSessionRepository: TwitterSessionRepository
 
-    lateinit private var mSubscription: Subscription
+    @Inject
+    lateinit var twitterService: TwitterService
+
+    override var progressDialog: ProgressDialog? = null
+
+    private var subscription: CompositeSubscription? = null
+
+    private var isLoading = false
 
     companion object {
 
         val TAG: String = EditBookmarkDialogFragment::class.java.simpleName
 
-        private val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
+        private const val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
 
-        private val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
+        private const val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
         fun newInstance(title: String,
                         url: String): EditBookmarkDialogFragment {
@@ -80,7 +90,7 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity.application as App).component.inject(this)
+        (activity as BaseActivity).component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -127,27 +137,25 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
         val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
         with(switchShareTwitter) {
-            if (twitterModel.isAuthorised()) {
-                isChecked = twitterModel.isShare
-            } else {
-                isChecked = false
-            }
+            val twitterSessionEntity = twitterSessionRepository.resolve()
+            isChecked = twitterSessionEntity.oAuthTokenEntity.isAuthorised
             setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
-                    if (!twitterModel.isAuthorised()) {
+                    if (!twitterSessionEntity.oAuthTokenEntity.isAuthorised) {
                         startActivity(SettingActivity.createIntent(activity))
                         dismiss()
                         return@setOnCheckedChangeListener
                     }
                 }
-                twitterModel.setIsShare(getAppContext(), isChecked)
+                twitterSessionEntity.isShare = isChecked
+                twitterSessionRepository.store(getAppContext(), twitterSessionEntity)
             }
         }
 
         // あとで読むタグが登録済だったらチェックを有効にする
         val switchReadAfter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_read_after) as SwitchCompat
 
-        switchReadAfter.isChecked = tags.contains(HatenaModel.TAG_READ_AFTER)
+        switchReadAfter.isChecked = tags.contains(HatenaService.TAG_READ_AFTER)
 
         val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
 
@@ -166,51 +174,28 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
         buttonOk.setOnClickListener { v ->
             if (switchDelete.isChecked) {
-                hatenaModel.deleteBookmark(bookmarkUrl)
+                deleteBookmark(bookmarkUrl)
             } else {
                 val inputtedComment = editBookmark.editableText.toString()
 
                 if (switchReadAfter.isChecked) {
-                    if (!tags.contains(HatenaModel.TAG_READ_AFTER)) {
-                        tags.add(HatenaModel.TAG_READ_AFTER)
+                    if (!tags.contains(HatenaService.TAG_READ_AFTER)) {
+                        tags.add(HatenaService.TAG_READ_AFTER)
                     }
                 } else {
-                    if (tags.contains(HatenaModel.TAG_READ_AFTER)) {
-                        tags.remove(HatenaModel.TAG_READ_AFTER)
+                    if (tags.contains(HatenaService.TAG_READ_AFTER)) {
+                        tags.remove(HatenaService.TAG_READ_AFTER)
                     }
                 }
 
-                hatenaModel.registerBookmark(bookmarkUrl,
+                registerBookmark(bookmarkUrl,
+                        bookmarkTitle,
                         inputtedComment,
                         switchOpen.isChecked,
-                        tags)
-                if (switchShareTwitter.isChecked) {
-                    twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
-                }
+                        tags,
+                        switchShareTwitter.isChecked)
             }
-            showProgressDialog(activity)
         }
-
-        val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
-
-        val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
-
-        mSubscription = RxTextView.textChanges(editBookmark)
-                .map { v ->
-                    Math.ceil(v.toString().toByteArray().size / 3.0).toInt()
-                }
-                .subscribe { size ->
-                    textCommentCount.let {
-                        it.text = "$size / $commentLength"
-                        if (commentLength < size) {
-                            it.setTextColor(Color.RED)
-                            buttonOk.disable()
-                        } else {
-                            it.setTextColor(R.color.text_color_thin)
-                            buttonOk.enable()
-                        }
-                    }
-                }
 
         if (!isAdd) {
             val bookmark = arguments.getSerializable(ARG_BOOKMARK) as BookmarkEditEntity
@@ -225,19 +210,44 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         return view
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mSubscription.unsubscribe()
-    }
-
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
+
+        subscription = CompositeSubscription()
+        isLoading = false
+
+        val view = view ?: return
+
+        val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
+
+        val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
+
+        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
+
+        val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
+
+        subscription?.add(RxTextView.textChanges(editBookmark)
+                .map { v ->
+                    Math.ceil(v.toString().toByteArray().size / 3.0).toInt()
+                }
+                .subscribe { size ->
+                    textCommentCount.let {
+                        it.text = "$size / $commentLength"
+                        if (commentLength < size) {
+                            it.setTextColor(Color.RED)
+                            buttonOk.disable()
+                        } else {
+                            it.setTextColor(R.color.text_color_thin)
+                            buttonOk.enable()
+                        }
+                    }
+                })
     }
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
+        subscription?.unsubscribe()
+        subscription = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -245,36 +255,84 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
         adjustScreenWidth()
     }
 
-    @Subscribe
-    fun subscribe(event: HatenaPostBookmarkLoadedEvent) {
+    fun registerBookmark(url: String, title: String, comment: String, isOpen: Boolean, tags: List<String>, isShareAtTwitter: Boolean) {
 
-        closeProgressDialog()
+        if (isLoading) return
 
-        when (event.status) {
-            LoadedEventStatus.OK -> {
+        showProgressDialog(activity)
+
+        isLoading = true
+
+        val observer = object : Observer<BookmarkEditEntity> {
+
+            override fun onNext(t: BookmarkEditEntity?) {
                 dismiss()
             }
-            else -> {
+
+            override fun onCompleted() {
+            }
+
+            override fun onError(e: Throwable?) {
                 (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
+        }
+
+
+        val oAuthTokenEntity = hatenaTokenRepository.resolve()
+
+        subscription?.add(hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, tags)
+                .doOnUnsubscribe {
+                    isLoading = false
+                    closeProgressDialog()
+                }
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer))
+
+        if (isShareAtTwitter) {
+            twitterService.postTweet(BookmarkUtil.createShareText(url, title, comment))
         }
     }
 
-    @Subscribe
-    fun subscribe(event: HatenaDeleteBookmarkLoadedEvent) {
+    fun deleteBookmark(url: String) {
 
-        closeProgressDialog()
+        if (isLoading) return
 
-        when (event.status) {
-            LoadedEventStatus.OK -> {
+        showProgressDialog(activity)
+
+        isLoading = true
+
+        val observer = object : Observer<Void?> {
+
+            override fun onNext(t: Void?) {
                 dismiss()
             }
-            LoadedEventStatus.NOT_FOUND -> {
-                dismiss()
+
+            override fun onCompleted() {
             }
-            else -> {
+
+            override fun onError(e: Throwable?) {
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        dismiss()
+                        return
+                    }
+                }
                 (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
         }
+
+        val oAuthTokenEntity = hatenaTokenRepository.resolve()
+
+        subscription?.add(hatenaService.deleteBookmark(oAuthTokenEntity, url)
+                .doOnUnsubscribe {
+                    isLoading = false
+                    closeProgressDialog()
+                }
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer))
     }
 }

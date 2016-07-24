@@ -11,6 +11,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -19,7 +20,7 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserContact
 import me.rei_m.hbfavmaterial.fragments.presenter.BookmarkUserPresenter
-import me.rei_m.hbfavmaterial.models.UserModel
+import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
@@ -78,7 +79,7 @@ class BookmarkUserFragment() : BaseFragment(),
     private lateinit var presenter: BookmarkUserPresenter
 
     @Inject
-    lateinit var userModel: UserModel
+    lateinit var userRepository: UserRepository
 
     private val listAdapter: BookmarkListAdapter by lazy {
         BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
@@ -109,7 +110,7 @@ class BookmarkUserFragment() : BaseFragment(),
         setHasOptionsMenu(true)
 
         isOwner = arguments.getBoolean(ARG_OWNER_FLAG)
-        userId = if (isOwner) userModel.userEntity!!.id else arguments.getString(ARG_USER_ID)
+        userId = if (isOwner) userRepository.resolve().id else arguments.getString(ARG_USER_ID)
         presenter = BookmarkUserPresenter(this, userId)
     }
 

@@ -12,7 +12,7 @@ import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.models.UserModel
+import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 import javax.inject.Inject
@@ -23,13 +23,13 @@ import javax.inject.Inject
 abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
-    lateinit var userModel: UserModel
+    lateinit var userRepository: UserRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         component.inject(this)
-        
+
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -48,7 +48,9 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
         val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
-        displayUserIconAndName(userModel.userEntity?.id ?: "")
+        val userEntity = userRepository.resolve()
+
+        displayUserIconAndName(userEntity.id)
     }
 
     override fun onResume() {
