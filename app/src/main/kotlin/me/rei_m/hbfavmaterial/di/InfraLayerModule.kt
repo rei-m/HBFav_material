@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.repositories.impl.HatenaTokenRepositoryImpl
@@ -22,11 +21,6 @@ class InfraLayerModule() {
                 context.getString(R.string.api_key_hatena_consumer_key),
                 context.getString(R.string.api_key_hatena_consumer_secret)
         )
-    }
-    
-    @Provides
-    fun provideHatenaRepository(@ForApplication context: Context): HatenaRepository {
-        return HatenaRepository(context)
     }
 
     @Provides

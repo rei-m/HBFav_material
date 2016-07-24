@@ -6,6 +6,10 @@ import rx.Observable
 
 interface HatenaService {
 
+    companion object {
+        const val TAG_READ_AFTER = "あとで読む"
+    }
+    
     fun fetchRequestToken(): Observable<String>
 
     fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity>
