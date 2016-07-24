@@ -3,17 +3,17 @@ package me.rei_m.hbfavmaterial.fragments
 import android.app.ProgressDialog
 import android.content.Context
 
-interface IProgressDialog {
+interface ProgressDialogController {
 
-    var mProgressDialog: ProgressDialog?
+    var progressDialog: ProgressDialog?
 
     fun showProgressDialog(context: Context) {
-        mProgressDialog ?: ProgressDialog(context).apply {
+        progressDialog ?: ProgressDialog(context).apply {
             setMessage("Now Loading...")
             setCanceledOnTouchOutside(false)
         }
 
-        mProgressDialog?.run {
+        progressDialog?.run {
             if (!isShowing) {
                 show()
             }
@@ -21,7 +21,7 @@ interface IProgressDialog {
     }
 
     fun closeProgressDialog() {
-        mProgressDialog?.dismiss()
-        mProgressDialog = null
+        progressDialog?.dismiss()
+        progressDialog = null
     }
 }

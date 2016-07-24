@@ -3,7 +3,6 @@ package me.rei_m.hbfavmaterial.models
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -15,13 +14,10 @@ import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * はてなのOAuth関連の情報を管理するModel.
  */
-@Singleton
 class HatenaModel {
 
     var isBusy = false
@@ -39,8 +35,7 @@ class HatenaModel {
         private val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
     }
 
-    @Inject
-    constructor(@ForApplication context: Context, hatenaRepository: HatenaRepository) {
+    constructor(context: Context, hatenaRepository: HatenaRepository) {
 
         // Repositoryを作成する.
         this.mHatenaRepository = hatenaRepository

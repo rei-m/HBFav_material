@@ -5,10 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
-import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.show
@@ -16,7 +14,7 @@ import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
-class SettingActivity : BaseDrawerActivity() {
+class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteractionListener {
 
     companion object {
         fun createIntent(context: Context): Intent {
@@ -63,8 +61,7 @@ class SettingActivity : BaseDrawerActivity() {
         }
     }
 
-    @Subscribe
-    fun subscribe(event: UserIdChangedEvent) {
-        displayUserIconAndName(event.newId)
+    override fun onUserIdUpdated(userId: String) {
+        displayUserIconAndName(userId)
     }
 }

@@ -14,36 +14,42 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
-import com.squareup.otto.Subscribe
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
+import me.rei_m.hbfavmaterial.activities.BaseActivity
+import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.extensions.adjustScreenWidth
-import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
-import me.rei_m.hbfavmaterial.models.UserModel
-import rx.Subscription
+import me.rei_m.hbfavmaterial.repositories.UserRepository
+import me.rei_m.hbfavmaterial.service.UserService
+import retrofit2.adapter.rxjava.HttpException
+import rx.Observer
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
-
-    @Inject
-    lateinit var userModel: UserModel
-
-    override var mProgressDialog: ProgressDialog? = null
-
-    lateinit private var mSubscription: Subscription
+class EditUserIdDialogFragment() : DialogFragment(), ProgressDialogController {
 
     companion object {
 
-        final val TAG = EditUserIdDialogFragment::class.java.simpleName
+        val TAG: String = EditUserIdDialogFragment::class.java.simpleName
 
-        fun newInstance(): EditUserIdDialogFragment {
-            return EditUserIdDialogFragment()
-        }
+        fun newInstance(): EditUserIdDialogFragment = EditUserIdDialogFragment()
     }
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
+    @Inject
+    lateinit var userService: UserService
+
+    override var progressDialog: ProgressDialog? = null
+
+    private var subscription: CompositeSubscription? = null
+
+    private var isLoading = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
@@ -53,12 +59,14 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity.application as App).component.inject(this)
+        (activity as BaseActivity).component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
+
+        val userEntity = userRepository.resolve()
 
         with(view.findViewById(R.id.dialog_fragment_edit_user_id_text_title)) {
             this as AppCompatTextView
@@ -66,7 +74,7 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
         }
 
         val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
-        editUserId.setText(userModel.userEntity?.id)
+        editUserId.setText(userEntity.id)
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
         buttonCancel.setOnClickListener { v ->
@@ -76,34 +84,37 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
         buttonOk.setOnClickListener { v ->
             val inputtedUserId = editUserId.editableText.toString()
-            if (inputtedUserId != userModel.userEntity?.id) {
-                userModel.checkAndSaveUserId(getAppContext(), editUserId.editableText.toString())
-                showProgressDialog(activity)
+            if (!userEntity.isSameId(inputtedUserId)) {
+                confirmAndSaveUserId(inputtedUserId)
             } else {
                 dismiss()
             }
         }
 
-        mSubscription = RxTextView.textChanges(editUserId)
-                .map { v -> 0 < v.length }
-                .subscribe { isEnabled -> buttonOk.toggle(isEnabled) }
-
         return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mSubscription.unsubscribe()
     }
 
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
+        subscription = CompositeSubscription()
+        isLoading = false
+
+        val view = view ?: return
+
+        val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
+
+        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
+
+        subscription?.add(RxTextView.textChanges(editUserId)
+                .map { v -> 0 < v.length }
+                .subscribe { isEnabled -> buttonOk.toggle(isEnabled) })
+
     }
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
+        subscription?.unsubscribe()
+        subscription = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -111,28 +122,57 @@ class EditUserIdDialogFragment : DialogFragment(), IProgressDialog {
         adjustScreenWidth()
     }
 
-    @Subscribe
-    fun subscribe(event: UserIdCheckedEvent) {
+    private fun confirmAndSaveUserId(userId: String) {
 
-        closeProgressDialog()
+        if (isLoading) return
 
-        val view = view ?: return
+        isLoading = true
 
-        val editUserIdLayout = view.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user) as TextInputLayout
+        showProgressDialog(activity)
 
-        when (event.type) {
-            UserIdCheckedEvent.Companion.Type.OK -> {
-                editUserIdLayout.isErrorEnabled = false
-                dismiss()
+        val observer = object : Observer<Boolean> {
+
+            override fun onNext(t: Boolean) {
+                if (t) {
+                    userRepository.store(context, UserEntity(userId))
+                    view?.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user)?.let {
+                        it as TextInputLayout
+                        it.isErrorEnabled = false
+                        dismiss()
+                    }
+                } else {
+                    view?.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user)?.let {
+                        it as TextInputLayout
+                        it.error = getString(R.string.message_error_input_user_id)
+                    }
+                }
             }
 
-            UserIdCheckedEvent.Companion.Type.NG -> {
-                editUserIdLayout.error = getString(R.string.message_error_input_user_id)
+            override fun onCompleted() {
             }
 
-            UserIdCheckedEvent.Companion.Type.ERROR -> {
+            override fun onError(e: Throwable?) {
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        view?.findViewById(R.id.dialog_fragment_edit_user_id_layout_edit_user)?.let {
+                            it as TextInputLayout
+                            it.error = getString(R.string.message_error_input_user_id)
+                        }
+                        return
+                    }
+                }
                 (activity as AppCompatActivity).showSnackbarNetworkError(view)
             }
         }
+
+        subscription?.add(userService.confirmExistingUserId(userId)
+                .doOnUnsubscribe {
+                    isLoading = false
+                    closeProgressDialog()
+                }
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer))
     }
 }

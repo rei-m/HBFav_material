@@ -1,5 +1,7 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -7,27 +9,32 @@ import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.otto.Subscribe
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.UserIdChangedEvent
-import me.rei_m.hbfavmaterial.events.ui.UserIdCheckedEvent
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
-import me.rei_m.hbfavmaterial.models.UserModel
+import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import javax.inject.Inject
 
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment : BaseFragment() {
+class SettingFragment() : BaseFragment() {
+
+    companion object {
+
+        val TAG: String = SettingFragment::class.java.simpleName
+
+        fun newInstance(): SettingFragment = SettingFragment()
+    }
+
+    private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var userModel: UserModel
+    lateinit var userRepository: UserRepository
 
     @Inject
     lateinit var hatenaModel: HatenaModel
@@ -35,12 +42,10 @@ class SettingFragment : BaseFragment() {
     @Inject
     lateinit var twitterModel: TwitterModel
 
-    companion object {
-
-        val TAG = SettingFragment::class.java.simpleName
-
-        fun newInstance(): SettingFragment {
-            return SettingFragment()
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
         }
     }
 
@@ -55,13 +60,25 @@ class SettingFragment : BaseFragment() {
 
         with(view.findViewById(R.id.fragment_setting_text_user_id)) {
             this as AppCompatTextView
-            text = userModel.userEntity?.id
+            text = userRepository.resolve().id
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_id).setOnClickListener {
-            EditUserIdDialogFragment
-                    .newInstance()
-                    .show(childFragmentManager, EditUserIdDialogFragment.TAG)
+            val dialog = EditUserIdDialogFragment.newInstance()
+            dialog.onDismiss(object : DialogInterface {
+                override fun dismiss() {
+                    val userEntity = userRepository.resolve()
+                    view?.findViewById(R.id.fragment_setting_text_user_id).let {
+                        it as AppCompatTextView
+                        it.text = userEntity.id
+                    }
+                    listener?.onUserIdUpdated(userEntity.id)
+                }
+
+                override fun cancel() {
+                }
+            })
+            dialog.show(childFragmentManager, EditUserIdDialogFragment.TAG)
         }
 
         val oauthTextId = if (hatenaModel.isAuthorised())
@@ -86,7 +103,6 @@ class SettingFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
 
         val view = view ?: return
 
@@ -100,8 +116,12 @@ class SettingFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
         twitterModel.clearBusy()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -144,18 +164,7 @@ class SettingFragment : BaseFragment() {
         }
     }
 
-    /**
-     * ユーザーIDチェック時のイベント.
-     */
-    @Subscribe
-    fun subscribe(event: UserIdCheckedEvent) {
-        if (event.type == UserIdCheckedEvent.Companion.Type.OK) {
-            userModel.userEntity ?: return
-            view?.run {
-                val textUserId = findViewById(R.id.fragment_setting_text_user_id) as AppCompatTextView
-                textUserId.text = userModel.userEntity?.id
-            }
-            EventBusHolder.EVENT_BUS.post(UserIdChangedEvent(userModel.userEntity?.id!!))
-        }
+    interface OnFragmentInteractionListener {
+        fun onUserIdUpdated(userId: String)
     }
 }

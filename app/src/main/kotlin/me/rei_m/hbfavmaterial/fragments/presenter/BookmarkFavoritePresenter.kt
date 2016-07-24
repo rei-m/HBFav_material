@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment
 import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
-import me.rei_m.hbfavmaterial.models.UserModel
+import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.BookmarkService
 import rx.Observer
 import rx.Subscription
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) : BookmarkFavoriteContact.Actions {
 
     @Inject
-    lateinit var userModel: UserModel
+    lateinit var userRepository: UserRepository
 
     @Inject
     lateinit var bookmarkService: BookmarkService
@@ -45,8 +45,7 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
 
     private fun request(nextIndex: Int): Subscription? {
 
-        // TODO
-        val userId = userModel.userEntity?.id!!
+        val userId = userRepository.resolve().id
 
         isLoading = true
 

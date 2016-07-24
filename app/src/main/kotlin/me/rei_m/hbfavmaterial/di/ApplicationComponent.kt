@@ -12,9 +12,5 @@ interface ApplicationComponent {
 
     fun inject(application: App)
 
-    fun inject(dialog: EditBookmarkDialogFragment)
-
-    fun inject(dialog: EditUserIdDialogFragment)
-
     fun plus(module: ActivityModule): ActivityComponent
 }

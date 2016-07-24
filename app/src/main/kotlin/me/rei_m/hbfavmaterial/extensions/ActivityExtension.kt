@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.extensions
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.Snackbar
@@ -13,7 +14,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * Activityのスタックを削除したうえで新しくIntentを起動する.
  */
-fun AppCompatActivity.startActivityWithClearTop(intent: Intent) {
+fun Activity.startActivityWithClearTop(intent: Intent) {
     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
     startActivity(intent)
     finish()

@@ -2,7 +2,6 @@ package me.rei_m.hbfavmaterial.repositories
 
 import android.content.Context
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.exeptions.HTTPException
@@ -11,7 +10,6 @@ import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.network.RetrofitManager
 import rx.Observable
 import java.net.HttpURLConnection
-import javax.inject.Inject
 
 open class HatenaRepository {
 
@@ -27,8 +25,7 @@ open class HatenaRepository {
     /**
      * コンストラクタ.
      */
-    @Inject
-    constructor(@ForApplication context: Context) {
+    constructor(context: Context) {
         hatenaOAuthManager = HatenaOAuthManager(context.getString(R.string.api_key_hatena_consumer_key),
                 context.getString(R.string.api_key_hatena_consumer_secret))
     }

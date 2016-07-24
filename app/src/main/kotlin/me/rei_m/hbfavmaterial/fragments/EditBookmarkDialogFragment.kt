@@ -18,6 +18,7 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.activities.BaseActivity
 import me.rei_m.hbfavmaterial.activities.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
@@ -31,7 +32,7 @@ import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import rx.Subscription
 import javax.inject.Inject
 
-class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
+class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
 
     @Inject
     lateinit var hatenaModel: HatenaModel
@@ -39,7 +40,7 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
     @Inject
     lateinit var twitterModel: TwitterModel
 
-    override var mProgressDialog: ProgressDialog? = null
+    override var progressDialog: ProgressDialog? = null
 
     lateinit private var mSubscription: Subscription
 
@@ -80,7 +81,7 @@ class EditBookmarkDialogFragment : DialogFragment(), IProgressDialog {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity.application as App).component.inject(this)
+        (activity as BaseActivity).component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

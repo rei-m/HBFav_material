@@ -5,18 +5,20 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
+import me.rei_m.hbfavmaterial.repositories.impl.UserRepositoryImpl
+import javax.inject.Singleton
 
 @Module
 class InfraLayerModule() {
 
     @Provides
-    @ForApplication
-    fun provideHatenaRepository(context: Context): HatenaRepository {
+    fun provideHatenaRepository(@ForApplication context: Context): HatenaRepository {
         return HatenaRepository(context)
     }
 
     @Provides
-    fun provideUserRepository(): UserRepository {
-        return UserRepository()
+    @Singleton
+    fun provideUserRepository(@ForApplication context: Context): UserRepository {
+        return UserRepositoryImpl(context)
     }
 }
