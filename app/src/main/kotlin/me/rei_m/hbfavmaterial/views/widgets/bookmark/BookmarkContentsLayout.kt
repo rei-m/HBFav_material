@@ -5,8 +5,6 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 
 /**
  * ブックマーク詳細のコンテンツを表示するレイアウト.
@@ -24,8 +22,6 @@ class BookmarkContentsLayout : LinearLayout {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         tag = ViewHolder(findViewById(R.id.layout_bookmark_contents_layout_bookmark) as BookmarkLayout,
@@ -37,9 +33,6 @@ class BookmarkContentsLayout : LinearLayout {
         holder.apply {
             bookmarkLayout.bindView(bookmarkEntity)
             articleLayout.bindView(bookmarkEntity)
-        }
-        setOnClickListener {
-            EventBusHolder.EVENT_BUS.post(BookmarkClickedEvent(bookmarkEntity))
         }
     }
 }

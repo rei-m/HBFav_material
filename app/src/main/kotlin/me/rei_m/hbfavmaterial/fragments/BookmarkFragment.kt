@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +12,11 @@ import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkHeaderLayout
 
-class BookmarkFragment() : BaseFragment(), IFragmentAnimation {
+class BookmarkFragment() : BaseFragment(), MovableWithAnimation {
 
     companion object {
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
         fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkFragment {
             return BookmarkFragment().apply {
@@ -25,15 +26,20 @@ class BookmarkFragment() : BaseFragment(), IFragmentAnimation {
             }
         }
     }
-    
-    private val mBookmarkEntity: BookmarkEntity by lazy {
+
+    private var listener: OnFragmentInteractionListener? = null
+
+    private val bookmarkEntity: BookmarkEntity by lazy {
         arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
-    override var mContainerWidth: Float = 0.0f
+    override var containerWidth: Float = 0.0f
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,10 +52,21 @@ class BookmarkFragment() : BaseFragment(), IFragmentAnimation {
 
         val bookmarkCountTextView = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 
-        with(mBookmarkEntity) {
+        with(bookmarkEntity) {
             bookmarkHeaderLayout.bindView(this)
+            bookmarkHeaderLayout.setOnClickListener {
+                listener?.onClickBookmarkUser(this)
+            }
+
             bookmarkContents.bindView(this)
+            bookmarkContents.setOnClickListener {
+                listener?.onClickBookmark(this)
+            }
+
             bookmarkCountTextView.bindView(this)
+            bookmarkCountTextView.setOnClickListener {
+                listener?.onClickBookmarkCount(this)
+            }
         }
 
         setContainerWidth(container!!)
@@ -57,8 +74,22 @@ class BookmarkFragment() : BaseFragment(), IFragmentAnimation {
         return view
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
+    }
+
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
         return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
+    interface OnFragmentInteractionListener {
+
+        fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity)
+
+        fun onClickBookmark(bookmarkEntity: BookmarkEntity)
+
+        fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity)
     }
 }

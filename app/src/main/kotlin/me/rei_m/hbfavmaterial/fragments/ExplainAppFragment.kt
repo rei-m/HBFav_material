@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.ClickedEvent
+import me.rei_m.hbfavmaterial.activities.FrameActivity
 import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.extensions.openUrl
 import me.rei_m.hbfavmaterial.utils.AppUtil
+import me.rei_m.hbfavmaterial.utils.FragmentUtil
 
 /**
  * このアプリについてを表示するFragment.
@@ -36,11 +36,11 @@ class ExplainAppFragment : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_explain_app_layout_from_developer).setOnClickListener {
-            EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.FROM_DEVELOPER))
+            activity.startActivity(FrameActivity.createIntent(activity, FragmentUtil.Companion.Tag.FROM_DEVELOPER))
         }
 
         view.findViewById(R.id.fragment_explain_app_layout_credit).setOnClickListener {
-            EventBusHolder.EVENT_BUS.post(ClickedEvent(ClickedEvent.Companion.Type.CREDIT))
+            activity.startActivity(FrameActivity.createIntent(activity, FragmentUtil.Companion.Tag.CREDIT))
         }
 
         val versionName = AppUtil.getVersionName(activity.applicationContext)

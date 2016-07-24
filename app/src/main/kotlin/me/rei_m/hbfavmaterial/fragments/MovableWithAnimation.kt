@@ -8,12 +8,12 @@ import android.view.animation.AnimationUtils
 
 import me.rei_m.hbfavmaterial.R
 
-interface IFragmentAnimation {
+interface MovableWithAnimation {
 
-    var mContainerWidth: Float;
+    var containerWidth: Float;
 
     fun setContainerWidth(container: ViewGroup) {
-        mContainerWidth = container.width.toFloat()
+        containerWidth = container.width.toFloat()
     }
 
     fun createAnimatorMoveSlide(transit: Int, enter: Boolean, nextAnim: Int, context: Context): Animation? {

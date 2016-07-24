@@ -7,14 +7,10 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
-import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
-import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.extensions.replaceFragment
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
@@ -35,7 +31,8 @@ import javax.inject.Inject
 /**
  * ブックマークの詳細を表示するActivity.
  */
-class BookmarkActivity : BaseSingleActivity() {
+class BookmarkActivity : BaseSingleActivity(),
+        BookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
 
@@ -133,7 +130,7 @@ class BookmarkActivity : BaseSingleActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        val id = item?.itemId;
+        val id = item?.itemId
 
         when (id) {
             R.id.menu_share ->
@@ -144,7 +141,7 @@ class BookmarkActivity : BaseSingleActivity() {
                         .setType("text/plain")
                         .startChooser()
             else ->
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item)
         }
 
         return true
@@ -220,18 +217,15 @@ class BookmarkActivity : BaseSingleActivity() {
                 .subscribe(observer)
     }
 
-    @Subscribe
-    fun subscribe(event: BookmarkUserClickedEvent) {
-        startActivity(OthersBookmarkActivity.createIntent(this, event.userId))
+    override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {
+        startActivity(OthersBookmarkActivity.createIntent(this, bookmarkEntity.creator))
     }
 
-    @Subscribe
-    fun subscribe(event: BookmarkClickedEvent) {
-        replaceFragment(EntryWebViewFragment.newInstance(event.bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
+    override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
+        replaceFragment(EntryWebViewFragment.newInstance(bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
     }
 
-    @Subscribe
-    fun subscribe(event: BookmarkCountClickedEvent) {
-        startActivity(BookmarkedUsersActivity.createIntent(this, event.bookmarkEntity))
+    override fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity) {
+        startActivity(BookmarkedUsersActivity.createIntent(this, bookmarkEntity))
     }
 }

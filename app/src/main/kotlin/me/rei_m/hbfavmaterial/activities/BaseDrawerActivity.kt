@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.EventBusHolder
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
@@ -52,17 +51,7 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
 
         displayUserIconAndName(userEntity.id)
     }
-
-    override fun onResume() {
-        super.onResume()
-        EventBusHolder.EVENT_BUS.register(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        EventBusHolder.EVENT_BUS.unregister(this)
-    }
-
+    
     override fun onBackPressed() {
         val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
         if (drawer.isDrawerOpen(GravityCompat.START)) {
