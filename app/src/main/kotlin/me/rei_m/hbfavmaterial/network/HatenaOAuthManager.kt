@@ -13,15 +13,15 @@ class HatenaOAuthManager(private val consumerKey: String,
 
     companion object {
 
-        private val REQUEST_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/initiate"
+        private const val REQUEST_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/initiate"
 
-        private val ACCESS_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/token"
+        private const val ACCESS_TOKEN_ENDPOINT_URL = "https://www.hatena.com/oauth/token"
 
-        private val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
+        private const val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
 
-        val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+        const val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
 
-        val CALLBACK = "https://github.com/rei-m/HBFav_material"
+        const val CALLBACK = "https://github.com/rei-m/HBFav_material"
     }
 
     var consumer = OkHttpOAuthConsumer(consumerKey, consumerSecret)

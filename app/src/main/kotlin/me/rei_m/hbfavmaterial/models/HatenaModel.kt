@@ -6,7 +6,9 @@ import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.network.*
+import me.rei_m.hbfavmaterial.events.network.HatenaDeleteBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.HatenaPostBookmarkLoadedEvent
+import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.repositories.HatenaRepository
 import retrofit2.adapter.rxjava.HttpException
@@ -46,139 +48,6 @@ class HatenaModel {
         if (oauthJsonString != null) {
             oauthTokenEntity = Gson().fromJson(oauthJsonString, OAuthTokenEntity::class.java)
         }
-    }
-
-    /**
-     * OAuth認証済か判定する.
-     */
-    fun isAuthorised(): Boolean {
-        return (!(oauthTokenEntity.token.isNullOrEmpty() || oauthTokenEntity.secretToken.isNullOrEmpty()))
-    }
-
-    /**
-     * OAuth認証用のリクエストトークンを取得する.
-     */
-    fun fetchRequestToken() {
-
-        if (isBusy) {
-            return
-        }
-
-        isBusy = true
-
-        var requestUrl: String = ""
-
-        val observer = object : Observer<String> {
-
-            override fun onNext(t: String?) {
-                requestUrl = t!!
-            }
-
-            override fun onCompleted() {
-                isBusy = false
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.OK, requestUrl))
-            }
-
-            override fun onError(e: Throwable?) {
-                isBusy = false
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthRequestTokenLoadedEvent(LoadedEventStatus.ERROR))
-            }
-        }
-
-        mHatenaRepository.fetchRequestToken()
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
-    }
-
-    /**
-     * OAuth認証用のAccessTokenを取得する.
-     */
-    fun fetchAccessToken(context: Context, requestToken: String) {
-
-        if (isBusy) {
-            return
-        }
-
-        isBusy = true
-
-        val observer = object : Observer<OAuthTokenEntity> {
-
-            override fun onNext(t: OAuthTokenEntity?) {
-                oauthTokenEntity = t!!
-            }
-
-            override fun onCompleted() {
-                isBusy = false
-                // 成功した場合はTokenをPreferencesに保存.
-                saveToken(context)
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.OK))
-            }
-
-            override fun onError(e: Throwable?) {
-                isBusy = false
-                EventBusHolder.EVENT_BUS.post(HatenaOAuthAccessTokenLoadedEvent(LoadedEventStatus.ERROR))
-            }
-        }
-
-        mHatenaRepository.fetchAccessToken(requestToken)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
-    }
-
-    /**
-     * 保存しているAccessTokenを削除する.
-     */
-    fun deleteAccessToken(context: Context) {
-        oauthTokenEntity = OAuthTokenEntity()
-        saveToken(context)
-    }
-
-    /**
-     * ブックマーク情報を取得する.
-     */
-    fun fetchBookmark(url: String) {
-
-        if (isBusy) {
-            return
-        }
-
-        isBusy = true
-
-        var bookmark: BookmarkEditEntity? = null
-
-        val observer = object : Observer<BookmarkEditEntity> {
-
-            override fun onNext(t: BookmarkEditEntity?) {
-                bookmark = t
-            }
-
-            override fun onCompleted() {
-                isBusy = false
-                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(bookmark, LoadedEventStatus.OK))
-            }
-
-            override fun onError(e: Throwable?) {
-                isBusy = false
-
-                if (e is HttpException) {
-                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                        EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.NOT_FOUND))
-                        return
-                    }
-                }
-                EventBusHolder.EVENT_BUS.post(HatenaGetBookmarkLoadedEvent(null, LoadedEventStatus.ERROR))
-            }
-        }
-
-        mHatenaRepository.findBookmarkByUrl(oauthTokenEntity, url)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
     }
 
     /**
@@ -258,17 +127,7 @@ class HatenaModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
     }
-
-    /**
-     * PreferencesにModel内のアクセストークンを保存する.
-     */
-    private fun saveToken(context: Context) {
-        getPreferences(context)
-                .edit()
-                .putString(KEY_PREF_OAUTH, Gson().toJson(oauthTokenEntity))
-                .apply()
-    }
-
+    
     /**
      * Preferencesを取得する
      */

@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.extensions.getAppPreferences
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 
-class UserRepositoryImpl constructor(context: Context) : UserRepository {
+class UserRepositoryImpl(context: Context) : UserRepository {
 
     companion object {
         private const val KEY_PREF_USER = "KEY_PREF_USER"

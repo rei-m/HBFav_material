@@ -13,8 +13,8 @@ import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.models.HatenaModel
 import me.rei_m.hbfavmaterial.models.TwitterModel
+import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class SettingFragment() : BaseFragment() {
     lateinit var userRepository: UserRepository
 
     @Inject
-    lateinit var hatenaModel: HatenaModel
+    lateinit var hatenaTokenRepository: HatenaTokenRepository
 
     @Inject
     lateinit var twitterModel: TwitterModel
@@ -81,7 +81,7 @@ class SettingFragment() : BaseFragment() {
             dialog.show(childFragmentManager, EditUserIdDialogFragment.TAG)
         }
 
-        val oauthTextId = if (hatenaModel.isAuthorised())
+        val oauthTextId = if (hatenaTokenRepository.resolve().isAuthorised)
             R.string.text_hatena_account_connect_ok else
             R.string.text_hatena_account_connect_no
 

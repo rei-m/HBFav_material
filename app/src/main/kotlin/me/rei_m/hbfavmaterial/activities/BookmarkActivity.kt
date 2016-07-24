@@ -9,10 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.events.network.HatenaGetBookmarkLoadedEvent
-import me.rei_m.hbfavmaterial.events.network.LoadedEventStatus
 import me.rei_m.hbfavmaterial.events.ui.BookmarkClickedEvent
 import me.rei_m.hbfavmaterial.events.ui.BookmarkCountClickedEvent
 import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
@@ -22,8 +21,15 @@ import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
-import me.rei_m.hbfavmaterial.models.HatenaModel
+import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.service.HatenaService
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
+import retrofit2.adapter.rxjava.HttpException
+import rx.Observer
+import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
 /**
@@ -50,9 +56,16 @@ class BookmarkActivity : BaseSingleActivity() {
             }
         }
     }
-    
+
     @Inject
-    lateinit var hatenaModel: HatenaModel
+    lateinit var hatenaTokenRepository: HatenaTokenRepository
+
+    @Inject
+    lateinit var hatenaService: HatenaService
+
+    private var subscription: Subscription? = null
+
+    private var isLoading = false
 
     private var entryTitle: String = ""
 
@@ -81,12 +94,23 @@ class BookmarkActivity : BaseSingleActivity() {
 
         fab.setOnClickListener {
             // はてぶ投稿ボタン
-            if (!hatenaModel.isAuthorised()) {
+            if (!hatenaTokenRepository.resolve().isAuthorised) {
                 startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
             } else {
-                hatenaModel.fetchBookmark(entryLink)
+                fetchBookmark(entryLink)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isLoading = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        subscription?.unsubscribe()
+        subscription = null
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -148,7 +172,7 @@ class BookmarkActivity : BaseSingleActivity() {
             RESULT_OK -> {
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
                     if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
-                        hatenaModel.fetchBookmark(entryLink)
+                        fetchBookmark(entryLink)
                     }
                 } else {
                     showSnackbarNetworkError(findViewById(R.id.activity_layout))
@@ -158,6 +182,42 @@ class BookmarkActivity : BaseSingleActivity() {
 
             }
         }
+    }
+
+    private fun fetchBookmark(url: String) {
+
+        val observer = object : Observer<BookmarkEditEntity> {
+
+            override fun onNext(t: BookmarkEditEntity) {
+                EditBookmarkDialogFragment
+                        .newInstance(entryTitle, entryLink, t)
+                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+            }
+
+            override fun onCompleted() {
+
+            }
+
+            override fun onError(e: Throwable?) {
+                if (e is HttpException) {
+                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                        EditBookmarkDialogFragment
+                                .newInstance(entryTitle, entryLink)
+                                .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+                        return
+                    }
+                }
+                showSnackbarNetworkError(findViewById(R.id.content))
+            }
+        }
+
+        val oAuthTokenEntity = hatenaTokenRepository.resolve()
+        subscription = hatenaService.findBookmarkByUrl(oAuthTokenEntity, url)
+                .doOnUnsubscribe { isLoading = false }
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer)
     }
 
     @Subscribe
@@ -173,26 +233,5 @@ class BookmarkActivity : BaseSingleActivity() {
     @Subscribe
     fun subscribe(event: BookmarkCountClickedEvent) {
         startActivity(BookmarkedUsersActivity.createIntent(this, event.bookmarkEntity))
-    }
-
-    @Subscribe
-    fun subscribe(event: HatenaGetBookmarkLoadedEvent) {
-        when (event.status) {
-            LoadedEventStatus.OK -> {
-                // 更新用ダイアログを表示
-                EditBookmarkDialogFragment
-                        .newInstance(entryTitle, entryLink, event.bookmarkEditEntity!!)
-                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-            }
-            LoadedEventStatus.NOT_FOUND -> {
-                // 新規用ダイアログを表示
-                EditBookmarkDialogFragment
-                        .newInstance(entryTitle, entryLink)
-                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-            }
-            LoadedEventStatus.ERROR -> {
-                showSnackbarNetworkError(findViewById(R.id.content))
-            }
-        }
     }
 }
