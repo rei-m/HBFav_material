@@ -36,7 +36,7 @@ class UserRepositoryImpl(context: Context) : UserRepository {
     }
 
     override fun delete(context: Context) {
-        getPreferences(context).edit().remove(KEY_PREF_USER)
+        getPreferences(context).edit().remove(KEY_PREF_USER).apply()
         this.userEntity = UserEntity(id = "")
     }
 

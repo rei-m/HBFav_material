@@ -6,8 +6,10 @@ import dagger.Provides
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.repositories.impl.HatenaTokenRepositoryImpl
+import me.rei_m.hbfavmaterial.repositories.impl.TwitterSessionRepositoryImpl
 import me.rei_m.hbfavmaterial.repositories.impl.UserRepositoryImpl
 import javax.inject.Singleton
 
@@ -33,5 +35,11 @@ class InfraLayerModule() {
     @Singleton
     fun provideUserRepository(@ForApplication context: Context): UserRepository {
         return UserRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTwitterSessionRepository(@ForApplication context: Context): TwitterSessionRepository {
+        return TwitterSessionRepositoryImpl(context)
     }
 }

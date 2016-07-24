@@ -13,9 +13,10 @@ import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.activities.OAuthActivity
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
+import me.rei_m.hbfavmaterial.service.TwitterService
 import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import javax.inject.Inject
 
@@ -31,8 +32,6 @@ class SettingFragment() : BaseFragment() {
         fun newInstance(): SettingFragment = SettingFragment()
     }
 
-    private var listener: OnFragmentInteractionListener? = null
-
     @Inject
     lateinit var userRepository: UserRepository
 
@@ -40,7 +39,14 @@ class SettingFragment() : BaseFragment() {
     lateinit var hatenaTokenRepository: HatenaTokenRepository
 
     @Inject
-    lateinit var twitterModel: TwitterModel
+    lateinit var twitterSessionRepository: TwitterSessionRepository
+
+    @Inject
+    lateinit var twitterService: TwitterService
+
+    private var listener: OnFragmentInteractionListener? = null
+
+    private var isLoading = false
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -95,7 +101,9 @@ class SettingFragment() : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {
-            twitterModel.authorize(activity)
+            if (isLoading) return@setOnClickListener
+            isLoading = true
+            twitterService.authorize(activity)
         }
 
         return view
@@ -107,7 +115,7 @@ class SettingFragment() : BaseFragment() {
         val view = view ?: return
 
         val textTwitterOAuth = view.findViewById(R.id.fragment_setting_text_twitter_oauth) as AppCompatTextView
-        val twitterOAuthTextId = if (twitterModel.isAuthorised())
+        val twitterOAuthTextId = if (twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
             R.string.text_hatena_account_connect_ok else
             R.string.text_hatena_account_connect_no
 
@@ -116,7 +124,7 @@ class SettingFragment() : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        twitterModel.clearBusy()
+        isLoading = false
     }
 
     override fun onDestroy() {
@@ -127,11 +135,13 @@ class SettingFragment() : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        isLoading = false
+
         data ?: return
 
         if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
             // TwitterOAuth認可後の処理を行う.
-            twitterModel.onActivityResult(requestCode, resultCode, data)
+            twitterService.onActivityResult(requestCode, resultCode, data)
             return
         }
 

@@ -36,7 +36,7 @@ class HatenaTokenRepositoryImpl(context: Context) : HatenaTokenRepository {
     }
 
     override fun delete(context: Context) {
-        getPreferences(context).edit().remove(KEY_PREF_OAUTH)
+        getPreferences(context).edit().remove(KEY_PREF_OAUTH).apply()
         this.oAuthTokenEntity = OAuthTokenEntity()
     }
 

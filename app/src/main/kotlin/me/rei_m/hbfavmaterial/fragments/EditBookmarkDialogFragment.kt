@@ -20,9 +20,10 @@ import me.rei_m.hbfavmaterial.activities.BaseActivity
 import me.rei_m.hbfavmaterial.activities.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extensions.*
-import me.rei_m.hbfavmaterial.models.TwitterModel
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
+import me.rei_m.hbfavmaterial.service.TwitterService
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import retrofit2.adapter.rxjava.HttpException
 import rx.Observer
@@ -41,7 +42,10 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
     lateinit var hatenaService: HatenaService
 
     @Inject
-    lateinit var twitterModel: TwitterModel
+    lateinit var twitterSessionRepository: TwitterSessionRepository
+
+    @Inject
+    lateinit var twitterService: TwitterService
 
     override var progressDialog: ProgressDialog? = null
 
@@ -53,11 +57,11 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
 
         val TAG: String = EditBookmarkDialogFragment::class.java.simpleName
 
-        private val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
+        private const val ARG_BOOKMARK_URL = "ARG_BOOKMARK_URL"
 
-        private val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
+        private const val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
         fun newInstance(title: String,
                         url: String): EditBookmarkDialogFragment {
@@ -133,20 +137,18 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
 
         val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
         with(switchShareTwitter) {
-            if (twitterModel.isAuthorised()) {
-                isChecked = twitterModel.isShare
-            } else {
-                isChecked = false
-            }
+            val twitterSessionEntity = twitterSessionRepository.resolve()
+            isChecked = twitterSessionEntity.oAuthTokenEntity.isAuthorised
             setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
-                    if (!twitterModel.isAuthorised()) {
+                    if (!twitterSessionEntity.oAuthTokenEntity.isAuthorised) {
                         startActivity(SettingActivity.createIntent(activity))
                         dismiss()
                         return@setOnCheckedChangeListener
                     }
                 }
-                twitterModel.setIsShare(getAppContext(), isChecked)
+                twitterSessionEntity.isShare = isChecked
+                twitterSessionRepository.store(getAppContext(), twitterSessionEntity)
             }
         }
 
@@ -187,12 +189,11 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
                 }
 
                 registerBookmark(bookmarkUrl,
+                        bookmarkTitle,
                         inputtedComment,
                         switchOpen.isChecked,
-                        tags)
-                if (switchShareTwitter.isChecked) {
-                    twitterModel.postTweet(BookmarkUtil.createShareText(bookmarkUrl, bookmarkTitle, inputtedComment))
-                }
+                        tags,
+                        switchShareTwitter.isChecked)
             }
         }
 
@@ -254,7 +255,7 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
         adjustScreenWidth()
     }
 
-    fun registerBookmark(url: String, comment: String, isOpen: Boolean, tags: List<String>) {
+    fun registerBookmark(url: String, title: String, comment: String, isOpen: Boolean, tags: List<String>, isShareAtTwitter: Boolean) {
 
         if (isLoading) return
 
@@ -288,6 +289,10 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer))
+
+        if (isShareAtTwitter) {
+            twitterService.postTweet(BookmarkUtil.createShareText(url, title, comment))
+        }
     }
 
     fun deleteBookmark(url: String) {
