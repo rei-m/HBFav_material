@@ -11,13 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activities.OAuthActivity
+import me.rei_m.hbfavmaterial.activitiy.OAuthActivity
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.TwitterService
-import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import javax.inject.Inject
 
 /**
@@ -31,6 +31,9 @@ class SettingFragment() : BaseFragment() {
 
         fun newInstance(): SettingFragment = SettingFragment()
     }
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -97,7 +100,7 @@ class SettingFragment() : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth).setOnClickListener {
-            startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
+            navigator.navigateToOAuth(activity)
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {
@@ -146,7 +149,7 @@ class SettingFragment() : BaseFragment() {
         }
 
         // はてなのOAuth以外のリクエストの場合は終了.
-        if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
+        if (requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
             return
         }
 

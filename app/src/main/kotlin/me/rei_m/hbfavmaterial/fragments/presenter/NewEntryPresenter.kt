@@ -1,10 +1,10 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.EntryService
 import rx.Observer
 import rx.Subscription
@@ -14,6 +14,9 @@ import javax.inject.Inject
 
 class NewEntryPresenter(private val view: NewEntryContact.View,
                         var entryTypeFilter: EntryTypeFilter) : NewEntryContact.Actions {
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var entryService: EntryService
@@ -28,7 +31,7 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
 
     override fun clickEntry(entryEntity: EntryEntity) {
         val activity = (view as Fragment).activity
-        activity.startActivity(BookmarkActivity.createIntent(activity, entryEntity))
+        navigator.navigateToBookmark(activity, entryEntity)
     }
 
     override fun initializeListContents(): Subscription? {

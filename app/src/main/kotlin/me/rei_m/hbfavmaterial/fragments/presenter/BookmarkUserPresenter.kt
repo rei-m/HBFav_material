@@ -1,10 +1,10 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.BookmarkService
 import rx.Observer
 import rx.Subscription
@@ -14,6 +14,9 @@ import javax.inject.Inject
 
 class BookmarkUserPresenter(private val view: BookmarkUserContact.View,
                             private val bookmarkUserId: String) : BookmarkUserContact.Actions {
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var bookmarkService: BookmarkService
@@ -111,6 +114,6 @@ class BookmarkUserPresenter(private val view: BookmarkUserContact.View,
 
     override fun clickBookmark(bookmarkEntity: BookmarkEntity) {
         val activity = (view as Fragment).activity
-        activity.startActivity(BookmarkActivity.createIntent(activity, bookmarkEntity))
+        navigator.navigateToBookmark(activity, bookmarkEntity)
     }
 }

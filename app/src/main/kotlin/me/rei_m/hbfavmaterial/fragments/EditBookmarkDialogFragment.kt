@@ -16,8 +16,8 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activities.BaseActivity
-import me.rei_m.hbfavmaterial.activities.SettingActivity
+import me.rei_m.hbfavmaterial.activitiy.BaseActivity
+import me.rei_m.hbfavmaterial.activitiy.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extensions.*
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
@@ -34,24 +34,6 @@ import java.net.HttpURLConnection
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
-
-    @Inject
-    lateinit var hatenaTokenRepository: HatenaTokenRepository
-
-    @Inject
-    lateinit var hatenaService: HatenaService
-
-    @Inject
-    lateinit var twitterSessionRepository: TwitterSessionRepository
-
-    @Inject
-    lateinit var twitterService: TwitterService
-
-    override var progressDialog: ProgressDialog? = null
-
-    private var subscription: CompositeSubscription? = null
-
-    private var isLoading = false
 
     companion object {
 
@@ -81,6 +63,24 @@ class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
             }
         }
     }
+
+    @Inject
+    lateinit var hatenaTokenRepository: HatenaTokenRepository
+
+    @Inject
+    lateinit var hatenaService: HatenaService
+
+    @Inject
+    lateinit var twitterSessionRepository: TwitterSessionRepository
+
+    @Inject
+    lateinit var twitterService: TwitterService
+
+    override var progressDialog: ProgressDialog? = null
+
+    private var subscription: CompositeSubscription? = null
+
+    private var isLoading = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {

@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
@@ -17,9 +17,9 @@ import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.BookmarkFragment
 import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragments.EntryWebViewFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
-import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import retrofit2.adapter.rxjava.HttpException
 import rx.Observer
 import rx.Subscription
@@ -36,11 +36,11 @@ class BookmarkActivity : BaseSingleActivity(),
 
     companion object {
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
-        private val ARG_ENTRY = "ARG_ENTRY"
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_ENTRY = "ARG_ENTRY"
 
-        private val KEY_ENTRY_TITLE = "KEY_ENTRY_TITLE"
-        private val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
+        private const val KEY_ENTRY_TITLE = "KEY_ENTRY_TITLE"
+        private const val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             return Intent(context, BookmarkActivity::class.java)
@@ -53,6 +53,9 @@ class BookmarkActivity : BaseSingleActivity(),
             }
         }
     }
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var hatenaTokenRepository: HatenaTokenRepository
@@ -92,7 +95,7 @@ class BookmarkActivity : BaseSingleActivity(),
         fab.setOnClickListener {
             // はてぶ投稿ボタン
             if (!hatenaTokenRepository.resolve().isAuthorised) {
-                startActivityForResult(OAuthActivity.createIntent(this), ConstantUtil.REQ_CODE_OAUTH)
+                navigator.navigateToOAuth(this)
             } else {
                 fetchBookmark(entryLink)
             }
@@ -161,7 +164,7 @@ class BookmarkActivity : BaseSingleActivity(),
 
         data ?: return
 
-        if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
+        if (requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
             return
         }
 
@@ -218,7 +221,7 @@ class BookmarkActivity : BaseSingleActivity(),
     }
 
     override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {
-        startActivity(OthersBookmarkActivity.createIntent(this, bookmarkEntity.creator))
+        navigator.navigateToOthersBookmark(this, bookmarkEntity.creator)
     }
 
     override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
@@ -226,6 +229,6 @@ class BookmarkActivity : BaseSingleActivity(),
     }
 
     override fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity) {
-        startActivity(BookmarkedUsersActivity.createIntent(this, bookmarkEntity))
+        navigator.navigateToBookmarkedUsers(this, bookmarkEntity)
     }
 }

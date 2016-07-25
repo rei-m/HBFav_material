@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".activitiy.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -22,38 +22,38 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activitiy.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.BookmarkActivity"
+            android:name=".activitiy.BookmarkActivity"
             android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.OthersBookmarkActivity"
+            android:name=".activitiy.OthersBookmarkActivity"
             android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.BookmarkedUsersActivity"
+            android:name=".activitiy.BookmarkedUsersActivity"
             android:label="@string/activity_title_bookmark"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.SettingActivity"
+            android:name=".activitiy.SettingActivity"
             android:label="@string/activity_title_setting"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.ExplainAppActivity"
+            android:name=".activitiy.ExplainAppActivity"
             android:label="@string/activity_title_explain_app"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.FrameActivity"
+            android:name=".activitiy.FrameActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".activities.OAuthActivity"
+            android:name=".activitiy.OAuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 

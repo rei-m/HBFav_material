@@ -11,11 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activities.MainActivity
 import me.rei_m.hbfavmaterial.entities.UserEntity
 import me.rei_m.hbfavmaterial.extensions.hideKeyBoard
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException
@@ -34,6 +33,9 @@ class InitializeFragment() : BaseFragment(), ProgressDialogController {
     companion object {
         fun newInstance(): InitializeFragment = InitializeFragment()
     }
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -88,7 +90,8 @@ class InitializeFragment() : BaseFragment(), ProgressDialogController {
 
         val userEntity = userRepository.resolve()
         if (userEntity.isCompleteSetting) {
-            activity.startActivityWithClearTop(MainActivity.createIntent(activity))
+            navigator.navigateToMain(activity)
+            activity.finish()
         }
     }
 
@@ -111,7 +114,8 @@ class InitializeFragment() : BaseFragment(), ProgressDialogController {
             override fun onNext(t: Boolean) {
                 if (t) {
                     userRepository.store(context, UserEntity(userId))
-                    activity.startActivityWithClearTop(MainActivity.createIntent(activity))
+                    navigator.navigateToMain(activity)
+                    activity.finish()
                 } else {
                     view?.findViewById(R.id.fragment_initialize_layout_hatena_id)?.let {
                         it as TextInputLayout

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import javax.inject.Singleton
 
 @Module
@@ -18,5 +19,11 @@ class ApplicationModule(private val application: Application) {
     @ForApplication
     fun provideContext(): Context {
         return application
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityNavigator(): ActivityNavigator {
+        return ActivityNavigator()
     }
 }
