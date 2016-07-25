@@ -12,15 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import me.rei_m.hbfavmaterial.R
 
 /**
- * Activityのスタックを削除したうえで新しくIntentを起動する.
- */
-fun Activity.startActivityWithClearTop(intent: Intent) {
-    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-    startActivity(intent)
-    finish()
-}
-
-/**
  * Fragmentをセットする.
  */
 fun AppCompatActivity.setFragment(fragment: Fragment,
