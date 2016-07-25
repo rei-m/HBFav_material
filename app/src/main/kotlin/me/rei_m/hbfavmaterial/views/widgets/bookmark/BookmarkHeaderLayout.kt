@@ -8,8 +8,6 @@ import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.events.EventBusHolder
-import me.rei_m.hbfavmaterial.events.ui.BookmarkUserClickedEvent
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
 
 /**
@@ -28,8 +26,6 @@ class BookmarkHeaderLayout : RelativeLayout {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         tag = ViewHolder(findViewById(R.id.layout_bookmark_header_text_user_name) as AppCompatTextView,
@@ -44,9 +40,6 @@ class BookmarkHeaderLayout : RelativeLayout {
                     .load(bookmarkEntity.bookmarkIconUrl)
                     .transform(RoundedTransformation())
                     .into(iconImage)
-        }
-        setOnClickListener {
-            EventBusHolder.EVENT_BUS.post(BookmarkUserClickedEvent(bookmarkEntity.creator))
         }
     }
 }

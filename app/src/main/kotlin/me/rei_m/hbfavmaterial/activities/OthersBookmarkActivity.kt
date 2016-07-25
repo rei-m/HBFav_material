@@ -4,9 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import com.squareup.otto.Subscribe
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.events.ui.BookmarkListItemClickedEvent
 import me.rei_m.hbfavmaterial.extensions.openUrl
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
@@ -39,14 +37,9 @@ class OthersBookmarkActivity : BaseSingleActivity() {
                 applicationContext.openUrl(url)
             }
         }
-        
+
         if (savedInstanceState == null) {
             setFragment(BookmarkUserFragment.newInstance(userId))
         }
-    }
-
-    @Subscribe
-    fun subscribe(event: BookmarkListItemClickedEvent) {
-        startActivity(BookmarkActivity.createIntent(this, event.bookmarkEntity))
     }
 }
