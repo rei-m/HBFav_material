@@ -13,9 +13,7 @@ import me.rei_m.hbfavmaterial.R
 class CreditFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(): CreditFragment {
-            return CreditFragment()
-        }
+        fun newInstance(): CreditFragment = CreditFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

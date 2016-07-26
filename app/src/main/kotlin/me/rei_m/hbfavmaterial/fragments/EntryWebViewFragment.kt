@@ -14,15 +14,11 @@ import me.rei_m.hbfavmaterial.R
  */
 class EntryWebViewFragment : BaseFragment() {
 
-    private val mEntryUrl: String by lazy {
-        arguments.getString(ARG_ENTRY_URL)
-    }
-
     companion object {
 
-        val TAG = EntryWebViewFragment::class.java.simpleName
+        val TAG: String = EntryWebViewFragment::class.java.simpleName
 
-        private val ARG_ENTRY_URL = "ARG_ENTRY_URL"
+        private const val ARG_ENTRY_URL = "ARG_ENTRY_URL"
 
         fun newInstance(entryUrl: String): EntryWebViewFragment {
             return EntryWebViewFragment().apply {
@@ -33,6 +29,10 @@ class EntryWebViewFragment : BaseFragment() {
         }
     }
 
+    private val mEntryUrl: String by lazy {
+        arguments.getString(ARG_ENTRY_URL)
+    }
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val view = inflater.inflate(R.layout.fragment_bookmark_webview, container, false)
