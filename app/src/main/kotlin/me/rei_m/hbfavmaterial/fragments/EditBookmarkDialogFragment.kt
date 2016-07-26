@@ -20,6 +20,7 @@ import me.rei_m.hbfavmaterial.activitiy.BaseActivity
 import me.rei_m.hbfavmaterial.activitiy.SettingActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extensions.*
+import me.rei_m.hbfavmaterial.fragments.presenter.EditBookmarkDialogContact
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
@@ -33,7 +34,9 @@ import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditBookmarkDialogFragment : DialogFragment(), ProgressDialogController {
+class EditBookmarkDialogFragment : DialogFragment(),
+        EditBookmarkDialogContact.View,
+        ProgressDialogController {
 
     companion object {
 
