@@ -3,12 +3,10 @@ package me.rei_m.hbfavmaterial.di
 import android.support.v7.app.AppCompatActivity
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.*
 import me.rei_m.hbfavmaterial.service.impl.*
-import javax.inject.Singleton
 
 @Module
 class ActivityModule(val activity: AppCompatActivity) {
