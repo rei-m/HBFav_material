@@ -13,14 +13,14 @@ interface EditBookmarkDialogContact {
         fun hideProgress()
 
         fun dismiss()
+
+        fun startSettingActivity()
     }
 
     interface Actions {
 
         fun changeCheckedShareTwitter(isChecked: Boolean)
-
-        fun changeCheckedDelete(isChecked: Boolean)
-
+        
         fun registerBookmark(url: String,
                              title: String,
                              comment: String,
