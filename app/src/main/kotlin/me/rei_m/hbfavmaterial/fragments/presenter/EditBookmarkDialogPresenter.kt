@@ -35,6 +35,10 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     private val appContext: Context
         get() = (view as BaseFragment).getAppContext()
 
+    init {
+        (view as BaseFragment).component.inject(this)
+    }
+
     override fun changeCheckedShareTwitter(isChecked: Boolean) {
         val twitterSessionEntity = twitterSessionRepository.resolve()
         if (isChecked) {

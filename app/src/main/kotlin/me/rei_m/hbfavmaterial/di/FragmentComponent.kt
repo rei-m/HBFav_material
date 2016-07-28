@@ -25,6 +25,8 @@ interface FragmentComponent {
 
     fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
 
+    fun inject(presenter: EditBookmarkDialogPresenter)
+
     fun inject(editUserIdDialogFragment: EditUserIdDialogFragment)
 
     fun inject(hotEntryFragment: HotEntryFragment)
