@@ -82,7 +82,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
                 .subscribe({
                     onUpsertBookmarkSuccess(it)
                 }, {
-                    onUpsertBookmarkError(it)
+                    onUpsertBookmarkFailure(it)
                 })
     }
 
@@ -90,7 +90,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
         view.dismiss()
     }
 
-    private fun onUpsertBookmarkError(e: Throwable?) {
+    private fun onUpsertBookmarkFailure(e: Throwable?) {
         view.showNetworkErrorMessage()
     }
 
@@ -115,7 +115,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
                 .subscribe({
                     onDeleteBookmarkSuccess(it)
                 }, {
-                    onDeleteBookmarkError(it)
+                    onDeleteBookmarkFailure(it)
                 })
     }
 
@@ -123,7 +123,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
         view.dismiss()
     }
 
-    private fun onDeleteBookmarkError(e: Throwable?) {
+    private fun onDeleteBookmarkFailure(e: Throwable?) {
         if (e is HttpException) {
             if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 view.dismiss()

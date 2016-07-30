@@ -66,10 +66,8 @@ class EditBookmarkDialogFragment : DialogFragment(),
     private lateinit var presenter: EditBookmarkDialogPresenter
 
     private var subscription: CompositeSubscription? = null
-    
-    override var progressDialog: ProgressDialog? = null
 
-    private var isLoading = false
+    override var progressDialog: ProgressDialog? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
@@ -196,7 +194,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
         super.onResume()
 
         subscription = CompositeSubscription()
-        isLoading = false
 
         val view = view ?: return
 

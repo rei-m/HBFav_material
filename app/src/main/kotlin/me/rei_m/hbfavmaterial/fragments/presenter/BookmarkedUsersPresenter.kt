@@ -6,7 +6,6 @@ import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.BookmarkService
-import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -60,34 +59,6 @@ class BookmarkedUsersPresenter(private val view: BookmarkedUsersContact.View,
 
         isLoading = true
 
-        val observer = object : Observer<List<BookmarkEntity>> {
-            override fun onNext(t: List<BookmarkEntity>?) {
-                t ?: return
-
-                bookmarkList.clear()
-                bookmarkList.addAll(t)
-
-                if (bookmarkList.isEmpty()) {
-                    view.hideUserList()
-                    view.showEmpty()
-                } else {
-                    view.hideEmpty()
-                    if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-                        view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
-                    } else {
-                        view.showUserList(bookmarkList)
-                    }
-                }
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-                view.showNetworkErrorMessage()
-            }
-        }
-
         return bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)
                 .doOnUnsubscribe {
                     isLoading = false
@@ -96,7 +67,32 @@ class BookmarkedUsersPresenter(private val view: BookmarkedUsersContact.View,
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
+                .subscribe({
+                    onFindByArticleUrlSuccess(it)
+                }, {
+                    onFindByArticleUrlFailure(it)
+                })
+    }
+
+    private fun onFindByArticleUrlSuccess(bookmarkList: List<BookmarkEntity>) {
+        this.bookmarkList.clear()
+        this.bookmarkList.addAll(bookmarkList)
+
+        if (bookmarkList.isEmpty()) {
+            view.hideUserList()
+            view.showEmpty()
+        } else {
+            view.hideEmpty()
+            if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
+                view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
+            } else {
+                view.showUserList(bookmarkList)
+            }
+        }
+    }
+
+    private fun onFindByArticleUrlFailure(e: Throwable) {
+        view.showNetworkErrorMessage()
     }
 
     override fun clickUser(bookmarkEntity: BookmarkEntity) {
