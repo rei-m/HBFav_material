@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.content.Context
+import android.support.v4.app.DialogFragment
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extensions.getAppContext
-import me.rei_m.hbfavmaterial.fragments.BaseFragment
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
@@ -33,11 +33,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     private var isLoading = false
 
     private val appContext: Context
-        get() = (view as BaseFragment).getAppContext()
-
-    init {
-        (view as BaseFragment).component.inject(this)
-    }
+        get() = (view as DialogFragment).getAppContext()
 
     override fun changeCheckedShareTwitter(isChecked: Boolean) {
         val twitterSessionEntity = twitterSessionRepository.resolve()

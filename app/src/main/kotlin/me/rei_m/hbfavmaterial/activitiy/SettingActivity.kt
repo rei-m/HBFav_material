@@ -13,16 +13,12 @@ import me.rei_m.hbfavmaterial.extensions.show
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import javax.inject.Inject
 
 class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteractionListener {
 
     companion object {
         fun createIntent(context: Context): Intent = Intent(context, SettingActivity::class.java)
     }
-
-    @Inject
-    lateinit var navigator: ActivityNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +57,12 @@ class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteract
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
-            val fragment = supportFragmentManager.findFragmentByTag(SettingFragment.TAG)
-            fragment?.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ActivityNavigator.REQ_CODE_OAUTH,
+            TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE -> {
+                val fragment = supportFragmentManager.findFragmentByTag(SettingFragment.TAG)
+                fragment?.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 

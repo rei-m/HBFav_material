@@ -11,10 +11,8 @@ import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
 import me.rei_m.hbfavmaterial.fragments.MainPageFragment
 import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
-import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
-import javax.inject.Inject
 
 /**
  * メインActivity.
@@ -23,9 +21,6 @@ class MainActivity : BaseDrawerActivity(),
         BookmarkUserFragment.OnFragmentInteractionListener,
         HotEntryFragment.OnFragmentInteractionListener,
         NewEntryFragment.OnFragmentInteractionListener {
-
-    @Inject
-    lateinit var navigator: ActivityNavigator
 
     companion object {
 

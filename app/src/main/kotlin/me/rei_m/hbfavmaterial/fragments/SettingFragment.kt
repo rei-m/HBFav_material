@@ -142,37 +142,30 @@ class SettingFragment() : BaseFragment() {
 
         data ?: return
 
-        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
-            // TwitterOAuth認可後の処理を行う.
-            twitterService.onActivityResult(requestCode, resultCode, data)
-            return
-        }
-
-        // はてなのOAuth以外のリクエストの場合は終了.
-        if (requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
-            return
-        }
-
-        // OAuthの認可後の処理を行う.
-        when (resultCode) {
-            AppCompatActivity.RESULT_OK -> {
-                // 認可の可否が選択されたかチェック
-                if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
-                    // 認可の結果により表示を更新する.
-                    view?.run {
-                        val textHatenaOAuth = findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
-                        val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
-                            R.string.text_hatena_account_connect_ok else
-                            R.string.text_hatena_account_connect_no
-                        textHatenaOAuth.text = resources.getString(oauthTextId)
-                    }
-                } else {
-                    // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
-                    (activity as AppCompatActivity).showSnackbarNetworkError(view)
-                }
+        when (requestCode) {
+            TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE -> {
+                // TwitterOAuth認可後の処理を行う.
+                twitterService.onActivityResult(requestCode, resultCode, data)
+                return
             }
-            else -> {
-
+            ActivityNavigator.REQ_CODE_OAUTH -> {
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    // 認可の可否が選択されたかチェック
+                    if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+                        // 認可の結果により表示を更新する.
+                        view?.run {
+                            val textHatenaOAuth = findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
+                            val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
+                                R.string.text_hatena_account_connect_ok else
+                                R.string.text_hatena_account_connect_no
+                            textHatenaOAuth.text = resources.getString(oauthTextId)
+                        }
+                    } else {
+                        // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
+                        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+                    }
+                }
+                return
             }
         }
     }

@@ -77,8 +77,10 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as BaseActivity).component.inject(this)
         presenter = EditBookmarkDialogPresenter(this)
+        val component = (activity as BaseActivity).component
+        component.inject(this)
+        component.inject(presenter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

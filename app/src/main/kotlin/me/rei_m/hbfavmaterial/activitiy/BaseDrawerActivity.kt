@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.utils.BookmarkUtil
 import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
@@ -20,6 +21,9 @@ import javax.inject.Inject
  * Drawer付きActivityの基底クラス.
  */
 abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var userRepository: UserRepository
