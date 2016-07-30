@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
@@ -19,8 +19,8 @@ class BookmarkedUsersActivity : BaseSingleActivity(),
 
     companion object {
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
-        
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
+
         fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
             return Intent(context, BookmarkedUsersActivity::class.java)
                     .putExtra(ARG_BOOKMARK, bookmarkEntity)

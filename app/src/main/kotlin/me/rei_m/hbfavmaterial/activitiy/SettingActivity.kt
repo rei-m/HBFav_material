@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
@@ -10,20 +10,19 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.extensions.show
-import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.SettingFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
 
 class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteractionListener {
 
     companion object {
-        fun createIntent(context: Context): Intent {
-            return Intent(context, SettingActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, SettingActivity::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        component.inject(this)
 
         findViewById(R.id.pager)?.hide()
         findViewById(R.id.content)?.show()
@@ -44,10 +43,13 @@ class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteract
             R.id.nav_setting -> {
             }
             R.id.nav_explain_app -> {
-                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
+                navigator.navigateToExplainApp(this)
+                finish()
             }
-            else ->
-                startActivityWithClearTop(MainActivity.createIntent(this, BookmarkPagerAdaptor.Page.forMenuId(item.itemId).index))
+            else -> {
+                navigator.navigateToMain(this, BookmarkPagerAdaptor.Page.forMenuId(item.itemId))
+                finish()
+            }
         }
 
         return super.onNavigationItemSelected(item)
@@ -55,9 +57,12 @@ class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteract
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
-            val fragment = supportFragmentManager.findFragmentByTag(SettingFragment.TAG)
-            fragment?.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ActivityNavigator.REQ_CODE_OAUTH,
+            TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE -> {
+                val fragment = supportFragmentManager.findFragmentByTag(SettingFragment.TAG)
+                fragment?.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 

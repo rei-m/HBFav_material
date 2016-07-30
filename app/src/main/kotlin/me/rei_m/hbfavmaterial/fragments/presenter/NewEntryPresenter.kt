@@ -1,12 +1,11 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.EntryEntity
 import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.EntryService
-import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -16,9 +15,10 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
                         var entryTypeFilter: EntryTypeFilter) : NewEntryContact.Actions {
 
     @Inject
-    lateinit var entryService: EntryService
+    lateinit var navigator: ActivityNavigator
 
-    private val entryList: MutableList<EntryEntity> = mutableListOf()
+    @Inject
+    lateinit var entryService: EntryService
 
     private var isLoading = false
 
@@ -28,7 +28,7 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
 
     override fun clickEntry(entryEntity: EntryEntity) {
         val activity = (view as Fragment).activity
-        activity.startActivity(BookmarkActivity.createIntent(activity, entryEntity))
+        navigator.navigateToBookmark(activity, entryEntity)
     }
 
     override fun initializeListContents(): Subscription? {
@@ -62,30 +62,6 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
 
         isLoading = true
 
-        val observer = object : Observer<List<EntryEntity>> {
-            override fun onNext(t: List<EntryEntity>?) {
-                t ?: return
-
-                entryList.clear()
-                entryList.addAll(t)
-
-                if (entryList.isEmpty()) {
-                    view.hideEntryList()
-                    view.showEmpty()
-                } else {
-                    view.hideEmpty()
-                    view.showEntryList(entryList)
-                }
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-                view.showNetworkErrorMessage()
-            }
-        }
-
         return entryService.findNewEntryByType(entryTypeFilter)
                 .doOnUnsubscribe {
                     isLoading = false
@@ -94,6 +70,24 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
+                .subscribe({
+                    onFindNewEntryByTypeSuccess(it)
+                }, {
+                    onFindNewEntryByTypeFailure(it)
+                })
+    }
+
+    private fun onFindNewEntryByTypeSuccess(entryList: List<EntryEntity>) {
+        if (entryList.isEmpty()) {
+            view.hideEntryList()
+            view.showEmpty()
+        } else {
+            view.hideEmpty()
+            view.showEntryList(entryList)
+        }
+    }
+
+    private fun onFindNewEntryByTypeFailure(e: Throwable) {
+        view.showNetworkErrorMessage()
     }
 }

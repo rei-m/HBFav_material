@@ -1,12 +1,13 @@
 package me.rei_m.hbfavmaterial.di
 
 import dagger.Subcomponent
-import me.rei_m.hbfavmaterial.activities.BaseDrawerActivity
-import me.rei_m.hbfavmaterial.activities.BookmarkActivity
-import me.rei_m.hbfavmaterial.activities.MainActivity
-import me.rei_m.hbfavmaterial.activities.OAuthActivity
+import me.rei_m.hbfavmaterial.activitiy.BaseDrawerActivity
+import me.rei_m.hbfavmaterial.activitiy.BookmarkActivity
+import me.rei_m.hbfavmaterial.activitiy.MainActivity
+import me.rei_m.hbfavmaterial.activitiy.OAuthActivity
 import me.rei_m.hbfavmaterial.fragments.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragments.EditUserIdDialogFragment
+import me.rei_m.hbfavmaterial.fragments.presenter.EditBookmarkDialogPresenter
 
 @Subcomponent(modules = arrayOf(ActivityModule::class))
 interface ActivityComponent {
@@ -21,6 +22,8 @@ interface ActivityComponent {
 
     fun inject(dialog: EditBookmarkDialogFragment)
 
+    fun inject(presenter: EditBookmarkDialogPresenter)
+    
     fun inject(dialog: EditUserIdDialogFragment)
 
     fun plus(module: FragmentModule): FragmentComponent

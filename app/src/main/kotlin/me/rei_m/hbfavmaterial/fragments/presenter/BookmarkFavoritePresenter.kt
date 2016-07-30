@@ -1,18 +1,20 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.activities.BookmarkActivity
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.BookmarkService
-import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) : BookmarkFavoriteContact.Actions {
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -48,39 +50,7 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
         val userId = userRepository.resolve().id
 
         isLoading = true
-
-        val observer = object : Observer<List<BookmarkEntity>> {
-            override fun onNext(t: List<BookmarkEntity>?) {
-                t ?: return
-
-                if (nextIndex === 0) {
-                    bookmarkList.clear()
-                }
-                bookmarkList.addAll(t)
-
-                if (bookmarkList.isEmpty()) {
-                    view.hideBookmarkList()
-                    view.showEmpty()
-                } else {
-                    view.hideEmpty()
-                    view.showBookmarkList(bookmarkList)
-                }
-
-                if (t.isEmpty()) {
-                    view.stopAutoLoading()
-                } else {
-                    view.startAutoLoading()
-                }
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-                view.showNetworkErrorMessage()
-            }
-        }
-
+        
         return bookmarkService.findByUserIdForFavorite(userId, nextIndex)
                 .doOnUnsubscribe {
                     isLoading = false
@@ -89,11 +59,40 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
+                .subscribe({
+                    onFindByUserIdForFavoriteSuccess(it, nextIndex)
+                }, {
+                    onFindByUserIdForFavoriteFailure(it)
+                })
+    }
+
+    private fun onFindByUserIdForFavoriteSuccess(bookmarkList: List<BookmarkEntity>, nextIndex: Int) {
+        if (nextIndex === 0) {
+            this.bookmarkList.clear()
+        }
+        this.bookmarkList.addAll(bookmarkList)
+
+        if (this.bookmarkList.isEmpty()) {
+            view.hideBookmarkList()
+            view.showEmpty()
+        } else {
+            view.hideEmpty()
+            view.showBookmarkList(this.bookmarkList)
+        }
+
+        if (bookmarkList.isEmpty()) {
+            view.stopAutoLoading()
+        } else {
+            view.startAutoLoading()
+        }
+    }
+
+    private fun onFindByUserIdForFavoriteFailure(e: Throwable) {
+        view.showNetworkErrorMessage()
     }
 
     override fun clickBookmark(bookmarkEntity: BookmarkEntity) {
         val activity = (view as Fragment).activity
-        activity.startActivity(BookmarkActivity.createIntent(activity, bookmarkEntity))
+        navigator.navigateToBookmark(activity, bookmarkEntity)
     }
 }

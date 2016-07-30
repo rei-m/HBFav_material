@@ -13,9 +13,7 @@ import me.rei_m.hbfavmaterial.R
 class FromDeveloperFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(): FromDeveloperFragment {
-            return FromDeveloperFragment()
-        }
+        fun newInstance(): FromDeveloperFragment = FromDeveloperFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

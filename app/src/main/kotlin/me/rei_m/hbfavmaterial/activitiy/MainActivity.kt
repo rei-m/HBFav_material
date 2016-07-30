@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.startActivityWithClearTop
 import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
 import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
 import me.rei_m.hbfavmaterial.fragments.MainPageFragment
@@ -25,12 +24,11 @@ class MainActivity : BaseDrawerActivity(),
 
     companion object {
 
-        private val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
+        private const val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
 
-        fun createIntent(context: Context,
-                         index: Int = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE.index): Intent {
+        fun createIntent(context: Context, page: BookmarkPagerAdaptor.Page): Intent {
             return Intent(context, MainActivity::class.java)
-                    .putExtra(ARG_PAGER_INDEX, index)
+                    .putExtra(ARG_PAGER_INDEX, page.index)
         }
     }
 
@@ -69,10 +67,14 @@ class MainActivity : BaseDrawerActivity(),
 
         // Drawer内のメニュー選択時のイベント
         when (item.itemId) {
-            R.id.nav_setting ->
-                startActivityWithClearTop(SettingActivity.createIntent(this))
-            R.id.nav_explain_app ->
-                startActivityWithClearTop(ExplainAppActivity.createIntent(this))
+            R.id.nav_setting -> {
+                navigator.navigateToSetting(this)
+                finish()
+            }
+            R.id.nav_explain_app -> {
+                navigator.navigateToExplainApp(this)
+                finish()
+            }
             else -> {
                 with(findViewById(R.id.pager) as BookmarkViewPager) {
                     currentItem = BookmarkPagerAdaptor.Page.forMenuId(item.itemId).index

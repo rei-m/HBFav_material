@@ -34,4 +34,6 @@ interface FragmentComponent {
     fun inject(newEntryFragment: NewEntryFragment)
 
     fun inject(settingFragment: SettingFragment)
+
+    fun inject(explainAppFragment: ExplainAppFragment)
 }

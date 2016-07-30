@@ -1,8 +1,6 @@
 package me.rei_m.hbfavmaterial.extensions
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -10,15 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import me.rei_m.hbfavmaterial.R
-
-/**
- * Activityのスタックを削除したうえで新しくIntentを起動する.
- */
-fun Activity.startActivityWithClearTop(intent: Intent) {
-    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-    startActivity(intent)
-    finish()
-}
 
 /**
  * Fragmentをセットする.

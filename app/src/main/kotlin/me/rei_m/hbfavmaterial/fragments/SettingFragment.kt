@@ -11,13 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activities.OAuthActivity
+import me.rei_m.hbfavmaterial.activitiy.OAuthActivity
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.TwitterService
-import me.rei_m.hbfavmaterial.utils.ConstantUtil
 import javax.inject.Inject
 
 /**
@@ -31,6 +31,9 @@ class SettingFragment() : BaseFragment() {
 
         fun newInstance(): SettingFragment = SettingFragment()
     }
+
+    @Inject
+    lateinit var navigator: ActivityNavigator
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -97,7 +100,7 @@ class SettingFragment() : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth).setOnClickListener {
-            startActivityForResult(OAuthActivity.createIntent(activity), ConstantUtil.REQ_CODE_OAUTH)
+            navigator.navigateToOAuth(activity)
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {
@@ -139,37 +142,30 @@ class SettingFragment() : BaseFragment() {
 
         data ?: return
 
-        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
-            // TwitterOAuth認可後の処理を行う.
-            twitterService.onActivityResult(requestCode, resultCode, data)
-            return
-        }
-
-        // はてなのOAuth以外のリクエストの場合は終了.
-        if (requestCode != ConstantUtil.REQ_CODE_OAUTH) {
-            return
-        }
-
-        // OAuthの認可後の処理を行う.
-        when (resultCode) {
-            AppCompatActivity.RESULT_OK -> {
-                // 認可の可否が選択されたかチェック
-                if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
-                    // 認可の結果により表示を更新する.
-                    view?.run {
-                        val textHatenaOAuth = findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
-                        val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
-                            R.string.text_hatena_account_connect_ok else
-                            R.string.text_hatena_account_connect_no
-                        textHatenaOAuth.text = resources.getString(oauthTextId)
-                    }
-                } else {
-                    // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
-                    (activity as AppCompatActivity).showSnackbarNetworkError(view)
-                }
+        when (requestCode) {
+            TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE -> {
+                // TwitterOAuth認可後の処理を行う.
+                twitterService.onActivityResult(requestCode, resultCode, data)
+                return
             }
-            else -> {
-
+            ActivityNavigator.REQ_CODE_OAUTH -> {
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    // 認可の可否が選択されたかチェック
+                    if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
+                        // 認可の結果により表示を更新する.
+                        view?.run {
+                            val textHatenaOAuth = findViewById(R.id.fragment_setting_text_user_oauth) as AppCompatTextView
+                            val oauthTextId = if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
+                                R.string.text_hatena_account_connect_ok else
+                                R.string.text_hatena_account_connect_no
+                            textHatenaOAuth.text = resources.getString(oauthTextId)
+                        }
+                    } else {
+                        // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
+                        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+                    }
+                }
+                return
             }
         }
     }

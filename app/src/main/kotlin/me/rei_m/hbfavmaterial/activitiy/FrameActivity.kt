@@ -1,20 +1,20 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.setFragment
 import me.rei_m.hbfavmaterial.fragments.CreditFragment
 import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
-import me.rei_m.hbfavmaterial.utils.FragmentUtil.Companion.Tag
 
 class FrameActivity : BaseSingleActivity() {
 
     companion object {
 
-        private val ARG_TAG = "TAG"
+        private const val ARG_TAG = "TAG"
 
         fun createIntent(context: Context, tag: Tag): Intent {
             return Intent(context, FrameActivity::class.java).apply {
@@ -25,24 +25,26 @@ class FrameActivity : BaseSingleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (savedInstanceState == null) {
             val tag = intent.getSerializableExtra(ARG_TAG) as Tag
-
-            when (tag) {
-                Tag.FROM_DEVELOPER -> {
-                    setFragment(FromDeveloperFragment.newInstance())
-                    supportActionBar?.title = getString(R.string.fragment_title_from_developer)
-                }
-                Tag.CREDIT -> {
-                    setFragment(CreditFragment.newInstance())
-                    supportActionBar?.title = getString(R.string.fragment_title_credit)
-                }
-                else -> {
-
-                }
-            }
+            setFragment(tag.newInstance())
+            supportActionBar?.title = getString(tag.titleStringId)
         }
         findViewById(R.id.fab)?.hide()
+    }
+
+    enum class Tag {
+        FROM_DEVELOPER {
+            override val titleStringId: Int = R.string.fragment_title_from_developer
+            override fun newInstance(): Fragment = FromDeveloperFragment.newInstance()
+        },
+        CREDIT {
+            override val titleStringId: Int = R.string.fragment_title_credit
+            override fun newInstance(): Fragment = CreditFragment.newInstance()
+        };
+
+        abstract val titleStringId: Int
+
+        abstract fun newInstance(): Fragment
     }
 }

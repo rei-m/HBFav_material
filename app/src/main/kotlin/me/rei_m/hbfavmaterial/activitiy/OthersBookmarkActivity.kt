@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.content.Context
 import android.content.Intent
@@ -16,7 +16,7 @@ class OthersBookmarkActivity : BaseSingleActivity() {
 
     companion object {
 
-        private val ARG_USER_ID = "ARG_USER_ID"
+        private const val ARG_USER_ID = "ARG_USER_ID"
 
         fun createIntent(context: Context, userId: String): Intent {
             return Intent(context, OthersBookmarkActivity::class.java)

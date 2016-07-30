@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activities
+package me.rei_m.hbfavmaterial.activitiy
 
 import android.support.v7.app.AppCompatActivity
 import me.rei_m.hbfavmaterial.App
