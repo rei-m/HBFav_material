@@ -49,9 +49,10 @@ class BookmarkFavoritePresenter(private val view: BookmarkFavoriteContact.View) 
 
         val userId = userRepository.resolve().id
 
-        isLoading = true
-        
         return bookmarkService.findByUserIdForFavorite(userId, nextIndex)
+                .doOnSubscribe {
+                    isLoading = true
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

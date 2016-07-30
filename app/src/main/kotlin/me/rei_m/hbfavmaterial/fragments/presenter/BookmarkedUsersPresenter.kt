@@ -57,9 +57,10 @@ class BookmarkedUsersPresenter(private val view: BookmarkedUsersContact.View,
 
     private fun request(): Subscription? {
 
-        isLoading = true
-
         return bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)
+                .doOnSubscribe {
+                    isLoading = true
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

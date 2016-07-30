@@ -114,15 +114,13 @@ class SettingFragment() : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-
-        val view = view ?: return
-
-        val textTwitterOAuth = view.findViewById(R.id.fragment_setting_text_twitter_oauth) as AppCompatTextView
-        val twitterOAuthTextId = if (twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
-            R.string.text_hatena_account_connect_ok else
-            R.string.text_hatena_account_connect_no
-
-        textTwitterOAuth.text = resources.getString(twitterOAuthTextId)
+        view?.findViewById(R.id.fragment_setting_text_twitter_oauth).let {
+            it as AppCompatTextView
+            val twitterOAuthTextId = if (twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
+                R.string.text_hatena_account_connect_ok else
+                R.string.text_hatena_account_connect_no
+            it.text = resources.getString(twitterOAuthTextId)
+        }
     }
 
     override fun onPause() {

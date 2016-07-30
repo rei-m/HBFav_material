@@ -60,9 +60,10 @@ class HotEntryPresenter(private val view: HotEntryContact.View,
 
     private fun request(): Subscription? {
 
-        isLoading = true
-
         return entryService.findHotEntryByType(entryTypeFilter)
+                .doOnSubscribe {
+                    isLoading = true
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

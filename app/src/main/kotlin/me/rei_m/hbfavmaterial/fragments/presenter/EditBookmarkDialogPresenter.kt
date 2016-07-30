@@ -40,7 +40,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
         if (isChecked) {
             if (!twitterSessionEntity.oAuthTokenEntity.isAuthorised) {
                 view.startSettingActivity()
-                view.dismiss()
+                view.dismissDialog()
                 return
             }
         }
@@ -57,10 +57,6 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
         if (isLoading) return null
 
-        view.showProgress()
-
-        isLoading = true
-
         if (isShareAtTwitter) {
             twitterService.postTweet(BookmarkUtil.createShareText(url, title, comment))
         }
@@ -68,6 +64,10 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
         val oAuthTokenEntity = hatenaTokenRepository.resolve()
 
         return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, tags)
+                .doOnSubscribe {
+                    isLoading = true
+                    view.showProgress()
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -83,7 +83,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     }
 
     private fun onUpsertBookmarkSuccess(bookmarkEditEntity: BookmarkEditEntity) {
-        view.dismiss()
+        view.dismissDialog()
     }
 
     private fun onUpsertBookmarkFailure(e: Throwable?) {
@@ -94,13 +94,13 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
         if (isLoading) return null
 
-        view.showProgress()
-
-        isLoading = true
-
         val oAuthTokenEntity = hatenaTokenRepository.resolve()
 
         return hatenaService.deleteBookmark(oAuthTokenEntity, bookmarkUrl)
+                .doOnSubscribe {
+                    isLoading = true
+                    view.showProgress()
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -116,13 +116,13 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     }
 
     private fun onDeleteBookmarkSuccess(void: Void?) {
-        view.dismiss()
+        view.dismissDialog()
     }
 
     private fun onDeleteBookmarkFailure(e: Throwable?) {
         if (e is HttpException) {
             if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                view.dismiss()
+                view.dismissDialog()
                 return
             }
         }

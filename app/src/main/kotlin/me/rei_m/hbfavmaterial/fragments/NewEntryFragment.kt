@@ -71,6 +71,8 @@ class NewEntryFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        subscription = CompositeSubscription()
+
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
@@ -92,34 +94,29 @@ class NewEntryFragment() : BaseFragment(),
             text = getString(R.string.message_text_empty_entry)
         }
 
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        subscription = CompositeSubscription()
-
-        val view = view ?: return
-
-        if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
-
-        view.findViewById(R.id.fragment_list_view_empty).hide()
-
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             presenter.fetchListContents()?.let {
                 subscription?.add(it)
             }
         })
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onResume() {
+        super.onResume()
+        if (listAdapter.count === 0) {
+            // 1件も表示していなければブックマーク情報をRSSから取得する
+            presenter.initializeListContents()?.let {
+                subscription?.add(it)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
         subscription?.unsubscribe()
         subscription = null
 

@@ -85,6 +85,8 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        subscription = CompositeSubscription()
+
         val view = inflater.inflate(R.layout.dialog_fragment_edit_bookmark, container, false)
 
         val bookmarkUrl = arguments.getString(ARG_BOOKMARK_URL)
@@ -189,21 +191,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
             switchDelete.hide()
         }
 
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        subscription = CompositeSubscription()
-
-        val view = view ?: return
-
         val textCommentCount = view.findViewById(R.id.dialog_fragment_edit_bookmark_text_comment_char_count) as AppCompatTextView
-
-        val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
-
-        val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
 
         val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
 
@@ -223,10 +211,12 @@ class EditBookmarkDialogFragment : DialogFragment(),
                         }
                     }
                 })
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroyView() {
+        super.onDestroyView()
         subscription?.unsubscribe()
         subscription = null
     }
@@ -250,5 +240,9 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun startSettingActivity() {
         startActivity(SettingActivity.createIntent(activity))
+    }
+
+    override fun dismissDialog() {
+        dismiss()
     }
 }

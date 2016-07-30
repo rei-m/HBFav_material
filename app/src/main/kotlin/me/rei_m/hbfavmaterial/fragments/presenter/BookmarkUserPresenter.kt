@@ -66,9 +66,10 @@ class BookmarkUserPresenter(private val view: BookmarkUserContact.View,
 
     private fun request(nextIndex: Int): Subscription? {
 
-        isLoading = true
-
         return bookmarkService.findByUserId(bookmarkUserId, readAfterFilter, nextIndex)
+                .doOnSubscribe {
+                    isLoading = true
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

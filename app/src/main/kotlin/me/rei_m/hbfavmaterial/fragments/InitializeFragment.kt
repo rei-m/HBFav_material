@@ -56,33 +56,14 @@ class InitializeFragment() : BaseFragment(), ProgressDialogController {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
+        subscription = CompositeSubscription()
+
         val view = inflater.inflate(R.layout.fragment_initialize, container, false)
 
         val editId = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as AppCompatEditText
 
         val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
         buttonSetId.setOnClickListener { confirmAndSaveUserId(editId.editableText.toString()) }
-
-        return view
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscription?.unsubscribe()
-        subscription = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        subscription = CompositeSubscription()
-        isLoading = false
-
-        val view = view ?: return
-
-        val editId = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as AppCompatEditText
-
-        val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
 
         subscription?.add(RxTextView.textChanges(editId)
                 .map { v -> 0 < v.length }
@@ -93,14 +74,18 @@ class InitializeFragment() : BaseFragment(), ProgressDialogController {
             navigator.navigateToMain(activity)
             activity.finish()
         }
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isLoading = false
         subscription?.unsubscribe()
         subscription = null
     }
-
+    
     private fun confirmAndSaveUserId(userId: String) {
 
         if (isLoading) return
