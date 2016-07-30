@@ -3,6 +3,7 @@ package me.rei_m.hbfavmaterial.fragments.presenter
 import android.content.Context
 import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.UserEntity
+import me.rei_m.hbfavmaterial.fragments.BaseFragment
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException
@@ -12,7 +13,7 @@ import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) : EditUserIdDialogContact.Actions {
+class InitializePresenter(private val view: InitializeContact.View) : InitializeContact.Actions {
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -26,7 +27,11 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
 
     private var isLoading = false
 
-    override fun confirmExistingUserId(userId: String): Subscription? {
+    init {
+        (view as BaseFragment).component.inject(this)
+    }
+
+    override fun clickButtonSetId(userId: String): Subscription? {
 
         if (isLoading) return null
 
@@ -52,7 +57,7 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
             userRepository.store(context, UserEntity(userId))
-            view.dismissDialog()
+            view.navigateToMain()
         } else {
             view.displayInvalidUserIdMessage()
         }

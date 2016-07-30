@@ -17,6 +17,8 @@ interface FragmentComponent {
 
     fun inject(presenter: BookmarkedUsersPresenter)
 
+    fun inject(presenter: InitializePresenter)
+
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 
     fun inject(bookmarkUserFragment: BookmarkUserFragment)
