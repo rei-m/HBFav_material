@@ -12,7 +12,7 @@ interface EditBookmarkDialogContact {
 
         fun hideProgress()
 
-        fun dismiss()
+        fun dismissDialog()
 
         fun startSettingActivity()
     }

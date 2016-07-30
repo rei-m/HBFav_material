@@ -11,7 +11,6 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ForApplication
 import me.rei_m.hbfavmaterial.entities.BookmarkEntity
 import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extensions.getAppContext
@@ -116,6 +115,8 @@ class BookmarkUserFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        subscription = CompositeSubscription()
+
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
@@ -155,22 +156,6 @@ class BookmarkUserFragment() : BaseFragment(),
             text = getString(R.string.message_text_empty_bookmark_user)
         }
 
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        subscription = CompositeSubscription()
-
-        val view = view ?: return
-
-        if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
-
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
@@ -178,10 +163,22 @@ class BookmarkUserFragment() : BaseFragment(),
                 subscription?.add(it)
             }
         })
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onResume() {
+        super.onResume()
+        if (listAdapter.count === 0) {
+            // 1件も表示していなければブックマーク情報をRSSから取得する
+            presenter.initializeListContents()?.let {
+                subscription?.add(it)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         subscription?.unsubscribe()
         subscription = null
 

@@ -28,7 +28,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     companion object {
 
-        private val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
         fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkedUsersFragment {
             return BookmarkedUsersFragment().apply {
@@ -68,6 +68,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        subscription = CompositeSubscription()
+
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
@@ -89,21 +91,6 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
             text = getString(R.string.message_text_empty_user)
         }
 
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        subscription = CompositeSubscription()
-
-        val view = view ?: return
-
-        if (listAdapter.count === 0) {
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
-
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
@@ -111,16 +98,27 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
                 subscription?.add(it)
             }
         })
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onResume() {
+        super.onResume()
+        if (listAdapter.count === 0) {
+            presenter.initializeListContents()?.let {
+                subscription?.add(it)
+            }
+        }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+
         subscription?.unsubscribe()
         subscription = null
 
         val view = view ?: return
 
-        // Pull to Refresh中であれば解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
                 RxSwipeRefreshLayout.refreshing(this).call(false)

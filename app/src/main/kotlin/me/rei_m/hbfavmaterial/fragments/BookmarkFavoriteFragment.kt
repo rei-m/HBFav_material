@@ -66,6 +66,8 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        subscription = CompositeSubscription()
+
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
@@ -104,40 +106,34 @@ class BookmarkFavoriteFragment() : BaseFragment(),
             text = getString(R.string.message_text_empty_favorite)
         }
 
+        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
+        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+            presenter.fetchListContents(0)?.let {
+                subscription?.add(it)
+            }
+        })
+
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        subscription = CompositeSubscription()
-
-        val view = view ?: return
-
         if (listAdapter.count === 0) {
             // 1件も表示していなければブックマーク情報をRSSから取得する
             presenter.initializeListContents()?.let {
                 subscription?.add(it)
             }
         }
-
-        // Pull to refreshのイベントをセット
-        val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            // 上から引っ張りきったらbookmarkの更新を行う
-            presenter.fetchListContents(0)?.let {
-                subscription?.add(it)
-            }
-        })
     }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
 
-    override fun onPause() {
-        super.onPause()
         subscription?.unsubscribe()
         subscription = null
 
         val view = view ?: return
 
-        // Pull to Refresh中であれば解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
                 RxSwipeRefreshLayout.refreshing(this).call(false)

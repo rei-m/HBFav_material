@@ -60,9 +60,10 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
 
     private fun request(): Subscription? {
 
-        isLoading = true
-
         return entryService.findNewEntryByType(entryTypeFilter)
+                .doOnSubscribe {
+                    isLoading = true
+                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

@@ -20,8 +20,8 @@ class EntryRssItemXml {
     var description: String = ""
 
     @Path("dc/subject")
-    @set:Element
-    @get:Element
+    @set:Element(required = false)
+    @get:Element(required = false)
     var subject: String = ""
 
     @Path("dc/date")
