@@ -63,7 +63,6 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
     }
 
     private fun onConfirmExistingUserIdFailure(e: Throwable) {
-        println(e)
         if (e is HttpException) {
             if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 view.displayInvalidUserIdMessage()
