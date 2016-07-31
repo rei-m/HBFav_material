@@ -2,6 +2,8 @@ package me.rei_m.hbfavmaterial.fragments
 
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
@@ -41,6 +43,8 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     private lateinit var presenter: EditUserIdDialogPresenter
 
+    private var listener: DialogInterface? = null
+
     override var progressDialog: ProgressDialog? = null
 
     private var subscription: CompositeSubscription? = null
@@ -48,6 +52,14 @@ class EditUserIdDialogFragment() : DialogFragment(),
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
             window.requestFeature(Window.FEATURE_NO_TITLE)
+        }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        val listener = targetFragment
+        if (listener is DialogInterface) {
+            this.listener = listener
         }
     }
 
@@ -105,6 +117,11 @@ class EditUserIdDialogFragment() : DialogFragment(),
         subscription = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        listener = null
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
@@ -136,4 +153,15 @@ class EditUserIdDialogFragment() : DialogFragment(),
         }
         dismiss()
     }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+        this.listener?.dismiss()
+    }
+
+    override fun onCancel(dialog: DialogInterface?) {
+        super.onCancel(dialog)
+        this.listener?.cancel()
+    }
 }
+

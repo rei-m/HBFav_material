@@ -23,7 +23,7 @@ import javax.inject.Inject
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment() : BaseFragment() {
+class SettingFragment() : BaseFragment(), DialogInterface {
 
     companion object {
 
@@ -73,21 +73,11 @@ class SettingFragment() : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_id).setOnClickListener {
-            val dialog = EditUserIdDialogFragment.newInstance()
-            dialog.onDismiss(object : DialogInterface {
-                override fun dismiss() {
-                    val userEntity = userRepository.resolve()
-                    view?.findViewById(R.id.fragment_setting_text_user_id).let {
-                        it as AppCompatTextView
-                        it.text = userEntity.id
-                    }
-                    listener?.onUserIdUpdated(userEntity.id)
-                }
-
-                override fun cancel() {
-                }
-            })
-            dialog.show(childFragmentManager, EditUserIdDialogFragment.TAG)
+            EditUserIdDialogFragment.newInstance().apply {
+                setTargetFragment(this@SettingFragment, 0)
+            }.let {
+                it.show(childFragmentManager, EditUserIdDialogFragment.TAG)
+            }
         }
 
         val oauthTextId = if (hatenaTokenRepository.resolve().isAuthorised)
@@ -170,5 +160,18 @@ class SettingFragment() : BaseFragment() {
 
     interface OnFragmentInteractionListener {
         fun onUserIdUpdated(userId: String)
+    }
+
+    override fun dismiss() {
+        val userEntity = userRepository.resolve()
+        view?.findViewById(R.id.fragment_setting_text_user_id).let {
+            it as AppCompatTextView
+            it.text = userEntity.id
+        }
+        listener?.onUserIdUpdated(userEntity.id)
+    }
+
+    override fun cancel() {
+
     }
 }

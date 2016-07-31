@@ -8,7 +8,10 @@ import com.squareup.leakcanary.LeakCanary
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.fabric.sdk.android.Fabric
-import me.rei_m.hbfavmaterial.di.*
+import me.rei_m.hbfavmaterial.di.ApplicationComponent
+import me.rei_m.hbfavmaterial.di.ApplicationModule
+import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
+import me.rei_m.hbfavmaterial.di.InfraLayerModule
 
 class App : Application() {
 
