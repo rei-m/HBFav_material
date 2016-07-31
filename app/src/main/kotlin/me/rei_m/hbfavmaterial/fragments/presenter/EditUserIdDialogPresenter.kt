@@ -1,8 +1,9 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.ForApplication
+import android.support.v4.app.DialogFragment
 import me.rei_m.hbfavmaterial.entities.UserEntity
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException
@@ -20,9 +21,8 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
     @Inject
     lateinit var userService: UserService
 
-    @Inject
-    @ForApplication
-    lateinit var context: Context
+    private val appContext: Context
+        get() = (view as DialogFragment).getAppContext()
 
     private var isLoading = false
 
@@ -30,11 +30,10 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
 
         if (isLoading) return null
 
+        isLoading = true
+        view.showProgress()
+
         return userService.confirmExistingUserId(userId)
-                .doOnSubscribe {
-                    isLoading = true
-                    view.showProgress()
-                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -51,7 +50,7 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
-            userRepository.store(context, UserEntity(userId))
+            userRepository.store(appContext, UserEntity(userId))
             view.dismissDialog()
         } else {
             view.displayInvalidUserIdMessage()

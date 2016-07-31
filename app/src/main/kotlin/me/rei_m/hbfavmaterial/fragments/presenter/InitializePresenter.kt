@@ -1,8 +1,9 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.ForApplication
+import android.support.v4.app.Fragment
 import me.rei_m.hbfavmaterial.entities.UserEntity
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.fragments.BaseFragment
 import me.rei_m.hbfavmaterial.repositories.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
@@ -21,9 +22,8 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
     @Inject
     lateinit var userService: UserService
 
-    @Inject
-    @ForApplication
-    lateinit var context: Context
+    private val appContext: Context
+        get() = (view as Fragment).getAppContext()
 
     private var isLoading = false
 
@@ -35,11 +35,10 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
 
         if (isLoading) return null
 
+        isLoading = true
+        view.showProgress()
+
         return userService.confirmExistingUserId(userId)
-                .doOnSubscribe {
-                    isLoading = true
-                    view.showProgress()
-                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -56,7 +55,7 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
-            userRepository.store(context, UserEntity(userId))
+            userRepository.store(appContext, UserEntity(userId))
             view.navigateToMain()
         } else {
             view.displayInvalidUserIdMessage()
@@ -64,6 +63,7 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
     }
 
     private fun onConfirmExistingUserIdFailure(e: Throwable) {
+        println(e)
         if (e is HttpException) {
             if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
                 view.displayInvalidUserIdMessage()

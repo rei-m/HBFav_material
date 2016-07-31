@@ -1,8 +1,9 @@
 package me.rei_m.hbfavmaterial.fragments.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.ForApplication
+import android.support.v4.app.DialogFragment
 import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.extensions.getAppContext
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
@@ -29,8 +30,8 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     @Inject
     lateinit var twitterService: TwitterService
 
-    @Inject
-    lateinit var context: Context
+    private val appContext: Context
+        get() = (view as DialogFragment).getAppContext()
 
     private var isLoading = false
 
@@ -44,7 +45,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
             }
         }
         twitterSessionEntity.isShare = isChecked
-        twitterSessionRepository.store(context, twitterSessionEntity)
+        twitterSessionRepository.store(appContext, twitterSessionEntity)
     }
 
     override fun registerBookmark(url: String,
@@ -62,11 +63,10 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
         val oAuthTokenEntity = hatenaTokenRepository.resolve()
 
+        isLoading = true
+        view.showProgress()
+
         return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, tags)
-                .doOnSubscribe {
-                    isLoading = true
-                    view.showProgress()
-                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -95,11 +95,10 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
         val oAuthTokenEntity = hatenaTokenRepository.resolve()
 
+        isLoading = true
+        view.showProgress()
+        
         return hatenaService.deleteBookmark(oAuthTokenEntity, bookmarkUrl)
-                .doOnSubscribe {
-                    isLoading = true
-                    view.showProgress()
-                }
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()

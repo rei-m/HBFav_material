@@ -42,7 +42,7 @@ class InitializeFragment() : BaseFragment(),
     override var progressDialog: ProgressDialog? = null
 
     private var subscription: CompositeSubscription? = null
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)

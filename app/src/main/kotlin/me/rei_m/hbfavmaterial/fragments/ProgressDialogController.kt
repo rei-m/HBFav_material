@@ -14,7 +14,7 @@ interface ProgressDialogController {
                 setCanceledOnTouchOutside(false)
             }
         }
-
+        
         progressDialog?.run {
             if (!isShowing) {
                 show()
