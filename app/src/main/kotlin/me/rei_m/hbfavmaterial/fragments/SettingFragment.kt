@@ -158,10 +158,6 @@ class SettingFragment() : BaseFragment(), DialogInterface {
         }
     }
 
-    interface OnFragmentInteractionListener {
-        fun onUserIdUpdated(userId: String)
-    }
-
     override fun dismiss() {
         val userEntity = userRepository.resolve()
         view?.findViewById(R.id.fragment_setting_text_user_id).let {
@@ -173,5 +169,9 @@ class SettingFragment() : BaseFragment(), DialogInterface {
 
     override fun cancel() {
 
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onUserIdUpdated(userId: String)
     }
 }

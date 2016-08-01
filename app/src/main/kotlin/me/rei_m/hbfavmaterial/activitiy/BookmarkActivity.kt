@@ -21,10 +21,9 @@ import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
 import retrofit2.adapter.rxjava.HttpException
-import rx.Observer
-import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
@@ -63,7 +62,7 @@ class BookmarkActivity : BaseSingleActivity(),
     @Inject
     lateinit var hatenaService: HatenaService
 
-    private var subscription: Subscription? = null
+    private var subscription: CompositeSubscription? = null
 
     private var isLoading = false
 
@@ -74,6 +73,8 @@ class BookmarkActivity : BaseSingleActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
+
+        subscription = CompositeSubscription()
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
@@ -102,13 +103,8 @@ class BookmarkActivity : BaseSingleActivity(),
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        isLoading = false
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         subscription?.unsubscribe()
         subscription = null
     }
@@ -186,38 +182,41 @@ class BookmarkActivity : BaseSingleActivity(),
 
     private fun fetchBookmark(url: String) {
 
-        val observer = object : Observer<BookmarkEditEntity> {
-
-            override fun onNext(t: BookmarkEditEntity) {
-                EditBookmarkDialogFragment
-                        .newInstance(entryTitle, entryLink, t)
-                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-            }
-
-            override fun onCompleted() {
-
-            }
-
-            override fun onError(e: Throwable?) {
-                if (e is HttpException) {
-                    if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                        EditBookmarkDialogFragment
-                                .newInstance(entryTitle, entryLink)
-                                .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-                        return
-                    }
-                }
-                showSnackbarNetworkError(findViewById(R.id.content))
-            }
+        if (isLoading) {
+            return
         }
 
+        isLoading = true
+
         val oAuthTokenEntity = hatenaTokenRepository.resolve()
-        subscription = hatenaService.findBookmarkByUrl(oAuthTokenEntity, url)
+        subscription?.add(hatenaService.findBookmarkByUrl(oAuthTokenEntity, url)
                 .doOnUnsubscribe { isLoading = false }
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
+                .subscribe({
+                    onFindBookmarkByUrlSuccess(it)
+                }, {
+                    onFindBookmarkByUrlFailure(it)
+                }))
+    }
+
+    private fun onFindBookmarkByUrlSuccess(bookmarkEditEntity: BookmarkEditEntity) {
+        EditBookmarkDialogFragment
+                .newInstance(entryTitle, entryLink, bookmarkEditEntity)
+                .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+    }
+
+    private fun onFindBookmarkByUrlFailure(e: Throwable) {
+        if (e is HttpException) {
+            if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                EditBookmarkDialogFragment
+                        .newInstance(entryTitle, entryLink)
+                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+                return
+            }
+        }
+        showSnackbarNetworkError(findViewById(R.id.content))
     }
 
     override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {
