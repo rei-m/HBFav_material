@@ -10,13 +10,11 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.extensions.hide
 import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
-import rx.Observer
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
@@ -49,6 +47,7 @@ class OAuthActivity : BaseSingleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
+        subscription = CompositeSubscription()
 
         webView.apply {
             clearCache(true)
@@ -86,13 +85,11 @@ class OAuthActivity : BaseSingleActivity() {
 
     override fun onResume() {
         super.onResume()
-        subscription = CompositeSubscription()
-        isLoading = false
         fetchRequestToken()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         subscription?.unsubscribe()
         subscription = null
     }
@@ -103,27 +100,16 @@ class OAuthActivity : BaseSingleActivity() {
 
         isLoading = true
 
-        val observer = object : Observer<String> {
-
-            override fun onNext(t: String) {
-                webView.loadUrl(t)
-            }
-
-            override fun onCompleted() {
-
-            }
-
-            override fun onError(e: Throwable?) {
-                showSnackbarNetworkError(findViewById(R.id.activity_layout))
-            }
-        }
-
         subscription?.add(hatenaService.fetchRequestToken()
                 .doOnUnsubscribe { isLoading = false }
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer))
+                .subscribe({
+                    webView.loadUrl(it)
+                }, {
+                    showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                }))
     }
 
     private fun fetchAccessToken(oauthVerifier: String) {
@@ -131,30 +117,20 @@ class OAuthActivity : BaseSingleActivity() {
         if (isLoading) return
 
         isLoading = true
-
-        val observer = object : Observer<OAuthTokenEntity> {
-
-            override fun onNext(t: OAuthTokenEntity) {
-                hatenaTokenRepository.store(applicationContext, t)
-                setAuthorizeResult(true, true)
-                finish()
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-                setAuthorizeResult(false, false)
-                finish()
-            }
-        }
-
+        
         subscription?.add(hatenaService.fetchAccessToken(oauthVerifier)
                 .doOnUnsubscribe { isLoading = false }
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer))
+                .subscribe({
+                    hatenaTokenRepository.store(applicationContext, it)
+                    setAuthorizeResult(true, true)
+                    finish()
+                }, {
+                    setAuthorizeResult(false, false)
+                    finish()
+                }))
     }
 
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
