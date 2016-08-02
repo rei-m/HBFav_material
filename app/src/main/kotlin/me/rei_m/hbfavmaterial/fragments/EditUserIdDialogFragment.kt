@@ -23,9 +23,7 @@ import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extensions.toggle
 import me.rei_m.hbfavmaterial.fragments.presenter.EditUserIdDialogContact
 import me.rei_m.hbfavmaterial.fragments.presenter.EditUserIdDialogPresenter
-import me.rei_m.hbfavmaterial.repositories.UserRepository
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
 class EditUserIdDialogFragment() : DialogFragment(),
         EditUserIdDialogContact.View,
@@ -37,9 +35,6 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
         fun newInstance(): EditUserIdDialogFragment = EditUserIdDialogFragment()
     }
-
-    @Inject
-    lateinit var userRepository: UserRepository
 
     private lateinit var presenter: EditUserIdDialogPresenter
 
@@ -67,7 +62,6 @@ class EditUserIdDialogFragment() : DialogFragment(),
         super.onCreate(savedInstanceState)
         presenter = EditUserIdDialogPresenter(this)
         val component = (activity as BaseActivity).component
-        component.inject(this)
         component.inject(presenter)
     }
 
@@ -77,15 +71,12 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
         val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
 
-        val userEntity = userRepository.resolve()
-
         with(view.findViewById(R.id.dialog_fragment_edit_user_id_text_title)) {
             this as AppCompatTextView
             text = getString(R.string.dialog_title_set_user)
         }
 
         val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
-        editUserId.setText(userEntity.id)
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
         buttonCancel.setOnClickListener { v ->
@@ -95,13 +86,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
         buttonOk.setOnClickListener { v ->
             val inputtedUserId = editUserId.editableText.toString()
-            if (!userEntity.isSameId(inputtedUserId)) {
-                presenter.confirmExistingUserId(inputtedUserId)?.let {
-                    subscription?.add(it)
-                }
-            } else {
-                dismiss()
-            }
+            presenter.clickButtonOk(inputtedUserId)
         }
 
         subscription?.add(RxTextView.textChanges(editUserId)
@@ -109,6 +94,11 @@ class EditUserIdDialogFragment() : DialogFragment(),
                 .subscribe { isEnabled -> buttonOk.toggle(isEnabled) })
 
         return view
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.onViewCreated()
     }
 
     override fun onDestroyView() {
@@ -125,6 +115,13 @@ class EditUserIdDialogFragment() : DialogFragment(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
+    }
+
+    override fun setEditUserId(userId: String) {
+        view?.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id)?.let {
+            it as EditText
+            it.setText(userId)
+        }
     }
 
     override fun showNetworkErrorMessage() {

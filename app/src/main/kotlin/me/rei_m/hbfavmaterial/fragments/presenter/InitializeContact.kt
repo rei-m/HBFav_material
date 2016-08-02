@@ -19,6 +19,9 @@ interface InitializeContact {
     }
 
     interface Actions {
+
+        fun onCreate()
+
         fun clickButtonSetId(userId: String): Subscription?
     }
 }

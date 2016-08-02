@@ -22,10 +22,8 @@ import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extensions.*
 import me.rei_m.hbfavmaterial.fragments.presenter.EditBookmarkDialogContact
 import me.rei_m.hbfavmaterial.fragments.presenter.EditBookmarkDialogPresenter
-import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(),
         EditBookmarkDialogContact.View,
@@ -60,9 +58,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
         }
     }
 
-    @Inject
-    lateinit var twitterSessionRepository: TwitterSessionRepository
-
     private lateinit var presenter: EditBookmarkDialogPresenter
 
     private var subscription: CompositeSubscription? = null
@@ -79,7 +74,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
         super.onCreate(savedInstanceState)
         presenter = EditBookmarkDialogPresenter(this)
         val component = (activity as BaseActivity).component
-        component.inject(this)
         component.inject(presenter)
     }
 
@@ -129,8 +123,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
         val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
         with(switchShareTwitter) {
-            val twitterSessionEntity = twitterSessionRepository.resolve()
-            isChecked = twitterSessionEntity.oAuthTokenEntity.isAuthorised
             setOnCheckedChangeListener { buttonView, isChecked ->
                 presenter.changeCheckedShareTwitter(isChecked)
             }
@@ -215,6 +207,11 @@ class EditBookmarkDialogFragment : DialogFragment(),
         return view
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.onViewCreated()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         subscription?.unsubscribe()
@@ -224,6 +221,13 @@ class EditBookmarkDialogFragment : DialogFragment(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
+    }
+
+    override fun setSwitchShareTwitterCheck(isChecked: Boolean) {
+        view?.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter)?.let {
+            it as SwitchCompat
+            it.isChecked = isChecked
+        }
     }
 
     override fun showNetworkErrorMessage() {

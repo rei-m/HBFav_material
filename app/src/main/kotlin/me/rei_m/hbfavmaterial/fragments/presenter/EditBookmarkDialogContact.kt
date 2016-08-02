@@ -6,6 +6,8 @@ interface EditBookmarkDialogContact {
 
     interface View {
 
+        fun setSwitchShareTwitterCheck(isChecked: Boolean)
+
         fun showNetworkErrorMessage()
 
         fun showProgress()
@@ -19,8 +21,10 @@ interface EditBookmarkDialogContact {
 
     interface Actions {
 
+        fun onViewCreated()
+
         fun changeCheckedShareTwitter(isChecked: Boolean)
-        
+
         fun registerBookmark(url: String,
                              title: String,
                              comment: String,

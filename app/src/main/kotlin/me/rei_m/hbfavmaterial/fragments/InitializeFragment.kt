@@ -16,7 +16,6 @@ import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragments.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.fragments.presenter.InitializePresenter
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
-import me.rei_m.hbfavmaterial.repositories.UserRepository
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
@@ -34,9 +33,6 @@ class InitializeFragment() : BaseFragment(),
     @Inject
     lateinit var navigator: ActivityNavigator
 
-    @Inject
-    lateinit var userRepository: UserRepository
-
     private lateinit var presenter: InitializePresenter
 
     override var progressDialog: ProgressDialog? = null
@@ -47,6 +43,7 @@ class InitializeFragment() : BaseFragment(),
         super.onCreate(savedInstanceState)
         component.inject(this)
         presenter = InitializePresenter(this)
+        presenter.onCreate()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -67,11 +64,6 @@ class InitializeFragment() : BaseFragment(),
         subscription?.add(RxTextView.textChanges(editId)
                 .map { v -> 0 < v.length }
                 .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled })
-
-        val userEntity = userRepository.resolve()
-        if (userEntity.isCompleteSetting) {
-            navigateToMain()
-        }
 
         return view
     }

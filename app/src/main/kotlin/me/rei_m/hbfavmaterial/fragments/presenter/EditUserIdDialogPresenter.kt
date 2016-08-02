@@ -26,7 +26,23 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
 
     private var isLoading = false
 
-    override fun confirmExistingUserId(userId: String): Subscription? {
+    override fun onViewCreated() {
+        view.setEditUserId(userRepository.resolve().id)
+    }
+
+    override fun clickButtonOk(userId: String): Subscription? {
+
+        val userEntity = userRepository.resolve()
+
+        if (!userEntity.isSameId(userId)) {
+            return confirmExistingUserId(userId)
+        } else {
+            view.dismissDialog()
+            return null
+        }
+    }
+
+    private fun confirmExistingUserId(userId: String): Subscription? {
 
         if (isLoading) return null
 

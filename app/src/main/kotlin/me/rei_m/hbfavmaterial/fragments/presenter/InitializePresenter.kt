@@ -31,6 +31,13 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
         (view as BaseFragment).component.inject(this)
     }
 
+    override fun onCreate() {
+        val userEntity = userRepository.resolve()
+        if (userEntity.isCompleteSetting) {
+            view.navigateToMain()
+        }
+    }
+
     override fun clickButtonSetId(userId: String): Subscription? {
 
         if (isLoading) return null

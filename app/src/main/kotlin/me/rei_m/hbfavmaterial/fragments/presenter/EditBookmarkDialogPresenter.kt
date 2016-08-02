@@ -35,6 +35,10 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
     private var isLoading = false
 
+    override fun onViewCreated() {
+        view.setSwitchShareTwitterCheck(twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
+    }
+
     override fun changeCheckedShareTwitter(isChecked: Boolean) {
         val twitterSessionEntity = twitterSessionRepository.resolve()
         if (isChecked) {
@@ -97,7 +101,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
 
         isLoading = true
         view.showProgress()
-        
+
         return hatenaService.deleteBookmark(oAuthTokenEntity, bookmarkUrl)
                 .doOnUnsubscribe {
                     isLoading = false
