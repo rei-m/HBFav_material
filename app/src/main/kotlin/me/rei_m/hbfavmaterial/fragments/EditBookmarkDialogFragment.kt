@@ -150,7 +150,9 @@ class EditBookmarkDialogFragment : DialogFragment(),
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
         buttonOk.setOnClickListener { v ->
             if (switchDelete.isChecked) {
+
                 presenter.deleteBookmark(bookmarkUrl)
+
             } else {
                 val inputtedComment = editBookmark.editableText.toString()
 

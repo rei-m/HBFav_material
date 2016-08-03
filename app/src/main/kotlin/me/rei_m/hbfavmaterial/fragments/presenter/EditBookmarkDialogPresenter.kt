@@ -36,7 +36,7 @@ class EditBookmarkDialogPresenter(private val view: EditBookmarkDialogContact.Vi
     private var isLoading = false
 
     override fun onViewCreated() {
-        view.setSwitchShareTwitterCheck(twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
+        view.setSwitchShareTwitterCheck(twitterSessionRepository.resolve().isShare)
     }
 
     override fun changeCheckedShareTwitter(isChecked: Boolean) {
