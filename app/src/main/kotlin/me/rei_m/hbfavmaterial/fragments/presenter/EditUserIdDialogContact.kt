@@ -6,6 +6,8 @@ interface EditUserIdDialogContact {
 
     interface View {
 
+        fun setEditUserId(userId: String)
+
         fun showNetworkErrorMessage()
 
         fun showProgress()
@@ -18,6 +20,9 @@ interface EditUserIdDialogContact {
     }
 
     interface Actions {
-        fun confirmExistingUserId(userId: String): Subscription?
+
+        fun onViewCreated()
+
+        fun clickButtonOk(userId: String): Subscription?
     }
 }
