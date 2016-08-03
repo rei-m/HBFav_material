@@ -19,6 +19,8 @@ interface FragmentComponent {
 
     fun inject(presenter: InitializePresenter)
 
+    fun inject(presenter: SettingPresenter)
+
     fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
 
     fun inject(bookmarkUserFragment: BookmarkUserFragment)
@@ -28,7 +30,7 @@ interface FragmentComponent {
     fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
 
     fun inject(editUserIdDialogFragment: EditUserIdDialogFragment)
-    
+
     fun inject(initializeFragment: InitializeFragment)
 
     fun inject(newEntryFragment: NewEntryFragment)
