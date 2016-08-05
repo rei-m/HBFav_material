@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.*
 import me.rei_m.hbfavmaterial.service.impl.*
 

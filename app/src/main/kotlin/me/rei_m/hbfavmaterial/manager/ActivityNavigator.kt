@@ -3,9 +3,9 @@ package me.rei_m.hbfavmaterial.manager
 import android.app.Activity
 import android.content.Intent
 import me.rei_m.hbfavmaterial.activitiy.*
-import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 
 class ActivityNavigator {
 

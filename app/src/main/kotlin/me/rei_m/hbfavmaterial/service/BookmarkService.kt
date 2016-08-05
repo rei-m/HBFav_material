@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.service
 
-import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import rx.Observable
 
 interface BookmarkService {

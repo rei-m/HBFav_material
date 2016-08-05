@@ -3,9 +3,9 @@ package me.rei_m.hbfavmaterial.activitiy
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.fragments.InitializeFragment
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 
 /**
  * 最初に起動するActivity.

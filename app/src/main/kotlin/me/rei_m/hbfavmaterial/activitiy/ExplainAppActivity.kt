@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.extensions.show
-import me.rei_m.hbfavmaterial.fragments.ExplainAppFragment
-import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.extension.show
+import me.rei_m.hbfavmaterial.fragment.ExplainAppFragment
+import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 
 /**
  * アプリについての情報を表示するActivity.

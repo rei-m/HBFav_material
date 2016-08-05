@@ -1,14 +1,14 @@
 package me.rei_m.hbfavmaterial.service.impl
 
-import me.rei_m.hbfavmaterial.entities.ArticleEntity
-import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.ReadAfterFilter
+import me.rei_m.hbfavmaterial.entitiy.ArticleEntity
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import me.rei_m.hbfavmaterial.network.HatenaApiService
 import me.rei_m.hbfavmaterial.network.HatenaRssService
 import me.rei_m.hbfavmaterial.network.RetrofitManager
 import me.rei_m.hbfavmaterial.service.BookmarkService
-import me.rei_m.hbfavmaterial.utils.ApiUtil
-import me.rei_m.hbfavmaterial.utils.RssXmlUtil
+import me.rei_m.hbfavmaterial.util.ApiUtil
+import me.rei_m.hbfavmaterial.util.RssXmlUtil
 import org.jsoup.Jsoup
 import rx.Observable
 
