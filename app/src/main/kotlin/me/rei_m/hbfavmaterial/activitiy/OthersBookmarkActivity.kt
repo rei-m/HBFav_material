@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.openUrl
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
+import me.rei_m.hbfavmaterial.extension.openUrl
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.fragment.BookmarkUserFragment
 
 /**
  * 他人のブックマークを表示するActivity.

@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entities.BookmarkEntity
-import me.rei_m.hbfavmaterial.enums.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.fragments.BookmarkedUsersFragment
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.fragment.BookmarkedUsersFragment
 
 class BookmarkedUsersActivity : BaseSingleActivity(),
         BookmarkedUsersFragment.OnFragmentInteractionListener {

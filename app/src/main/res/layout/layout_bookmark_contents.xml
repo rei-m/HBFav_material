@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkContentsLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_bookmark_contents"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,4 +21,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkContentsLayout>
+</me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkContentsLayout>

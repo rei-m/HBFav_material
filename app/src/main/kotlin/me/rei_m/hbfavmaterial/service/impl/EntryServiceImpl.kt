@@ -1,13 +1,13 @@
 package me.rei_m.hbfavmaterial.service.impl
 
-import me.rei_m.hbfavmaterial.entities.ArticleEntity
-import me.rei_m.hbfavmaterial.entities.EntryEntity
-import me.rei_m.hbfavmaterial.enums.EntryTypeFilter
+import me.rei_m.hbfavmaterial.entitiy.ArticleEntity
+import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import me.rei_m.hbfavmaterial.network.HatenaRssService
 import me.rei_m.hbfavmaterial.network.RetrofitManager
 import me.rei_m.hbfavmaterial.service.EntryService
-import me.rei_m.hbfavmaterial.utils.ApiUtil
-import me.rei_m.hbfavmaterial.utils.RssXmlUtil
+import me.rei_m.hbfavmaterial.util.ApiUtil
+import me.rei_m.hbfavmaterial.util.RssXmlUtil
 import org.jsoup.Jsoup
 import rx.Observable
 

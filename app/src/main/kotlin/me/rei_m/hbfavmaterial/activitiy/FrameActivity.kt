@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.fragments.CreditFragment
-import me.rei_m.hbfavmaterial.fragments.FromDeveloperFragment
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.fragment.CreditFragment
+import me.rei_m.hbfavmaterial.fragment.FromDeveloperFragment
 
 class FrameActivity : BaseSingleActivity() {
 

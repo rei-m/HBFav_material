@@ -7,12 +7,12 @@ import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.setFragment
-import me.rei_m.hbfavmaterial.extensions.show
-import me.rei_m.hbfavmaterial.fragments.SettingFragment
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.extension.show
+import me.rei_m.hbfavmaterial.fragment.SettingFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
-import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 
 class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteractionListener {
 

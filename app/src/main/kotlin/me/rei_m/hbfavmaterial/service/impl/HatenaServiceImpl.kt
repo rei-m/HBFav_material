@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.service.impl
 
-import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.exeptions.HTTPException
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.entitiy.OAuthTokenEntity
+import me.rei_m.hbfavmaterial.exeption.HTTPException
 import me.rei_m.hbfavmaterial.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.network.RetrofitManager

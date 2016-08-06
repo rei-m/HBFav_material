@@ -26,7 +26,7 @@
             android:layout_height="1dp"
             android:background="@drawable/bg_border_bottom" />
 
-        <me.rei_m.hbfavmaterial.views.widgets.bookmark.BookmarkCountTextView
+        <me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkCountTextView
             android:id="@+id/fragment_bookmark_text_bookmark_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

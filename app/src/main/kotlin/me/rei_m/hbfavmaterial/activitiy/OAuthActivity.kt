@@ -10,10 +10,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extensions.hide
-import me.rei_m.hbfavmaterial.extensions.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.extension.hide
+import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

@@ -7,12 +7,12 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.fragments.BookmarkUserFragment
-import me.rei_m.hbfavmaterial.fragments.HotEntryFragment
-import me.rei_m.hbfavmaterial.fragments.MainPageFragment
-import me.rei_m.hbfavmaterial.fragments.NewEntryFragment
-import me.rei_m.hbfavmaterial.views.adapters.BookmarkPagerAdaptor
-import me.rei_m.hbfavmaterial.views.widgets.manager.BookmarkViewPager
+import me.rei_m.hbfavmaterial.fragment.BookmarkUserFragment
+import me.rei_m.hbfavmaterial.fragment.HotEntryFragment
+import me.rei_m.hbfavmaterial.fragment.MainPageFragment
+import me.rei_m.hbfavmaterial.fragment.NewEntryFragment
+import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.view.widget.manager.BookmarkViewPager
 
 /**
  * メインActivity.

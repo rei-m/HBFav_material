@@ -5,8 +5,8 @@ import me.rei_m.hbfavmaterial.activitiy.BaseDrawerActivity
 import me.rei_m.hbfavmaterial.activitiy.BookmarkActivity
 import me.rei_m.hbfavmaterial.activitiy.MainActivity
 import me.rei_m.hbfavmaterial.activitiy.OAuthActivity
-import me.rei_m.hbfavmaterial.fragments.presenter.EditBookmarkDialogPresenter
-import me.rei_m.hbfavmaterial.fragments.presenter.EditUserIdDialogPresenter
+import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogPresenter
+import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogPresenter
 
 @Subcomponent(modules = arrayOf(ActivityModule::class))
 interface ActivityComponent {

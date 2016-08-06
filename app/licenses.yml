@@ -1,0 +1,277 @@
+- artifact: com.squareup.retrofit2:adapter-rxjava:+
+  name: Adapter RxJava
+  copyrightHolder: Netflix, Inc.
+  license: The Apache Software License, Version 2.0
+  skip: true
+- artifact: com.crashlytics.sdk.android:answers:+
+  name: Android SDK Answers
+  copyrightHolder: Twitter Inc.
+  license: Answers Terms of Service
+  skip: true
+- artifact: com.crashlytics.sdk.android:crashlytics:+
+  name: Android SDK Crashlytics
+  copyrightHolder: Twitter Inc.
+  license: Crashlytics Terms of Service
+  skip: true
+- artifact: com.crashlytics.sdk.android:crashlytics-core:+
+  name: Android SDK Crashlytics Core
+  copyrightHolder: Twitter Inc.
+  license: Crashlytics Terms of Service
+  skip: true
+- artifact: com.digits.sdk.android:digits:+
+  name: Android SDK Digits
+  copyrightHolder: Twitter Inc.
+  license: TwitterKit Agreement
+  skip: true
+- artifact: io.fabric.sdk.android:fabric:+
+  name: Android SDK Fabric
+  copyrightHolder: Twitter Inc.
+  license: Fabric Software and Services Agreement
+  skip: true
+- artifact: com.crashlytics.sdk.android:beta:+
+  name: Android SDK for Beta
+  copyrightHolder: Twitter Inc.
+  license: Crashlytics Terms of Service
+  skip: true
+- artifact: com.twitter.sdk.android:tweet-composer:+
+  name: Android SDK Tweet Composer
+  copyrightHolder: Twitter Inc.
+  license: TwitterKit Agreement
+  skip: true
+- artifact: com.twitter.sdk.android:tweet-ui:+
+  name: Android SDK Tweet Ui
+  copyrightHolder: Twitter Inc.
+  license: TwitterKit Agreement
+  skip: true
+- artifact: com.twitter.sdk.android:twitter:+
+  name: Android SDK Twitter
+  copyrightHolder: Twitter Inc.
+  license: TwitterKit Agreement
+  skip: true
+- artifact: com.twitter.sdk.android:twitter-core:+
+  name: Android SDK Twitter Core
+  copyrightHolder: Twitter Inc.
+  license: TwitterKit Agreement
+  skip: true
+- artifact: com.android.support:animated-vector-drawable:+
+  name: animated-vector-drawable
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.crashlytics.sdk.android:answers-shim:+
+  name: answers-shim
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.android.support:appcompat-v7:+
+  name: appcompat-v7
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: commons-codec:commons-codec:+
+  name: Codec
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: http://jakarta.apache.org/commons/codec/
+  skip: true
+- artifact: com.squareup.retrofit2:converter-gson:+
+  name: Converter Gson
+  copyrightHolder: Square, Inc.
+  license: The Apache Software License, Version 2.0
+  skip: true
+- artifact: com.squareup.retrofit2:converter-scalars:+
+  name: Converter Java Scalars
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.squareup.retrofit2:converter-simplexml:+
+  name: Converter SimpleXML
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.dagger:dagger:+
+  name: Dagger
+  copyrightHolder: Google, Inc.
+  license: The Apache Software License, Version 2.0
+- artifact: com.android.support:design:+
+  name: design
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.firebase:firebase-analytics:+
+  name: firebase-analytics
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.firebase:firebase-analytics-impl:+
+  name: firebase-analytics-impl
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.firebase:firebase-common:+
+  name: firebase-common
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.firebase:firebase-core:+
+  name: firebase-core
+  copyrightHolder: Google, Inc.
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.firebase:firebase-iid:+
+  name: firebase-iid
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.code.gson:gson:+
+  name: Gson
+  copyrightHolder: Google, Inc.
+  license: The Apache Software License, Version 2.0
+- artifact: javax.inject:javax.inject:+
+  name: javax.inject
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: http://code.google.com/p/atinject/
+  skip: true
+- artifact: org.jsoup:jsoup:+
+  name: jsoup
+  copyrightHolder: Jonathan Hedley
+  license: The MIT License
+  url: https://jsoup.org/
+- artifact: org.jetbrains.kotlin:kotlin-runtime:+
+  name: kotlin-runtime
+  copyrightHolder: JetBrains s.r.o.
+  license: The Apache Software License, Version 2.0
+- artifact: org.jetbrains.kotlin:kotlin-stdlib:+
+  name: kotlin-stdlib
+  copyrightHolder: JetBrains s.r.o.
+  license: The Apache Software License, Version 2.0
+- artifact: com.squareup.leakcanary:leakcanary-android-no-op:+
+  name: No op LeakCanary for Android
+  copyrightHolder: Square, Inc.
+  license: The Apache Software License, Version 2.0
+  url: http://github.com/square/leakcanary/
+- artifact: com.squareup.okhttp3:okhttp:+
+  name: OkHttp
+  copyrightHolder: Square, Inc.
+  license: The Apache Software License, Version 2.0
+- artifact: com.squareup.okhttp3:logging-interceptor:+
+  name: OkHttp Logging Interceptor
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: se.akerfeldt:okhttp-signpost:+
+  name: OkHttp Signpost
+  copyrightHolder: Patrik Åkerfeldt
+  license: Apache 2.0
+  url: http://github.com/pakerfeldt/okhttp-signpost/
+- artifact: com.squareup.okio:okio:+
+  name: Okio
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.squareup.picasso:picasso:+
+  name: Picasso
+  copyrightHolder: Square, Inc.
+  license: The Apache Software License, Version 2.0
+- artifact: com.google.android.gms:play-services-basement:+
+  name: play-services-basement
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.google.android.gms:play-services-tasks:+
+  name: play-services-tasks
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.android.support:recyclerview-v7:+
+  name: recyclerview-v7
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.squareup.retrofit2:retrofit:+
+  name: Retrofit
+  copyrightHolder: Square, Inc.
+  license: The Apache Software License, Version 2.0
+- artifact: com.squareup.retrofit:retrofit-mock:+
+  name: Retrofit Mock Adapter
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: io.reactivex:rxandroid:+
+  name: RxAndroid
+  copyrightHolder: The RxAndroid authors
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/ReactiveX/RxAndroid
+- artifact: com.jakewharton.rxbinding:rxbinding:+
+  name: RxBinding
+  copyrightHolder: Jake Wharton
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+- artifact: com.jakewharton.rxbinding:rxbinding-appcompat-v7:+
+  name: RxBinding (appcompat-v7)
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+  skip: true
+- artifact: com.jakewharton.rxbinding:rxbinding-support-v4:+
+  name: RxBinding (support-v4)
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+  skip: true
+- artifact: com.jakewharton.rxbinding:rxbinding-kotlin:+
+  name: RxBinding Kotlin
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+  skip: true
+- artifact: com.jakewharton.rxbinding:rxbinding-appcompat-v7-kotlin:+
+  name: RxBinding Kotlin (appcompat-v7)
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+  skip: true
+- artifact: com.jakewharton.rxbinding:rxbinding-support-v4-kotlin:+
+  name: RxBinding Kotlin (support-v4)
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/RxBinding/
+  skip: true
+- artifact: io.reactivex:rxjava:+
+  name: rxjava
+  copyrightHolder: Netflix, Inc.
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/ReactiveX/RxJava
+- artifact: oauth.signpost:signpost-core:+
+  name: signpost-core
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: org.simpleframework:simple-xml:+
+  name: Simple XML
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: http://simple.sourceforge.net
+  skip: true
+- artifact: com.android.support:support-annotations:+
+  name: support-annotations
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.android.support:support-v4:+
+  name: support-v4
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.android.support:support-vector-drawable:+
+  name: support-vector-drawable
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: #LICENSE#
+  skip: true
+- artifact: com.twitter:twitter-text:+
+  name: twitter-text
+  copyrightHolder: #COPYRIGHT_HOLDER#
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/twitter/twitter-text
+  skip: true

@@ -12,9 +12,9 @@ import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
-import me.rei_m.hbfavmaterial.repositories.UserRepository
-import me.rei_m.hbfavmaterial.utils.BookmarkUtil
-import me.rei_m.hbfavmaterial.views.widgets.graphics.RoundedTransformation
+import me.rei_m.hbfavmaterial.repository.UserRepository
+import me.rei_m.hbfavmaterial.util.BookmarkUtil
+import me.rei_m.hbfavmaterial.view.widget.graphics.RoundedTransformation
 import javax.inject.Inject
 
 /**

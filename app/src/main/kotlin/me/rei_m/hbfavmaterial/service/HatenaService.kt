@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.service
 
-import me.rei_m.hbfavmaterial.entities.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.entities.OAuthTokenEntity
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.entitiy.OAuthTokenEntity
 import rx.Observable
 
 interface HatenaService {

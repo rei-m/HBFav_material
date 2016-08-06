@@ -5,12 +5,12 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.repositories.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.repositories.TwitterSessionRepository
-import me.rei_m.hbfavmaterial.repositories.UserRepository
-import me.rei_m.hbfavmaterial.repositories.impl.HatenaTokenRepositoryImpl
-import me.rei_m.hbfavmaterial.repositories.impl.TwitterSessionRepositoryImpl
-import me.rei_m.hbfavmaterial.repositories.impl.UserRepositoryImpl
+import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.repository.UserRepository
+import me.rei_m.hbfavmaterial.repository.impl.HatenaTokenRepositoryImpl
+import me.rei_m.hbfavmaterial.repository.impl.TwitterSessionRepositoryImpl
+import me.rei_m.hbfavmaterial.repository.impl.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
