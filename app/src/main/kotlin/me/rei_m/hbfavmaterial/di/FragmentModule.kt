@@ -3,10 +3,7 @@ package me.rei_m.hbfavmaterial.di
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.BaseFragment
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoritePresenter
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersPresenter
+import me.rei_m.hbfavmaterial.fragment.presenter.*
 
 @Module
 class FragmentModule(val fragment: BaseFragment) {
@@ -19,5 +16,10 @@ class FragmentModule(val fragment: BaseFragment) {
     @Provides
     fun provideBookmarkFavoritePresenter(): BookmarkFavoriteContact.Actions {
         return BookmarkFavoritePresenter()
+    }
+
+    @Provides
+    fun provideBookmarkUserPresenter(): BookmarkUserContact.Actions {
+        return BookmarkUserPresenter()
     }
 }

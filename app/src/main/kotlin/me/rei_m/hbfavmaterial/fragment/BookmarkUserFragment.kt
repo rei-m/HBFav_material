@@ -18,8 +18,6 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserPresenter
-import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
@@ -73,22 +71,16 @@ class BookmarkUserFragment() : BaseFragment(),
         }
     }
 
-    private var listener: OnFragmentInteractionListener? = null
-
-    private lateinit var presenter: BookmarkUserPresenter
-
     @Inject
-    lateinit var userRepository: UserRepository
+    lateinit var presenter: BookmarkUserContact.Actions
+
+    private var listener: OnFragmentInteractionListener? = null
 
     private val listAdapter: BookmarkListAdapter by lazy {
         BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
     }
 
     private var subscription: CompositeSubscription? = null
-
-    lateinit private var userId: String
-
-    private var isOwner: Boolean = true
 
     override val pageIndex: Int
         get() = arguments.getInt(ARG_PAGE_INDEX)
@@ -106,11 +98,16 @@ class BookmarkUserFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        setHasOptionsMenu(true)
 
-        isOwner = arguments.getBoolean(ARG_OWNER_FLAG)
-        userId = if (isOwner) userRepository.resolve().id else arguments.getString(ARG_USER_ID)
-        presenter = BookmarkUserPresenter(this, userId)
+        val isOwner = arguments.getBoolean(ARG_OWNER_FLAG)
+        val userId = arguments.getString(ARG_USER_ID) ?: ""
+
+        require(isOwner || (!isOwner && userId.isNotEmpty())) {
+            "UserId is empty !!"
+        }
+
+        presenter.onCreate(component, this, isOwner, userId)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -128,9 +125,7 @@ class BookmarkUserFragment() : BaseFragment(),
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     // FooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (0 < listView.footerViewsCount) {
-                        presenter.fetchListContents(listAdapter.nextIndex)?.let {
-                            subscription?.add(it)
-                        }
+                        presenter.onScrollEnd(listAdapter.nextIndex)
                     }
                 }
             }
@@ -141,7 +136,7 @@ class BookmarkUserFragment() : BaseFragment(),
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            presenter.clickBookmark(bookmarkEntity)
+            presenter.onClickBookmark(bookmarkEntity)
         }
 
         listView.adapter = listAdapter
@@ -159,9 +154,7 @@ class BookmarkUserFragment() : BaseFragment(),
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            presenter.fetchListContents(0)?.let {
-                subscription?.add(it)
-            }
+            presenter.onRefreshList()
         })
 
         return view
@@ -169,12 +162,12 @@ class BookmarkUserFragment() : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
-        if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
+        presenter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
 
     override fun onDestroyView() {
@@ -202,12 +195,14 @@ class BookmarkUserFragment() : BaseFragment(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
         item ?: return false
+
         val filter = ReadAfterFilter.forMenuId(item.itemId)
-        presenter.toggleListContents(filter)?.let {
-            subscription?.add(it)
-            listener?.onChangeFilter(pageTitle)
-        }
+
+        presenter.onOptionItemSelected(filter)
+
+        listener?.onChangeFilter(pageTitle)
 
         return true
     }
