@@ -1,12 +1,15 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import rx.Subscription
+import me.rei_m.hbfavmaterial.di.ActivityComponent
+import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
 
 interface EditBookmarkDialogContact {
 
     interface View {
 
         fun setSwitchShareTwitterCheck(isChecked: Boolean)
+
+        fun setSwitchEnableByDelete(isEnabled: Boolean)
 
         fun showNetworkErrorMessage()
 
@@ -21,17 +24,26 @@ interface EditBookmarkDialogContact {
 
     interface Actions {
 
+        fun onCreate(component: ActivityComponent,
+                     view: EditBookmarkDialogContact.View,
+                     bookmarkUrl: String,
+                     bookmarkTitle: String,
+                     bookmarkEditEntity: BookmarkEditEntity?)
+
         fun onViewCreated()
 
-        fun changeCheckedShareTwitter(isChecked: Boolean)
+        fun onResume()
 
-        fun registerBookmark(url: String,
-                             title: String,
-                             comment: String,
-                             isOpen: Boolean,
-                             tags: List<String>,
-                             isShareAtTwitter: Boolean): Subscription?
+        fun onPause()
 
-        fun deleteBookmark(bookmarkUrl: String): Subscription?
+        fun onCheckedChangeShareTwitter(isChecked: Boolean)
+
+        fun onCheckedChangeDelete(isChecked: Boolean)
+
+        fun onClickButtonOk(isCheckedDelete: Boolean,
+                            inputtedComment: String,
+                            isCheckedOpen: Boolean,
+                            isCheckedReadAfter: Boolean,
+                            isCheckedShareTwitter: Boolean)
     }
 }
