@@ -108,25 +108,19 @@ class EditBookmarkDialogFragment : DialogFragment(),
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
 
         val switchOpen = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open) as SwitchCompat
-        val textOpen = context.resources.getString(R.string.text_open)
-        val textNotOpen = context.resources.getString(R.string.text_not_open)
         switchOpen.setOnCheckedChangeListener { buttonView, isChecked ->
-            buttonView.text = if (isChecked) {
-                textOpen
-            } else {
-                textNotOpen
-            }
+            presenter.onCheckedChangeOpen(isChecked)
         }
 
         val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
-        with(switchShareTwitter) {
-            setOnCheckedChangeListener { buttonView, isChecked ->
-                presenter.onCheckedChangeShareTwitter(isChecked)
-            }
+        switchShareTwitter.setOnCheckedChangeListener { buttonView, isChecked ->
+            presenter.onCheckedChangeShareTwitter(isChecked)
         }
 
         val switchReadAfter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_read_after) as SwitchCompat
-        switchReadAfter.isChecked = false
+        switchReadAfter.setOnCheckedChangeListener { buttonView, isChecked ->
+            presenter.onCheckedChangeReadAfter(isChecked)
+        }
 
         val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
         switchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -207,8 +201,27 @@ class EditBookmarkDialogFragment : DialogFragment(),
         adjustScreenWidth()
     }
 
+    override fun setSwitchOpenCheck(isChecked: Boolean) {
+        view?.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open)?.let {
+            it as SwitchCompat
+            it.isChecked = isChecked
+            it.text = if (isChecked) {
+                context.resources.getString(R.string.text_open)
+            } else {
+                context.resources.getString(R.string.text_not_open)
+            }
+        }
+    }
+
     override fun setSwitchShareTwitterCheck(isChecked: Boolean) {
         view?.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter)?.let {
+            it as SwitchCompat
+            it.isChecked = isChecked
+        }
+    }
+
+    override fun setSwitchReadAfterCheck(isChecked: Boolean) {
+        view?.findViewById(R.id.dialog_fragment_edit_bookmark_switch_read_after)?.let {
             it as SwitchCompat
             it.isChecked = isChecked
         }

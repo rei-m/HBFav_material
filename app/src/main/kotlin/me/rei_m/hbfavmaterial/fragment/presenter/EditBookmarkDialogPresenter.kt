@@ -5,6 +5,7 @@ import me.rei_m.hbfavmaterial.di.ActivityComponent
 import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
 import me.rei_m.hbfavmaterial.service.TwitterService
 import me.rei_m.hbfavmaterial.util.BookmarkUtil
@@ -16,6 +17,9 @@ import java.net.HttpURLConnection
 import javax.inject.Inject
 
 class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDialogContact.Actions {
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     @Inject
     lateinit var hatenaTokenRepository: HatenaTokenRepository
@@ -55,7 +59,10 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
     }
 
     override fun onViewCreated() {
+        val userEntity = userRepository.resolve()
+        view.setSwitchOpenCheck(userEntity.isCheckedPostBookmarkOpen)
         view.setSwitchShareTwitterCheck(twitterSessionRepository.resolve().isShare)
+        view.setSwitchReadAfterCheck(userEntity.isCheckedPostBookmarkReadAfter)
     }
 
     override fun onResume() {
@@ -65,6 +72,13 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
     override fun onPause() {
         subscription?.unsubscribe()
         subscription = null
+    }
+
+    override fun onCheckedChangeOpen(isChecked: Boolean) {
+        val userEntity = userRepository.resolve()
+        userEntity.isCheckedPostBookmarkOpen = isChecked
+        userRepository.store(context, userEntity)
+        view.setSwitchOpenCheck(isChecked)
     }
 
     override fun onCheckedChangeShareTwitter(isChecked: Boolean) {
@@ -78,6 +92,12 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
         }
         twitterSessionEntity.isShare = isChecked
         twitterSessionRepository.store(context, twitterSessionEntity)
+    }
+
+    override fun onCheckedChangeReadAfter(isChecked: Boolean) {
+        val userEntity = userRepository.resolve()
+        userEntity.isCheckedPostBookmarkReadAfter = isChecked
+        userRepository.store(context, userEntity)
     }
 
     override fun onCheckedChangeDelete(isChecked: Boolean) {

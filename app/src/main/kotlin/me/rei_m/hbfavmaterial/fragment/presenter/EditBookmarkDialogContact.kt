@@ -7,7 +7,11 @@ interface EditBookmarkDialogContact {
 
     interface View {
 
+        fun setSwitchOpenCheck(isChecked: Boolean)
+
         fun setSwitchShareTwitterCheck(isChecked: Boolean)
+
+        fun setSwitchReadAfterCheck(isChecked: Boolean)
 
         fun setSwitchEnableByDelete(isEnabled: Boolean)
 
@@ -36,7 +40,11 @@ interface EditBookmarkDialogContact {
 
         fun onPause()
 
+        fun onCheckedChangeOpen(isChecked: Boolean)
+
         fun onCheckedChangeShareTwitter(isChecked: Boolean)
+
+        fun onCheckedChangeReadAfter(isChecked: Boolean)
 
         fun onCheckedChangeDelete(isChecked: Boolean)
 
