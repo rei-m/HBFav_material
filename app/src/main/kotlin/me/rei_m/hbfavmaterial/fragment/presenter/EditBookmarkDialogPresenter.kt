@@ -1,10 +1,8 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import android.support.v4.app.DialogFragment
 import me.rei_m.hbfavmaterial.di.ActivityComponent
 import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.HatenaService
@@ -17,7 +15,7 @@ import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditBookmarkDialogPresenter() : EditBookmarkDialogContact.Actions {
+class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDialogContact.Actions {
 
     @Inject
     lateinit var hatenaTokenRepository: HatenaTokenRepository
@@ -40,9 +38,6 @@ class EditBookmarkDialogPresenter() : EditBookmarkDialogContact.Actions {
     private var bookmarkEditEntity: BookmarkEditEntity? = null
 
     private var subscription: CompositeSubscription? = null
-
-    private val appContext: Context
-        get() = (view as DialogFragment).getAppContext()
 
     private var isLoading = false
 
@@ -82,7 +77,7 @@ class EditBookmarkDialogPresenter() : EditBookmarkDialogContact.Actions {
             }
         }
         twitterSessionEntity.isShare = isChecked
-        twitterSessionRepository.store(appContext, twitterSessionEntity)
+        twitterSessionRepository.store(context, twitterSessionEntity)
     }
 
     override fun onCheckedChangeDelete(isChecked: Boolean) {

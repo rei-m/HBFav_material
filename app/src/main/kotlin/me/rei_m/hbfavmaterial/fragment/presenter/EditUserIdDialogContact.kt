@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import rx.Subscription
+import me.rei_m.hbfavmaterial.di.ActivityComponent
 
 interface EditUserIdDialogContact {
 
@@ -21,8 +21,15 @@ interface EditUserIdDialogContact {
 
     interface Actions {
 
+        fun onCreate(component: ActivityComponent,
+                     view: EditUserIdDialogContact.View)
+
         fun onViewCreated()
 
-        fun clickButtonOk(userId: String): Subscription?
+        fun onResume()
+
+        fun onPause()
+
+        fun onClickButtonOk(userId: String)
     }
 }

@@ -22,8 +22,8 @@ import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extension.toggle
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogContact
-import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogPresenter
 import rx.subscriptions.CompositeSubscription
+import javax.inject.Inject
 
 class EditUserIdDialogFragment() : DialogFragment(),
         EditUserIdDialogContact.View,
@@ -36,13 +36,14 @@ class EditUserIdDialogFragment() : DialogFragment(),
         fun newInstance(): EditUserIdDialogFragment = EditUserIdDialogFragment()
     }
 
-    private lateinit var presenter: EditUserIdDialogPresenter
+    @Inject
+    lateinit var presenter: EditUserIdDialogContact.Actions
 
     private var listener: DialogInterface? = null
 
-    override var progressDialog: ProgressDialog? = null
-
     private var subscription: CompositeSubscription? = null
+
+    override var progressDialog: ProgressDialog? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
@@ -60,9 +61,9 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = EditUserIdDialogPresenter(this)
         val component = (activity as BaseActivity).component
-        component.inject(presenter)
+        component.inject(this)
+        presenter.onCreate(component, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -86,7 +87,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
         buttonOk.setOnClickListener { v ->
             val inputtedUserId = editUserId.editableText.toString()
-            presenter.clickButtonOk(inputtedUserId)
+            presenter.onClickButtonOk(inputtedUserId)
         }
 
         subscription?.add(RxTextView.textChanges(editUserId)
@@ -99,6 +100,16 @@ class EditUserIdDialogFragment() : DialogFragment(),
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.onViewCreated()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
 
     override fun onDestroyView() {
