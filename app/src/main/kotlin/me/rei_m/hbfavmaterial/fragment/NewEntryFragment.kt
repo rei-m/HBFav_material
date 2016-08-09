@@ -33,6 +33,8 @@ class NewEntryFragment() : BaseFragment(),
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
 
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
+
         fun newInstance(pageIndex: Int): NewEntryFragment = NewEntryFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)

@@ -33,6 +33,8 @@ class HotEntryFragment() : BaseFragment(),
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
 
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
+
         fun newInstance(pageIndex: Int): HotEntryFragment = HotEntryFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)
@@ -67,7 +69,14 @@ class HotEntryFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter.onCreate(component, this, EntryTypeFilter.ALL)
+
+        val entryTypeFilter = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(KEY_FILTER_TYPE) as EntryTypeFilter
+        } else {
+            EntryTypeFilter.ALL
+        }
+
+        presenter.onCreate(component, this, entryTypeFilter)
         setHasOptionsMenu(true)
     }
 
@@ -151,6 +160,11 @@ class HotEntryFragment() : BaseFragment(),
         listener?.onChangeFilter(pageTitle)
 
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(KEY_FILTER_TYPE, presenter.entryTypeFilter)
     }
 
     override fun showEntryList(entryList: List<EntryEntity>) {

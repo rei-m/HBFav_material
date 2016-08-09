@@ -34,7 +34,8 @@ interface BookmarkUserContact {
         fun onCreate(component: FragmentComponent,
                      view: BookmarkUserContact.View,
                      isOwner: Boolean,
-                     bookmarkUserId: String)
+                     bookmarkUserId: String,
+                     readAfterFilter: ReadAfterFilter)
 
         fun onResume()
 

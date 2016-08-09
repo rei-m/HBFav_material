@@ -39,13 +39,15 @@ class BookmarkUserPresenter() : BookmarkUserContact.Actions {
     override fun onCreate(component: FragmentComponent,
                           view: BookmarkUserContact.View,
                           isOwner: Boolean,
-                          bookmarkUserId: String) {
+                          bookmarkUserId: String,
+                          readAfterFilter: ReadAfterFilter) {
         component.inject(this)
         this.view = view
         this.bookmarkUserId = if (isOwner)
             userRepository.resolve().id
         else
             bookmarkUserId
+        this.readAfterFilter = readAfterFilter
     }
 
     override fun onResume() {

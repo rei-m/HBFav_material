@@ -40,6 +40,8 @@ class BookmarkUserFragment() : BaseFragment(),
 
         private const val ARG_OWNER_FLAG = "ARG_OWNER_FLAG"
 
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
+
         /**
          * 自分のブックマークを表示する
          *
@@ -80,6 +82,10 @@ class BookmarkUserFragment() : BaseFragment(),
         BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
     }
 
+    private val isOwner: Boolean by lazy {
+        arguments.getBoolean(ARG_OWNER_FLAG)
+    }
+
     private var subscription: CompositeSubscription? = null
 
     override val pageIndex: Int
@@ -99,14 +105,19 @@ class BookmarkUserFragment() : BaseFragment(),
         super.onCreate(savedInstanceState)
         component.inject(this)
 
-        val isOwner = arguments.getBoolean(ARG_OWNER_FLAG)
         val userId = arguments.getString(ARG_USER_ID) ?: ""
 
         require(isOwner || (!isOwner && userId.isNotEmpty())) {
             "UserId is empty !!"
         }
 
-        presenter.onCreate(component, this, isOwner, userId)
+        val readAfterFilter = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(KEY_FILTER_TYPE) as ReadAfterFilter
+        } else {
+            ReadAfterFilter.ALL
+        }
+
+        presenter.onCreate(component, this, isOwner, userId, readAfterFilter)
         setHasOptionsMenu(true)
     }
 
@@ -191,7 +202,9 @@ class BookmarkUserFragment() : BaseFragment(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.fragment_bookmark_user, menu)
+        if (isOwner) {
+            inflater?.inflate(R.menu.fragment_bookmark_user, menu)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -205,6 +218,11 @@ class BookmarkUserFragment() : BaseFragment(),
         listener?.onChangeFilter(pageTitle)
 
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(KEY_FILTER_TYPE, presenter.readAfterFilter)
     }
 
     override fun showBookmarkList(bookmarkList: List<BookmarkEntity>) {
