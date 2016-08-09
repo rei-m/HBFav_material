@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import me.rei_m.hbfavmaterial.di.FragmentComponent
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 
 interface BookmarkUserContact {

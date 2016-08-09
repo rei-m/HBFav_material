@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.entitiy
+package me.rei_m.hbfavmaterial.entity
 
 import java.io.Serializable
 

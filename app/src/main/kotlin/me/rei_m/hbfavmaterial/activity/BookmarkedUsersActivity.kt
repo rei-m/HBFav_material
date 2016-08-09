@@ -1,10 +1,10 @@
-package me.rei_m.hbfavmaterial.activitiy
+package me.rei_m.hbfavmaterial.activity
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment

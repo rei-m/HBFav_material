@@ -22,4 +22,9 @@ class FragmentModule(val fragment: BaseFragment) {
     fun provideBookmarkUserPresenter(): BookmarkUserContact.Actions {
         return BookmarkUserPresenter()
     }
+
+    @Provides
+    fun provideHotEntryPresenter(): HotEntryContact.Actions {
+        return HotEntryPresenter()
+    }
 }

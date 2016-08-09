@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activitiy
+package me.rei_m.hbfavmaterial.activity
 
 import android.content.Context
 import android.content.Intent
@@ -8,9 +8,9 @@ import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
-import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError

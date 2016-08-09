@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import rx.Subscription
 

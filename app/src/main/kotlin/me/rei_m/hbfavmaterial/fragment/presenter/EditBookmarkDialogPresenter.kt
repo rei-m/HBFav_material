@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
 import me.rei_m.hbfavmaterial.di.ActivityComponent
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repository.UserRepository

@@ -21,21 +21,23 @@ interface FragmentComponent {
 
     fun inject(presenter: SettingPresenter)
 
-    fun inject(bookmarkFavoriteFragment: BookmarkFavoriteFragment)
+    fun inject(fragment: BookmarkFavoriteFragment)
 
-    fun inject(bookmarkUserFragment: BookmarkUserFragment)
+    fun inject(fragment: BookmarkUserFragment)
 
-    fun inject(bookmarkedUsersFragment: BookmarkedUsersFragment)
+    fun inject(fragment: BookmarkedUsersFragment)
 
-    fun inject(editBookmarkDialogFragment: EditBookmarkDialogFragment)
+    fun inject(fragment: EditBookmarkDialogFragment)
 
-    fun inject(editUserIdDialogFragment: EditUserIdDialogFragment)
+    fun inject(fragment: EditUserIdDialogFragment)
 
-    fun inject(initializeFragment: InitializeFragment)
+    fun inject(fragment: InitializeFragment)
 
-    fun inject(newEntryFragment: NewEntryFragment)
+    fun inject(fragment: NewEntryFragment)
 
-    fun inject(settingFragment: SettingFragment)
+    fun inject(fragment: HotEntryFragment)
 
-    fun inject(explainAppFragment: ExplainAppFragment)
+    fun inject(fragment: SettingFragment)
+
+    fun inject(fragment: ExplainAppFragment)
 }

@@ -16,9 +16,9 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activitiy.BaseActivity
-import me.rei_m.hbfavmaterial.activitiy.SettingActivity
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.activity.BaseActivity
+import me.rei_m.hbfavmaterial.activity.SettingActivity
+import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extension.*
 import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogContact
 import me.rei_m.hbfavmaterial.service.HatenaService

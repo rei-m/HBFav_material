@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
 import me.rei_m.hbfavmaterial.di.ActivityComponent
-import me.rei_m.hbfavmaterial.entitiy.UserEntity
+import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException

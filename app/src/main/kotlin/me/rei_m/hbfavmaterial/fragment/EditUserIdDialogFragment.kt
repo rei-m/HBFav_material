@@ -17,7 +17,7 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activitiy.BaseActivity
+import me.rei_m.hbfavmaterial.activity.BaseActivity
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extension.toggle

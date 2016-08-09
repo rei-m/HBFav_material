@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.view.widget.bookmark
 import android.content.Context
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 
 class BookmarkCountTextView : AppCompatTextView {
     constructor(context: Context?) : super(context)

@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.activitiy
+package me.rei_m.hbfavmaterial.activity
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView

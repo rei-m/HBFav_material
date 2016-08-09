@@ -6,8 +6,8 @@ import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import com.twitter.sdk.android.core.models.Tweet
-import me.rei_m.hbfavmaterial.entitiy.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.entitiy.TwitterSessionEntity
+import me.rei_m.hbfavmaterial.entity.OAuthTokenEntity
+import me.rei_m.hbfavmaterial.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.service.TwitterService
 

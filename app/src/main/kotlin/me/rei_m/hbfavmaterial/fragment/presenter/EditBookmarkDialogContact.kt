@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import me.rei_m.hbfavmaterial.di.ActivityComponent
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
 
 interface EditBookmarkDialogContact {
 
