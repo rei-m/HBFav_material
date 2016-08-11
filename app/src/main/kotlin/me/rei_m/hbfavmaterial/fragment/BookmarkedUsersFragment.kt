@@ -30,6 +30,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
         private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
+
         fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkedUsersFragment {
             return BookmarkedUsersFragment().apply {
                 arguments = Bundle().apply {
@@ -64,7 +66,13 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter.onCreate(component, this, bookmarkEntity)
+
+        val bookmarkCommentFilter = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(KEY_FILTER_TYPE) as BookmarkCommentFilter
+        } else {
+            BookmarkCommentFilter.ALL
+        }
+        presenter.onCreate(component, this, bookmarkEntity, bookmarkCommentFilter)
         setHasOptionsMenu(true)
     }
 
@@ -155,6 +163,11 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         return true
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(KEY_FILTER_TYPE, presenter.bookmarkCommentFilter)
+    }
+
     override fun showUserList(bookmarkList: List<BookmarkEntity>) {
 
         val view = view ?: return
@@ -175,6 +188,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
                 RxSwipeRefreshLayout.refreshing(this).call(false)
             }
         }
+
+        listener?.onChangeFilter(presenter.bookmarkCommentFilter)
     }
 
     override fun hideUserList() {

@@ -30,23 +30,28 @@ class BookmarkedUsersPresenter() : BookmarkedUsersContact.Actions {
 
     private var isLoading = false
 
-    private var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
-        private set
+    override var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
 
     override fun onCreate(component: FragmentComponent,
                           view: BookmarkedUsersContact.View,
-                          bookmarkEntity: BookmarkEntity) {
+                          bookmarkEntity: BookmarkEntity,
+                          bookmarkCommentFilter: BookmarkCommentFilter) {
         component.inject(this)
         this.view = view
         this.bookmarkEntity = bookmarkEntity
+        this.bookmarkCommentFilter = bookmarkCommentFilter
     }
-    
+
     override fun onResume() {
         subscription = CompositeSubscription()
         if (bookmarkList.isEmpty()) {
             initializeListContents()
         } else {
-            view.showUserList(bookmarkList)
+            if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
+                view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
+            } else {
+                view.showUserList(bookmarkList)
+            }
         }
     }
 
@@ -73,6 +78,11 @@ class BookmarkedUsersPresenter() : BookmarkedUsersContact.Actions {
     }
 
     override fun onOptionItemSelected(bookmarkCommentFilter: BookmarkCommentFilter) {
+
+        if (this.bookmarkCommentFilter == bookmarkCommentFilter) return
+
+        this.bookmarkCommentFilter = bookmarkCommentFilter
+
         if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
             view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
         } else {

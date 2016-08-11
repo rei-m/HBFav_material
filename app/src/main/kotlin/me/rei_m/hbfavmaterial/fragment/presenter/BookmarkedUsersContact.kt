@@ -25,9 +25,12 @@ interface BookmarkedUsersContact {
 
     interface Actions {
 
+        var bookmarkCommentFilter: BookmarkCommentFilter
+
         fun onCreate(component: FragmentComponent,
                      view: BookmarkedUsersContact.View,
-                     bookmarkEntity: BookmarkEntity)
+                     bookmarkEntity: BookmarkEntity,
+                     bookmarkCommentFilter: BookmarkCommentFilter)
 
         fun onResume()
 
