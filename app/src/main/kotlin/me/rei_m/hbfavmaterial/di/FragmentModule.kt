@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.BaseFragment
@@ -26,5 +27,10 @@ class FragmentModule(val fragment: BaseFragment) {
     @Provides
     fun provideHotEntryPresenter(): HotEntryContact.Actions {
         return HotEntryPresenter()
+    }
+
+    @Provides
+    fun provideInitializePresenter(@ForApplication context: Context): InitializeContact.Actions {
+        return InitializePresenter(context)
     }
 }

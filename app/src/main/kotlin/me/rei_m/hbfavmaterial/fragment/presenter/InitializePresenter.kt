@@ -1,20 +1,18 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import android.support.v4.app.Fragment
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.UserEntity
-import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.fragment.BaseFragment
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException
-import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class InitializePresenter(private val view: InitializeContact.View) : InitializeContact.Actions {
+class InitializePresenter(private val context: Context) : InitializeContact.Actions {
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -22,30 +20,40 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
     @Inject
     lateinit var userService: UserService
 
-    private val appContext: Context
-        get() = (view as Fragment).getAppContext()
+    private lateinit var view: InitializeContact.View
+
+    private var subscription: CompositeSubscription? = null
 
     private var isLoading = false
 
-    init {
-        (view as BaseFragment).component.inject(this)
-    }
+    override fun onCreate(component: FragmentComponent,
+                          view: InitializeContact.View) {
+        component.inject(this)
+        this.view = view
 
-    override fun onCreate() {
         val userEntity = userRepository.resolve()
         if (userEntity.isCompleteSetting) {
             view.navigateToMain()
         }
     }
 
-    override fun clickButtonSetId(userId: String): Subscription? {
+    override fun onResume() {
+        subscription = CompositeSubscription()
+    }
 
-        if (isLoading) return null
+    override fun onPause() {
+        subscription?.unsubscribe()
+        subscription = null
+    }
+
+    override fun onClickButtonSetId(userId: String) {
+
+        if (isLoading) return
 
         isLoading = true
         view.showProgress()
 
-        return userService.confirmExistingUserId(userId)
+        subscription?.add(userService.confirmExistingUserId(userId)
                 .doOnUnsubscribe {
                     isLoading = false
                     view.hideProgress()
@@ -57,12 +65,12 @@ class InitializePresenter(private val view: InitializeContact.View) : Initialize
                     onConfirmExistingUserIdSuccess(it, userId)
                 }, {
                     onConfirmExistingUserIdFailure(it)
-                })
+                }))
     }
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
-            userRepository.store(appContext, UserEntity(userId))
+            userRepository.store(context, UserEntity(userId))
             view.navigateToMain()
         } else {
             view.displayInvalidUserIdMessage()

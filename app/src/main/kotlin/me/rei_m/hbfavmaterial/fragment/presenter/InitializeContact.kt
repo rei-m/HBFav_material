@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import rx.Subscription
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 
 
 interface InitializeContact {
@@ -20,8 +20,13 @@ interface InitializeContact {
 
     interface Actions {
 
-        fun onCreate()
+        fun onCreate(component: FragmentComponent,
+                     view: InitializeContact.View)
 
-        fun clickButtonSetId(userId: String): Subscription?
+        fun onResume()
+
+        fun onPause()
+
+        fun onClickButtonSetId(userId: String)
     }
 }
