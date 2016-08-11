@@ -1,18 +1,18 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.support.v4.app.Fragment
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
-import me.rei_m.hbfavmaterial.fragment.BaseFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.EntryService
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
-class NewEntryPresenter(private val view: NewEntryContact.View,
-                        var entryTypeFilter: EntryTypeFilter) : NewEntryContact.Actions {
+class NewEntryPresenter : NewEntryContact.Actions {
 
     @Inject
     lateinit var navigator: ActivityNavigator
@@ -20,42 +20,70 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
     @Inject
     lateinit var entryService: EntryService
 
+    private lateinit var view: NewEntryContact.View
+
+    private var subscription: CompositeSubscription? = null
+
+    private val entryList: MutableList<EntryEntity> = mutableListOf()
+
     private var isLoading = false
 
-    init {
-        (view as BaseFragment).component.inject(this)
+    override var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+
+    override fun onCreate(component: FragmentComponent,
+                          view: NewEntryContact.View,
+                          entryTypeFilter: EntryTypeFilter) {
+        component.inject(this)
+        this.view = view
+        this.entryTypeFilter = entryTypeFilter
     }
 
-    override fun clickEntry(entryEntity: EntryEntity) {
+    override fun onResume() {
+        subscription = CompositeSubscription()
+        if (entryList.isEmpty()) {
+            initializeListContents()
+        } else {
+            view.showEntryList(entryList)
+        }
+    }
+
+    override fun onPause() {
+        subscription?.unsubscribe()
+        subscription = null
+    }
+
+    override fun onClickEntry(entryEntity: EntryEntity) {
         val activity = (view as Fragment).activity
         navigator.navigateToBookmark(activity, entryEntity)
     }
 
-    override fun initializeListContents(): Subscription? {
+    private fun initializeListContents() {
 
-        if (isLoading) return null
+        if (isLoading) return
 
-        view.showProgress()
-
-        return request()
+        subscription?.let {
+            view.showProgress()
+            it.add(request())
+        }
     }
 
-    override fun fetchListContents(): Subscription? {
+    override fun onRefreshList() {
 
-        if (isLoading) return null
+        if (isLoading) return
 
-        return request()
+        subscription?.add(request())
     }
 
-    override fun toggleListContents(entryTypeFilter: EntryTypeFilter): Subscription? {
+    override fun onOptionItemSelected(entryTypeFilter: EntryTypeFilter) {
 
-        if (isLoading) return null
+        if (isLoading) return
 
-        if (this.entryTypeFilter == entryTypeFilter) return null
+        if (this.entryTypeFilter == entryTypeFilter) return
 
-        this.entryTypeFilter = entryTypeFilter
-
-        return request()
+        subscription?.let {
+            this.entryTypeFilter = entryTypeFilter
+            it.add(request())
+        }
     }
 
     private fun request(): Subscription? {
@@ -79,7 +107,11 @@ class NewEntryPresenter(private val view: NewEntryContact.View,
     }
 
     private fun onFindNewEntryByTypeSuccess(entryList: List<EntryEntity>) {
-        if (entryList.isEmpty()) {
+
+        this.entryList.clear()
+        this.entryList.addAll(entryList)
+
+        if (this.entryList.isEmpty()) {
             view.hideEntryList()
             view.showEmpty()
         } else {

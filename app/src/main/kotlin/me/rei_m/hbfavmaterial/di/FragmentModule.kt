@@ -30,6 +30,11 @@ class FragmentModule(val fragment: BaseFragment) {
     }
 
     @Provides
+    fun provideNewEntryPresenter(): NewEntryContact.Actions {
+        return NewEntryPresenter()
+    }
+
+    @Provides
     fun provideInitializePresenter(@ForApplication context: Context): InitializeContact.Actions {
         return InitializePresenter(context)
     }
