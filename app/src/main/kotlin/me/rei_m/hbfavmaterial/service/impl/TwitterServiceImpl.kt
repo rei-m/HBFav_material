@@ -22,7 +22,6 @@ class TwitterServiceImpl(val twitterSessionRepository: TwitterSessionRepository)
     }
 
     override fun authorize(activity: Activity) {
-        
         TwitterAuthClient().authorize(activity, object : Callback<TwitterSession>() {
             override fun success(result: Result<TwitterSession>?) {
                 val twitterSession = result?.data ?: return

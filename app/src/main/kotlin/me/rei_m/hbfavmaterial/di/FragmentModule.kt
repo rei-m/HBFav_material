@@ -38,4 +38,9 @@ class FragmentModule(val fragment: BaseFragment) {
     fun provideInitializePresenter(@ForApplication context: Context): InitializeContact.Actions {
         return InitializePresenter(context)
     }
+
+    @Provides
+    fun provideSettingPresenter(): SettingContact.Actions {
+        return SettingPresenter()
+    }
 }

@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.app.Activity
 import android.content.Intent
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 
 interface SettingContact {
 
@@ -20,7 +21,8 @@ interface SettingContact {
 
     interface Actions {
 
-        fun clickTwitterOAuth(activity: Activity)
+        fun onCreate(component: FragmentComponent,
+                     view: SettingContact.View)
 
         fun onViewCreated()
 
@@ -31,5 +33,7 @@ interface SettingContact {
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 
         fun onDismissEditUserIdDialog()
+
+        fun onClickTwitterAuthorize(activity: Activity)
     }
 }

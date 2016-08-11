@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.SettingContact
-import me.rei_m.hbfavmaterial.fragment.presenter.SettingPresenter
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import javax.inject.Inject
 
@@ -33,7 +32,8 @@ class SettingFragment() : BaseFragment(),
     @Inject
     lateinit var navigator: ActivityNavigator
 
-    lateinit var presenter: SettingPresenter
+    @Inject
+    lateinit var presenter: SettingContact.Actions
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -47,7 +47,7 @@ class SettingFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter = SettingPresenter(this)
+        presenter.onCreate(component, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -67,7 +67,7 @@ class SettingFragment() : BaseFragment(),
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {
-            presenter.clickTwitterOAuth(activity)
+            presenter.onClickTwitterAuthorize(activity)
         }
 
         return view
