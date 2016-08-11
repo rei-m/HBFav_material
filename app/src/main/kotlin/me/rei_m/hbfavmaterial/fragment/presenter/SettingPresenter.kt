@@ -5,7 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.fragment.BaseFragment
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
@@ -13,7 +13,7 @@ import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.TwitterService
 import javax.inject.Inject
 
-class SettingPresenter(val view: SettingContact.View) : SettingContact.Actions {
+class SettingPresenter() : SettingContact.Actions {
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -27,13 +27,17 @@ class SettingPresenter(val view: SettingContact.View) : SettingContact.Actions {
     @Inject
     lateinit var twitterService: TwitterService
 
+    private lateinit var view: SettingContact.View
+
     private var isLoading = false
 
-    init {
-        (view as BaseFragment).component.inject(this)
+    override fun onCreate(component: FragmentComponent,
+                          view: SettingContact.View) {
+        component.inject(this)
+        this.view = view
     }
 
-    override fun clickTwitterOAuth(activity: Activity) {
+    override fun onClickTwitterAuthorize(activity: Activity) {
         if (isLoading) return
         isLoading = true
         twitterService.authorize(activity)
@@ -47,7 +51,6 @@ class SettingPresenter(val view: SettingContact.View) : SettingContact.Actions {
     }
 
     override fun onResume() {
-
         view.setTwitterAuthoriseStatus(twitterSessionRepository.resolve().oAuthTokenEntity.isAuthorised)
     }
 
@@ -57,10 +60,6 @@ class SettingPresenter(val view: SettingContact.View) : SettingContact.Actions {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        isLoading = false
-
-        data ?: return
-
         when (requestCode) {
             TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE -> {
                 // TwitterOAuth認可後の処理を行う.
@@ -68,6 +67,9 @@ class SettingPresenter(val view: SettingContact.View) : SettingContact.Actions {
                 return
             }
             ActivityNavigator.REQ_CODE_OAUTH -> {
+
+                data ?: return
+
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     // 認可の可否が選択されたかチェック
                     if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {

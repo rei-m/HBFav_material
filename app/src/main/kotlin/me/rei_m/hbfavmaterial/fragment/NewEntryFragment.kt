@@ -17,10 +17,10 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.NewEntryContact
-import me.rei_m.hbfavmaterial.fragment.presenter.NewEntryPresenter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.view.adapter.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
+import javax.inject.Inject
 
 /**
  * 新着Entryを一覧で表示するFragment.
@@ -42,9 +42,10 @@ class NewEntryFragment() : BaseFragment(),
         }
     }
 
-    private var listener: OnFragmentInteractionListener? = null
+    @Inject
+    lateinit var presenter: NewEntryContact.Actions
 
-    private lateinit var presenter: NewEntryPresenter
+    private var listener: OnFragmentInteractionListener? = null
 
     private val listAdapter: EntryListAdapter by lazy {
         EntryListAdapter(activity, R.layout.list_item_entry)
@@ -67,7 +68,15 @@ class NewEntryFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = NewEntryPresenter(this, EntryTypeFilter.ALL)
+        component.inject(this)
+
+        val entryTypeFilter = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(NewEntryFragment.KEY_FILTER_TYPE) as EntryTypeFilter
+        } else {
+            EntryTypeFilter.ALL
+        }
+
+        presenter.onCreate(component, this, entryTypeFilter)
         setHasOptionsMenu(true)
     }
 
@@ -81,7 +90,7 @@ class NewEntryFragment() : BaseFragment(),
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
-            presenter.clickEntry(entryEntity)
+            presenter.onClickEntry(entryEntity)
         }
 
         listView.adapter = listAdapter
@@ -98,9 +107,7 @@ class NewEntryFragment() : BaseFragment(),
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            presenter.fetchListContents()?.let {
-                subscription?.add(it)
-            }
+            presenter.onRefreshList()
         })
 
         return view
@@ -108,12 +115,12 @@ class NewEntryFragment() : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
-        if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
+        presenter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
 
     override fun onDestroyView() {
@@ -142,14 +149,21 @@ class NewEntryFragment() : BaseFragment(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
         item ?: return false
+
         val filter = EntryTypeFilter.forMenuId(item.itemId)
-        presenter.toggleListContents(filter)?.let {
-            subscription?.add(it)
-            listener?.onChangeFilter(pageTitle)
-        }
+
+        presenter.onOptionItemSelected(filter)
+
+        listener?.onChangeFilter(pageTitle)
 
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(KEY_FILTER_TYPE, presenter.entryTypeFilter)
     }
 
     override fun showEntryList(entryList: List<EntryEntity>) {

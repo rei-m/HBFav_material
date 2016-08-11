@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
+import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
-import rx.Subscription
 
 interface NewEntryContact {
 
@@ -25,12 +25,20 @@ interface NewEntryContact {
 
     interface Actions {
 
-        fun clickEntry(entryEntity: EntryEntity)
+        var entryTypeFilter: EntryTypeFilter
 
-        fun initializeListContents(): Subscription?
+        fun onCreate(component: FragmentComponent,
+                     view: NewEntryContact.View,
+                     entryTypeFilter: EntryTypeFilter)
 
-        fun fetchListContents(): Subscription?
+        fun onResume()
 
-        fun toggleListContents(entryTypeFilter: EntryTypeFilter): Subscription?
+        fun onPause()
+
+        fun onRefreshList()
+
+        fun onOptionItemSelected(entryTypeFilter: EntryTypeFilter)
+
+        fun onClickEntry(entryEntity: EntryEntity)
     }
 }

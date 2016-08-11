@@ -14,7 +14,6 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.hideKeyBoard
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
-import me.rei_m.hbfavmaterial.fragment.presenter.InitializePresenter
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
@@ -33,7 +32,8 @@ class InitializeFragment() : BaseFragment(),
     @Inject
     lateinit var navigator: ActivityNavigator
 
-    private lateinit var presenter: InitializePresenter
+    @Inject
+    lateinit var presenter: InitializeContact.Actions
 
     override var progressDialog: ProgressDialog? = null
 
@@ -42,8 +42,7 @@ class InitializeFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter = InitializePresenter(this)
-        presenter.onCreate()
+        presenter.onCreate(component, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -56,9 +55,7 @@ class InitializeFragment() : BaseFragment(),
 
         val buttonSetId = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as AppCompatButton
         buttonSetId.setOnClickListener {
-            presenter.clickButtonSetId(editId.editableText.toString())?.let {
-                subscription?.add(it)
-            }
+            presenter.onClickButtonSetId(editId.editableText.toString())
         }
 
         subscription?.add(RxTextView.textChanges(editId)
@@ -66,6 +63,16 @@ class InitializeFragment() : BaseFragment(),
                 .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled })
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
 
     override fun onDestroyView() {
