@@ -63,7 +63,6 @@
         android:layout_marginRight="@dimen/margin_outline_dialog"
         android:background="@null"
         android:checked="true"
-        android:text="@string/text_open"
         android:textColor="@color/text_color_middle" />
 
     <android.support.v7.widget.SwitchCompat

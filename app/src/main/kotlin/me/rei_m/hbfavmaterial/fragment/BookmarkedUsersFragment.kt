@@ -10,16 +10,16 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.enum.FilterItem
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersPresenter
 import me.rei_m.hbfavmaterial.view.adapter.UserListAdapter
 import rx.subscriptions.CompositeSubscription
+import javax.inject.Inject
 
 /**
  * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
@@ -30,6 +30,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
         private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
+
         fun newInstance(bookmarkEntity: BookmarkEntity): BookmarkedUsersFragment {
             return BookmarkedUsersFragment().apply {
                 arguments = Bundle().apply {
@@ -39,9 +41,12 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         }
     }
 
-    private var listener: OnFragmentInteractionListener? = null
+    @Inject
+    lateinit var presenter: BookmarkedUsersContact.Actions
 
-    private lateinit var presenter: BookmarkedUsersPresenter
+    private var subscription: CompositeSubscription? = null
+
+    private var listener: OnFragmentInteractionListener? = null
 
     private val bookmarkEntity: BookmarkEntity by lazy {
         arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
@@ -50,8 +55,6 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     private val listAdapter: UserListAdapter by lazy {
         UserListAdapter(activity, R.layout.list_item_user)
     }
-
-    private var subscription: CompositeSubscription? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -62,7 +65,14 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = BookmarkedUsersPresenter(this, bookmarkEntity)
+        component.inject(this)
+
+        val bookmarkCommentFilter = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(KEY_FILTER_TYPE) as BookmarkCommentFilter
+        } else {
+            BookmarkCommentFilter.ALL
+        }
+        presenter.onCreate(component, this, bookmarkEntity, bookmarkCommentFilter)
         setHasOptionsMenu(true)
     }
 
@@ -76,7 +86,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            presenter.clickUser(bookmarkEntity)
+            presenter.onClickUser(bookmarkEntity)
         }
 
         listView.adapter = listAdapter
@@ -94,9 +104,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            presenter.fetchListContents()?.let {
-                subscription?.add(it)
-            }
+            presenter.onRefreshList()
         })
 
         return view
@@ -104,13 +112,14 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun onResume() {
         super.onResume()
-        if (listAdapter.count === 0) {
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
+        presenter.onResume()
     }
-    
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -144,13 +153,19 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         if (id == android.R.id.home) {
             return super.onOptionsItemSelected(item)
         }
+
         val commentFilter = FilterItem.forMenuId(id) as BookmarkCommentFilter
 
-        presenter.toggleListContents(commentFilter)
+        presenter.onOptionItemSelected(commentFilter)
 
         listener?.onChangeFilter(commentFilter)
 
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(KEY_FILTER_TYPE, presenter.bookmarkCommentFilter)
     }
 
     override fun showUserList(bookmarkList: List<BookmarkEntity>) {
@@ -173,6 +188,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
                 RxSwipeRefreshLayout.refreshing(this).call(false)
             }
         }
+
+        listener?.onChangeFilter(presenter.bookmarkCommentFilter)
     }
 
     override fun hideUserList() {

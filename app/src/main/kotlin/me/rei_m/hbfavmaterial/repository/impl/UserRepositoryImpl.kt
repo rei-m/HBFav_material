@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.repository.impl
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entitiy.UserEntity
+import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.repository.UserRepository
 

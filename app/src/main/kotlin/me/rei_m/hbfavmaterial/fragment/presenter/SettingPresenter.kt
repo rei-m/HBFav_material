@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import com.twitter.sdk.android.core.TwitterAuthConfig
-import me.rei_m.hbfavmaterial.activitiy.OAuthActivity
+import me.rei_m.hbfavmaterial.activity.OAuthActivity
 import me.rei_m.hbfavmaterial.fragment.BaseFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository

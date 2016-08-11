@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.service.impl
 
-import me.rei_m.hbfavmaterial.entitiy.ArticleEntity
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.ArticleEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import me.rei_m.hbfavmaterial.network.HatenaApiService
 import me.rei_m.hbfavmaterial.network.HatenaRssService

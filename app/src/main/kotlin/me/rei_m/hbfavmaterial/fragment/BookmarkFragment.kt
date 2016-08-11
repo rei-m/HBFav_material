@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkHeaderLayout

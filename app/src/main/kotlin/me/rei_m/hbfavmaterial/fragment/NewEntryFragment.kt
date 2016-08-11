@@ -10,7 +10,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
@@ -32,6 +32,8 @@ class NewEntryFragment() : BaseFragment(),
     companion object {
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
         fun newInstance(pageIndex: Int): NewEntryFragment = NewEntryFragment().apply {
             arguments = Bundle().apply {

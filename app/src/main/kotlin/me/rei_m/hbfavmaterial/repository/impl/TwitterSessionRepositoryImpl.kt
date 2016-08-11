@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.repository.impl
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import me.rei_m.hbfavmaterial.entitiy.TwitterSessionEntity
+import me.rei_m.hbfavmaterial.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 

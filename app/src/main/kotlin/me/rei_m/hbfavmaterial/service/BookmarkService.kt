@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.service
 
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import rx.Observable
 

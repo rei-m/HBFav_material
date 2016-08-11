@@ -1,19 +1,19 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import android.support.v4.app.DialogFragment
-import me.rei_m.hbfavmaterial.entitiy.UserEntity
-import me.rei_m.hbfavmaterial.extension.getAppContext
+import me.rei_m.hbfavmaterial.di.ActivityComponent
+import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
 import retrofit2.adapter.rxjava.HttpException
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) : EditUserIdDialogContact.Actions {
+class EditUserIdDialogPresenter(private val context: Context) : EditUserIdDialogContact.Actions {
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -21,24 +21,39 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
     @Inject
     lateinit var userService: UserService
 
-    private val appContext: Context
-        get() = (view as DialogFragment).getAppContext()
+    private lateinit var view: EditUserIdDialogContact.View
+
+    private var subscription: CompositeSubscription? = null
 
     private var isLoading = false
+
+    override fun onCreate(component: ActivityComponent,
+                          view: EditUserIdDialogContact.View) {
+        component.inject(this)
+        this.view = view
+    }
 
     override fun onViewCreated() {
         view.setEditUserId(userRepository.resolve().id)
     }
 
-    override fun clickButtonOk(userId: String): Subscription? {
+    override fun onResume() {
+        subscription = CompositeSubscription()
+    }
+
+    override fun onPause() {
+        subscription?.unsubscribe()
+        subscription = null
+    }
+
+    override fun onClickButtonOk(userId: String) {
 
         val userEntity = userRepository.resolve()
 
         if (!userEntity.isSameId(userId)) {
-            return confirmExistingUserId(userId)
+            subscription?.add(confirmExistingUserId(userId))
         } else {
             view.dismissDialog()
-            return null
         }
     }
 
@@ -66,7 +81,7 @@ class EditUserIdDialogPresenter(private val view: EditUserIdDialogContact.View) 
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
-            userRepository.store(appContext, UserEntity(userId))
+            userRepository.store(context, UserEntity(userId))
             view.dismissDialog()
         } else {
             view.displayInvalidUserIdMessage()

@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
-import rx.Subscription
+import me.rei_m.hbfavmaterial.di.FragmentComponent
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 
 interface BookmarkFavoriteContact {
 
@@ -28,10 +28,17 @@ interface BookmarkFavoriteContact {
 
     interface Actions {
 
-        fun initializeListContents(): Subscription?
+        fun onCreate(component: FragmentComponent,
+                     view: BookmarkFavoriteContact.View)
 
-        fun fetchListContents(nextIndex: Int): Subscription?
+        fun onResume()
 
-        fun clickBookmark(bookmarkEntity: BookmarkEntity)
+        fun onPause()
+
+        fun onRefreshList()
+
+        fun onScrollEnd(nextIndex: Int)
+
+        fun onClickBookmark(bookmarkEntity: BookmarkEntity)
     }
 }

@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.di.FragmentComponent
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import rx.Subscription
 
 interface BookmarkUserContact {
 
@@ -29,12 +29,24 @@ interface BookmarkUserContact {
 
     interface Actions {
 
-        fun initializeListContents(): Subscription?
+        var readAfterFilter: ReadAfterFilter
 
-        fun fetchListContents(nextIndex: Int): Subscription?
+        fun onCreate(component: FragmentComponent,
+                     view: BookmarkUserContact.View,
+                     isOwner: Boolean,
+                     bookmarkUserId: String,
+                     readAfterFilter: ReadAfterFilter)
 
-        fun toggleListContents(readAfterFilter: ReadAfterFilter): Subscription?
+        fun onResume()
 
-        fun clickBookmark(bookmarkEntity: BookmarkEntity)
+        fun onPause()
+
+        fun onRefreshList()
+
+        fun onScrollEnd(nextIndex: Int)
+
+        fun onOptionItemSelected(readAfterFilter: ReadAfterFilter)
+
+        fun onClickBookmark(bookmarkEntity: BookmarkEntity)
     }
 }

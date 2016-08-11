@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.di.FragmentComponent
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
-import rx.Subscription
 
 interface BookmarkedUsersContact {
 
@@ -25,12 +25,21 @@ interface BookmarkedUsersContact {
 
     interface Actions {
 
-        fun clickUser(bookmarkEntity: BookmarkEntity)
+        var bookmarkCommentFilter: BookmarkCommentFilter
 
-        fun initializeListContents(): Subscription?
+        fun onCreate(component: FragmentComponent,
+                     view: BookmarkedUsersContact.View,
+                     bookmarkEntity: BookmarkEntity,
+                     bookmarkCommentFilter: BookmarkCommentFilter)
 
-        fun fetchListContents(): Subscription?
+        fun onResume()
 
-        fun toggleListContents(bookmarkCommentFilter: BookmarkCommentFilter)
+        fun onPause()
+
+        fun onClickUser(bookmarkEntity: BookmarkEntity)
+
+        fun onRefreshList()
+
+        fun onOptionItemSelected(bookmarkCommentFilter: BookmarkCommentFilter)
     }
 }

@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.entitiy.EntryEntity
+import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import me.rei_m.hbfavmaterial.fragment.BaseFragment
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator

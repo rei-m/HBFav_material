@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
 import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.entitiy.UserEntity
+import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.fragment.BaseFragment
 import me.rei_m.hbfavmaterial.repository.UserRepository

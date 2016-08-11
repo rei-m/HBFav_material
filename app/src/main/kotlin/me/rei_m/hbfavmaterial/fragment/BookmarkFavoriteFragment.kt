@@ -12,16 +12,16 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entitiy.BookmarkEntity
+import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
+import javax.inject.Inject
 
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
@@ -45,7 +45,8 @@ class BookmarkFavoriteFragment() : BaseFragment(),
         }
     }
 
-    private lateinit var presenter: BookmarkFavoritePresenter
+    @Inject
+    lateinit var presenter: BookmarkFavoriteContact.Actions
 
     private val listAdapter: BookmarkListAdapter by lazy {
         BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
@@ -61,7 +62,8 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = BookmarkFavoritePresenter(this)
+        component.inject(this)
+        presenter.onCreate(component, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,9 +80,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
                 if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
                     // FooterViewが設定されている場合 = 次の読み込み対象が存在する場合、次ページ分をFetch.
                     if (0 < listView.footerViewsCount) {
-                        presenter.fetchListContents(listAdapter.nextIndex)?.let {
-                            subscription?.add(it)
-                        }
+                        presenter.onScrollEnd(listAdapter.nextIndex)
                     }
                 }
             }
@@ -91,7 +91,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
-            presenter.clickBookmark(bookmarkEntity)
+            presenter.onClickBookmark(bookmarkEntity)
         }
 
         listView.adapter = listAdapter
@@ -108,9 +108,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
         subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
-            presenter.fetchListContents(0)?.let {
-                subscription?.add(it)
-            }
+            presenter.onRefreshList()
         })
 
         return view
@@ -118,14 +116,14 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
-        if (listAdapter.count === 0) {
-            // 1件も表示していなければブックマーク情報をRSSから取得する
-            presenter.initializeListContents()?.let {
-                subscription?.add(it)
-            }
-        }
+        presenter.onResume()
     }
-    
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
 
