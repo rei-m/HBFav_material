@@ -20,15 +20,15 @@ dependencies:
 
 test:
   override:
+    - (./gradlew assembleDebug): timeout: 900
     # start the emulator
-    - emulator -avd circleci-android22 -no-skin -no-audio -no-window -no-boot-anim:
+    - emulator -avd circleci-android22 -no-audio -no-window:
         background: true
         parallel: true
     # wait for it to have booted
     - circle-android wait-for-boot
     # run tests against the emulator.
-    - (./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m" -PdisablePreDex):
-    timeout: 900
+    - ./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m" -PdisablePreDex
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
