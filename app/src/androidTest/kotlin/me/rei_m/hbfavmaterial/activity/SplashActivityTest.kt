@@ -8,6 +8,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.view.WindowManager
 import dagger.Component
 import dagger.Module
 import dagger.Subcomponent
@@ -19,6 +20,7 @@ import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.util.CustomMatcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,6 +45,17 @@ class SplashActivityTest {
 
             app.component = appComponent
         }
+    }
+
+    @Before
+    fun setUp() {
+        val activity = activityRule.activity
+        val wakeUpDevice = Runnable {
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        activity.runOnUiThread(wakeUpDevice)
     }
 
     @Test
