@@ -27,7 +27,7 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run tests against the emulator.
-    - ./gradlew connectedDebugAndroidTest -P preDexEnable=false -D org.gradle.parallel=true -D org.gradle.jvmargs="-Xms512m -Xmx512m -XX:MaxMetaspaceSize=2048m" -D org.gradle.daemon=true
+    - ./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m" -PdisablePreDex
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
