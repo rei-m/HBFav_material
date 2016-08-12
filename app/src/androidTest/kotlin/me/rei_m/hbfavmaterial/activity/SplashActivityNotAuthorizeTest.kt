@@ -17,6 +17,7 @@ import me.rei_m.hbfavmaterial.di.*
 import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.util.CustomMatcher
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
@@ -57,7 +58,7 @@ class SplashActivityNotAuthorizeTest {
         // FABは表示されてない.
         onView(withId(R.id.fab)).check(matches(not(isDisplayed())))
     }
-    
+
     @Test
     fun はてなIDを入力すると送信ボタンが有効になる() {
         onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("a"))
@@ -90,6 +91,17 @@ class SplashActivityNotAuthorizeTest {
                 .perform(click())
         onView(withId(R.id.fragment_initialize_layout_hatena_id))
                 .check(matches(CustomMatcher.withErrorText(R.string.message_error_input_user_id)))
+    }
+
+    @Test
+    fun ネットワークエラーの時はSnackbarが表示される() {
+        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("error"))
+        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
+                .perform(closeSoftKeyboard())
+                .perform(click())
+
+        onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.message_error_network)))
+                .check(matches(isDisplayed()))
     }
 
     @Singleton
@@ -131,8 +143,10 @@ class SplashActivityNotAuthorizeTest {
                 override fun onClickButtonSetId(userId: String) {
                     if (userId == "valid") {
                         view.navigateToMain()
-                    } else {
+                    } else if (userId == "invalid") {
                         view.displayInvalidUserIdMessage()
+                    } else {
+                        view.showNetworkErrorMessage()
                     }
                 }
             }
