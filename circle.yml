@@ -19,14 +19,13 @@ dependencies:
     - ./gradlew dependencies
 
 test:
-  pre:
+  override:
     # start the emulator
     - emulator -avd circleci-android22 -no-skin -no-audio -no-window -no-boot-anim:
         background: true
         parallel: true
     # wait for it to have booted
     - circle-android wait-for-boot
-  override:
     # run tests against the emulator.
     - ./gradlew connectedAndroidTest -P preDexEnable=false -D org.gradle.parallel=true -D org.gradle.jvmargs="-Xms512m -Xmx512m -XX:MaxMetaspaceSize=2048m" -D org.gradle.daemon=true
   post:
