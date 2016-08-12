@@ -20,7 +20,7 @@ class InitializePresenter(private val context: Context) : InitializeContact.Acti
     @Inject
     lateinit var userService: UserService
 
-    private lateinit var view: InitializeContact.View
+    override lateinit var view: InitializeContact.View
 
     private var subscription: CompositeSubscription? = null
 

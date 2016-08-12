@@ -33,7 +33,7 @@ open class InfraLayerModule() {
 
     @Provides
     @Singleton
-    open fun provideUserRepository(@ForApplication context: Context): UserRepository {
+    fun provideUserRepository(@ForApplication context: Context): UserRepository {
         return UserRepositoryImpl(context)
     }
 
