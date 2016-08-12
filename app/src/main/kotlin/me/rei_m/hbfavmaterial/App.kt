@@ -13,7 +13,7 @@ import me.rei_m.hbfavmaterial.di.ApplicationModule
 import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
 import me.rei_m.hbfavmaterial.di.InfraLayerModule
 
-open class App : Application() {
+class App : Application() {
 
     lateinit var component: ApplicationComponent
 
