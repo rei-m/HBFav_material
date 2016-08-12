@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 import javax.inject.Singleton
 
 @RunWith(AndroidJUnit4::class)
-class SplashActivityNotAuthorizeTest {
+class SplashActivityTest {
 
     @Rule
     @JvmField
@@ -36,7 +36,7 @@ class SplashActivityNotAuthorizeTest {
 
             val app = InstrumentationRegistry.getTargetContext().applicationContext as App
 
-            val appComponent = DaggerSplashActivityNotAuthorizeTest_TestApplicationComponent.builder()
+            val appComponent = DaggerSplashActivityTest_TestApplicationComponent.builder()
                     .applicationModule(ApplicationModule(app))
                     .infraLayerModule(InfraLayerModule())
                     .build()
