@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.repository.impl.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
-class InfraLayerModule() {
+open class InfraLayerModule() {
 
     @Provides
     @Singleton
@@ -33,7 +33,7 @@ class InfraLayerModule() {
 
     @Provides
     @Singleton
-    fun provideUserRepository(@ForApplication context: Context): UserRepository {
+    open fun provideUserRepository(@ForApplication context: Context): UserRepository {
         return UserRepositoryImpl(context)
     }
 

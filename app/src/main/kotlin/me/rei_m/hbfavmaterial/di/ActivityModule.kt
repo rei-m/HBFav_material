@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.di
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogContact
@@ -14,7 +13,7 @@ import me.rei_m.hbfavmaterial.service.*
 import me.rei_m.hbfavmaterial.service.impl.*
 
 @Module
-class ActivityModule(val activity: AppCompatActivity) {
+class ActivityModule() {
 
     @Provides
     fun provideUserService(): UserService {

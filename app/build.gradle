@@ -34,12 +34,9 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
 
-        androidTest {
-            java.srcDirs = ['src/androidTest/kotlin']
-        }
-        test {
-            java.srcDirs = ['src/test/kotlin']
-        }
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+
+        test.java.srcDirs += 'src/test/kotlin'
     }
 
     if (project.hasProperty('storeFile')) {
@@ -82,6 +79,8 @@ dependencies {
     compile "com.android.support:appcompat-v7:$android_support_lib_version"
     compile "com.android.support:support-v4:$android_support_lib_version"
     compile "com.android.support:design:$android_support_lib_version"
+    compile "com.android.support:support-annotations:$android_support_lib_version"
+
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
     compile 'io.reactivex:rxandroid:1.2.1'
@@ -91,13 +90,15 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7-kotlin:$rx_android_kotlin_version"
     compile 'com.google.dagger:dagger:2.6'
     kapt 'com.google.dagger:dagger-compiler:2.6'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.6'
+
     compile 'com.google.code.gson:gson:2.7'
     compile "com.squareup.okhttp3:okhttp:$okhttp_version"
     compile "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
-    compile ("com.squareup.retrofit2:converter-simplexml:$retrofit_version") {
+    compile("com.squareup.retrofit2:converter-simplexml:$retrofit_version") {
         exclude module: 'stax'
         exclude module: 'stax-api'
         exclude module: 'xpp3'
@@ -117,11 +118,17 @@ dependencies {
     }
     compile 'com.google.firebase:firebase-core:9.4.0'
 
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile "com.android.support:support-annotations:$android_support_lib_version"
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test:runner:0.5') {
+        exclude module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test:rules:0.5') {
+        exclude module: 'support-annotations'
+    }
 }
+
 buildscript {
     ext.kotlin_version = '1.0.3'
     repositories {
