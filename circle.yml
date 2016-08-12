@@ -28,7 +28,7 @@ test:
     - circle-android wait-for-boot
   override:
     # run tests against the emulator.
-    - ./gradlew connectedAndroidTest -PpreDexEnable=false -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xms512m -Xmx512m -XX:MaxMetaspaceSize=2048m" -Dorg.gradle.daemon=true
+    - ./gradlew connectedAndroidTest -PpreDexEnable=false -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xms512m -Xmx512m -XX:MaxMetaspaceSize=1024m" -Dorg.gradle.daemon=true
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

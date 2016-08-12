@@ -57,11 +57,7 @@ object CustomMatcher {
                     }
 
                 }
-                var actualText: CharSequence? = null
-
-                actualText = textInputLayout.error
-
-
+                val actualText = textInputLayout.error
                 if (null != expectedText && null != actualText) {
                     // FYI: actualText may not be string ... its just a char sequence convert to string.
                     return expectedText == actualText.toString()
