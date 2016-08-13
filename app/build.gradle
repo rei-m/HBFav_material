@@ -7,12 +7,13 @@ android {
     signingConfigs {
         releaseConfig
     }
-    compileSdkVersion 23
+
+    compileSdkVersion 24
     buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId "me.rei_m.hbfavmaterial"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 12
         versionName "1.2.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -31,6 +32,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
 
@@ -69,7 +71,7 @@ kapt {
 }
 
 dependencies {
-    ext.android_support_lib_version = '23.4.0'
+    ext.android_support_lib_version = '24.1.1'
     ext.rx_android_kotlin_version = '0.4.0'
     ext.retrofit_version = '2.1.0'
     ext.okhttp_version = '3.4.1'
