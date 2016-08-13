@@ -27,7 +27,7 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run tests against the emulator.
-    - (./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxPermSize=1024m" -PdisablePreDex):
+    - (./gradlew connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx1024m -XX:MaxPermSize=512m" -PdisablePreDex):
         timeout: 900
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
