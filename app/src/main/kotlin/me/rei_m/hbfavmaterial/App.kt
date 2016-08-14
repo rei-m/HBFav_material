@@ -33,7 +33,7 @@ class App : Application() {
 
         // LeakCanaryの設定
         if (BuildConfig.DEBUG) {
-            LeakCanary.install(this);
+//            LeakCanary.install(this);
         }
 
         // Set up Fabric
