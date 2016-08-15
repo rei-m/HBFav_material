@@ -65,7 +65,7 @@ class SplashActivityTest {
 
         // はてなID入力欄が表示.
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
-                .perform(scrollTo())
+                .perform(closeSoftKeyboard(), scrollTo())
                 .check(matches(isDisplayed()))
 
         // はてなID送信ボタンが無効な状態で表示.
