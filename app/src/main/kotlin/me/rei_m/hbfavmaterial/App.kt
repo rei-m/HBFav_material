@@ -15,12 +15,7 @@ import me.rei_m.hbfavmaterial.di.InfraLayerModule
 
 class App : Application() {
 
-    val component: ApplicationComponent by lazy {
-        DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this))
-                .infraLayerModule(InfraLayerModule())
-                .build()
-    }
+    lateinit var component: ApplicationComponent
 
     private lateinit var analytics: FirebaseAnalytics
 
@@ -30,6 +25,10 @@ class App : Application() {
         // Application起動時に実行される。アプリの初期処理など
 
         // Dagger2
+        component = DaggerApplicationComponent.builder()
+                .applicationModule(ApplicationModule(this))
+                .infraLayerModule(InfraLayerModule())
+                .build()
         component.inject(this)
 
         // LeakCanaryの設定

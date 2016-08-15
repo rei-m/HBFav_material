@@ -29,5 +29,5 @@ interface ActivityComponent {
 
     fun inject(presenter: EditUserIdDialogPresenter)
 
-    fun plus(module: FragmentModule): FragmentComponent
+    fun fragmentComponent(): FragmentComponent
 }

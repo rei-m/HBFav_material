@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.repository.impl.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
-class InfraLayerModule() {
+open class InfraLayerModule() {
 
     @Provides
     @Singleton

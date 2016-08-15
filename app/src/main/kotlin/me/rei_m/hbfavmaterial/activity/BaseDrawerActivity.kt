@@ -34,7 +34,7 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
         component.inject(this)
 
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById(R.id.app_bar_main_toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
         val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout

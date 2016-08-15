@@ -15,7 +15,7 @@ class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         findViewById(R.id.fab)?.hide()
         if (savedInstanceState == null) {

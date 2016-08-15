@@ -20,6 +20,8 @@ interface InitializeContact {
 
     interface Actions {
 
+        var view: InitializeContact.View
+
         fun onCreate(component: FragmentComponent,
                      view: InitializeContact.View)
 
