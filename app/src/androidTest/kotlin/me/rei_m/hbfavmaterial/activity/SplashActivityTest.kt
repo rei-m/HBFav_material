@@ -64,59 +64,72 @@ class SplashActivityTest {
     fun 初期表示の確認() {
 
         // はてなID入力欄が表示.
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).check(matches(isDisplayed()))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
         // はてなID送信ボタンが無効な状態で表示.
-        onView(withId(R.id.fragment_initialize_button_set_hatena_id)).check(matches(isDisplayed()))
-        onView(withId(R.id.fragment_initialize_button_set_hatena_id)).check(matches(not(isEnabled())))
+        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .check(matches(not(isEnabled())))
 
         // FABは表示されてない.
-        onView(withId(R.id.fab)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.fab))
+                .check(matches(not(isDisplayed())))
     }
 
     @Test
     fun はてなIDを入力すると送信ボタンが有効になる() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("a"))
-        onView(withId(R.id.fragment_initialize_button_set_hatena_id)).check(matches(isEnabled()))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("a"))
+
+        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
+                .perform(scrollTo())
+                .check(matches(isEnabled()))
     }
 
     @Test
     fun 入力したはてなIDを消すと送信ボタンが無効になる() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("a"))
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(replaceText(""))
-        onView(withId(R.id.fragment_initialize_button_set_hatena_id)).check(matches(not(isEnabled())))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("a"))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(replaceText(""))
+        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
+                .perform(scrollTo())
+                .check(matches(not(isEnabled())))
     }
 
     @Test
     fun 正しいはてなIDが入力されるとメイン画面に行く() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("valid"))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("valid"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
-                .perform(closeSoftKeyboard())
-                .perform(scrollTo())
-                .perform(click())
+                .perform(scrollTo(), closeSoftKeyboard(), click())
 
         // メイン画面のツールバーが表示されたら遷移したとみなす.
-        onView(withId(R.id.app_bar_main_toolbar)).check(matches(isDisplayed()))
+        onView(withId(R.id.app_bar_main_toolbar))
+                .check(matches(isDisplayed()))
     }
 
     @Test
     fun 誤ったはてなIDが入力されるとエラーメッセージが表示される() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("invalid"))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("invalid"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
-                .perform(closeSoftKeyboard())
-                .perform(scrollTo())
-                .perform(click())
+                .perform(scrollTo(), closeSoftKeyboard(), click())
+
         onView(withId(R.id.fragment_initialize_layout_hatena_id))
+                .perform(scrollTo())
                 .check(matches(CustomMatcher.withErrorText(R.string.message_error_input_user_id)))
     }
 
     @Test
     fun ネットワークエラーの時はSnackbarが表示される() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("error"))
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("error"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
-                .perform(closeSoftKeyboard())
-                .perform(scrollTo())
-                .perform(click())
+                .perform(scrollTo(), closeSoftKeyboard(), click())
 
         onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.message_error_network)))
                 .check(matches(isDisplayed()))
