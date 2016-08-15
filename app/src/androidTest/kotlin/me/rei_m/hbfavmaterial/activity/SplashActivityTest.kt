@@ -92,6 +92,7 @@ class SplashActivityTest {
         onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("valid"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
                 .perform(closeSoftKeyboard())
+                .perform(scrollTo())
                 .perform(click())
 
         // メイン画面のツールバーが表示されたら遷移したとみなす.
@@ -103,6 +104,7 @@ class SplashActivityTest {
         onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("invalid"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
                 .perform(closeSoftKeyboard())
+                .perform(scrollTo())
                 .perform(click())
         onView(withId(R.id.fragment_initialize_layout_hatena_id))
                 .check(matches(CustomMatcher.withErrorText(R.string.message_error_input_user_id)))
@@ -113,6 +115,7 @@ class SplashActivityTest {
         onView(withId(R.id.fragment_initialize_edit_hatena_id)).perform(typeText("error"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
                 .perform(closeSoftKeyboard())
+                .perform(scrollTo())
                 .perform(click())
 
         onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.message_error_network)))
