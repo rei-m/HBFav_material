@@ -1,24 +1,14 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
-import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.service.EntryService
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
-class NewEntryPresenter : NewEntryContact.Actions {
-
-    @Inject
-    lateinit var navigator: ActivityNavigator
-
-    @Inject
-    lateinit var entryService: EntryService
+class NewEntryPresenter(private val entryService: EntryService) : NewEntryContact.Actions {
 
     private lateinit var view: NewEntryContact.View
 
@@ -30,10 +20,8 @@ class NewEntryPresenter : NewEntryContact.Actions {
 
     override var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
 
-    override fun onCreate(component: FragmentComponent,
-                          view: NewEntryContact.View,
+    override fun onCreate(view: NewEntryContact.View,
                           entryTypeFilter: EntryTypeFilter) {
-        component.inject(this)
         this.view = view
         this.entryTypeFilter = entryTypeFilter
     }
@@ -53,8 +41,7 @@ class NewEntryPresenter : NewEntryContact.Actions {
     }
 
     override fun onClickEntry(entryEntity: EntryEntity) {
-        val activity = (view as Fragment).activity
-        navigator.navigateToBookmark(activity, entryEntity)
+        view.navigateToBookmark(entryEntity)
     }
 
     private fun initializeListContents() {

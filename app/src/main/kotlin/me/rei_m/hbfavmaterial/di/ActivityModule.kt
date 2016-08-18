@@ -8,7 +8,9 @@ import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogPresenter
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogContact
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogPresenter
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
+import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.*
 import me.rei_m.hbfavmaterial.service.impl.*
 
@@ -41,12 +43,24 @@ class ActivityModule() {
     }
 
     @Provides
-    fun provideEditBookmarkDialogPresenter(@ForApplication context: Context): EditBookmarkDialogContact.Actions {
-        return EditBookmarkDialogPresenter(context)
+    fun provideEditBookmarkDialogPresenter(@ForApplication context: Context,
+                                           userRepository: UserRepository,
+                                           hatenaTokenRepository: HatenaTokenRepository,
+                                           hatenaService: HatenaService,
+                                           twitterSessionRepository: TwitterSessionRepository,
+                                           twitterService: TwitterService): EditBookmarkDialogContact.Actions {
+        return EditBookmarkDialogPresenter(context,
+                userRepository,
+                hatenaTokenRepository,
+                hatenaService,
+                twitterSessionRepository,
+                twitterService)
     }
 
     @Provides
-    fun provideEditUserIdDialogPresenter(@ForApplication context: Context): EditUserIdDialogContact.Actions {
-        return EditUserIdDialogPresenter(context)
+    fun provideEditUserIdDialogPresenter(@ForApplication context: Context,
+                                         userRepository: UserRepository,
+                                         userService: UserService): EditUserIdDialogContact.Actions {
+        return EditUserIdDialogPresenter(context, userRepository, userService)
     }
 }

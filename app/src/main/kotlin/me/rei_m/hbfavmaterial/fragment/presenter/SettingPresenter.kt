@@ -5,35 +5,22 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.TwitterService
-import javax.inject.Inject
 
-class SettingPresenter() : SettingContact.Actions {
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var hatenaTokenRepository: HatenaTokenRepository
-
-    @Inject
-    lateinit var twitterSessionRepository: TwitterSessionRepository
-
-    @Inject
-    lateinit var twitterService: TwitterService
+class SettingPresenter(private val userRepository: UserRepository,
+                       private val hatenaTokenRepository: HatenaTokenRepository,
+                       private val twitterSessionRepository: TwitterSessionRepository,
+                       private val twitterService: TwitterService) : SettingContact.Actions {
 
     private lateinit var view: SettingContact.View
 
     private var isLoading = false
 
-    override fun onCreate(component: FragmentComponent,
-                          view: SettingContact.View) {
-        component.inject(this)
+    override fun onCreate(view: SettingContact.View) {
         this.view = view
     }
 

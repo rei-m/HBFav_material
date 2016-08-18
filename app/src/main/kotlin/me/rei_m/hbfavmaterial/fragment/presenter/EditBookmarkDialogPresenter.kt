@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.ActivityComponent
 import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
@@ -14,24 +13,13 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
-import javax.inject.Inject
 
-class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDialogContact.Actions {
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var hatenaTokenRepository: HatenaTokenRepository
-
-    @Inject
-    lateinit var hatenaService: HatenaService
-
-    @Inject
-    lateinit var twitterSessionRepository: TwitterSessionRepository
-
-    @Inject
-    lateinit var twitterService: TwitterService
+class EditBookmarkDialogPresenter(private val context: Context,
+                                  private val userRepository: UserRepository,
+                                  private val hatenaTokenRepository: HatenaTokenRepository,
+                                  private val hatenaService: HatenaService,
+                                  private val twitterSessionRepository: TwitterSessionRepository,
+                                  private val twitterService: TwitterService) : EditBookmarkDialogContact.Actions {
 
     private lateinit var view: EditBookmarkDialogContact.View
 
@@ -45,13 +33,10 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
 
     private var isLoading = false
 
-    override fun onCreate(component: ActivityComponent,
-                          view: EditBookmarkDialogContact.View,
+    override fun onCreate(view: EditBookmarkDialogContact.View,
                           bookmarkUrl: String,
                           bookmarkTitle: String,
                           bookmarkEditEntity: BookmarkEditEntity?) {
-
-        component.inject(this)
         this.view = view
         this.bookmarkUrl = bookmarkUrl
         this.bookmarkTitle = bookmarkTitle
@@ -167,11 +152,11 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
                 }))
     }
 
-    private fun onUpsertBookmarkSuccess(bookmarkEditEntity: BookmarkEditEntity) {
+    private fun onUpsertBookmarkSuccess(@Suppress("unused") bookmarkEditEntity: BookmarkEditEntity) {
         view.dismissDialog()
     }
 
-    private fun onUpsertBookmarkFailure(e: Throwable?) {
+    private fun onUpsertBookmarkFailure(@Suppress("unused") e: Throwable?) {
         view.showNetworkErrorMessage()
     }
 
@@ -199,7 +184,7 @@ class EditBookmarkDialogPresenter(private val context: Context) : EditBookmarkDi
                 }))
     }
 
-    private fun onDeleteBookmarkSuccess(void: Void?) {
+    private fun onDeleteBookmarkSuccess(@Suppress("unused") void: Void?) {
         view.dismissDialog()
     }
 

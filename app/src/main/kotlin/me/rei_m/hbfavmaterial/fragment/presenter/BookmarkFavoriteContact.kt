@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 
 interface BookmarkFavoriteContact {
@@ -24,12 +23,13 @@ interface BookmarkFavoriteContact {
         fun showEmpty()
 
         fun hideEmpty()
+
+        fun navigateToBookmark(bookmarkEntity: BookmarkEntity)
     }
 
     interface Actions {
 
-        fun onCreate(component: FragmentComponent,
-                     view: BookmarkFavoriteContact.View)
+        fun onCreate(view: BookmarkFavoriteContact.View)
 
         fun onResume()
 

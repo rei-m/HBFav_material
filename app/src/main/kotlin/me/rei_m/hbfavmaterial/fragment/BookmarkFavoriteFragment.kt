@@ -18,6 +18,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoriteContact
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
@@ -48,6 +49,9 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     @Inject
     lateinit var presenter: BookmarkFavoriteContact.Actions
 
+    @Inject
+    lateinit var activityNavigator: ActivityNavigator
+
     private val listAdapter: BookmarkListAdapter by lazy {
         BookmarkListAdapter(activity, R.layout.list_item_bookmark, BOOKMARK_COUNT_PER_PAGE)
     }
@@ -63,7 +67,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter.onCreate(component, this)
+        presenter.onCreate(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -207,5 +211,9 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    override fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
+        activityNavigator.navigateToBookmark(activity, bookmarkEntity)
     }
 }

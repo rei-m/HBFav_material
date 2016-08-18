@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
@@ -10,15 +9,10 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
-import javax.inject.Inject
 
-class InitializePresenter(private val context: Context) : InitializeContact.Actions {
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var userService: UserService
+class InitializePresenter(private val context: Context,
+                          private val userRepository: UserRepository,
+                          private val userService: UserService) : InitializeContact.Actions {
 
     override lateinit var view: InitializeContact.View
 
@@ -26,9 +20,8 @@ class InitializePresenter(private val context: Context) : InitializeContact.Acti
 
     private var isLoading = false
 
-    override fun onCreate(component: FragmentComponent,
-                          view: InitializeContact.View) {
-        component.inject(this)
+    override fun onCreate(view: InitializeContact.View) {
+
         this.view = view
 
         val userEntity = userRepository.resolve()

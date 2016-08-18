@@ -63,7 +63,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
         super.onCreate(savedInstanceState)
         val component = (activity as BaseActivity).component
         component.inject(this)
-        presenter.onCreate(component, this)
+        presenter.onCreate(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -118,8 +118,8 @@ class EditUserIdDialogFragment() : DialogFragment(),
         subscription = null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDetach() {
+        super.onDetach()
         listener = null
     }
 

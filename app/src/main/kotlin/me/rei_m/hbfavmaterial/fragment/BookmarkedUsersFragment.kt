@@ -17,6 +17,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersContact
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.view.adapter.UserListAdapter
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
@@ -43,6 +44,9 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     @Inject
     lateinit var presenter: BookmarkedUsersContact.Actions
+
+    @Inject
+    lateinit var activityNavigator: ActivityNavigator
 
     private var subscription: CompositeSubscription? = null
 
@@ -72,7 +76,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         } else {
             BookmarkCommentFilter.ALL
         }
-        presenter.onCreate(component, this, bookmarkEntity, bookmarkCommentFilter)
+        presenter.onCreate(this, bookmarkEntity, bookmarkCommentFilter)
         setHasOptionsMenu(true)
     }
 
@@ -135,8 +139,8 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDetach() {
+        super.onDetach()
         listener = null
     }
 
@@ -221,6 +225,10 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    override fun navigateToOthersBookmark(bookmarkEntity: BookmarkEntity) {
+        activityNavigator.navigateToOthersBookmark(activity, bookmarkEntity.creator)
     }
 
     interface OnFragmentInteractionListener {

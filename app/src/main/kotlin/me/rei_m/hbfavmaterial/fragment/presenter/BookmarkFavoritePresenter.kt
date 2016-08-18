@@ -1,27 +1,15 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.BookmarkService
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
-class BookmarkFavoritePresenter() : BookmarkFavoriteContact.Actions {
-
-    @Inject
-    lateinit var navigator: ActivityNavigator
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var bookmarkService: BookmarkService
+class BookmarkFavoritePresenter(private val userRepository: UserRepository,
+                                private val bookmarkService: BookmarkService) : BookmarkFavoriteContact.Actions {
 
     private lateinit var view: BookmarkFavoriteContact.View
 
@@ -31,8 +19,7 @@ class BookmarkFavoritePresenter() : BookmarkFavoriteContact.Actions {
 
     private var isLoading = false
 
-    override fun onCreate(component: FragmentComponent, view: BookmarkFavoriteContact.View) {
-        component.inject(this)
+    override fun onCreate(view: BookmarkFavoriteContact.View) {
         this.view = view
     }
 
@@ -117,12 +104,11 @@ class BookmarkFavoritePresenter() : BookmarkFavoriteContact.Actions {
         }
     }
 
-    private fun onFindByUserIdForFavoriteFailure(e: Throwable) {
+    private fun onFindByUserIdForFavoriteFailure(@Suppress("unused") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 
     override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
-        val activity = (view as Fragment).activity
-        navigator.navigateToBookmark(activity, bookmarkEntity)
+        view.navigateToBookmark(bookmarkEntity)
     }
 }

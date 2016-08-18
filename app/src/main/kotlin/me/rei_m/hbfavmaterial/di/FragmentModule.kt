@@ -4,46 +4,62 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.presenter.*
+import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.repository.UserRepository
+import me.rei_m.hbfavmaterial.service.BookmarkService
+import me.rei_m.hbfavmaterial.service.EntryService
+import me.rei_m.hbfavmaterial.service.TwitterService
+import me.rei_m.hbfavmaterial.service.UserService
 
 @Module
 open class FragmentModule {
 
     @Provides
-    fun provideBookmarkedUsersPresenter(): BookmarkedUsersContact.Actions {
-        return BookmarkedUsersPresenter()
+    fun provideBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
+        return BookmarkedUsersPresenter(bookmarkService)
     }
 
     @Provides
-    fun provideBookmarkFavoritePresenter(): BookmarkFavoriteContact.Actions {
-        return BookmarkFavoritePresenter()
+    fun provideBookmarkFavoritePresenter(userRepository: UserRepository,
+                                         bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
+        return BookmarkFavoritePresenter(userRepository, bookmarkService)
     }
 
     @Provides
-    fun provideBookmarkUserPresenter(): BookmarkUserContact.Actions {
-        return BookmarkUserPresenter()
+    fun provideBookmarkUserPresenter(userRepository: UserRepository,
+                                     bookmarkService: BookmarkService): BookmarkUserContact.Actions {
+        return BookmarkUserPresenter(userRepository, bookmarkService)
     }
 
     @Provides
-    fun provideHotEntryPresenter(): HotEntryContact.Actions {
-        return HotEntryPresenter()
+    fun provideHotEntryPresenter(entryService: EntryService): HotEntryContact.Actions {
+        return HotEntryPresenter(entryService)
     }
 
     @Provides
-    fun provideNewEntryPresenter(): NewEntryContact.Actions {
-        return NewEntryPresenter()
+    fun provideNewEntryPresenter(entryService: EntryService): NewEntryContact.Actions {
+        return NewEntryPresenter(entryService)
     }
 
     @Provides
-    fun provideInitializePresenter(@ForApplication context: Context): InitializeContact.Actions {
-        return createInitializePresenter(context)
+    fun provideInitializePresenter(@ForApplication context: Context,
+                                   userRepository: UserRepository,
+                                   userService: UserService): InitializeContact.Actions {
+        return createInitializePresenter(context, userRepository, userService)
     }
 
-    open fun createInitializePresenter(context: Context): InitializeContact.Actions {
-        return InitializePresenter(context)
+    open fun createInitializePresenter(context: Context,
+                                       userRepository: UserRepository,
+                                       userService: UserService): InitializeContact.Actions {
+        return InitializePresenter(context, userRepository, userService)
     }
 
     @Provides
-    fun provideSettingPresenter(): SettingContact.Actions {
-        return SettingPresenter()
+    fun provideSettingPresenter(userRepository: UserRepository,
+                                hatenaTokenRepository: HatenaTokenRepository,
+                                twitterSessionRepository: TwitterSessionRepository,
+                                twitterService: TwitterService): SettingContact.Actions {
+        return SettingPresenter(userRepository, hatenaTokenRepository, twitterSessionRepository, twitterService)
     }
 }

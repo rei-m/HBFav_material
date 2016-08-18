@@ -89,7 +89,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
         super.onCreate(savedInstanceState)
         val component = (activity as BaseActivity).component
         component.inject(this)
-        presenter.onCreate(component, this, bookmarkUrl, bookmarkTitle, bookmarkEdit)
+        presenter.onCreate(this, bookmarkUrl, bookmarkTitle, bookmarkEdit)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

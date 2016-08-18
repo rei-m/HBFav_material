@@ -1,7 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.di.FragmentComponent
-
 
 interface InitializeContact {
 
@@ -22,8 +20,7 @@ interface InitializeContact {
 
         var view: InitializeContact.View
 
-        fun onCreate(component: FragmentComponent,
-                     view: InitializeContact.View)
+        fun onCreate(view: InitializeContact.View)
 
         fun onResume()
 

@@ -17,6 +17,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.NewEntryContact
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.view.adapter.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
@@ -44,6 +45,9 @@ class NewEntryFragment() : BaseFragment(),
 
     @Inject
     lateinit var presenter: NewEntryContact.Actions
+
+    @Inject
+    lateinit var activityNavigator: ActivityNavigator
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -76,7 +80,7 @@ class NewEntryFragment() : BaseFragment(),
             EntryTypeFilter.ALL
         }
 
-        presenter.onCreate(component, this, entryTypeFilter)
+        presenter.onCreate(this, entryTypeFilter)
         setHasOptionsMenu(true)
     }
 
@@ -138,9 +142,9 @@ class NewEntryFragment() : BaseFragment(),
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
+    
+    override fun onDetach() {
+        super.onDetach()
         listener = null
     }
 
@@ -213,6 +217,10 @@ class NewEntryFragment() : BaseFragment(),
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    override fun navigateToBookmark(entryEntity: EntryEntity) {
+        activityNavigator.navigateToBookmark(activity, entryEntity)
     }
 
     interface OnFragmentInteractionListener {

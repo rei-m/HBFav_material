@@ -7,7 +7,6 @@ import me.rei_m.hbfavmaterial.activity.MainActivity
 import me.rei_m.hbfavmaterial.activity.OAuthActivity
 import me.rei_m.hbfavmaterial.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.fragment.EditUserIdDialogFragment
-import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogPresenter
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogPresenter
 
 @Subcomponent(modules = arrayOf(ActivityModule::class))
@@ -23,11 +22,7 @@ interface ActivityComponent {
 
     fun inject(dialogFragment: EditBookmarkDialogFragment)
 
-    fun inject(presenter: EditBookmarkDialogPresenter)
-
     fun inject(dialogFragment: EditUserIdDialogFragment)
-
-    fun inject(presenter: EditUserIdDialogPresenter)
 
     fun fragmentComponent(): FragmentComponent
 }

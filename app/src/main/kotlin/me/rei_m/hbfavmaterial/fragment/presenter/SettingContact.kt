@@ -2,7 +2,6 @@ package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.app.Activity
 import android.content.Intent
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 
 interface SettingContact {
 
@@ -21,8 +20,7 @@ interface SettingContact {
 
     interface Actions {
 
-        fun onCreate(component: FragmentComponent,
-                     view: SettingContact.View)
+        fun onCreate(view: SettingContact.View)
 
         fun onViewCreated()
 
