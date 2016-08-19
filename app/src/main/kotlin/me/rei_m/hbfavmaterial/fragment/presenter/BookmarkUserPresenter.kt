@@ -1,28 +1,16 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import android.support.v4.app.Fragment
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.BookmarkService
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
-import javax.inject.Inject
 
-class BookmarkUserPresenter() : BookmarkUserContact.Actions {
-
-    @Inject
-    lateinit var navigator: ActivityNavigator
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var bookmarkService: BookmarkService
+class BookmarkUserPresenter(private val userRepository: UserRepository,
+                            private val bookmarkService: BookmarkService) : BookmarkUserContact.Actions {
 
     private lateinit var view: BookmarkUserContact.View
 
@@ -36,12 +24,10 @@ class BookmarkUserPresenter() : BookmarkUserContact.Actions {
 
     override var readAfterFilter = ReadAfterFilter.ALL
 
-    override fun onCreate(component: FragmentComponent,
-                          view: BookmarkUserContact.View,
+    override fun onCreate(view: BookmarkUserContact.View,
                           isOwner: Boolean,
                           bookmarkUserId: String,
                           readAfterFilter: ReadAfterFilter) {
-        component.inject(this)
         this.view = view
         this.bookmarkUserId = if (isOwner)
             userRepository.resolve().id
@@ -147,12 +133,11 @@ class BookmarkUserPresenter() : BookmarkUserContact.Actions {
         }
     }
 
-    private fun onFindByUserIdFailure(e: Throwable) {
+    private fun onFindByUserIdFailure(@Suppress("unused") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 
     override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
-        val activity = (view as Fragment).activity
-        navigator.navigateToBookmark(activity, bookmarkEntity)
+        view.navigateToBookmark(bookmarkEntity)
     }
 }

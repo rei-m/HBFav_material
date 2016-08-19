@@ -73,9 +73,9 @@ class BookmarkFragment() : BaseFragment(), MovableWithAnimation {
 
         return view
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
+    
+    override fun onDetach() {
+        super.onDetach()
         listener = null
     }
 

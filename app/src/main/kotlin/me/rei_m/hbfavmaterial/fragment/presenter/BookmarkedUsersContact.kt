@@ -21,14 +21,15 @@ interface BookmarkedUsersContact {
         fun showEmpty()
 
         fun hideEmpty()
+
+        fun navigateToOthersBookmark(bookmarkEntity: BookmarkEntity)
     }
 
     interface Actions {
 
         var bookmarkCommentFilter: BookmarkCommentFilter
 
-        fun onCreate(component: FragmentComponent,
-                     view: BookmarkedUsersContact.View,
+        fun onCreate(view: BookmarkedUsersContact.View,
                      bookmarkEntity: BookmarkEntity,
                      bookmarkCommentFilter: BookmarkCommentFilter)
 

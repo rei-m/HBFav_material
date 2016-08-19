@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 
@@ -21,14 +20,15 @@ interface HotEntryContact {
         fun showEmpty()
 
         fun hideEmpty()
+
+        fun navigateToBookmark(entryEntity: EntryEntity)
     }
 
     interface Actions {
 
         var entryTypeFilter: EntryTypeFilter
 
-        fun onCreate(component: FragmentComponent,
-                     view: HotEntryContact.View,
+        fun onCreate(view: HotEntryContact.View,
                      entryTypeFilter: EntryTypeFilter)
 
         fun onResume()

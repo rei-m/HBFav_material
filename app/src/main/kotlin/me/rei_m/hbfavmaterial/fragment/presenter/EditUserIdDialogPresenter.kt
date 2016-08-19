@@ -1,7 +1,6 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
 import android.content.Context
-import me.rei_m.hbfavmaterial.di.ActivityComponent
 import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
@@ -11,15 +10,10 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
-import javax.inject.Inject
 
-class EditUserIdDialogPresenter(private val context: Context) : EditUserIdDialogContact.Actions {
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var userService: UserService
+class EditUserIdDialogPresenter(private val context: Context,
+                                private val userRepository: UserRepository,
+                                private val userService: UserService) : EditUserIdDialogContact.Actions {
 
     private lateinit var view: EditUserIdDialogContact.View
 
@@ -27,9 +21,7 @@ class EditUserIdDialogPresenter(private val context: Context) : EditUserIdDialog
 
     private var isLoading = false
 
-    override fun onCreate(component: ActivityComponent,
-                          view: EditUserIdDialogContact.View) {
-        component.inject(this)
+    override fun onCreate(view: EditUserIdDialogContact.View) {
         this.view = view
     }
 

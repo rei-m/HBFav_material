@@ -18,6 +18,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserContact
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import rx.subscriptions.CompositeSubscription
@@ -76,6 +77,9 @@ class BookmarkUserFragment() : BaseFragment(),
     @Inject
     lateinit var presenter: BookmarkUserContact.Actions
 
+    @Inject
+    lateinit var activityNavigator: ActivityNavigator
+
     private var listener: OnFragmentInteractionListener? = null
 
     private val listAdapter: BookmarkListAdapter by lazy {
@@ -117,7 +121,7 @@ class BookmarkUserFragment() : BaseFragment(),
             ReadAfterFilter.ALL
         }
 
-        presenter.onCreate(component, this, isOwner, userId, readAfterFilter)
+        presenter.onCreate(this, isOwner, userId, readAfterFilter)
         setHasOptionsMenu(true)
     }
 
@@ -293,6 +297,10 @@ class BookmarkUserFragment() : BaseFragment(),
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    override fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
+        activityNavigator.navigateToBookmark(activity, bookmarkEntity)
     }
 
     interface OnFragmentInteractionListener {

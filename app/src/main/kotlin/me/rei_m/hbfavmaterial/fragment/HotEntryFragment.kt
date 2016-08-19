@@ -17,6 +17,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.fragment.presenter.HotEntryContact
+import me.rei_m.hbfavmaterial.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.view.adapter.EntryListAdapter
 import rx.subscriptions.CompositeSubscription
@@ -44,6 +45,9 @@ class HotEntryFragment() : BaseFragment(),
 
     @Inject
     lateinit var presenter: HotEntryContact.Actions
+
+    @Inject
+    lateinit var activityNavigator: ActivityNavigator
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -76,7 +80,7 @@ class HotEntryFragment() : BaseFragment(),
             EntryTypeFilter.ALL
         }
 
-        presenter.onCreate(component, this, entryTypeFilter)
+        presenter.onCreate(this, entryTypeFilter)
         setHasOptionsMenu(true)
     }
 
@@ -214,6 +218,10 @@ class HotEntryFragment() : BaseFragment(),
     override fun hideEmpty() {
         val view = view ?: return
         view.findViewById(R.id.fragment_list_view_empty).hide()
+    }
+
+    override fun navigateToBookmark(entryEntity: EntryEntity) {
+        activityNavigator.navigateToBookmark(activity, entryEntity)
     }
 
     interface OnFragmentInteractionListener {

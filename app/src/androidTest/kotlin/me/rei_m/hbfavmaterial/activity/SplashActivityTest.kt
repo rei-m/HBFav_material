@@ -17,6 +17,8 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.*
 import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
+import me.rei_m.hbfavmaterial.repository.UserRepository
+import me.rei_m.hbfavmaterial.service.UserService
 import me.rei_m.hbfavmaterial.util.CustomMatcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
@@ -154,12 +156,14 @@ class SplashActivityTest {
     @Module
     class TestInitializeFragmentModule() : FragmentModule() {
 
-        override fun createInitializePresenter(context: Context): InitializeContact.Actions {
+        override fun createInitializePresenter(context: Context,
+                                               userRepository: UserRepository,
+                                               userService: UserService): InitializeContact.Actions {
             return object : InitializeContact.Actions {
 
                 override lateinit var view: InitializeContact.View
 
-                override fun onCreate(component: FragmentComponent, view: InitializeContact.View) {
+                override fun onCreate(view: InitializeContact.View) {
                     this.view = view
                 }
 

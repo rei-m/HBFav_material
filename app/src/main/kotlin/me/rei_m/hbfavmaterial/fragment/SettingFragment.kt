@@ -47,7 +47,7 @@ class SettingFragment() : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        presenter.onCreate(component, this)
+        presenter.onCreate(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -88,8 +88,8 @@ class SettingFragment() : BaseFragment(),
         presenter.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDetach() {
+        super.onDetach()
         listener = null
     }
 
