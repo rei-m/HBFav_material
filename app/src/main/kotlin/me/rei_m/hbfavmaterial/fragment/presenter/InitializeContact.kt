@@ -18,8 +18,6 @@ interface InitializeContact {
 
     interface Actions {
 
-        var view: InitializeContact.View
-
         fun onCreate(view: InitializeContact.View)
 
         fun onResume()

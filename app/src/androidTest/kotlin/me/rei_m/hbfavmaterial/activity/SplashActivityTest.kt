@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
@@ -26,6 +27,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.*
 import javax.inject.Singleton
 
 @RunWith(AndroidJUnit4::class)
@@ -48,6 +50,9 @@ class SplashActivityTest {
             app.component = appComponent
         }
     }
+
+    val fragment: InitializeFragment
+        get() = activityRule.activity.supportFragmentManager.findFragmentByTag(InitializeFragment::class.java.simpleName) as InitializeFragment
 
     @Before
     fun setUp() {
@@ -83,6 +88,7 @@ class SplashActivityTest {
 
     @Test
     fun はてなIDを入力すると送信ボタンが有効になる() {
+
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
                 .perform(scrollTo(), typeText("a"))
 
@@ -93,6 +99,7 @@ class SplashActivityTest {
 
     @Test
     fun 入力したはてなIDを消すと送信ボタンが無効になる() {
+
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
                 .perform(scrollTo(), typeText("a"))
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
@@ -103,21 +110,47 @@ class SplashActivityTest {
     }
 
     @Test
-    fun 正しいはてなIDが入力されるとメイン画面に行く() {
+    fun 送信ボタンをクリックしたイベントがPresenterに伝わる() {
+
+        val presenter = mock(InitializeContact.Actions::class.java)
+        doAnswer { Unit }.`when`(presenter).onClickButtonSetId("valid")
+        fragment.presenter = presenter
+
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
                 .perform(scrollTo(), typeText("valid"))
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
                 .perform(scrollTo(), closeSoftKeyboard(), click())
 
-        // メイン画面のツールバーが表示されたら遷移したとみなす.
-        onView(withId(R.id.app_bar_main_toolbar))
-                .check(matches(isDisplayed()))
+        verify(presenter, times(1)).onClickButtonSetId("valid")
     }
 
     @Test
-    fun 誤ったはてなIDが入力されるとエラーメッセージが表示される() {
+    fun testShowNetworkErrorMessage() {
+
         onView(withId(R.id.fragment_initialize_edit_hatena_id))
-                .perform(scrollTo(), typeText("invalid"))
+                .perform(scrollTo(), typeText("errore"))
+
+        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
+                .perform(scrollTo(), closeSoftKeyboard(), click())
+
+        activityRule.activity.runOnUiThread {
+            fragment.showNetworkErrorMessage()
+        }
+
+        onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.message_error_network)))
+                .check(matches(isEnabled()))
+    }
+
+    @Test
+    fun testDisplayInvalidUserIdMessage() {
+
+        onView(withId(R.id.fragment_initialize_edit_hatena_id))
+                .perform(scrollTo(), typeText("error"))
+
+        activityRule.activity.runOnUiThread {
+            fragment.displayInvalidUserIdMessage()
+        }
+
         onView(withId(R.id.fragment_initialize_button_set_hatena_id))
                 .perform(scrollTo(), closeSoftKeyboard(), click())
 
@@ -127,14 +160,30 @@ class SplashActivityTest {
     }
 
     @Test
-    fun ネットワークエラーの時はSnackbarが表示される() {
-        onView(withId(R.id.fragment_initialize_edit_hatena_id))
-                .perform(scrollTo(), typeText("error"))
-        onView(withId(R.id.fragment_initialize_button_set_hatena_id))
-                .perform(scrollTo(), closeSoftKeyboard(), click())
+    fun testShowProgress() {
+        activityRule.activity.runOnUiThread {
+            fragment.showProgress()
+        }
+        onView(withText(R.string.text_progress_loading)).check(matches(isDisplayed()))
+    }
 
-        onView(allOf(withId(android.support.design.R.id.snackbar_text), withText(R.string.message_error_network)))
-                .check(matches(isDisplayed()))
+    @Test
+    fun testHideProgress() {
+        activityRule.activity.runOnUiThread {
+            fragment.showProgress()
+            fragment.hideProgress()
+        }
+        onView(withText(R.string.text_progress_loading)).check(doesNotExist())
+    }
+
+
+    @Test
+    fun testNavigateToMain() {
+        val navigator = spy(fragment.navigator)
+        doAnswer { Unit }.`when`(navigator).navigateToMain(activityRule.activity)
+        fragment.navigator = navigator
+        fragment.navigateToMain()
+        verify(navigator, times(1)).navigateToMain(activityRule.activity)
     }
 
     @Singleton
@@ -160,29 +209,16 @@ class SplashActivityTest {
                                                userRepository: UserRepository,
                                                userService: UserService): InitializeContact.Actions {
             return object : InitializeContact.Actions {
-
-                override lateinit var view: InitializeContact.View
-
                 override fun onCreate(view: InitializeContact.View) {
-                    this.view = view
                 }
 
                 override fun onResume() {
-
                 }
 
                 override fun onPause() {
-
                 }
 
                 override fun onClickButtonSetId(userId: String) {
-                    if (userId == "valid") {
-                        view.navigateToMain()
-                    } else if (userId == "invalid") {
-                        view.displayInvalidUserIdMessage()
-                    } else {
-                        view.showNetworkErrorMessage()
-                    }
                 }
             }
         }

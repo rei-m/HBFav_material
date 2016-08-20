@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.fragment
 
 import android.app.ProgressDialog
 import android.content.Context
+import me.rei_m.hbfavmaterial.R
 
 interface ProgressDialogController {
 
@@ -10,7 +11,7 @@ interface ProgressDialogController {
     fun showProgressDialog(context: Context) {
         if (progressDialog == null) {
             progressDialog = ProgressDialog(context).apply {
-                setMessage("Now Loading...")
+                setMessage(context.getString(R.string.text_progress_loading))
                 setCanceledOnTouchOutside(false)
             }
         }
