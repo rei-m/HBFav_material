@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogContact
@@ -43,14 +42,12 @@ class ActivityModule() {
     }
 
     @Provides
-    fun provideEditBookmarkDialogPresenter(@ForApplication context: Context,
-                                           userRepository: UserRepository,
+    fun provideEditBookmarkDialogPresenter(userRepository: UserRepository,
                                            hatenaTokenRepository: HatenaTokenRepository,
                                            hatenaService: HatenaService,
                                            twitterSessionRepository: TwitterSessionRepository,
                                            twitterService: TwitterService): EditBookmarkDialogContact.Actions {
-        return EditBookmarkDialogPresenter(context,
-                userRepository,
+        return EditBookmarkDialogPresenter(userRepository,
                 hatenaTokenRepository,
                 hatenaService,
                 twitterSessionRepository,
@@ -58,9 +55,8 @@ class ActivityModule() {
     }
 
     @Provides
-    fun provideEditUserIdDialogPresenter(@ForApplication context: Context,
-                                         userRepository: UserRepository,
+    fun provideEditUserIdDialogPresenter(userRepository: UserRepository,
                                          userService: UserService): EditUserIdDialogContact.Actions {
-        return EditUserIdDialogPresenter(context, userRepository, userService)
+        return EditUserIdDialogPresenter(userRepository, userService)
     }
 }

@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 
-class HatenaTokenRepositoryImpl(context: Context) : HatenaTokenRepository {
+class HatenaTokenRepositoryImpl(private val context: Context) : HatenaTokenRepository {
 
     companion object {
         private const val KEY_PREF_OAUTH = "KEY_PREF_OAUTH"
@@ -27,7 +27,7 @@ class HatenaTokenRepositoryImpl(context: Context) : HatenaTokenRepository {
 
     override fun resolve(): OAuthTokenEntity = oAuthTokenEntity
 
-    override fun store(context: Context, oAuthTokenEntity: OAuthTokenEntity) {
+    override fun store(oAuthTokenEntity: OAuthTokenEntity) {
         getPreferences(context)
                 .edit()
                 .putString(KEY_PREF_OAUTH, Gson().toJson(oAuthTokenEntity))
@@ -35,7 +35,7 @@ class HatenaTokenRepositoryImpl(context: Context) : HatenaTokenRepository {
         this.oAuthTokenEntity = oAuthTokenEntity
     }
 
-    override fun delete(context: Context) {
+    override fun delete() {
         getPreferences(context).edit().remove(KEY_PREF_OAUTH).apply()
         this.oAuthTokenEntity = OAuthTokenEntity()
     }

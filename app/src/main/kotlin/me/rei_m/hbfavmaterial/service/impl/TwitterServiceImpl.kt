@@ -33,7 +33,7 @@ class TwitterServiceImpl(val twitterSessionRepository: TwitterSessionRepository)
                                 secretToken = twitterSession.authToken.secret
                         )
                 )
-                twitterSessionRepository.store(activity.applicationContext, twitterSessionEntity)
+                twitterSessionRepository.store(twitterSessionEntity)
             }
 
             override fun failure(exception: TwitterException?) {
