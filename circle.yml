@@ -20,7 +20,7 @@ dependencies:
 
 test:
   override:
-    - ./gradlew clean testDevDebug -PdisablePreDex -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx1024m" -Dorg.gradle.daemon=false
+    - ./gradlew clean testDebug -PdisablePreDex -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx1024m" -Dorg.gradle.daemon=false
 
     # start the emulator
     #- emulator -avd circleci-android22 -no-audio:
