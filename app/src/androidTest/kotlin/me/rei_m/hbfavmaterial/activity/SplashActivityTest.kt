@@ -159,27 +159,26 @@ class SplashActivityTest {
                 .check(matches(CustomMatcher.withErrorText(R.string.message_error_input_user_id)))
     }
 
-    @Test
-    fun testShowProgress() {
-        activityRule.activity.runOnUiThread {
-            fragment.showProgress()
-        }
-        onView(withText(R.string.text_progress_loading)).check(matches(isDisplayed()))
-        activityRule.activity.runOnUiThread {
-            fragment.hideProgress()
-        }
-    }
-
-    @Test
-    fun testHideProgress() {
-        activityRule.activity.runOnUiThread {
-            fragment.showProgress()
-            fragment.hideProgress()
-        }
-        onView(withText(R.string.text_progress_loading)).check(doesNotExist())
-    }
-
-
+//    @Test
+//    fun testShowProgress() {
+//        activityRule.activity.runOnUiThread {
+//            fragment.showProgress()
+//        }
+//        onView(withText(R.string.text_progress_loading)).check(matches(isDisplayed()))
+//        activityRule.activity.runOnUiThread {
+//            fragment.hideProgress()
+//        }
+//    }
+//
+//    @Test
+//    fun testHideProgress() {
+//        activityRule.activity.runOnUiThread {
+//            fragment.showProgress()
+//            fragment.hideProgress()
+//        }
+//        onView(withText(R.string.text_progress_loading)).check(doesNotExist())
+//    }
+    
     @Test
     fun testNavigateToMain() {
         val navigator = spy(fragment.navigator)
