@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import android.content.Context
 import me.rei_m.hbfavmaterial.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
@@ -14,8 +13,7 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 
-class EditBookmarkDialogPresenter(private val context: Context,
-                                  private val userRepository: UserRepository,
+class EditBookmarkDialogPresenter(private val userRepository: UserRepository,
                                   private val hatenaTokenRepository: HatenaTokenRepository,
                                   private val hatenaService: HatenaService,
                                   private val twitterSessionRepository: TwitterSessionRepository,
@@ -62,7 +60,7 @@ class EditBookmarkDialogPresenter(private val context: Context,
     override fun onCheckedChangeOpen(isChecked: Boolean) {
         val userEntity = userRepository.resolve()
         userEntity.isCheckedPostBookmarkOpen = isChecked
-        userRepository.store(context, userEntity)
+        userRepository.store(userEntity)
         view.setSwitchOpenCheck(isChecked)
     }
 
@@ -76,13 +74,13 @@ class EditBookmarkDialogPresenter(private val context: Context,
             }
         }
         twitterSessionEntity.isShare = isChecked
-        twitterSessionRepository.store(context, twitterSessionEntity)
+        twitterSessionRepository.store(twitterSessionEntity)
     }
 
     override fun onCheckedChangeReadAfter(isChecked: Boolean) {
         val userEntity = userRepository.resolve()
         userEntity.isCheckedPostBookmarkReadAfter = isChecked
-        userRepository.store(context, userEntity)
+        userRepository.store(userEntity)
     }
 
     override fun onCheckedChangeDelete(isChecked: Boolean) {

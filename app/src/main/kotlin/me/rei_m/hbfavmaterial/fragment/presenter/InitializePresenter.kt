@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-import android.content.Context
 import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
@@ -10,8 +9,7 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.net.HttpURLConnection
 
-class InitializePresenter(private val context: Context,
-                          private val userRepository: UserRepository,
+class InitializePresenter(private val userRepository: UserRepository,
                           private val userService: UserService) : InitializeContact.Actions {
 
     private lateinit var view: InitializeContact.View
@@ -63,7 +61,7 @@ class InitializePresenter(private val context: Context,
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean, userId: String) {
         if (isValid) {
-            userRepository.store(context, UserEntity(userId))
+            userRepository.store(UserEntity(userId))
             view.navigateToMain()
         } else {
             view.displayInvalidUserIdMessage()

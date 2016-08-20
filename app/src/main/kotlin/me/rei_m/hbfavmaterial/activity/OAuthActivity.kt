@@ -63,7 +63,7 @@ class OAuthActivity : BaseSingleActivity() {
                         fetchAccessToken(oauthVerifier)
                     } else if (url?.startsWith(HatenaOAuthManager.AUTHORIZATION_DENY_URL) ?: false) {
                         stopLoading()
-                        hatenaTokenRepository.delete(applicationContext)
+                        hatenaTokenRepository.delete()
                         setAuthorizeResult(false, true)
                         finish()
                     } else {
@@ -124,7 +124,7 @@ class OAuthActivity : BaseSingleActivity() {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    hatenaTokenRepository.store(applicationContext, it)
+                    hatenaTokenRepository.store(it)
                     setAuthorizeResult(true, true)
                     finish()
                 }, {

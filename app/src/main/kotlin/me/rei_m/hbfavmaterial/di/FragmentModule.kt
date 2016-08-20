@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.fragment.presenter.*
@@ -43,16 +42,14 @@ open class FragmentModule {
     }
 
     @Provides
-    fun provideInitializePresenter(@ForApplication context: Context,
-                                   userRepository: UserRepository,
+    fun provideInitializePresenter(userRepository: UserRepository,
                                    userService: UserService): InitializeContact.Actions {
-        return createInitializePresenter(context, userRepository, userService)
+        return createInitializePresenter(userRepository, userService)
     }
 
-    open fun createInitializePresenter(context: Context,
-                                       userRepository: UserRepository,
+    open fun createInitializePresenter(userRepository: UserRepository,
                                        userService: UserService): InitializeContact.Actions {
-        return InitializePresenter(context, userRepository, userService)
+        return InitializePresenter(userRepository, userService)
     }
 
     @Provides

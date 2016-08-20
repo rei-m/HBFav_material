@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 
-class TwitterSessionRepositoryImpl(context: Context) : TwitterSessionRepository {
+class TwitterSessionRepositoryImpl(private val context: Context) : TwitterSessionRepository {
 
     companion object {
         private const val KEY_PREF_TWITTER_SESSION = "KEY_PREF_TWITTER_SESSION"
@@ -30,7 +30,7 @@ class TwitterSessionRepositoryImpl(context: Context) : TwitterSessionRepository 
 
     override fun resolve(): TwitterSessionEntity = twitterSessionEntity
 
-    override fun store(context: Context, twitterSessionEntity: TwitterSessionEntity) {
+    override fun store(twitterSessionEntity: TwitterSessionEntity) {
         getPreferences(context)
                 .edit()
                 .putString(KEY_PREF_TWITTER_SESSION, Gson().toJson(twitterSessionEntity))
@@ -39,7 +39,7 @@ class TwitterSessionRepositoryImpl(context: Context) : TwitterSessionRepository 
         this.twitterSessionEntity = twitterSessionEntity
     }
 
-    override fun delete(context: Context) {
+    override fun delete() {
         getPreferences(context).edit()
                 .remove(KEY_PREF_TWITTER_SESSION)
                 .remove(KEY_PREF_IS_SHARE_TWITTER)

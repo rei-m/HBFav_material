@@ -7,7 +7,7 @@ import me.rei_m.hbfavmaterial.entity.UserEntity
 import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.repository.UserRepository
 
-class UserRepositoryImpl(context: Context) : UserRepository {
+class UserRepositoryImpl(private val context: Context) : UserRepository {
 
     companion object {
         private const val KEY_PREF_USER = "KEY_PREF_USER"
@@ -27,7 +27,7 @@ class UserRepositoryImpl(context: Context) : UserRepository {
 
     override fun resolve(): UserEntity = userEntity
 
-    override fun store(context: Context, userEntity: UserEntity) {
+    override fun store(userEntity: UserEntity) {
         getPreferences(context)
                 .edit()
                 .putString(KEY_PREF_USER, Gson().toJson(userEntity))
@@ -35,7 +35,7 @@ class UserRepositoryImpl(context: Context) : UserRepository {
         this.userEntity = userEntity
     }
 
-    override fun delete(context: Context) {
+    override fun delete() {
         getPreferences(context).edit().remove(KEY_PREF_USER).apply()
         this.userEntity = UserEntity(id = "")
     }

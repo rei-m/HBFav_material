@@ -142,19 +142,6 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
 }
 
-buildscript {
-    ext.kotlin_version = '1.0.3'
-    repositories {
-        mavenCentral()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 repositories {
     mavenCentral()
     maven {
