@@ -7,13 +7,13 @@ import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.entity.EntryEntity
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkPagerAdaptor
 
-class ActivityNavigator {
+open class ActivityNavigator {
 
     companion object {
         const val REQ_CODE_OAUTH = 100
     }
 
-    fun navigateToMain(activity: Activity, page: BookmarkPagerAdaptor.Page = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE) {
+    open fun navigateToMain(activity: Activity, page: BookmarkPagerAdaptor.Page = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE) {
         val intentToLaunch = MainActivity.createIntent(activity, page)
         intentToLaunch.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         activity.startActivity(intentToLaunch)

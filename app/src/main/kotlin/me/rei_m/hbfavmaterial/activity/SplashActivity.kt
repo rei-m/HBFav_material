@@ -19,7 +19,7 @@ class SplashActivity : BaseActivity() {
         setSupportActionBar(toolbar)
         findViewById(R.id.fab)?.hide()
         if (savedInstanceState == null) {
-            setFragment(InitializeFragment.newInstance())
+            setFragment(InitializeFragment.newInstance(), InitializeFragment::class.java.simpleName)
         }
     }
 }

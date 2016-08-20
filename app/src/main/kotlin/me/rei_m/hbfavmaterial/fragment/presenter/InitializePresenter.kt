@@ -14,7 +14,7 @@ class InitializePresenter(private val context: Context,
                           private val userRepository: UserRepository,
                           private val userService: UserService) : InitializeContact.Actions {
 
-    override lateinit var view: InitializeContact.View
+    private lateinit var view: InitializeContact.View
 
     private var subscription: CompositeSubscription? = null
 

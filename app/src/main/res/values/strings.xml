@@ -50,6 +50,7 @@
     <string name="text_delete">削除</string>
     <string name="text_share_twitter">Twitterに投稿</string>
     <string name="text_read_after">あとで読む</string>
+    <string name="text_progress_loading">Now Loading...</string>
 
     <string name="button_setting">　 設定 　</string>
     <string name="button_add">　 追加 　</string>
