@@ -20,16 +20,18 @@ dependencies:
 
 test:
   override:
+    - ./gradlew clean testDevDebug -PdisablePreDex -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx1024m" -Dorg.gradle.daemon=false
+
     # start the emulator
-    - emulator -avd circleci-android22 -no-audio:
-        background: true
-        parallel: true
+    #- emulator -avd circleci-android22 -no-audio:
+    #    background: true
+    #    parallel: true
     # wait for it to have booted
-    - circle-android wait-for-boot
+    #- circle-android wait-for-boot
     # run tests against the emulator.
-    - adb shell input keyevent 82
-    - (./gradlew clean connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx1024m -XX:MaxPermSize=512m" -PdisablePreDex):
-        timeout: 900
+    #- adb shell input keyevent 82
+    #- (./gradlew clean connectedDebugAndroidTest -Dorg.gradle.jvmargs="-Xmx1024m -XX:MaxPermSize=512m" -PdisablePreDex):
+    #    timeout: 900
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
