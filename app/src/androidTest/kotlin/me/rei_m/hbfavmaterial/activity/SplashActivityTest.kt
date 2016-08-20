@@ -165,6 +165,9 @@ class SplashActivityTest {
             fragment.showProgress()
         }
         onView(withText(R.string.text_progress_loading)).check(matches(isDisplayed()))
+        activityRule.activity.runOnUiThread {
+            fragment.hideProgress()
+        }
     }
 
     @Test
