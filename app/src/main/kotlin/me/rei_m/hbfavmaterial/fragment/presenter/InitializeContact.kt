@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.fragment.presenter
 
-
 interface InitializeContact {
 
     interface View {

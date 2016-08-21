@@ -57,7 +57,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnCreate_ユーザーの設定未完了の場合はメイン画面に進まない() {
+    fun testOnCreate_initialize_not_complete_register_user() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
@@ -68,7 +68,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnCreate_ユーザーの設定完了の場合はメイン画面に進む() {
+    fun testOnCreate_initialize_complete_register_user() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity("test"))
 
@@ -79,7 +79,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnClickButtonSetId_IDのチェックに成功するとメイン画面に進む() {
+    fun testOnClickButtonSetId_success_check_id() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
@@ -99,7 +99,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnClickButtonSetId_IDのチェックでエラーが発生するとID誤りのメッセージが表示される() {
+    fun testOnClickButtonSetId_fail_check_id() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
@@ -116,7 +116,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnClickButtonSetId_IDのチェックで404エラーが発生するとID誤りのメッセージが表示される() {
+    fun testOnClickButtonSetId_fail_check_id_404() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
@@ -134,7 +134,7 @@ class InitializePresenterTest {
     }
 
     @Test
-    fun testOnClickButtonSetId_IDのチェックでネットワークエラーが発生するとエラーメッセージが表示される() {
+    fun testOnClickButtonSetId_fail_check_id_network_error() {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
