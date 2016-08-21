@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.util
+package me.rei_m.hbfavmaterial.testutil
 
 import android.content.res.Resources
 import android.support.design.widget.TextInputLayout

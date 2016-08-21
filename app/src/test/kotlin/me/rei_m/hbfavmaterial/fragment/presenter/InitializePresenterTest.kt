@@ -85,10 +85,7 @@ class InitializePresenterTest {
 
         doAnswer { Unit }.`when`(userRepository).store(UserEntity("success"))
 
-        `when`(userService.confirmExistingUserId("success")).thenReturn(Observable.create {
-            it.onNext(true)
-            it.onCompleted()
-        })
+        `when`(userService.confirmExistingUserId("success")).thenReturn(Observable.just(true))
 
         val presenter = InitializePresenter(userRepository, userService)
         presenter.onCreate(view)
@@ -106,10 +103,7 @@ class InitializePresenterTest {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
-        `when`(userService.confirmExistingUserId("fail")).thenReturn(Observable.create {
-            it.onNext(false)
-            it.onCompleted()
-        })
+        `when`(userService.confirmExistingUserId("fail")).thenReturn(Observable.just(false))
 
         val presenter = InitializePresenter(userRepository, userService)
         presenter.onCreate(view)

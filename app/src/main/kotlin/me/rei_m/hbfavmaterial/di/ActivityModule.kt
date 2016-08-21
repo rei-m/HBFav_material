@@ -6,7 +6,9 @@ import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogContact
 import me.rei_m.hbfavmaterial.fragment.presenter.EditBookmarkDialogPresenter
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogContact
 import me.rei_m.hbfavmaterial.fragment.presenter.EditUserIdDialogPresenter
+import me.rei_m.hbfavmaterial.network.HatenaApiService
 import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
+import me.rei_m.hbfavmaterial.network.RetrofitManager
 import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
 import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
 import me.rei_m.hbfavmaterial.repository.UserRepository
@@ -18,7 +20,7 @@ class ActivityModule() {
 
     @Provides
     fun provideUserService(): UserService {
-        return UserServiceImpl()
+        return UserServiceImpl(RetrofitManager.scalar.create(HatenaApiService::class.java))
     }
 
     @Provides

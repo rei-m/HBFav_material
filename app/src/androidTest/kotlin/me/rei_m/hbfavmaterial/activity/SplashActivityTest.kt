@@ -20,7 +20,7 @@ import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
-import me.rei_m.hbfavmaterial.util.CustomMatcher
+import me.rei_m.hbfavmaterial.testutil.CustomMatcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.Before
