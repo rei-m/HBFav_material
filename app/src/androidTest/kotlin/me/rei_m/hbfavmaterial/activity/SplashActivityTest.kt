@@ -207,8 +207,7 @@ class SplashActivityTest {
     @Module
     class TestInitializeFragmentModule() : FragmentModule() {
 
-        override fun createInitializePresenter(context: Context,
-                                               userRepository: UserRepository,
+        override fun createInitializePresenter(userRepository: UserRepository,
                                                userService: UserService): InitializeContact.Actions {
             return object : InitializeContact.Actions {
                 override fun onCreate(view: InitializeContact.View) {
