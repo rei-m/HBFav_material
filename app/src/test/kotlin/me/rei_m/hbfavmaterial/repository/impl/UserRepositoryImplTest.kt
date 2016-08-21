@@ -25,7 +25,7 @@ class UserRepositoryImplTest {
     lateinit var mockEditor: SharedPreferences.Editor
 
     @Test
-    fun testResolve_initialize_アプリ初回起動() {
+    fun testResolve_initialize() {
 
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(null)
         `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)
@@ -35,7 +35,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    fun testResolve_initialize_アカウント設定後起動() {
+    fun testResolve_after_set_account() {
 
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(Gson().toJson(UserEntity("test")))
         `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)

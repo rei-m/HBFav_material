@@ -4,6 +4,7 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/fragment_initialize_layout_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

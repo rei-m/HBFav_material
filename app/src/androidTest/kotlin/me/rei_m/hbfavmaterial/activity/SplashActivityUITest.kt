@@ -31,7 +31,7 @@ import org.mockito.Mockito.*
 import javax.inject.Singleton
 
 @RunWith(AndroidJUnit4::class)
-class SplashActivityTest {
+class SplashActivityUITest {
 
     @Rule
     @JvmField
@@ -42,7 +42,7 @@ class SplashActivityTest {
 
             val app = InstrumentationRegistry.getTargetContext().applicationContext as App
 
-            val appComponent = DaggerSplashActivityTest_TestApplicationComponent.builder()
+            val appComponent = DaggerSplashActivityUITest_TestApplicationComponent.builder()
                     .applicationModule(ApplicationModule(app))
                     .infraLayerModule(InfraLayerModule())
                     .build()
