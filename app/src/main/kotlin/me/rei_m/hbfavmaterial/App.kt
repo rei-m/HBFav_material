@@ -13,22 +13,26 @@ import me.rei_m.hbfavmaterial.di.ApplicationModule
 import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
 import me.rei_m.hbfavmaterial.di.InfraLayerModule
 
-class App : Application() {
+open class App : Application() {
 
     lateinit var component: ApplicationComponent
 
     private lateinit var analytics: FirebaseAnalytics
 
+    open fun createApplicationComponent(): ApplicationComponent {
+        return DaggerApplicationComponent.builder()
+                .applicationModule(ApplicationModule(this))
+                .infraLayerModule(InfraLayerModule())
+                .build()
+    }
+    
     override fun onCreate() {
         super.onCreate()
 
         // Application起動時に実行される。アプリの初期処理など
 
         // Dagger2
-        component = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this))
-                .infraLayerModule(InfraLayerModule())
-                .build()
+        component = createApplicationComponent()
         component.inject(this)
 
         // LeakCanaryの設定

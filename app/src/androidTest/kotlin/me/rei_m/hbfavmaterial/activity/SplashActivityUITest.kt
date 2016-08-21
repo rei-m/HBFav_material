@@ -20,7 +20,7 @@ import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.repository.UserRepository
 import me.rei_m.hbfavmaterial.service.UserService
-import me.rei_m.hbfavmaterial.util.CustomMatcher
+import me.rei_m.hbfavmaterial.testutil.CustomMatcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.Before
@@ -31,7 +31,7 @@ import org.mockito.Mockito.*
 import javax.inject.Singleton
 
 @RunWith(AndroidJUnit4::class)
-class SplashActivityTest {
+class SplashActivityUITest {
 
     @Rule
     @JvmField
@@ -42,7 +42,7 @@ class SplashActivityTest {
 
             val app = InstrumentationRegistry.getTargetContext().applicationContext as App
 
-            val appComponent = DaggerSplashActivityTest_TestApplicationComponent.builder()
+            val appComponent = DaggerSplashActivityUITest_TestApplicationComponent.builder()
                     .applicationModule(ApplicationModule(app))
                     .infraLayerModule(InfraLayerModule())
                     .build()
@@ -207,8 +207,7 @@ class SplashActivityTest {
     @Module
     class TestInitializeFragmentModule() : FragmentModule() {
 
-        override fun createInitializePresenter(context: Context,
-                                               userRepository: UserRepository,
+        override fun createInitializePresenter(userRepository: UserRepository,
                                                userService: UserService): InitializeContact.Actions {
             return object : InitializeContact.Actions {
                 override fun onCreate(view: InitializeContact.View) {

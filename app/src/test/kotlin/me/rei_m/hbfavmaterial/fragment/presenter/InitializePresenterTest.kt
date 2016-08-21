@@ -8,9 +8,10 @@ import okhttp3.ResponseBody
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
+import org.mockito.runners.MockitoJUnitRunner
 import retrofit2.Response
 import retrofit2.adapter.rxjava.HttpException
 import rx.Observable
@@ -21,6 +22,7 @@ import rx.schedulers.Schedulers
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
+@RunWith(MockitoJUnitRunner::class)
 class InitializePresenterTest {
 
     @Mock
@@ -34,7 +36,6 @@ class InitializePresenterTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
 
         doAnswer { Unit }.`when`(view).navigateToMain()
         doAnswer { Unit }.`when`(view).showProgress()
@@ -84,10 +85,7 @@ class InitializePresenterTest {
 
         doAnswer { Unit }.`when`(userRepository).store(UserEntity("success"))
 
-        `when`(userService.confirmExistingUserId("success")).thenReturn(Observable.create {
-            it.onNext(true)
-            it.onCompleted()
-        })
+        `when`(userService.confirmExistingUserId("success")).thenReturn(Observable.just(true))
 
         val presenter = InitializePresenter(userRepository, userService)
         presenter.onCreate(view)
@@ -105,10 +103,7 @@ class InitializePresenterTest {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
-        `when`(userService.confirmExistingUserId("fail")).thenReturn(Observable.create {
-            it.onNext(false)
-            it.onCompleted()
-        })
+        `when`(userService.confirmExistingUserId("fail")).thenReturn(Observable.just(false))
 
         val presenter = InitializePresenter(userRepository, userService)
         presenter.onCreate(view)
