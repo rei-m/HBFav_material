@@ -55,7 +55,7 @@ open class ActivityNavigator {
         activity.startActivityForResult(intentToLaunch, REQ_CODE_OAUTH)
     }
 
-    fun navigateToOthersBookmark(activity: Activity, userId: String) {
+    open fun navigateToOthersBookmark(activity: Activity, userId: String) {
         val intentToLaunch = OthersBookmarkActivity.createIntent(activity, userId)
         activity.startActivity(intentToLaunch)
     }

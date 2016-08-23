@@ -83,9 +83,8 @@ class InitializeFragment() : BaseFragment(),
 
     override fun showNetworkErrorMessage() {
         with(activity as AppCompatActivity) {
-            val rootView = findViewById(R.id.fragment_initialize_layout_root)
-            hideKeyBoard(rootView)
-            showSnackbarNetworkError(rootView)
+            hideKeyBoard(activity.window.decorView)
+            showSnackbarNetworkError(activity.window.decorView)
         }
     }
 

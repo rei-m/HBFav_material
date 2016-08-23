@@ -1,11 +1,8 @@
 package me.rei_m.hbfavmaterial.activity
 
-import android.os.Build
 import android.support.design.widget.FloatingActionButton
 import android.view.View
-import me.rei_m.hbfavmaterial.BuildConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.TestApp
 import me.rei_m.hbfavmaterial.fragment.InitializeFragment
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertNotNull
@@ -15,12 +12,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = TestApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class SplashActivityTest {
 
     private lateinit var splashActivity: SplashActivity
@@ -41,7 +34,7 @@ class SplashActivityTest {
 //                .infraLayerModule(InfraLayerModule())
 //                .build()
 //        testApp.component = appComponent
-        
+
         splashActivity = Robolectric.setupActivity(SplashActivity::class.java)
     }
 

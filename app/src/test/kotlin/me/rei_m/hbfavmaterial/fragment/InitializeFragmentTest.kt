@@ -1,16 +1,13 @@
 package me.rei_m.hbfavmaterial.fragment
 
-import android.os.Build
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import me.rei_m.hbfavmaterial.BuildConfig
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.TestApp
-import me.rei_m.hbfavmaterial.activity.SplashActivity
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
+import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
@@ -19,13 +16,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-        application = TestApp::class,
-        sdk = intArrayOf(Build.VERSION_CODES.LOLLIPOP))
 class InitializeFragmentTest {
 
     lateinit var fragment: InitializeFragment
@@ -53,7 +46,7 @@ class InitializeFragmentTest {
     @Before
     fun setUp() {
         fragment = InitializeFragment.newInstance()
-        SupportFragmentTestUtil.startFragment(fragment, SplashActivity::class.java)
+        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
     }
 
     @Test
