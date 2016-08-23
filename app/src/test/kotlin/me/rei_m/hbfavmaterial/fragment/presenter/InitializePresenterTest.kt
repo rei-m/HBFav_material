@@ -43,7 +43,6 @@ class InitializePresenterTest {
         doAnswer { Unit }.`when`(view).displayInvalidUserIdMessage()
         doAnswer { Unit }.`when`(view).showNetworkErrorMessage()
 
-        RxAndroidPlugins.getInstance().reset()
         RxAndroidPlugins.getInstance().registerSchedulersHook(object : RxAndroidSchedulersHook() {
             override fun getMainThreadScheduler(): Scheduler? {
                 return Schedulers.immediate()
