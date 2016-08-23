@@ -204,7 +204,9 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        with(activity as AppCompatActivity) {
+            showSnackbarNetworkError(activity.window.decorView)
+        }
     }
 
     override fun showProgress() {

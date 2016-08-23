@@ -3,11 +3,14 @@ package me.rei_m.hbfavmaterial.fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
 import android.widget.ListView
+import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entity.ArticleEntity
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
+import me.rei_m.hbfavmaterial.view.adapter.UserListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -16,6 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 import java.util.*
+import org.mockito.Mockito.*
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkedUsersFragmentTest {
@@ -35,29 +39,42 @@ class BookmarkedUsersFragmentTest {
     private val textEmpty: TextView
         get() = view.findViewById(R.id.fragment_list_view_empty) as TextView
 
+    private val progressBar: ProgressBar
+        get() = view.findViewById(R.id.fragment_list_progress_list) as ProgressBar
+
+    private val snackbarTextView: TextView
+        get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
+
+    private fun getString(resId: Int): String {
+        return fragment.getString(resId)
+    }
+
     private val now = Date()
 
-    private val bookmarkEntity = BookmarkEntity(
-            articleEntity = ArticleEntity(
-                    title = "ArticleEntity_title",
-                    url = "ArticleEntity_url",
-                    bookmarkCount = 1,
-                    iconUrl = "ArticleEntity_iconUrl",
-                    body = "ArticleEntity_body",
-                    bodyImageUrl = "ArticleEntity_bodyImageUrl"
-            ),
-            description = "BookmarkEntity_description",
-            creator = "BookmarkEntity_creator",
-            date = now,
-            bookmarkIconUrl = "BookmarkEntity_bookmarkIconUrl"
-    )
+    private val bookmarkEntity = createTestBookmarkEntity(0)
+
+    private fun createTestBookmarkEntity(no: Int): BookmarkEntity {
+        return BookmarkEntity(
+                articleEntity = ArticleEntity(
+                        title = "ArticleEntity_title_$no",
+                        url = "ArticleEntity_url_$no",
+                        bookmarkCount = no,
+                        iconUrl = "ArticleEntity_iconUrl_$no",
+                        body = "ArticleEntity_body_$no",
+                        bodyImageUrl = "ArticleEntity_bodyImageUrl_$no"
+                ),
+                description = "BookmarkEntity_description_$no",
+                creator = "BookmarkEntity_creator_$no",
+                date = now,
+                bookmarkIconUrl = "BookmarkEntity_bookmarkIconUrl_$no")
+    }
 
     @Before
     fun setUp() {
 
         fragment = BookmarkedUsersFragment.newInstance(bookmarkEntity)
 
-        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
+        SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
     @Test
@@ -65,5 +82,88 @@ class BookmarkedUsersFragmentTest {
         assertThat(listView.visibility, `is`(View.VISIBLE))
         assertThat(layoutRefresh.visibility, `is`(View.VISIBLE))
         assertThat(textEmpty.visibility, `is`(View.GONE))
+        assertThat(fragment.hasOptionsMenu(), `is`(true))
+    }
+
+    @Test
+    fun testShowUserList() {
+
+        val bookmarkList = arrayListOf<BookmarkEntity>().apply {
+            add(createTestBookmarkEntity(1))
+            add(createTestBookmarkEntity(2))
+            add(createTestBookmarkEntity(3))
+            add(createTestBookmarkEntity(4))
+        }
+
+        layoutRefresh.isRefreshing = true
+        fragment.showUserList(bookmarkList)
+
+        val adapter = listView.adapter as UserListAdapter
+
+        assertThat(listView.visibility, `is`(View.VISIBLE))
+        assertThat(adapter.count, `is`(4))
+        assertThat(adapter.getItem(0), `is`(bookmarkList[0]))
+        assertThat(adapter.getItem(3), `is`(bookmarkList[3]))
+
+        assertThat(layoutRefresh.isRefreshing, `is`(false))
+
+        val activity = fragment.activity as CustomDriverActivity
+        assertThat(activity.bookmarkCommentFilter, `is`(fragment.presenter.bookmarkCommentFilter))
+    }
+
+    @Test
+    fun testHideUserList() {
+        fragment.hideUserList()
+        assertThat(listView.visibility, `is`(View.GONE))
+    }
+
+    @Test
+    fun testShowNetworkErrorMessage() {
+        fragment.showNetworkErrorMessage()
+        assertThat(snackbarTextView.visibility, `is`(View.VISIBLE))
+        assertThat(snackbarTextView.text.toString(), `is`(getString(R.string.message_error_network)))
+    }
+
+    @Test
+    fun testShowProgress() {
+        fragment.showProgress()
+        assertThat(progressBar.visibility, `is`(View.VISIBLE))
+    }
+
+    @Test
+    fun testHideProgress() {
+        fragment.hideProgress()
+        assertThat(progressBar.visibility, `is`(View.GONE))
+    }
+
+    @Test
+    fun testShowEmpty() {
+        fragment.showEmpty()
+        assertThat(textEmpty.visibility, `is`(View.VISIBLE))
+    }
+
+    @Test
+    fun testHideEmpty() {
+        fragment.hideEmpty()
+        assertThat(textEmpty.visibility, `is`(View.GONE))
+    }
+
+    @Test
+    fun testNavigateToOthersBookmark() {
+        val navigator = spy(fragment.activityNavigator)
+        doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
+        fragment.activityNavigator = navigator
+        fragment.navigateToOthersBookmark(bookmarkEntity)
+        verify(navigator, times(1)).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
+    }
+
+    class CustomDriverActivity : DriverActivity(),
+            BookmarkedUsersFragment.OnFragmentInteractionListener {
+
+        var bookmarkCommentFilter: BookmarkCommentFilter? = null
+
+        override fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter) {
+            this.bookmarkCommentFilter = bookmarkCommentFilter
+        }
     }
 }
