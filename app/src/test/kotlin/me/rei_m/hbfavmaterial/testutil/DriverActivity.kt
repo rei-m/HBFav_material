@@ -17,8 +17,5 @@ open class DriverActivity : BaseActivity() {
         val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         findViewById(R.id.fab)?.hide()
-        if (savedInstanceState == null) {
-            setFragment(InitializeFragment.newInstance(), InitializeFragment::class.java.simpleName)
-        }
     }
 }
