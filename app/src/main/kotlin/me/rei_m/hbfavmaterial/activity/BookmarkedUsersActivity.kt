@@ -31,7 +31,7 @@ class BookmarkedUsersActivity : BaseSingleActivity(),
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkedUsersFragment.newInstance(bookmarkEntity))
+            setFragment(BookmarkedUsersFragment.newInstance(bookmarkEntity), BookmarkedUsersFragment::class.java.simpleName)
         }
 
         displayTitle(BookmarkCommentFilter.ALL)
