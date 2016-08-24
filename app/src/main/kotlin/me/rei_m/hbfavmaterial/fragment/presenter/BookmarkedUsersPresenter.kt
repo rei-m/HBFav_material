@@ -115,7 +115,7 @@ class BookmarkedUsersPresenter(private val bookmarkService: BookmarkService) : B
         }
     }
 
-    private fun onFindByArticleUrlFailure(e: Throwable) {
+    private fun onFindByArticleUrlFailure(@Suppress("unused") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 
