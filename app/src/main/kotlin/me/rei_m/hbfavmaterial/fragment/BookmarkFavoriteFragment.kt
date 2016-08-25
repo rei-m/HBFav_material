@@ -170,7 +170,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        (activity as AppCompatActivity).showSnackbarNetworkError(activity.window.decorView)
     }
 
     override fun showProgress() {
