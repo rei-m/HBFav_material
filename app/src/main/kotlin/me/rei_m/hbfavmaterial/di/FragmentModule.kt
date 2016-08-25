@@ -16,7 +16,7 @@ open class FragmentModule {
 
     @Provides
     fun provideBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
-        return BookmarkedUsersPresenter(bookmarkService)
+        return createBookmarkedUsersPresenter(bookmarkService)
     }
 
     open fun createBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
@@ -26,6 +26,11 @@ open class FragmentModule {
     @Provides
     fun provideBookmarkFavoritePresenter(userRepository: UserRepository,
                                          bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
+        return createBookmarkFavoritePresenter(userRepository, bookmarkService)
+    }
+
+    open fun createBookmarkFavoritePresenter(userRepository: UserRepository,
+                                             bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
         return BookmarkFavoritePresenter(userRepository, bookmarkService)
     }
 
