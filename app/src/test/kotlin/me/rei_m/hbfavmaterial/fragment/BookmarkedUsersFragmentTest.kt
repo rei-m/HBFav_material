@@ -19,7 +19,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
-import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkedUsersFragmentTest {
@@ -49,8 +48,6 @@ class BookmarkedUsersFragmentTest {
         return fragment.getString(resId)
     }
 
-    private val now = Date()
-
     private val bookmarkEntity = TestUtil.createTestBookmarkEntity(0)
 
     @Before
@@ -62,7 +59,7 @@ class BookmarkedUsersFragmentTest {
     }
 
     @Test
-    fun initialize() {
+    fun testInitialize() {
         assertThat(listView.visibility, `is`(View.VISIBLE))
         assertThat(layoutRefresh.visibility, `is`(View.VISIBLE))
         assertThat(textEmpty.visibility, `is`(View.GONE))
