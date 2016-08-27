@@ -33,13 +33,6 @@ class InitializePresenterTest {
 
     @Before
     fun setUp() {
-
-        doAnswer { Unit }.`when`(view).navigateToMain()
-        doAnswer { Unit }.`when`(view).showProgress()
-        doAnswer { Unit }.`when`(view).hideProgress()
-        doAnswer { Unit }.`when`(view).displayInvalidUserIdMessage()
-        doAnswer { Unit }.`when`(view).showNetworkErrorMessage()
-
         RxAndroidPlugins.getInstance().registerSchedulersHook(object : RxAndroidSchedulersHook() {
             override fun getMainThreadScheduler(): Scheduler? {
                 return Schedulers.immediate()
