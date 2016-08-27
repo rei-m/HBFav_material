@@ -166,6 +166,6 @@ class BookmarkFavoriteFragmentTest {
         doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToBookmark(bookmarkEntity)
-        verify(navigator, times(1)).navigateToBookmark(fragment.activity, bookmarkEntity)
+        verify(navigator).navigateToBookmark(fragment.activity, bookmarkEntity)
     }
 }

@@ -4,12 +4,12 @@ import me.rei_m.hbfavmaterial.entity.ArticleEntity
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.service.BookmarkService
-import me.rei_m.hbfavmaterial.service.UserService
+import me.rei_m.hbfavmaterial.testutil.TestUtil
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
-import org.junit.Test
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -19,7 +19,8 @@ import rx.Scheduler
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.schedulers.Schedulers
-import java.util.Date
+import java.net.HttpURLConnection
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -79,7 +80,7 @@ class BookmarkedUsersPresenterTest {
     }
 
     @Test
-    fun testOnResume_initialize() {
+    fun testOnResume_initialize_success() {
 
         val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         bookmarkList.add(createTestBookmarkEntity(0, ""))
@@ -92,29 +93,166 @@ class BookmarkedUsersPresenterTest {
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1).times(1))).showProgress()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1).times(1))).hideProgress()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1).times(1))).hideEmpty()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1).times(1))).showUserList(bookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
     }
 
     @Test
-    fun testOnPause() {
+    fun testOnResume_initialize_failure() {
 
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url))
+                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+        presenter.onResume()
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
+    }
+
+    @Test
+    fun testOnResume_restart_all() {
+
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(createTestBookmarkEntity(0, ""))
+
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
+
+        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+        presenter.onResume()
+
+        Thread.sleep(100)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
+    }
+
+    @Test
+    fun testOnResume_restart_comment() {
+
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(createTestBookmarkEntity(0, ""))
+        bookmarkList.add(createTestBookmarkEntity(1, "hoge"))
+
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
+
+        val displayedBookmarkList = arrayListOf(bookmarkList[1])
+
+        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
+        presenter.onResume()
+
+        Thread.sleep(100)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(displayedBookmarkList)
     }
 
     @Test
     fun testOnRefreshList() {
 
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(createTestBookmarkEntity(0, ""))
+
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
+
+        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+        presenter.onResume()
+
+        Thread.sleep(100)
+
+        presenter.onRefreshList()
+
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
     }
 
     @Test
-    fun testOnOptionItemSelected() {
+    fun testOnOptionItemSelected_all() {
 
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(createTestBookmarkEntity(0, ""))
+        bookmarkList.add(createTestBookmarkEntity(1, "hoge"))
+
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
+
+        val displayedBookmarkList = arrayListOf(bookmarkList[1])
+
+        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
+        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
+        presenter.onResume()
+
+        Thread.sleep(100)
+
+        presenter.onOptionItemSelected(BookmarkCommentFilter.ALL)
+
+        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(displayedBookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(bookmarkList)
+    }
+
+    @Test
+    fun testOnOptionItemSelected_comment() {
+
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(createTestBookmarkEntity(0, ""))
+        bookmarkList.add(createTestBookmarkEntity(1, "hoge"))
+
+        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
+
+        val displayedBookmarkList = arrayListOf(bookmarkList[1])
+
+        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
+        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+        presenter.onResume()
+
+        Thread.sleep(100)
+
+        presenter.onOptionItemSelected(BookmarkCommentFilter.COMMENT)
+
+        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(displayedBookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(bookmarkList)
     }
 
     @Test
     fun testOnClickUser() {
 
+        val bookmark = createTestBookmarkEntity(0, "")
+
+        doAnswer { Unit }.`when`(view).navigateToOthersBookmark(bookmark)
+
+        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+
+        presenter.onClickUser(bookmark)
+
+        verify(view).navigateToOthersBookmark(bookmark)
     }
 }

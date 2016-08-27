@@ -16,10 +16,10 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 import java.util.*
-import org.mockito.Mockito.*
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkedUsersFragmentTest {
@@ -154,7 +154,7 @@ class BookmarkedUsersFragmentTest {
         doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToOthersBookmark(bookmarkEntity)
-        verify(navigator, times(1)).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
+        verify(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
     }
 
     class CustomDriverActivity : DriverActivity(),

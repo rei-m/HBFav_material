@@ -58,7 +58,7 @@ class UserRepositoryImplTest {
         val userRepository = UserRepositoryImpl(mockContext)
         userRepository.store(UserEntity("test"))
 
-        verify(mockEditor, times(1)).apply()
+        verify(mockEditor).apply()
         assertThat(userRepository.resolve(), `is`(UserEntity("test")))
     }
 
@@ -77,7 +77,7 @@ class UserRepositoryImplTest {
 
         userRepository.delete()
 
-        verify(mockEditor, times(1)).apply()
+        verify(mockEditor).apply()
         assertThat(userRepository.resolve(), `is`(UserEntity("")))
     }
 }

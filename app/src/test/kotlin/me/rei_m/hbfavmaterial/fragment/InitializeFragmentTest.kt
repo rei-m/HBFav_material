@@ -75,7 +75,7 @@ class InitializeFragmentTest {
         fragment.presenter = presenter
         editHatenaId.setText("valid")
         buttonSetHatenaId.performClick()
-        verify(presenter, times(1)).onClickButtonSetId("valid")
+        verify(presenter).onClickButtonSetId("valid")
     }
 
     @Test
@@ -105,6 +105,6 @@ class InitializeFragmentTest {
         doAnswer { Unit }.`when`(navigator).navigateToMain(fragment.activity)
         fragment.navigator = navigator
         fragment.navigateToMain()
-        verify(navigator, times(1)).navigateToMain(fragment.activity)
+        verify(navigator).navigateToMain(fragment.activity)
     }
 }
