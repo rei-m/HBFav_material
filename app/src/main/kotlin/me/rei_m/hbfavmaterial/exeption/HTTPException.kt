@@ -10,8 +10,4 @@ class HTTPException : ProtocolException {
     constructor(statusCode: Int) : super() {
         this.statusCode = statusCode
     }
-
-    constructor(statusCode: Int, detailMessage: String?) : super(detailMessage) {
-        this.statusCode = statusCode
-    }
 }

@@ -6,20 +6,20 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.entity.ArticleEntity
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
+import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.view.adapter.UserListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 import java.util.*
-import org.mockito.Mockito.*
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkedUsersFragmentTest {
@@ -51,23 +51,7 @@ class BookmarkedUsersFragmentTest {
 
     private val now = Date()
 
-    private val bookmarkEntity = createTestBookmarkEntity(0)
-
-    private fun createTestBookmarkEntity(no: Int): BookmarkEntity {
-        return BookmarkEntity(
-                articleEntity = ArticleEntity(
-                        title = "ArticleEntity_title_$no",
-                        url = "ArticleEntity_url_$no",
-                        bookmarkCount = no,
-                        iconUrl = "ArticleEntity_iconUrl_$no",
-                        body = "ArticleEntity_body_$no",
-                        bodyImageUrl = "ArticleEntity_bodyImageUrl_$no"
-                ),
-                description = "BookmarkEntity_description_$no",
-                creator = "BookmarkEntity_creator_$no",
-                date = now,
-                bookmarkIconUrl = "BookmarkEntity_bookmarkIconUrl_$no")
-    }
+    private val bookmarkEntity = TestUtil.createTestBookmarkEntity(0)
 
     @Before
     fun setUp() {
@@ -89,10 +73,10 @@ class BookmarkedUsersFragmentTest {
     fun testShowUserList() {
 
         val bookmarkList = arrayListOf<BookmarkEntity>().apply {
-            add(createTestBookmarkEntity(1))
-            add(createTestBookmarkEntity(2))
-            add(createTestBookmarkEntity(3))
-            add(createTestBookmarkEntity(4))
+            add(TestUtil.createTestBookmarkEntity(1))
+            add(TestUtil.createTestBookmarkEntity(2))
+            add(TestUtil.createTestBookmarkEntity(3))
+            add(TestUtil.createTestBookmarkEntity(4))
         }
 
         layoutRefresh.isRefreshing = true
@@ -154,7 +138,7 @@ class BookmarkedUsersFragmentTest {
         doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToOthersBookmark(bookmarkEntity)
-        verify(navigator, times(1)).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
+        verify(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
     }
 
     class CustomDriverActivity : DriverActivity(),
