@@ -48,7 +48,6 @@ class UserRepositoryImplTest {
     fun testStore() {
 
         `when`(mockEditor.putString("KEY_PREF_USER", Gson().toJson(UserEntity("test")))).thenReturn(mockEditor)
-        doAnswer { Unit }.`when`(mockEditor).apply()
 
         `when`(mockPrefs.edit()).thenReturn(mockEditor)
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(null)
@@ -66,7 +65,6 @@ class UserRepositoryImplTest {
     fun testDelete() {
 
         `when`(mockEditor.remove("KEY_PREF_USER")).thenReturn(mockEditor)
-        doAnswer { Unit }.`when`(mockEditor).apply()
 
         `when`(mockPrefs.edit()).thenReturn(mockEditor)
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(Gson().toJson(UserEntity("test")))

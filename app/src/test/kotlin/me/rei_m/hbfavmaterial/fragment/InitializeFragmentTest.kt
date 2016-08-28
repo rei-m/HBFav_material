@@ -71,7 +71,6 @@ class InitializeFragmentTest {
     @Test
     fun testButtonSetHatenaIdClick() {
         val presenter = mock(InitializeContact.Actions::class.java)
-        doAnswer { Unit }.`when`(presenter).onClickButtonSetId("valid")
         fragment.presenter = presenter
         editHatenaId.setText("valid")
         buttonSetHatenaId.performClick()
@@ -102,7 +101,6 @@ class InitializeFragmentTest {
     @Test
     fun testNavigateToMain() {
         val navigator = spy(fragment.navigator)
-        doAnswer { Unit }.`when`(navigator).navigateToMain(fragment.activity)
         fragment.navigator = navigator
         fragment.navigateToMain()
         verify(navigator).navigateToMain(fragment.activity)

@@ -8,15 +8,14 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class BookmarkedUsersPresenter(private val bookmarkService: BookmarkService) : BookmarkedUsersContact.Actions {
+class BookmarkedUsersPresenter(private val bookmarkService: BookmarkService,
+                               private var bookmarkList: List<BookmarkEntity> = mutableListOf()) : BookmarkedUsersContact.Actions {
 
     private lateinit var view: BookmarkedUsersContact.View
 
     private lateinit var bookmarkEntity: BookmarkEntity
 
     private var subscription: CompositeSubscription? = null
-
-    private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
 
     private var isLoading = false
 
@@ -99,10 +98,10 @@ class BookmarkedUsersPresenter(private val bookmarkService: BookmarkService) : B
     }
 
     private fun onFindByArticleUrlSuccess(bookmarkList: List<BookmarkEntity>) {
-        this.bookmarkList.clear()
-        this.bookmarkList.addAll(bookmarkList)
 
-        if (bookmarkList.isEmpty()) {
+        this.bookmarkList = bookmarkList
+
+        if (this.bookmarkList.isEmpty()) {
             view.hideUserList()
             view.showEmpty()
         } else {

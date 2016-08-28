@@ -16,7 +16,8 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -132,7 +133,6 @@ class BookmarkedUsersFragmentTest {
     @Test
     fun testNavigateToOthersBookmark() {
         val navigator = spy(fragment.activityNavigator)
-        doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToOthersBookmark(bookmarkEntity)
         verify(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)

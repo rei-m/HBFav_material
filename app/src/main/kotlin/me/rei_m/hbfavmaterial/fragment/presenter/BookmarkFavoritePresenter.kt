@@ -9,13 +9,12 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class BookmarkFavoritePresenter(private val userRepository: UserRepository,
-                                private val bookmarkService: BookmarkService) : BookmarkFavoriteContact.Actions {
+                                private val bookmarkService: BookmarkService,
+                                private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()) : BookmarkFavoriteContact.Actions {
 
     private lateinit var view: BookmarkFavoriteContact.View
 
     private var subscription: CompositeSubscription? = null
-
-    private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
 
     private var isLoading = false
 

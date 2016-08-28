@@ -61,12 +61,11 @@ class BookmarkedUsersPresenterTest {
 
         `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
 
-        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
-
         val presenter = BookmarkedUsersPresenter(bookmarkService)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByArticleUrl(bookmarkEntity.articleEntity.url)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -83,6 +82,7 @@ class BookmarkedUsersPresenterTest {
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByArticleUrl(bookmarkEntity.articleEntity.url)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
@@ -93,23 +93,14 @@ class BookmarkedUsersPresenterTest {
 
         val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
+        bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
-
-        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
-
-        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        val presenter = BookmarkedUsersPresenter(bookmarkService, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
-        Thread.sleep(100)
-
-        presenter.onPause()
-
-        presenter.onResume()
-
-        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
+        verify(bookmarkService, never()).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
     }
 
     @Test
@@ -119,24 +110,14 @@ class BookmarkedUsersPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
-
         val displayedBookmarkList = arrayListOf(bookmarkList[1])
 
-        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
-
-        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        val presenter = BookmarkedUsersPresenter(bookmarkService, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
         presenter.onResume()
 
-        Thread.sleep(100)
-
-        presenter.onPause()
-
-        presenter.onResume()
-
-        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(displayedBookmarkList)
+        verify(bookmarkService, never()).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(displayedBookmarkList)
     }
 
     @Test
@@ -147,17 +128,12 @@ class BookmarkedUsersPresenterTest {
 
         `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
 
-        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
-
-        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        val presenter = BookmarkedUsersPresenter(bookmarkService, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
-
-        Thread.sleep(100)
-
         presenter.onRefreshList()
 
-        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).findByArticleUrl(bookmarkEntity.articleEntity.url)
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByArticleUrl(bookmarkEntity.articleEntity.url)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
     }
 
@@ -168,23 +144,10 @@ class BookmarkedUsersPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
-
-        val displayedBookmarkList = arrayListOf(bookmarkList[1])
-
-        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
-        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
-
-        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        val presenter = BookmarkedUsersPresenter(bookmarkService, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
-        presenter.onResume()
-
-        Thread.sleep(100)
-
         presenter.onOptionItemSelected(BookmarkCommentFilter.ALL)
 
-        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(displayedBookmarkList)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(bookmarkList)
     }
 
@@ -195,32 +158,19 @@ class BookmarkedUsersPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        `when`(bookmarkService.findByArticleUrl(bookmarkEntity.articleEntity.url)).thenReturn(Observable.just(bookmarkList))
-
         val displayedBookmarkList = arrayListOf(bookmarkList[1])
 
-        doAnswer { Unit }.`when`(view).showUserList(bookmarkList)
-        doAnswer { Unit }.`when`(view).showUserList(displayedBookmarkList)
-
-        val presenter = BookmarkedUsersPresenter(bookmarkService)
+        val presenter = BookmarkedUsersPresenter(bookmarkService, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
-        presenter.onResume()
-
-        Thread.sleep(100)
-
         presenter.onOptionItemSelected(BookmarkCommentFilter.COMMENT)
 
-        verify(bookmarkService).findByArticleUrl(bookmarkEntity.articleEntity.url)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(displayedBookmarkList)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(bookmarkList)
     }
 
     @Test
     fun testOnClickUser() {
 
         val bookmark = TestUtil.createTestBookmarkEntity(0)
-
-        doAnswer { Unit }.`when`(view).navigateToOthersBookmark(bookmark)
 
         val presenter = BookmarkedUsersPresenter(bookmarkService)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
