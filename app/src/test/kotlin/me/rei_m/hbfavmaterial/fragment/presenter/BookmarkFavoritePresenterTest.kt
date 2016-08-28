@@ -141,15 +141,16 @@ class BookmarkFavoritePresenterTest {
         finallyDisplayList.addAll(nextBookmarkList)
 
         `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id)).thenReturn(Observable.just(bookmarkList))
-        `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id, 2)).thenReturn(Observable.just(nextBookmarkList))
-
-        doAnswer { Unit }.`when`(view).showBookmarkList(finallyDisplayList)
+        doAnswer { Unit }.`when`(view).showBookmarkList(bookmarkList)
 
         val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService)
         presenter.onCreate(view)
         presenter.onResume()
 
         Thread.sleep(100)
+
+        `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id, 2)).thenReturn(Observable.just(nextBookmarkList))
+        doAnswer { Unit }.`when`(view).showBookmarkList(finallyDisplayList)
 
         presenter.onScrollEnd(2)
 
