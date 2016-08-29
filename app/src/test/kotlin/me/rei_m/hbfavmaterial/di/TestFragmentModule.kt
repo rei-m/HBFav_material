@@ -3,7 +3,9 @@ package me.rei_m.hbfavmaterial.di
 import dagger.Module
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoriteContact
+import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserContact
 import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersContact
 import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
 import me.rei_m.hbfavmaterial.repository.UserRepository
@@ -71,6 +73,35 @@ class TestFragmentModule : FragmentModule() {
             }
 
             override fun onScrollEnd(nextIndex: Int) {
+            }
+
+            override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
+            }
+        }
+    }
+
+    override fun createBookmarkUserPresenter(userRepository: UserRepository,
+                                             bookmarkService: BookmarkService): BookmarkUserContact.Actions {
+        return object : BookmarkUserContact.Actions {
+
+            override var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL
+
+            override fun onCreate(view: BookmarkUserContact.View, isOwner: Boolean, bookmarkUserId: String, readAfterFilter: ReadAfterFilter) {
+            }
+
+            override fun onResume() {
+            }
+
+            override fun onPause() {
+            }
+
+            override fun onRefreshList() {
+            }
+
+            override fun onScrollEnd(nextIndex: Int) {
+            }
+
+            override fun onOptionItemSelected(readAfterFilter: ReadAfterFilter) {
             }
 
             override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {

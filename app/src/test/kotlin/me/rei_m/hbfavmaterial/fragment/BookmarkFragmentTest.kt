@@ -5,6 +5,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
+import me.rei_m.hbfavmaterial.testutil.bindView
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.view.widget.bookmark.BookmarkHeaderLayout
@@ -24,20 +25,12 @@ class BookmarkFragmentTest {
     private val activity: CustomDriverActivity
         get() = fragment.activity as CustomDriverActivity
 
-    private val view: View by lazy {
-        fragment.view ?: throw IllegalStateException("fragment's view is Null")
+    private val holder: ViewHolder by lazy {
+        val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
+        ViewHolder(view)
     }
 
     private val bookmarkEntity = TestUtil.createTestBookmarkEntity(0)
-
-    private val bookmarkHeaderLayout: BookmarkHeaderLayout
-        get() = view.findViewById(R.id.fragment_bookmark_layout_header) as BookmarkHeaderLayout
-
-    private val bookmarkContents: BookmarkContentsLayout
-        get() = view.findViewById(R.id.layout_bookmark_contents) as BookmarkContentsLayout
-
-    private val bookmarkCountTextView: BookmarkCountTextView
-        get() = view.findViewById(R.id.fragment_bookmark_text_bookmark_count) as BookmarkCountTextView
 
     @Before
     fun setUp() {
@@ -49,27 +42,36 @@ class BookmarkFragmentTest {
 
     @Test
     fun testInitialize() {
-        assertThat(bookmarkHeaderLayout.visibility, `is`(View.VISIBLE))
-        assertThat(bookmarkContents.visibility, `is`(View.VISIBLE))
-        assertThat(bookmarkCountTextView.visibility, `is`(View.VISIBLE))
+        assertThat(holder.bookmarkHeaderLayout.visibility, `is`(View.VISIBLE))
+        assertThat(holder.bookmarkContents.visibility, `is`(View.VISIBLE))
+        assertThat(holder.bookmarkCountTextView.visibility, `is`(View.VISIBLE))
     }
 
     @Test
     fun testInitialize_clickBookmarkHeaderLayout() {
-        bookmarkHeaderLayout.performClick()
+        holder.bookmarkHeaderLayout.performClick()
         assertThat(activity.isBookmarkUserClicked, `is`(true))
     }
 
     @Test
     fun testInitialize_clickBookmarkContents() {
-        bookmarkContents.performClick()
+        holder.bookmarkContents.performClick()
         assertThat(activity.isBookmarkClicked, `is`(true))
     }
 
     @Test
     fun testInitialize_clickBookmarkCount() {
-        bookmarkCountTextView.performClick()
+        holder.bookmarkCountTextView.performClick()
         assertThat(activity.isBookmarkCountClicked, `is`(true))
+    }
+
+    class ViewHolder(view: View) {
+
+        val bookmarkHeaderLayout by view.bindView<BookmarkHeaderLayout>(R.id.fragment_bookmark_layout_header)
+
+        val bookmarkContents by view.bindView<BookmarkContentsLayout>(R.id.layout_bookmark_contents)
+
+        val bookmarkCountTextView by view.bindView<BookmarkCountTextView>(R.id.fragment_bookmark_text_bookmark_count)
     }
 
     class CustomDriverActivity : DriverActivity(),

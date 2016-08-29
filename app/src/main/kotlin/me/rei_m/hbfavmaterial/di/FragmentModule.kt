@@ -37,6 +37,11 @@ open class FragmentModule {
     @Provides
     fun provideBookmarkUserPresenter(userRepository: UserRepository,
                                      bookmarkService: BookmarkService): BookmarkUserContact.Actions {
+        return createBookmarkUserPresenter(userRepository, bookmarkService)
+    }
+
+    open fun createBookmarkUserPresenter(userRepository: UserRepository,
+                                         bookmarkService: BookmarkService): BookmarkUserContact.Actions {
         return BookmarkUserPresenter(userRepository, bookmarkService)
     }
 

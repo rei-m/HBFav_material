@@ -10,6 +10,7 @@ import me.rei_m.hbfavmaterial.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
+import me.rei_m.hbfavmaterial.testutil.bindView
 import me.rei_m.hbfavmaterial.view.adapter.UserListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
@@ -26,21 +27,10 @@ class BookmarkedUsersFragmentTest {
 
     lateinit var fragment: BookmarkedUsersFragment
 
-    private val view: View by lazy {
-        fragment.view ?: throw IllegalStateException("fragment's view is Null")
+    private val holder: ViewHolder by lazy {
+        val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
+        ViewHolder(view)
     }
-
-    private val listView: ListView
-        get() = view.findViewById(R.id.fragment_list_list) as ListView
-
-    private val layoutRefresh: SwipeRefreshLayout
-        get() = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-
-    private val textEmpty: TextView
-        get() = view.findViewById(R.id.fragment_list_view_empty) as TextView
-
-    private val progressBar: ProgressBar
-        get() = view.findViewById(R.id.fragment_list_progress_list) as ProgressBar
 
     private val snackbarTextView: TextView
         get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
@@ -61,14 +51,14 @@ class BookmarkedUsersFragmentTest {
 
     @Test
     fun testInitialize() {
-        assertThat(listView.visibility, `is`(View.VISIBLE))
-        assertThat(layoutRefresh.visibility, `is`(View.VISIBLE))
-        assertThat(textEmpty.visibility, `is`(View.GONE))
+        assertThat(holder.listView.visibility, `is`(View.VISIBLE))
+        assertThat(holder.layoutRefresh.visibility, `is`(View.VISIBLE))
+        assertThat(holder.textEmpty.visibility, `is`(View.GONE))
         assertThat(fragment.hasOptionsMenu(), `is`(true))
     }
 
     @Test
-    fun testShowUserList() {
+    fun testShowHideUserList() {
 
         val bookmarkList = arrayListOf<BookmarkEntity>().apply {
             add(TestUtil.createTestBookmarkEntity(1))
@@ -77,26 +67,25 @@ class BookmarkedUsersFragmentTest {
             add(TestUtil.createTestBookmarkEntity(4))
         }
 
-        layoutRefresh.isRefreshing = true
+        holder.listView.visibility = View.GONE
+        holder.layoutRefresh.isRefreshing = true
+
         fragment.showUserList(bookmarkList)
 
-        val adapter = listView.adapter as UserListAdapter
+        val adapter = holder.listView.adapter as UserListAdapter
 
-        assertThat(listView.visibility, `is`(View.VISIBLE))
+        assertThat(holder.listView.visibility, `is`(View.VISIBLE))
         assertThat(adapter.count, `is`(4))
         assertThat(adapter.getItem(0), `is`(bookmarkList[0]))
         assertThat(adapter.getItem(3), `is`(bookmarkList[3]))
 
-        assertThat(layoutRefresh.isRefreshing, `is`(false))
+        assertThat(holder.layoutRefresh.isRefreshing, `is`(false))
 
         val activity = fragment.activity as CustomDriverActivity
         assertThat(activity.bookmarkCommentFilter, `is`(fragment.presenter.bookmarkCommentFilter))
-    }
 
-    @Test
-    fun testHideUserList() {
         fragment.hideUserList()
-        assertThat(listView.visibility, `is`(View.GONE))
+        assertThat(holder.listView.visibility, `is`(View.GONE))
     }
 
     @Test
@@ -107,27 +96,25 @@ class BookmarkedUsersFragmentTest {
     }
 
     @Test
-    fun testShowProgress() {
+    fun testShowHideProgress() {
+        holder.progressBar.visibility = View.GONE
+
         fragment.showProgress()
-        assertThat(progressBar.visibility, `is`(View.VISIBLE))
-    }
+        assertThat(holder.progressBar.visibility, `is`(View.VISIBLE))
 
-    @Test
-    fun testHideProgress() {
         fragment.hideProgress()
-        assertThat(progressBar.visibility, `is`(View.GONE))
+        assertThat(holder.progressBar.visibility, `is`(View.GONE))
     }
 
     @Test
-    fun testShowEmpty() {
+    fun testShowHideEmpty() {
+        holder.textEmpty.visibility = View.GONE
+
         fragment.showEmpty()
-        assertThat(textEmpty.visibility, `is`(View.VISIBLE))
-    }
+        assertThat(holder.textEmpty.visibility, `is`(View.VISIBLE))
 
-    @Test
-    fun testHideEmpty() {
         fragment.hideEmpty()
-        assertThat(textEmpty.visibility, `is`(View.GONE))
+        assertThat(holder.textEmpty.visibility, `is`(View.GONE))
     }
 
     @Test
@@ -146,5 +133,12 @@ class BookmarkedUsersFragmentTest {
         override fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter) {
             this.bookmarkCommentFilter = bookmarkCommentFilter
         }
+    }
+
+    class ViewHolder(view: View) {
+        val listView by view.bindView<ListView>(R.id.fragment_list_list)
+        val layoutRefresh by view.bindView<SwipeRefreshLayout>(R.id.fragment_list_refresh)
+        val textEmpty by view.bindView<TextView>(R.id.fragment_list_view_empty)
+        val progressBar by view.bindView<ProgressBar>(R.id.fragment_list_progress_list)
     }
 }
