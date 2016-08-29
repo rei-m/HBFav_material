@@ -69,11 +69,11 @@ class BookmarkFragment() : BaseFragment(), MovableWithAnimation {
             }
         }
 
-        setContainerWidth(container!!)
+        container?.let { setContainerWidth(it) }
 
         return view
     }
-    
+
     override fun onDetach() {
         super.onDetach()
         listener = null

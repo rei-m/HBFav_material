@@ -72,8 +72,6 @@ class InitializePresenterTest {
 
         `when`(userRepository.resolve()).thenReturn(UserEntity(""))
 
-        doAnswer { Unit }.`when`(userRepository).store(UserEntity("success"))
-
         `when`(userService.confirmExistingUserId("success")).thenReturn(Observable.just(true))
 
         val presenter = InitializePresenter(userRepository, userService)

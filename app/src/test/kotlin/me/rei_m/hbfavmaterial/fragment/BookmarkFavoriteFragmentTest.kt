@@ -146,7 +146,6 @@ class BookmarkFavoriteFragmentTest {
     fun testNavigateToBookmark() {
         val bookmarkEntity = TestUtil.createTestBookmarkEntity(1)
         val navigator = spy(fragment.activityNavigator)
-        doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToBookmark(bookmarkEntity)
         verify(navigator).navigateToBookmark(fragment.activity, bookmarkEntity)

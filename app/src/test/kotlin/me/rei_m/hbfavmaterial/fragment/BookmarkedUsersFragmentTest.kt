@@ -16,10 +16,10 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
-import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkedUsersFragmentTest {
@@ -49,8 +49,6 @@ class BookmarkedUsersFragmentTest {
         return fragment.getString(resId)
     }
 
-    private val now = Date()
-
     private val bookmarkEntity = TestUtil.createTestBookmarkEntity(0)
 
     @Before
@@ -62,7 +60,7 @@ class BookmarkedUsersFragmentTest {
     }
 
     @Test
-    fun initialize() {
+    fun testInitialize() {
         assertThat(listView.visibility, `is`(View.VISIBLE))
         assertThat(layoutRefresh.visibility, `is`(View.VISIBLE))
         assertThat(textEmpty.visibility, `is`(View.GONE))
@@ -135,7 +133,6 @@ class BookmarkedUsersFragmentTest {
     @Test
     fun testNavigateToOthersBookmark() {
         val navigator = spy(fragment.activityNavigator)
-        doAnswer { Unit }.`when`(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
         fragment.activityNavigator = navigator
         fragment.navigateToOthersBookmark(bookmarkEntity)
         verify(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)

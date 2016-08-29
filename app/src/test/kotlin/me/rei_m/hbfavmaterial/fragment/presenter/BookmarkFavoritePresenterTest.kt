@@ -58,12 +58,11 @@ class BookmarkFavoritePresenterTest {
         `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id))
                 .thenReturn(Observable.just(bookmarkList))
 
-        doAnswer { Unit }.`when`(view).showBookmarkList(bookmarkList)
-
         val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService)
         presenter.onCreate(view)
         presenter.onResume()
 
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByUserIdForFavorite(userRepository.resolve().id)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -83,6 +82,7 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByUserIdForFavorite(userRepository.resolve().id)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideBookmarkList()
@@ -100,9 +100,27 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByUserIdForFavorite(userRepository.resolve().id)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
+    }
+
+    @Test
+    fun testOnResume_initialize_restart() {
+
+        val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
+        bookmarkList.add(TestUtil.createTestBookmarkEntity(2))
+
+        val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService, bookmarkList)
+        presenter.onCreate(view)
+        presenter.onResume()
+
+        verify(bookmarkService, never()).findByUserIdForFavorite(userRepository.resolve().id)
+        verify(view, never()).showProgress()
+        verify(view, never()).hideProgress()
+        verify(view).showBookmarkList(bookmarkList)
     }
 
     @Test
@@ -110,21 +128,24 @@ class BookmarkFavoritePresenterTest {
 
         val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
+        bookmarkList.add(TestUtil.createTestBookmarkEntity(2))
 
-        `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id)).thenReturn(Observable.just(bookmarkList))
+        val nextBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+        nextBookmarkList.add(TestUtil.createTestBookmarkEntity(3))
 
-        doAnswer { Unit }.`when`(view).showBookmarkList(bookmarkList)
+        val finallyDisplayList = mutableListOf<BookmarkEntity>()
+        finallyDisplayList.addAll(bookmarkList)
+        finallyDisplayList.addAll(nextBookmarkList)
 
-        val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService)
+        `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id)).thenReturn(Observable.just(finallyDisplayList))
+
+        val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService, bookmarkList)
         presenter.onCreate(view)
         presenter.onResume()
-
-        Thread.sleep(100)
-
         presenter.onRefreshList()
 
-        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).findByUserIdForFavorite(userRepository.resolve().id)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(bookmarkList)
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByUserIdForFavorite(userRepository.resolve().id)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 
     @Test
@@ -132,37 +153,29 @@ class BookmarkFavoritePresenterTest {
 
         val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
+        bookmarkList.add(TestUtil.createTestBookmarkEntity(2))
 
         val nextBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
-        nextBookmarkList.add(TestUtil.createTestBookmarkEntity(2))
+        nextBookmarkList.add(TestUtil.createTestBookmarkEntity(3))
 
         val finallyDisplayList = mutableListOf<BookmarkEntity>()
         finallyDisplayList.addAll(bookmarkList)
         finallyDisplayList.addAll(nextBookmarkList)
 
-        `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id)).thenReturn(Observable.just(bookmarkList))
         `when`(bookmarkService.findByUserIdForFavorite(userRepository.resolve().id, 2)).thenReturn(Observable.just(nextBookmarkList))
 
-        doAnswer { Unit }.`when`(view).showBookmarkList(finallyDisplayList)
-
-        val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService)
+        val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService, bookmarkList)
         presenter.onCreate(view)
         presenter.onResume()
-
-        Thread.sleep(100)
-
         presenter.onScrollEnd(2)
 
-        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).findByUserIdForFavorite(userRepository.resolve().id)
-        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).findByUserIdForFavorite(userRepository.resolve().id, 2)
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
+        verify(bookmarkService, timeout(TimeUnit.SECONDS.toMillis(1))).findByUserIdForFavorite(userRepository.resolve().id, 2)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 
     @Test
     fun testOnClickBookmark() {
         val bookmark = TestUtil.createTestBookmarkEntity(0)
-
-        doAnswer { Unit }.`when`(view).navigateToBookmark(bookmark)
 
         val presenter = BookmarkFavoritePresenter(userRepository, bookmarkService)
         presenter.onCreate(view)
