@@ -7,28 +7,40 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
+import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserContact
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.testutil.bindView
+import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkUserFragmentOwnerTest {
 
     lateinit var fragment: BookmarkUserFragment
-
-    private val activity: CustomDriverActivity
-        get() = fragment.activity as CustomDriverActivity
-
+    
     private val holder: ViewHolder by lazy {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
+    }
+
+    private val viewListFooter: View
+        get() = fragment.view!!.findViewById(R.id.list_footer_loading_layout)
+
+    private val snackbarTextView: TextView
+        get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
+
+    private fun getString(resId: Int): String {
+        return fragment.getString(resId)
     }
 
     @Before
@@ -59,17 +71,28 @@ class BookmarkUserFragmentOwnerTest {
     }
 
     @Test
-    fun testShowBookmarkList() {
+    fun testShowHideBookmarkList() {
 
-        val bookmarkList = mutableListOf<BookmarkEntity>()
-        bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
-        bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
+        val bookmarkList = arrayListOf<BookmarkEntity>().apply {
+            add(TestUtil.createTestBookmarkEntity(1))
+            add(TestUtil.createTestBookmarkEntity(2))
+            add(TestUtil.createTestBookmarkEntity(3))
+            add(TestUtil.createTestBookmarkEntity(4))
+        }
 
         holder.listView.visibility = View.GONE
-        assertThat(holder.listView.visibility, `is`(View.GONE))
+        holder.layoutRefresh.isRefreshing = true
+        assertThat(holder.listView.adapter.count, `is`(0))
 
         fragment.showBookmarkList(bookmarkList)
+
         assertThat(holder.listView.visibility, `is`(View.VISIBLE))
+        assertThat(holder.layoutRefresh.isRefreshing, `is`(false))
+
+        val adapter = holder.listView.adapter as BookmarkListAdapter
+        assertThat(adapter.count, `is`(4))
+        assertThat(adapter.getItem(0), `is`(bookmarkList[0]))
+        assertThat(adapter.getItem(3), `is`(bookmarkList[3]))
 
         fragment.hideBookmarkList()
         assertThat(holder.listView.visibility, `is`(View.GONE))
@@ -77,42 +100,76 @@ class BookmarkUserFragmentOwnerTest {
 
     @Test
     fun testShowNetworkErrorMessage() {
-
+        fragment.showNetworkErrorMessage()
+        assertThat(snackbarTextView.visibility, `is`(View.VISIBLE))
+        assertThat(snackbarTextView.text.toString(), `is`(getString(R.string.message_error_network)))
     }
 
     @Test
-    fun testShowProgress() {
+    fun testShowHideProgress() {
 
+        holder.progressBar.visibility = View.GONE
+
+        fragment.showProgress()
+        assertThat(holder.progressBar.visibility, `is`(View.VISIBLE))
+
+        fragment.hideProgress()
+        assertThat(holder.progressBar.visibility, `is`(View.GONE))
     }
 
     @Test
-    fun testHideProgress() {
+    fun testStartStopAutoLoading() {
 
+        assertThat(holder.listView.footerViewsCount, `is`(0))
+
+        fragment.startAutoLoading()
+        assertThat(viewListFooter.visibility, `is`(View.VISIBLE))
+        assertThat(holder.listView.footerViewsCount, `is`(1))
+
+        fragment.startAutoLoading()
+        assertThat(holder.listView.footerViewsCount, `is`(1))
+
+        fragment.stopAutoLoading()
+        assertThat(holder.listView.footerViewsCount, `is`(0))
+
+        fragment.stopAutoLoading()
+        assertThat(holder.listView.footerViewsCount, `is`(0))
     }
 
     @Test
-    fun testStartAutoLoading() {
+    fun testShowHideEmpty() {
 
-    }
+        holder.textEmpty.visibility = View.GONE
 
-    @Test
-    fun testStopAutoLoading() {
+        fragment.showEmpty()
+        assertThat(holder.textEmpty.visibility, `is`(View.VISIBLE))
 
-    }
-
-    @Test
-    fun testShowEmpty() {
-
-    }
-
-    @Test
-    fun testHideEmpty() {
-
+        fragment.hideEmpty()
+        assertThat(holder.textEmpty.visibility, `is`(View.GONE))
     }
 
     @Test
     fun testNavigateToBookmark() {
+        val bookmarkEntity = TestUtil.createTestBookmarkEntity(1)
+        val navigator = spy(fragment.activityNavigator)
+        fragment.activityNavigator = navigator
+        fragment.navigateToBookmark(bookmarkEntity)
+        verify(navigator).navigateToBookmark(fragment.activity, bookmarkEntity)
+    }
 
+    @Test
+    fun testOnOptionsItemSelected() {
+        val menuItem = RoboMenuItem(R.id.fragment_bookmark_user_menu_filter_bookmark_read_after)
+
+        val presenter = mock(BookmarkUserContact.Actions::class.java)
+        `when`(presenter.readAfterFilter).thenReturn(ReadAfterFilter.AFTER_READ)
+        fragment.presenter = presenter
+
+        fragment.onOptionsItemSelected(menuItem)
+        verify(presenter).onOptionItemSelected(ReadAfterFilter.AFTER_READ)
+
+        val activity = fragment.activity as CustomDriverActivity
+        assertThat(activity.newPageTitle, `is`("ブックマーク - あとで読む"))
     }
 
     class ViewHolder(view: View) {
@@ -125,8 +182,10 @@ class BookmarkUserFragmentOwnerTest {
     class CustomDriverActivity : DriverActivity(),
             BookmarkUserFragment.OnFragmentInteractionListener {
 
-        override fun onChangeFilter(newPageTitle: String) {
+        var newPageTitle: String = ""
 
+        override fun onChangeFilter(newPageTitle: String) {
+            this.newPageTitle = newPageTitle
         }
     }
 }
