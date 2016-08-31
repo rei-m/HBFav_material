@@ -10,15 +10,14 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class BookmarkUserPresenter(private val userRepository: UserRepository,
-                            private val bookmarkService: BookmarkService) : BookmarkUserContact.Actions {
+                            private val bookmarkService: BookmarkService,
+                            private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()) : BookmarkUserContact.Actions {
 
     private lateinit var view: BookmarkUserContact.View
 
     private lateinit var bookmarkUserId: String
 
     private var subscription: CompositeSubscription? = null
-
-    private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
 
     private var isLoading = false
 
@@ -29,10 +28,11 @@ class BookmarkUserPresenter(private val userRepository: UserRepository,
                           bookmarkUserId: String,
                           readAfterFilter: ReadAfterFilter) {
         this.view = view
-        this.bookmarkUserId = if (isOwner)
+        this.bookmarkUserId = if (isOwner) {
             userRepository.resolve().id
-        else
+        } else {
             bookmarkUserId
+        }
         this.readAfterFilter = readAfterFilter
     }
 
