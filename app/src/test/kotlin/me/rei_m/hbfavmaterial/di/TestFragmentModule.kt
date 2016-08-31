@@ -87,6 +87,7 @@ class TestFragmentModule : FragmentModule() {
             override var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL
 
             override fun onCreate(view: BookmarkUserContact.View, isOwner: Boolean, bookmarkUserId: String, readAfterFilter: ReadAfterFilter) {
+                this.readAfterFilter = readAfterFilter
             }
 
             override fun onResume() {

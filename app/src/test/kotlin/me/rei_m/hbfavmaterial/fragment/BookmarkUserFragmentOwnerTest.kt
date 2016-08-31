@@ -14,7 +14,8 @@ import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.testutil.bindView
 import me.rei_m.hbfavmaterial.view.adapter.BookmarkListAdapter
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
+import org.hamcrest.CoreMatchers.nullValue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +28,7 @@ import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 class BookmarkUserFragmentOwnerTest {
 
     lateinit var fragment: BookmarkUserFragment
-    
+
     private val holder: ViewHolder by lazy {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
@@ -52,6 +53,11 @@ class BookmarkUserFragmentOwnerTest {
 
     @Test
     fun testInitialize() {
+
+        assertThat(fragment.arguments.getString("ARG_USER_ID"), `is`(nullValue()))
+        assertThat(fragment.arguments.getBoolean("ARG_OWNER_FLAG"), `is`(true))
+        assertThat(fragment.arguments.getInt("ARG_PAGE_INDEX"), `is`(1))
+
         assertThat(holder.listView.visibility, `is`(View.VISIBLE))
         assertThat(holder.layoutRefresh.visibility, `is`(View.VISIBLE))
         assertThat(holder.textEmpty.visibility, `is`(View.GONE))
@@ -170,6 +176,16 @@ class BookmarkUserFragmentOwnerTest {
 
         val activity = fragment.activity as CustomDriverActivity
         assertThat(activity.newPageTitle, `is`("ブックマーク - あとで読む"))
+    }
+
+    @Test
+    fun testOnSaveInstanceState() {
+        fragment.presenter.readAfterFilter = ReadAfterFilter.AFTER_READ
+        val activity = fragment.activity
+        activity.recreate()
+        val recreatedFragment = activity.supportFragmentManager.fragments[0] as BookmarkUserFragment
+        assertNotSame(fragment, recreatedFragment)
+        assertThat(recreatedFragment.presenter.readAfterFilter, `is`(ReadAfterFilter.AFTER_READ))
     }
 
     class ViewHolder(view: View) {
