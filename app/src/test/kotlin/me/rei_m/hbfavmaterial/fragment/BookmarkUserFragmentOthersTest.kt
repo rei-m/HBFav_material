@@ -1,12 +1,8 @@
 package me.rei_m.hbfavmaterial.fragment
 
-import android.view.View
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
-import org.hamcrest.CoreMatchers
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert
-import org.junit.Assert.*
-import org.junit.Before
+import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -21,7 +17,7 @@ class BookmarkUserFragmentOthersTest {
 
     @Rule
     @JvmField
-    val thrown = ExpectedException.none()
+    val thrown: ExpectedException? = ExpectedException.none()
 
     @Test
     fun testInitialize_validUserId() {
@@ -35,7 +31,7 @@ class BookmarkUserFragmentOthersTest {
 
     @Test
     fun testInitialize_invalidUserId() {
-        thrown.expect(IllegalArgumentException::class.java)
+        thrown?.expect(IllegalArgumentException::class.java)
         fragment = BookmarkUserFragment.newInstance("")
         SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
     }
