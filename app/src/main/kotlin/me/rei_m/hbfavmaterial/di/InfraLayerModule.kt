@@ -4,13 +4,16 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
-import me.rei_m.hbfavmaterial.repository.UserRepository
-import me.rei_m.hbfavmaterial.repository.impl.HatenaTokenRepositoryImpl
-import me.rei_m.hbfavmaterial.repository.impl.TwitterSessionRepositoryImpl
-import me.rei_m.hbfavmaterial.repository.impl.UserRepositoryImpl
+import me.rei_m.hbfavmaterial.domain.repository.*
+import me.rei_m.hbfavmaterial.domain.repository.impl.*
+import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.domain.service.impl.HatenaServiceImpl
+import me.rei_m.hbfavmaterial.domain.service.impl.TwitterServiceImpl
+import me.rei_m.hbfavmaterial.infra.network.HatenaApiService
+import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
+import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
+import me.rei_m.hbfavmaterial.infra.network.RetrofitManager
 import javax.inject.Singleton
 
 @Module
@@ -33,6 +36,13 @@ open class InfraLayerModule() {
 
     @Provides
     @Singleton
+    fun provideHatenaAccountRepository(): HatenaAccountRepository {
+        val hatenaApiService = RetrofitManager.scalar.create(HatenaApiService::class.java)
+        return HatenaAccountRepositoryImpl(hatenaApiService)
+    }
+
+    @Provides
+    @Singleton
     fun provideUserRepository(@ForApplication context: Context): UserRepository {
         return UserRepositoryImpl(context)
     }
@@ -41,5 +51,33 @@ open class InfraLayerModule() {
     @Singleton
     fun provideTwitterSessionRepository(@ForApplication context: Context): TwitterSessionRepository {
         return TwitterSessionRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookmarkRepository(): BookmarkRepository {
+        val hatenaRssService = RetrofitManager.xml.create(HatenaRssService::class.java)
+        val hatenaApiService = RetrofitManager.json.create(HatenaApiService::class.java)
+        return BookmarkRepositoryImpl(hatenaRssService, hatenaApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEntryRepository(): EntryRepository {
+        val hatenaRssService = RetrofitManager.xml.create(HatenaRssService::class.java)
+        val hotEntryRssService = RetrofitManager.xmlForHotEntryAll.create(HatenaRssService::class.java)
+        return EntryRepositoryImpl(hatenaRssService, hotEntryRssService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTwitterService(twitterSessionRepository: TwitterSessionRepository): TwitterService {
+        return TwitterServiceImpl(twitterSessionRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHatenaService(hatenaOAuthManager: HatenaOAuthManager): HatenaService {
+        return HatenaServiceImpl(hatenaOAuthManager)
     }
 }

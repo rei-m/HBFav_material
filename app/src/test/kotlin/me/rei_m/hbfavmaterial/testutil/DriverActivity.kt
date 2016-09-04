@@ -3,10 +3,10 @@ package me.rei_m.hbfavmaterial.testutil
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.activity.BaseActivity
+import me.rei_m.hbfavmaterial.presentation.activity.BaseActivity
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.fragment.InitializeFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
 
 open class DriverActivity : BaseActivity() {
 

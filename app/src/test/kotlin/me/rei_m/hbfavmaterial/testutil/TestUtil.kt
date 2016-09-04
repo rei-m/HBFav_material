@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.testutil
 
-import me.rei_m.hbfavmaterial.entity.ArticleEntity
-import me.rei_m.hbfavmaterial.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.domain.entity.ArticleEntity
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import okhttp3.MediaType
 import okhttp3.ResponseBody
 import retrofit2.Response
