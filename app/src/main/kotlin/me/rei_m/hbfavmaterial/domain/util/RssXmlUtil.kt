@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.util
+package me.rei_m.hbfavmaterial.domain.util
 
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat

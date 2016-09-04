@@ -7,8 +7,8 @@ import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import me.rei_m.hbfavmaterial.infra.network.HatenaApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
-import me.rei_m.hbfavmaterial.util.ApiUtil
-import me.rei_m.hbfavmaterial.util.RssXmlUtil
+import me.rei_m.hbfavmaterial.domain.util.ApiUtil
+import me.rei_m.hbfavmaterial.domain.util.RssXmlUtil
 import org.jsoup.Jsoup
 import rx.Observable
 

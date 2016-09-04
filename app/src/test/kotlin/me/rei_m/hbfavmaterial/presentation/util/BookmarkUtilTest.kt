@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.util
+package me.rei_m.hbfavmaterial.presentation.util
 
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat

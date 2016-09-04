@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.util
+package me.rei_m.hbfavmaterial.domain.util
 
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import java.text.SimpleDateFormat

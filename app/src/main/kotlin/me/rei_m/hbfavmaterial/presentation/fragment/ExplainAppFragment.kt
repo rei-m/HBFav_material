@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
-import me.rei_m.hbfavmaterial.util.AppUtil
+import me.rei_m.hbfavmaterial.presentation.util.AppUtil
 import javax.inject.Inject
 
 /**

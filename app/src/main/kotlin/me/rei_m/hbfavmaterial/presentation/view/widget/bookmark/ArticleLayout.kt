@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
-import me.rei_m.hbfavmaterial.util.BookmarkUtil
+import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 
 /**
  * 記事の情報を表示するレイアウト.

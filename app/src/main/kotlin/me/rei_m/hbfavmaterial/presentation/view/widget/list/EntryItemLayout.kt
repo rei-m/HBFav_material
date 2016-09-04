@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
-import me.rei_m.hbfavmaterial.util.BookmarkUtil
+import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransformation
 
 /**
