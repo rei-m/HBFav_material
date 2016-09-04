@@ -1,21 +1,19 @@
 package me.rei_m.hbfavmaterial.di
 
 import dagger.Module
-import me.rei_m.hbfavmaterial.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkUserContact
-import me.rei_m.hbfavmaterial.fragment.presenter.BookmarkedUsersContact
-import me.rei_m.hbfavmaterial.fragment.presenter.InitializeContact
-import me.rei_m.hbfavmaterial.repository.UserRepository
-import me.rei_m.hbfavmaterial.service.BookmarkService
-import me.rei_m.hbfavmaterial.service.UserService
+import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteContact
+import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserContact
+import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersContact
+import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
+import me.rei_m.hbfavmaterial.usecase.*
 
 @Module
 class TestFragmentModule : FragmentModule() {
-    override fun createInitializePresenter(userRepository: UserRepository,
-                                           userService: UserService): InitializeContact.Actions {
+
+    override fun createInitializePresenter(getUserUsecase: GetUserUsecase, confirmExistingUserIdUsecase: ConfirmExistingUserIdUsecase): InitializeContact.Actions {
         return object : InitializeContact.Actions {
             override fun onCreate(view: InitializeContact.View) {
             }
@@ -31,7 +29,7 @@ class TestFragmentModule : FragmentModule() {
         }
     }
 
-    override fun createBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
+    override fun createBookmarkedUsersPresenter(getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase): BookmarkedUsersContact.Actions {
         return object : BookmarkedUsersContact.Actions {
             override var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
 
@@ -57,8 +55,7 @@ class TestFragmentModule : FragmentModule() {
         }
     }
 
-    override fun createBookmarkFavoritePresenter(userRepository: UserRepository,
-                                                 bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
+    override fun createBookmarkFavoritePresenter(getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase): BookmarkFavoriteContact.Actions {
         return object : BookmarkFavoriteContact.Actions {
             override fun onCreate(view: BookmarkFavoriteContact.View) {
             }
@@ -80,8 +77,7 @@ class TestFragmentModule : FragmentModule() {
         }
     }
 
-    override fun createBookmarkUserPresenter(userRepository: UserRepository,
-                                             bookmarkService: BookmarkService): BookmarkUserContact.Actions {
+    override fun createBookmarkUserPresenter(getUserBookmarksUsecase: GetUserBookmarksUsecase): BookmarkUserContact.Actions {
         return object : BookmarkUserContact.Actions {
 
             override var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL

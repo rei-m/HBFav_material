@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.di
 
 import dagger.Subcomponent
-import me.rei_m.hbfavmaterial.fragment.*
-import me.rei_m.hbfavmaterial.fragment.presenter.NewEntryPresenter
-import me.rei_m.hbfavmaterial.fragment.presenter.SettingPresenter
+import me.rei_m.hbfavmaterial.presentation.fragment.*
+import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryPresenter
+import me.rei_m.hbfavmaterial.presentation.fragment.SettingPresenter
 
 @Subcomponent(modules = arrayOf(FragmentModule::class))
 interface FragmentComponent {

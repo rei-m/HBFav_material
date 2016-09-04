@@ -2,75 +2,65 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.fragment.presenter.*
-import me.rei_m.hbfavmaterial.repository.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.repository.TwitterSessionRepository
-import me.rei_m.hbfavmaterial.repository.UserRepository
-import me.rei_m.hbfavmaterial.service.BookmarkService
-import me.rei_m.hbfavmaterial.service.EntryService
-import me.rei_m.hbfavmaterial.service.TwitterService
-import me.rei_m.hbfavmaterial.service.UserService
+import me.rei_m.hbfavmaterial.presentation.fragment.*
+import me.rei_m.hbfavmaterial.usecase.*
 
 @Module
 open class FragmentModule {
 
     @Provides
-    fun provideBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
-        return createBookmarkedUsersPresenter(bookmarkService)
+    fun provideBookmarkedUsersPresenter(getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase): BookmarkedUsersContact.Actions {
+        return createBookmarkedUsersPresenter(getBookmarkedUsersUsecase)
     }
 
-    open fun createBookmarkedUsersPresenter(bookmarkService: BookmarkService): BookmarkedUsersContact.Actions {
-        return BookmarkedUsersPresenter(bookmarkService)
-    }
-
-    @Provides
-    fun provideBookmarkFavoritePresenter(userRepository: UserRepository,
-                                         bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
-        return createBookmarkFavoritePresenter(userRepository, bookmarkService)
-    }
-
-    open fun createBookmarkFavoritePresenter(userRepository: UserRepository,
-                                             bookmarkService: BookmarkService): BookmarkFavoriteContact.Actions {
-        return BookmarkFavoritePresenter(userRepository, bookmarkService)
+    open fun createBookmarkedUsersPresenter(getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase): BookmarkedUsersContact.Actions {
+        return BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
     }
 
     @Provides
-    fun provideBookmarkUserPresenter(userRepository: UserRepository,
-                                     bookmarkService: BookmarkService): BookmarkUserContact.Actions {
-        return createBookmarkUserPresenter(userRepository, bookmarkService)
+    fun provideBookmarkFavoritePresenter(getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase): BookmarkFavoriteContact.Actions {
+        return createBookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
     }
 
-    open fun createBookmarkUserPresenter(userRepository: UserRepository,
-                                         bookmarkService: BookmarkService): BookmarkUserContact.Actions {
-        return BookmarkUserPresenter(userRepository, bookmarkService)
-    }
-
-    @Provides
-    fun provideHotEntryPresenter(entryService: EntryService): HotEntryContact.Actions {
-        return HotEntryPresenter(entryService)
+    open fun createBookmarkFavoritePresenter(getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase): BookmarkFavoriteContact.Actions {
+        return BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
     }
 
     @Provides
-    fun provideNewEntryPresenter(entryService: EntryService): NewEntryContact.Actions {
-        return NewEntryPresenter(entryService)
+    fun provideBookmarkUserPresenter(getUserBookmarksUsecase: GetUserBookmarksUsecase): BookmarkUserContact.Actions {
+        return createBookmarkUserPresenter(getUserBookmarksUsecase)
+    }
+
+    open fun createBookmarkUserPresenter(getUserBookmarksUsecase: GetUserBookmarksUsecase): BookmarkUserContact.Actions {
+        return BookmarkUserPresenter(getUserBookmarksUsecase)
     }
 
     @Provides
-    fun provideInitializePresenter(userRepository: UserRepository,
-                                   userService: UserService): InitializeContact.Actions {
-        return createInitializePresenter(userRepository, userService)
-    }
-
-    open fun createInitializePresenter(userRepository: UserRepository,
-                                       userService: UserService): InitializeContact.Actions {
-        return InitializePresenter(userRepository, userService)
+    fun provideHotEntryPresenter(getHotEntriesUsecase: GetHotEntriesUsecase): HotEntryContact.Actions {
+        return HotEntryPresenter(getHotEntriesUsecase)
     }
 
     @Provides
-    fun provideSettingPresenter(userRepository: UserRepository,
-                                hatenaTokenRepository: HatenaTokenRepository,
-                                twitterSessionRepository: TwitterSessionRepository,
-                                twitterService: TwitterService): SettingContact.Actions {
-        return SettingPresenter(userRepository, hatenaTokenRepository, twitterSessionRepository, twitterService)
+    fun provideNewEntryPresenter(getNewEntriesUsecase: GetNewEntriesUsecase): NewEntryContact.Actions {
+        return NewEntryPresenter(getNewEntriesUsecase)
+    }
+
+    @Provides
+    fun provideInitializePresenter(getUserUsecase: GetUserUsecase,
+                                   confirmExistingUserIdUsecase: ConfirmExistingUserIdUsecase): InitializeContact.Actions {
+        return createInitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
+    }
+
+    open fun createInitializePresenter(getUserUsecase: GetUserUsecase,
+                                       confirmExistingUserIdUsecase: ConfirmExistingUserIdUsecase): InitializeContact.Actions {
+        return InitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
+    }
+
+    @Provides
+    fun provideSettingPresenter(getUserUsecase: GetUserUsecase,
+                                getHatenaTokenUsecase: GetHatenaTokenUsecase,
+                                getTwitterSessionUsecase: GetTwitterSessionUsecase,
+                                authorizeTwitterUsecase: AuthorizeTwitterUsecase): SettingContact.Actions {
+        return SettingPresenter(getUserUsecase, getHatenaTokenUsecase, getTwitterSessionUsecase, authorizeTwitterUsecase)
     }
 }
