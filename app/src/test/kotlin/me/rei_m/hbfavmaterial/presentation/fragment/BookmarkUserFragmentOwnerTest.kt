@@ -8,14 +8,14 @@ import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserContact
+import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.testutil.bindView
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
-import org.junit.Assert.*
+import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

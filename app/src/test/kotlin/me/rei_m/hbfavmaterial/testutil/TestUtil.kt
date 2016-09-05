@@ -6,12 +6,13 @@ import okhttp3.MediaType
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.adapter.rxjava.HttpException
+import rx.Observable
 import java.util.*
 
 object TestUtil {
 
-    fun createApiErrorResponse(statusCode: Int): HttpException {
-        return HttpException(Response.error<HttpException>(statusCode, ResponseBody.create(MediaType.parse("application/json"), "")))
+    fun <T> createApiErrorResponse(statusCode: Int): Observable<T> {
+        return Observable.error(HttpException(Response.error<HttpException>(statusCode, ResponseBody.create(MediaType.parse("application/json"), ""))))
     }
 
     fun createTestBookmarkEntity(no: Int, description: String = ""): BookmarkEntity {

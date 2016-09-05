@@ -85,7 +85,7 @@ class BookmarkFavoritePresenterTest {
     @Test
     fun testOnResume_initialize_failure() {
 
-        `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+        `when`(getFavoriteBookmarksUsecase.get()).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
         presenter.onCreate(view)

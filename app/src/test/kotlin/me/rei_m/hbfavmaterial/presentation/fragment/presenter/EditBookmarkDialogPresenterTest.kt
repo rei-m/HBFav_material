@@ -11,13 +11,14 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.runners.MockitoJUnitRunner
+import rx.Observable
 import rx.Scheduler
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
 class EditBookmarkDialogPresenterTest {
@@ -53,6 +54,9 @@ class EditBookmarkDialogPresenterTest {
             }
         })
 
+        `when`(getUserUsecase.get()).thenReturn(UserEntity("test", true, false))
+        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity())
+
         presenter = EditBookmarkDialogPresenter(getUserUsecase,
                 getTwitterSessionUsecase,
                 updateUserUsecase,
@@ -69,9 +73,6 @@ class EditBookmarkDialogPresenterTest {
     @Test
     fun testOnViewCreated() {
 
-        `when`(getUserUsecase.get()).thenReturn(UserEntity("test", true, false))
-        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity())
-
         presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
         presenter.onViewCreated()
 
@@ -79,8 +80,8 @@ class EditBookmarkDialogPresenterTest {
         verify(view).setSwitchShareTwitterCheck(false)
         verify(view).setSwitchReadAfterCheck(false)
 
-        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity(1, "test", OAuthTokenEntity()).apply { isShare = true })
         `when`(getUserUsecase.get()).thenReturn(UserEntity("test", false, true))
+        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity(1, "test", OAuthTokenEntity()).apply { isShare = true })
 
         presenter.onViewCreated()
 
@@ -92,25 +93,91 @@ class EditBookmarkDialogPresenterTest {
     @Test
     fun testOnCheckedChangeOpen() {
 
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+
+        presenter.onCheckedChangeOpen(true)
+        verify(updateUserUsecase).updateIsCheckedPostBookmarkOpen(true)
+        verify(view, times(2)).setSwitchOpenCheck(true)
+
+        presenter.onCheckedChangeOpen(false)
+        verify(updateUserUsecase).updateIsCheckedPostBookmarkOpen(false)
+        verify(view).setSwitchOpenCheck(false)
     }
 
     @Test
-    fun testOnCheckedChangeShareTwitter() {
+    fun testOnCheckedChangeShareTwitter_authorized() {
 
+        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity().apply {
+            oAuthTokenEntity = OAuthTokenEntity(token = "token", secretToken = "secretToken")
+        })
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+
+        presenter.onCheckedChangeShareTwitter(true)
+        verify(updateTwitterSessionUsecase).updateIsShare(true)
+
+        presenter.onCheckedChangeShareTwitter(false)
+        verify(updateTwitterSessionUsecase).updateIsShare(false)
+    }
+
+    @Test
+    fun testOnCheckedChangeShareTwitter_unauthorized() {
+
+        `when`(getTwitterSessionUsecase.get()).thenReturn(TwitterSessionEntity().apply {
+            oAuthTokenEntity = OAuthTokenEntity(token = "", secretToken = "")
+        })
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+
+        presenter.onCheckedChangeShareTwitter(true)
+        verify(updateTwitterSessionUsecase, never()).updateIsShare(true)
+        verify(view).startSettingActivity()
+        verify(view).dismissDialog()
+
+        presenter.onCheckedChangeShareTwitter(false)
+        verify(updateTwitterSessionUsecase).updateIsShare(false)
     }
 
     @Test
     fun testOnCheckedChangeReadAfter() {
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
 
+        presenter.onCheckedChangeReadAfter(true)
+        verify(updateUserUsecase).updateIsCheckedPostBookmarkReadAfter(true)
+
+        presenter.onCheckedChangeReadAfter(false)
+        verify(updateUserUsecase).updateIsCheckedPostBookmarkReadAfter(false)
     }
 
     @Test
     fun testOnCheckedChangeDelete() {
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
 
+        presenter.onCheckedChangeDelete(true)
+        verify(view).setSwitchEnableByDelete(false)
+
+        presenter.onCheckedChangeDelete(false)
+        verify(view).setSwitchEnableByDelete(true)
     }
 
     @Test
-    fun testOnClickButtonOk() {
+    fun testOnClickButtonOk_delete_success() {
 
+        `when`(deleteBookmarkUsecase.delete("http://hogehoge")).thenReturn(Observable.just(Unit))
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+        presenter.onResume()
+        presenter.onClickButtonOk(true, "", false, false, false)
+
+        verify(deleteBookmarkUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).delete("http://hogehoge")
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).dismissDialog()
     }
 }

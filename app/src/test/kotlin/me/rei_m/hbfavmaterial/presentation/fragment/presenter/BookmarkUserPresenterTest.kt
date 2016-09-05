@@ -130,7 +130,7 @@ class BookmarkUserPresenterTest {
     @Test
     fun testOnResume_initialize_failure() {
 
-        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)

@@ -146,7 +146,7 @@ class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
                 }))
     }
 
-    private fun onDeleteBookmarkSuccess(@Suppress("unused") void: Void?) {
+    private fun onDeleteBookmarkSuccess(@Suppress("unused") unit: Unit) {
         view.dismissDialog()
     }
 

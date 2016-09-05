@@ -109,7 +109,7 @@ class InitializePresenterTest {
         `when`(getUserUsecase.get()).thenReturn(UserEntity(""))
 
         `when`(confirmExistingUserIdUsecase.confirm("fail"))
-                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_NOT_FOUND)))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_NOT_FOUND))
 
         val presenter = InitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
         presenter.onCreate(view)
@@ -127,7 +127,7 @@ class InitializePresenterTest {
         `when`(getUserUsecase.get()).thenReturn(UserEntity(""))
 
         `when`(confirmExistingUserIdUsecase.confirm("fail"))
-                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = InitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
         presenter.onCreate(view)

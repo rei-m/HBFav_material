@@ -24,5 +24,5 @@ interface HatenaService {
                        tags: List<String> = listOf()): Observable<BookmarkEditEntity>
 
     fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String): Observable<Void?>
+                       urlString: String): Observable<Unit>
 }
