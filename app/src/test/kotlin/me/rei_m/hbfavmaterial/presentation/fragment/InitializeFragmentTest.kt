@@ -6,8 +6,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
+import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
@@ -23,18 +23,10 @@ class InitializeFragmentTest {
 
     lateinit var fragment: InitializeFragment
 
-    private val view: View by lazy {
-        fragment.view ?: throw IllegalStateException("fragment's view is Null")
+    private val holder: ViewHolder by lazy {
+        val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
+        ViewHolder(view)
     }
-
-    private val editHatenaId: EditText
-        get() = view.findViewById(R.id.fragment_initialize_edit_hatena_id) as EditText
-
-    private val buttonSetHatenaId: Button
-        get() = view.findViewById(R.id.fragment_initialize_button_set_hatena_id) as Button
-
-    private val textInputLayoutHatenaId: TextInputLayout
-        get() = view.findViewById(R.id.fragment_initialize_layout_hatena_id) as TextInputLayout
 
     private val snackbarTextView: TextView
         get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
@@ -51,29 +43,29 @@ class InitializeFragmentTest {
 
     @Test
     fun initialize() {
-        assertThat(editHatenaId.visibility, `is`(View.VISIBLE))
-        assertThat(buttonSetHatenaId.visibility, `is`(View.VISIBLE))
-        assertThat(buttonSetHatenaId.isEnabled, `is`(false))
+        assertThat(holder.editHatenaId.visibility, `is`(View.VISIBLE))
+        assertThat(holder.buttonSetHatenaId.visibility, `is`(View.VISIBLE))
+        assertThat(holder.buttonSetHatenaId.isEnabled, `is`(false))
     }
 
     @Test
     fun testButtonSetHatenaIdStatus_input_id() {
-        editHatenaId.setText("a")
-        assertThat(buttonSetHatenaId.isEnabled, `is`(true))
+        holder.editHatenaId.setText("a")
+        assertThat(holder.buttonSetHatenaId.isEnabled, `is`(true))
     }
 
     @Test
     fun testButtonSetHatenaIdStatus_not_input_id() {
-        editHatenaId.setText("")
-        assertThat(buttonSetHatenaId.isEnabled, `is`(false))
+        holder.editHatenaId.setText("")
+        assertThat(holder.buttonSetHatenaId.isEnabled, `is`(false))
     }
 
     @Test
     fun testButtonSetHatenaIdClick() {
         val presenter = mock(InitializeContact.Actions::class.java)
         fragment.presenter = presenter
-        editHatenaId.setText("valid")
-        buttonSetHatenaId.performClick()
+        holder.editHatenaId.setText("valid")
+        holder.buttonSetHatenaId.performClick()
         verify(presenter).onClickButtonSetId("valid")
     }
 
@@ -87,7 +79,7 @@ class InitializeFragmentTest {
     @Test
     fun testDisplayInvalidUserIdMessage() {
         fragment.displayInvalidUserIdMessage()
-        assertThat(textInputLayoutHatenaId.error.toString(), `is`(getString(R.string.message_error_input_user_id)))
+        assertThat(holder.textInputLayoutHatenaId.error.toString(), `is`(getString(R.string.message_error_input_user_id)))
     }
 
     @Test
@@ -104,5 +96,11 @@ class InitializeFragmentTest {
         fragment.navigator = navigator
         fragment.navigateToMain()
         verify(navigator).navigateToMain(fragment.activity)
+    }
+
+    class ViewHolder(view: View) {
+        val editHatenaId by view.bindView<EditText>(R.id.fragment_initialize_edit_hatena_id)
+        val buttonSetHatenaId by view.bindView<Button>(R.id.fragment_initialize_button_set_hatena_id)
+        val textInputLayoutHatenaId by view.bindView<TextInputLayout>(R.id.fragment_initialize_layout_hatena_id)
     }
 }

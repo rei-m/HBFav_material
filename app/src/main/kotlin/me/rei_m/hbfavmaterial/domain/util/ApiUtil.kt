@@ -8,8 +8,9 @@ class ApiUtil private constructor() {
 
     companion object {
 
-        private val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-
+        private val dateFormat: SimpleDateFormat
+            get() = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+        
         fun parseStringToDate(dateString: String): Date {
             return dateFormat.parse(dateString)
         }

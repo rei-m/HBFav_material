@@ -1,8 +1,6 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializePresenter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.ConfirmExistingUserIdUsecase
 import me.rei_m.hbfavmaterial.usecase.GetUserUsecase

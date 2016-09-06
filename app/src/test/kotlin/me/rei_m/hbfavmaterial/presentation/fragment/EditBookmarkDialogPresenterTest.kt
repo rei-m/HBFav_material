@@ -1,10 +1,10 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
-import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogContact
-import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogPresenter
+import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.*
 import org.junit.After
 import org.junit.Before
@@ -18,6 +18,7 @@ import rx.Scheduler
 import rx.android.plugins.RxAndroidPlugins
 import rx.android.plugins.RxAndroidSchedulersHook
 import rx.schedulers.Schedulers
+import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -166,6 +167,38 @@ class EditBookmarkDialogPresenterTest {
     }
 
     @Test
+    fun testOnClickButtonOk_register_success() {
+
+        `when`(registerBookmarkUsecase.register("http://hogehoge", "bookmarkTestTitle", "fuga", arrayListOf(), true, true, true))
+                .thenReturn(Observable.just(BookmarkEditEntity("http://hogehoge", "fuga", false, arrayListOf())))
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+        presenter.onResume()
+        presenter.onClickButtonOk(false, "fuga", true, true, true)
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).dismissDialog()
+    }
+
+    @Test
+    fun testOnClickButtonOk_register_failure() {
+
+        `when`(registerBookmarkUsecase.register("http://hogehoge", "bookmarkTestTitle", "fuga", arrayListOf(), true, true, true))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+        presenter.onResume()
+        presenter.onClickButtonOk(false, "fuga", true, true, true)
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
+    }
+
+    @Test
     fun testOnClickButtonOk_delete_success() {
 
         `when`(deleteBookmarkUsecase.delete("http://hogehoge")).thenReturn(Observable.just(Unit))
@@ -175,9 +208,38 @@ class EditBookmarkDialogPresenterTest {
         presenter.onResume()
         presenter.onClickButtonOk(true, "", false, false, false)
 
-        verify(deleteBookmarkUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).delete("http://hogehoge")
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).dismissDialog()
+    }
+
+    @Test
+    fun testOnClickButtonOk_delete_failure_notFound() {
+
+        `when`(deleteBookmarkUsecase.delete("http://hogehoge")).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_NOT_FOUND))
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+        presenter.onResume()
+        presenter.onClickButtonOk(true, "", false, false, false)
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).dismissDialog()
+    }
+
+    @Test
+    fun testOnClickButtonOk_delete_failure_error() {
+
+        `when`(deleteBookmarkUsecase.delete("http://hogehoge")).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
+
+        presenter.onCreate(view, "http://hogehoge", "bookmarkTestTitle", null)
+        presenter.onViewCreated()
+        presenter.onResume()
+        presenter.onClickButtonOk(true, "", false, false, false)
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
     }
 }

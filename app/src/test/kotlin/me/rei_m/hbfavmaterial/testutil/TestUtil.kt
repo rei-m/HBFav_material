@@ -11,6 +11,8 @@ import java.util.*
 
 object TestUtil {
 
+    private val date: Date = Date()
+
     fun <T> createApiErrorResponse(statusCode: Int): Observable<T> {
         return Observable.error(HttpException(Response.error<HttpException>(statusCode, ResponseBody.create(MediaType.parse("application/json"), ""))))
     }
@@ -27,7 +29,7 @@ object TestUtil {
                 ),
                 description = description,
                 creator = "BookmarkEntity_creator_$no",
-                date = Date(),
+                date = date,
                 bookmarkIconUrl = "BookmarkEntity_bookmarkIconUrl_$no")
     }
 }

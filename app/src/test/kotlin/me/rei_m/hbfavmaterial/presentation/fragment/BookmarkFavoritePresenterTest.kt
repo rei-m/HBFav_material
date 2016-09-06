@@ -1,8 +1,6 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoritePresenter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.GetFavoriteBookmarksUsecase
 import org.junit.After
@@ -55,7 +53,6 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
-        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -74,7 +71,6 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
-        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideBookmarkList()
@@ -91,7 +87,6 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
-        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
@@ -108,7 +103,6 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
 
-        verify(getFavoriteBookmarksUsecase, never()).get()
         verify(view, never()).showProgress()
         verify(view, never()).hideProgress()
         verify(view).showBookmarkList(bookmarkList)
@@ -135,7 +129,6 @@ class BookmarkFavoritePresenterTest {
         presenter.onResume()
         presenter.onRefreshList()
 
-        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 
@@ -159,8 +152,7 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
         presenter.onScrollEnd(2)
-
-        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(2)
+        
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 

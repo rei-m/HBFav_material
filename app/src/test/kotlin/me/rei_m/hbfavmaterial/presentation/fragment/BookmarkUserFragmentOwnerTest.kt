@@ -167,12 +167,10 @@ class BookmarkUserFragmentOwnerTest {
     fun testOnOptionsItemSelected() {
         val menuItem = RoboMenuItem(R.id.fragment_bookmark_user_menu_filter_bookmark_read_after)
 
-        val presenter = mock(BookmarkUserContact.Actions::class.java)
-        `when`(presenter.readAfterFilter).thenReturn(ReadAfterFilter.AFTER_READ)
-        fragment.presenter = presenter
+        `when`(fragment.presenter.readAfterFilter).thenReturn(ReadAfterFilter.AFTER_READ)
 
         fragment.onOptionsItemSelected(menuItem)
-        verify(presenter).onOptionItemSelected(ReadAfterFilter.AFTER_READ)
+        verify(fragment.presenter).onOptionItemSelected(ReadAfterFilter.AFTER_READ)
 
         val activity = fragment.activity as CustomDriverActivity
         assertThat(activity.newPageTitle, `is`("ブックマーク - あとで読む"))
@@ -180,12 +178,15 @@ class BookmarkUserFragmentOwnerTest {
 
     @Test
     fun testOnSaveInstanceState() {
-        fragment.presenter.readAfterFilter = ReadAfterFilter.AFTER_READ
+
+        `when`(fragment.presenter.readAfterFilter).thenReturn(ReadAfterFilter.AFTER_READ)
+
         val activity = fragment.activity
         activity.recreate()
+
         val recreatedFragment = activity.supportFragmentManager.fragments[0] as BookmarkUserFragment
         assertNotSame(fragment, recreatedFragment)
-        assertThat(recreatedFragment.presenter.readAfterFilter, `is`(ReadAfterFilter.AFTER_READ))
+        verify(recreatedFragment.presenter).onCreate(recreatedFragment, true, "", ReadAfterFilter.AFTER_READ)
     }
 
     class ViewHolder(view: View) {
