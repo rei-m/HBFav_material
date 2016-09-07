@@ -1,8 +1,6 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializePresenter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.ConfirmExistingUserIdUsecase
 import me.rei_m.hbfavmaterial.usecase.GetUserUsecase
@@ -109,7 +107,7 @@ class InitializePresenterTest {
         `when`(getUserUsecase.get()).thenReturn(UserEntity(""))
 
         `when`(confirmExistingUserIdUsecase.confirm("fail"))
-                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_NOT_FOUND)))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_NOT_FOUND))
 
         val presenter = InitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
         presenter.onCreate(view)
@@ -127,7 +125,7 @@ class InitializePresenterTest {
         `when`(getUserUsecase.get()).thenReturn(UserEntity(""))
 
         `when`(confirmExistingUserIdUsecase.confirm("fail"))
-                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = InitializePresenter(getUserUsecase, confirmExistingUserIdUsecase)
         presenter.onCreate(view)

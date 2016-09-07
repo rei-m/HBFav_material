@@ -63,7 +63,7 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
                                 isOpen: Boolean,
                                 tags: List<String>): Observable<BookmarkEditEntity> {
 
-        require(tags.size <= MAX_TAGS_COUNT) { "登録可能なタグは ${MAX_TAGS_COUNT} 個までです。" }
+        require(tags.size <= MAX_TAGS_COUNT) { "登録可能なタグは $MAX_TAGS_COUNT 個までです。" }
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 
@@ -81,7 +81,7 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
     }
 
     override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                                urlString: String): Observable<Void?> {
+                                urlString: String): Observable<Unit> {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 

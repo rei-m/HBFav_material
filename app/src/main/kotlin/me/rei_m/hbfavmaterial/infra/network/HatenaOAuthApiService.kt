@@ -17,5 +17,5 @@ interface HatenaOAuthApiService {
                      @Field("tags") tags: Array<String>): Observable<HatenaRestApiBookmarkResponse>
 
     @DELETE("my/bookmark")
-    fun deleteBookmark(@Query("url") url: String): Observable<Void?>
+    fun deleteBookmark(@Query("url") url: String): Observable<Unit>
 }

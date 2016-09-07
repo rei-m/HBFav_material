@@ -1,9 +1,7 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserPresenter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.GetUserBookmarksUsecase
 import org.hamcrest.CoreMatchers.`is`
@@ -56,7 +54,6 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
 
         assertThat(presenter.readAfterFilter, `is`(ReadAfterFilter.ALL))
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
     }
 
     @Test
@@ -69,7 +66,6 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
 
         assertThat(presenter.readAfterFilter, `is`(ReadAfterFilter.AFTER_READ))
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get("hoge", ReadAfterFilter.AFTER_READ)
     }
 
     @Test
@@ -83,7 +79,6 @@ class BookmarkUserPresenterTest {
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -102,7 +97,6 @@ class BookmarkUserPresenterTest {
         presenter.onCreate(view, true, "", ReadAfterFilter.AFTER_READ)
         presenter.onResume()
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.AFTER_READ)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -119,7 +113,6 @@ class BookmarkUserPresenterTest {
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideBookmarkList()
@@ -130,13 +123,12 @@ class BookmarkUserPresenterTest {
     @Test
     fun testOnResume_initialize_failure() {
 
-        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
@@ -153,7 +145,6 @@ class BookmarkUserPresenterTest {
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
-        verify(getUserBookmarksUsecase, never()).get(ReadAfterFilter.ALL)
         verify(view, never()).showProgress()
         verify(view, never()).hideProgress()
         verify(view).showBookmarkList(bookmarkList)
@@ -180,7 +171,6 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
         presenter.onRefreshList()
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 
@@ -205,7 +195,6 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
         presenter.onScrollEnd(2)
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL, 2)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
     }
 
@@ -227,7 +216,6 @@ class BookmarkUserPresenterTest {
         presenter.onOptionItemSelected(ReadAfterFilter.AFTER_READ)
         presenter.onOptionItemSelected(ReadAfterFilter.AFTER_READ)
 
-        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.AFTER_READ)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()

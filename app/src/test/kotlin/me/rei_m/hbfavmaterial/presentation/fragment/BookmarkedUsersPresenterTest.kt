@@ -1,9 +1,7 @@
-package me.rei_m.hbfavmaterial.presentation.fragment.presenter
+package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersPresenter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.GetBookmarkedUsersUsecase
 import org.hamcrest.CoreMatchers.`is`
@@ -67,7 +65,6 @@ class BookmarkedUsersPresenterTest {
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
-        verify(getBookmarkedUsersUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(bookmarkEntity)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
@@ -78,13 +75,12 @@ class BookmarkedUsersPresenterTest {
     fun testOnResume_initialize_failure() {
 
         `when`(getBookmarkedUsersUsecase.get(bookmarkEntity))
-                .thenReturn(Observable.error(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
         val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
-        verify(getBookmarkedUsersUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(bookmarkEntity)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showNetworkErrorMessage()
@@ -101,7 +97,6 @@ class BookmarkedUsersPresenterTest {
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
-        verify(getBookmarkedUsersUsecase, never()).get(bookmarkEntity)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
     }
 
@@ -118,7 +113,6 @@ class BookmarkedUsersPresenterTest {
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
         presenter.onResume()
 
-        verify(getBookmarkedUsersUsecase, never()).get(bookmarkEntity)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(displayedBookmarkList)
     }
 
@@ -135,7 +129,6 @@ class BookmarkedUsersPresenterTest {
         presenter.onResume()
         presenter.onRefreshList()
 
-        verify(getBookmarkedUsersUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(bookmarkEntity)
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
     }
 
