@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogPresenter
 import me.rei_m.hbfavmaterial.usecase.*
 
 @Module
-class ActivityModule() {
+open class ActivityModule() {
 
     @Provides
     fun provideEditBookmarkDialogPresenter(getUserUsecase: GetUserUsecase,
@@ -19,6 +19,20 @@ class ActivityModule() {
                                            registerBookmarkUsecase: RegisterBookmarkUsecase,
                                            deleteBookmarkUsecase: DeleteBookmarkUsecase): EditBookmarkDialogContact.Actions {
 
+        return createEditBookmarkDialogPresenter(getUserUsecase,
+                getTwitterSessionUsecase,
+                updateUserUsecase,
+                updateTwitterSessionUsecase,
+                registerBookmarkUsecase,
+                deleteBookmarkUsecase)
+    }
+
+    open fun createEditBookmarkDialogPresenter(getUserUsecase: GetUserUsecase,
+                                               getTwitterSessionUsecase: GetTwitterSessionUsecase,
+                                               updateUserUsecase: UpdateUserUsecase,
+                                               updateTwitterSessionUsecase: UpdateTwitterSessionUsecase,
+                                               registerBookmarkUsecase: RegisterBookmarkUsecase,
+                                               deleteBookmarkUsecase: DeleteBookmarkUsecase): EditBookmarkDialogContact.Actions {
         return EditBookmarkDialogPresenter(getUserUsecase,
                 getTwitterSessionUsecase,
                 updateUserUsecase,

@@ -129,7 +129,7 @@ class BookmarkFavoritePresenterTest {
         presenter.onResume()
         presenter.onRefreshList()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
     }
 
     @Test
@@ -152,8 +152,8 @@ class BookmarkFavoritePresenterTest {
         presenter.onCreate(view)
         presenter.onResume()
         presenter.onScrollEnd(2)
-        
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
+
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
     }
 
     @Test

@@ -8,7 +8,7 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase,
-                                private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()) : BookmarkFavoriteContact.Actions {
+                                private var bookmarkList: List<BookmarkEntity> = mutableListOf()) : BookmarkFavoriteContact.Actions {
 
     private lateinit var view: BookmarkFavoriteContact.View
 
@@ -80,10 +80,14 @@ class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavo
 
     private fun onFindByUserIdForFavoriteSuccess(bookmarkList: List<BookmarkEntity>, nextIndex: Int) {
         if (nextIndex === 0) {
-            this.bookmarkList.clear()
+            this.bookmarkList = bookmarkList
+        } else {
+            val totalBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+            totalBookmarkList.addAll(this.bookmarkList)
+            totalBookmarkList.addAll(bookmarkList)
+            this.bookmarkList = totalBookmarkList
         }
-        this.bookmarkList.addAll(bookmarkList)
-
+        
         if (this.bookmarkList.isEmpty()) {
             view.hideBookmarkList()
             view.showEmpty()

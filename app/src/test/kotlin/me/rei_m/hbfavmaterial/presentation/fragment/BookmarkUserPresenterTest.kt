@@ -171,7 +171,7 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
         presenter.onRefreshList()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
     }
 
     @Test
@@ -195,7 +195,7 @@ class BookmarkUserPresenterTest {
         presenter.onResume()
         presenter.onScrollEnd(2)
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(finallyDisplayList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
     }
 
     @Test
@@ -220,7 +220,7 @@ class BookmarkUserPresenterTest {
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).startAutoLoading()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(nextBookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(nextBookmarkList)
     }
 
     @Test

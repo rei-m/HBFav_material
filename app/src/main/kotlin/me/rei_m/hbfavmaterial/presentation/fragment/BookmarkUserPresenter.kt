@@ -9,7 +9,7 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmarksUsecase,
-                            private val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()) : BookmarkUserContact.Actions {
+                            private var bookmarkList: List<BookmarkEntity> = mutableListOf()) : BookmarkUserContact.Actions {
 
     private lateinit var view: BookmarkUserContact.View
 
@@ -117,9 +117,13 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
 
     private fun onFindByUserIdSuccess(bookmarkList: List<BookmarkEntity>, nextIndex: Int) {
         if (nextIndex === 0) {
-            this.bookmarkList.clear()
+            this.bookmarkList = bookmarkList
+        } else {
+            val totalBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+            totalBookmarkList.addAll(this.bookmarkList)
+            totalBookmarkList.addAll(bookmarkList)
+            this.bookmarkList = totalBookmarkList
         }
-        this.bookmarkList.addAll(bookmarkList)
 
         if (this.bookmarkList.isEmpty()) {
             view.hideBookmarkList()
