@@ -16,7 +16,6 @@ import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryContact
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.presentation.view.adapter.EntryListAdapter
@@ -197,7 +196,7 @@ class HotEntryFragment() : BaseFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
     override fun showProgress() {

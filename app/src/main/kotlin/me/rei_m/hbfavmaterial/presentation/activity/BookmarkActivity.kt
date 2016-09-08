@@ -171,7 +171,7 @@ class BookmarkActivity : BaseSingleActivity(),
                         fetchBookmark(entryLink)
                     }
                 } else {
-                    showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                    showSnackbarNetworkError()
                 }
             }
             else -> {
@@ -215,7 +215,7 @@ class BookmarkActivity : BaseSingleActivity(),
                 return
             }
         }
-        showSnackbarNetworkError(findViewById(R.id.content))
+        showSnackbarNetworkError()
     }
 
     override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {

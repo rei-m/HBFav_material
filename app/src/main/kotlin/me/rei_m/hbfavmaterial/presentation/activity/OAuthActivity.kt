@@ -108,7 +108,7 @@ class OAuthActivity : BaseSingleActivity() {
                 .subscribe({
                     webView.loadUrl(it)
                 }, {
-                    showSnackbarNetworkError(findViewById(R.id.activity_layout))
+                    showSnackbarNetworkError()
                 }))
     }
 
