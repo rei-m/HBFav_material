@@ -16,7 +16,6 @@ import me.rei_m.hbfavmaterial.enum.FilterItem
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersContact
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
 import rx.subscriptions.CompositeSubscription
@@ -205,7 +204,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun showNetworkErrorMessage() {
         with(activity as AppCompatActivity) {
-            showSnackbarNetworkError(activity.window.decorView)
+            showSnackbarNetworkError()
         }
     }
 

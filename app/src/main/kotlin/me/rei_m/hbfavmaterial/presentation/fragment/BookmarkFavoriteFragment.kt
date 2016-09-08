@@ -17,7 +17,6 @@ import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteContact
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
@@ -170,7 +169,7 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(activity.window.decorView)
+        (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
     override fun showProgress() {

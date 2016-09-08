@@ -13,7 +13,6 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.hideKeyBoard
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
@@ -84,7 +83,7 @@ class InitializeFragment() : BaseFragment(),
     override fun showNetworkErrorMessage() {
         with(activity as AppCompatActivity) {
             hideKeyBoard(activity.window.decorView)
-            showSnackbarNetworkError(activity.window.decorView)
+            showSnackbarNetworkError()
         }
     }
 

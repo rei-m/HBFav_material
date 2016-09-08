@@ -17,11 +17,10 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.presentation.activity.BaseActivity
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extension.toggle
-import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogContact
+import me.rei_m.hbfavmaterial.presentation.activity.BaseActivity
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
@@ -136,7 +135,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
     override fun showProgress() {

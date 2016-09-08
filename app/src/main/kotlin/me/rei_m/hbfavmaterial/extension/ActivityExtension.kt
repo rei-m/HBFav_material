@@ -73,9 +73,7 @@ fun AppCompatActivity.hideKeyBoard(view: View?) {
 /**
  * ネットワークエラー通知ののSnackbarを表示する
  */
-fun AppCompatActivity.showSnackbarNetworkError(view: View?) {
+fun AppCompatActivity.showSnackbarNetworkError() {
 
-    view ?: return
-
-    Snackbar.make(view, getString(R.string.message_error_network), Snackbar.LENGTH_LONG).setAction("Action", null).show()
+    Snackbar.make(findViewById(android.R.id.content), getString(R.string.message_error_network), Snackbar.LENGTH_LONG).setAction("Action", null).show()
 }

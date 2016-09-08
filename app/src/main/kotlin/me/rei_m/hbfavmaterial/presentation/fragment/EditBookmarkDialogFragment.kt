@@ -236,7 +236,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
     override fun showProgress() {

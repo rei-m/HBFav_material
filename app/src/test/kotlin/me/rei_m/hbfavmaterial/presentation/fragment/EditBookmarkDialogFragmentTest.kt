@@ -9,6 +9,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.Matchers.`is`
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -26,6 +27,9 @@ class EditBookmarkDialogFragmentTest {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
     }
+
+    private val snackbarTextView: TextView
+        get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
 
     private fun getString(resId: Int): String {
         return fragment.getString(resId)
@@ -120,36 +124,21 @@ class EditBookmarkDialogFragmentTest {
 
     @Test
     fun testShowNetworkErrorMessage() {
-
+        fragment.showNetworkErrorMessage()
+        assertThat(snackbarTextView.visibility, `is`(View.VISIBLE))
+        assertThat(snackbarTextView.text.toString(), `is`(getString(R.string.message_error_network)))
     }
 
     @Test
-    fun testShowProgress() {
-
-    }
-
-    @Test
-    fun testHideProgress() {
-
+    fun testShowHideProgress() {
+        fragment.showProgress()
+        assertThat(fragment.progressDialog?.isShowing, `is`(true))
+        fragment.hideProgress()
+        assertNull(fragment.progressDialog)
     }
 
     @Test
     fun testStartSettingActivity() {
-
-    }
-
-    @Test
-    fun testDismissDialog() {
-
-    }
-
-    @Test
-    fun testShowProgressDialog() {
-
-    }
-
-    @Test
-    fun testCloseProgressDialog() {
 
     }
 

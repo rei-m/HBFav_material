@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.fragment.SettingContact
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import javax.inject.Inject
 
@@ -141,7 +140,7 @@ class SettingFragment() : BaseFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError(view)
+        (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
     interface OnFragmentInteractionListener {
