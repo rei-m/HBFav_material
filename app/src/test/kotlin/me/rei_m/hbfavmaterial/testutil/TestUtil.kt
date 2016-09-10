@@ -2,6 +2,7 @@ package me.rei_m.hbfavmaterial.testutil
 
 import me.rei_m.hbfavmaterial.domain.entity.ArticleEntity
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import okhttp3.MediaType
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -31,5 +32,20 @@ object TestUtil {
                 creator = "BookmarkEntity_creator_$no",
                 date = date,
                 bookmarkIconUrl = "BookmarkEntity_bookmarkIconUrl_$no")
+    }
+
+    fun createTestEntryEntity(no: Int): EntryEntity {
+        return EntryEntity(
+                articleEntity = ArticleEntity(
+                        title = "ArticleEntity_title_$no",
+                        url = "ArticleEntity_url_$no",
+                        bookmarkCount = no,
+                        iconUrl = "ArticleEntity_iconUrl_$no",
+                        body = "ArticleEntity_body_$no",
+                        bodyImageUrl = "ArticleEntity_bodyImageUrl_$no"
+                ),
+                description = "Description_$no",
+                date = date,
+                subject = "Subject_$no")
     }
 }

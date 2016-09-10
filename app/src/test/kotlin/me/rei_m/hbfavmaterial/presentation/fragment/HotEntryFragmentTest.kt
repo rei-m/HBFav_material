@@ -6,47 +6,41 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
+import me.rei_m.hbfavmaterial.presentation.view.adapter.EntryListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.testutil.bindView
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
 @RunWith(RobolectricTestRunner::class)
-class BookmarkFavoriteFragmentTest {
+class HotEntryFragmentTest {
 
-    lateinit var fragment: BookmarkFavoriteFragment
+    lateinit var fragment: HotEntryFragment
 
     private val holder: ViewHolder by lazy {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
     }
 
-    private val viewListFooter: View
-        get() = fragment.view!!.findViewById(R.id.list_footer_loading_layout)
-
     private val snackbarTextView: TextView
         get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
-
-    private fun getString(resId: Int): String {
-        return fragment.getString(resId)
-    }
 
     @Before
     fun setUp() {
 
-        fragment = BookmarkFavoriteFragment.newInstance(0)
+        fragment = HotEntryFragment.newInstance(0)
 
-        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
+        SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
     @Test
@@ -55,34 +49,33 @@ class BookmarkFavoriteFragmentTest {
         assertThat(holder.layoutRefresh.visibility, `is`(View.VISIBLE))
         assertThat(holder.textEmpty.visibility, `is`(View.GONE))
         assertThat(holder.progressBar.visibility, `is`(View.GONE))
-        assertThat(fragment.hasOptionsMenu(), `is`(false))
+        assertThat(fragment.hasOptionsMenu(), `is`(true))
     }
 
     @Test
-    fun testShowHideBookmarkList() {
-
-        val bookmarkList = arrayListOf<BookmarkEntity>().apply {
-            add(TestUtil.createTestBookmarkEntity(1))
-            add(TestUtil.createTestBookmarkEntity(2))
-            add(TestUtil.createTestBookmarkEntity(3))
-            add(TestUtil.createTestBookmarkEntity(4))
+    fun testShowHideEntryList() {
+        val entryList = arrayListOf<EntryEntity>().apply {
+            add(TestUtil.createTestEntryEntity(1))
+            add(TestUtil.createTestEntryEntity(2))
+            add(TestUtil.createTestEntryEntity(3))
+            add(TestUtil.createTestEntryEntity(4))
         }
 
         holder.listView.visibility = View.GONE
         holder.layoutRefresh.isRefreshing = true
         assertThat(holder.listView.adapter.count, `is`(0))
 
-        fragment.showBookmarkList(bookmarkList)
+        fragment.showEntryList(entryList)
 
         assertThat(holder.listView.visibility, `is`(View.VISIBLE))
         assertThat(holder.layoutRefresh.isRefreshing, `is`(false))
 
-        val adapter = holder.listView.adapter as BookmarkListAdapter
+        val adapter = holder.listView.adapter as EntryListAdapter
         assertThat(adapter.count, `is`(4))
-        assertThat(adapter.getItem(0), `is`(bookmarkList[0]))
-        assertThat(adapter.getItem(3), `is`(bookmarkList[3]))
+        assertThat(adapter.getItem(0), `is`(entryList[0]))
+        assertThat(adapter.getItem(3), `is`(entryList[3]))
 
-        fragment.hideBookmarkList()
+        fragment.hideEntryList()
         assertThat(holder.listView.visibility, `is`(View.GONE))
     }
 
@@ -90,12 +83,11 @@ class BookmarkFavoriteFragmentTest {
     fun testShowNetworkErrorMessage() {
         fragment.showNetworkErrorMessage()
         assertThat(snackbarTextView.visibility, `is`(View.VISIBLE))
-        assertThat(snackbarTextView.text.toString(), `is`(getString(R.string.message_error_network)))
+        assertThat(snackbarTextView.text.toString(), `is`(fragment.getString(R.string.message_error_network)))
     }
 
     @Test
     fun testShowHideProgress() {
-
         holder.progressBar.visibility = View.GONE
 
         fragment.showProgress()
@@ -106,27 +98,7 @@ class BookmarkFavoriteFragmentTest {
     }
 
     @Test
-    fun testStartStopAutoLoading() {
-
-        assertThat(holder.listView.footerViewsCount, `is`(0))
-
-        fragment.startAutoLoading()
-        assertThat(viewListFooter.visibility, `is`(View.VISIBLE))
-        assertThat(holder.listView.footerViewsCount, `is`(1))
-
-        fragment.startAutoLoading()
-        assertThat(holder.listView.footerViewsCount, `is`(1))
-
-        fragment.stopAutoLoading()
-        assertThat(holder.listView.footerViewsCount, `is`(0))
-
-        fragment.stopAutoLoading()
-        assertThat(holder.listView.footerViewsCount, `is`(0))
-    }
-
-    @Test
     fun testShowHideEmpty() {
-
         holder.textEmpty.visibility = View.GONE
 
         fragment.showEmpty()
@@ -138,11 +110,34 @@ class BookmarkFavoriteFragmentTest {
 
     @Test
     fun testNavigateToBookmark() {
-        val bookmarkEntity = TestUtil.createTestBookmarkEntity(1)
+        val entryEntity = TestUtil.createTestEntryEntity(1)
         val navigator = spy(fragment.activityNavigator)
         fragment.activityNavigator = navigator
-        fragment.navigateToBookmark(bookmarkEntity)
-        verify(navigator).navigateToBookmark(fragment.activity, bookmarkEntity)
+        fragment.navigateToBookmark(entryEntity)
+        verify(navigator).navigateToBookmark(fragment.activity, entryEntity)
+    }
+
+    @Test
+    fun testOnOptionsItemSelected() {
+        val menuItem = RoboMenuItem(R.id.fragment_entry_menu_category_animation_and_game)
+
+        `when`(fragment.presenter.entryTypeFilter).thenReturn(EntryTypeFilter.ANIMATION_AND_GAME)
+
+        fragment.onOptionsItemSelected(menuItem)
+        verify(fragment.presenter).onOptionItemSelected(EntryTypeFilter.ANIMATION_AND_GAME)
+
+        val activity = fragment.activity as CustomDriverActivity
+        assertThat(activity.newPageTitle, `is`(fragment.pageTitle))
+    }
+
+    class CustomDriverActivity : DriverActivity(),
+            HotEntryFragment.OnFragmentInteractionListener {
+
+        var newPageTitle = ""
+
+        override fun onChangeFilter(newPageTitle: String) {
+            this.newPageTitle = newPageTitle
+        }
     }
 
     class ViewHolder(view: View) {

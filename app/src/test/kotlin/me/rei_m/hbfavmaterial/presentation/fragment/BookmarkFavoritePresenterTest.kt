@@ -27,6 +27,8 @@ class BookmarkFavoritePresenterTest {
     @Mock
     lateinit var view: BookmarkFavoriteContact.View
 
+    lateinit var presenter: BookmarkFavoritePresenter
+
     @Before
     fun setUp() {
         RxAndroidPlugins.getInstance().registerSchedulersHook(object : RxAndroidSchedulersHook() {
@@ -34,10 +36,14 @@ class BookmarkFavoritePresenterTest {
                 return Schedulers.immediate()
             }
         })
+
+        presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
+        presenter.onCreate(view)
     }
 
     @After
     fun tearDown() {
+        presenter.onPause()
         RxAndroidPlugins.getInstance().reset()
     }
 
@@ -49,8 +55,6 @@ class BookmarkFavoritePresenterTest {
 
         `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
-        presenter.onCreate(view)
         presenter.onResume()
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
@@ -67,8 +71,6 @@ class BookmarkFavoritePresenterTest {
 
         `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
-        presenter.onCreate(view)
         presenter.onResume()
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
@@ -83,8 +85,6 @@ class BookmarkFavoritePresenterTest {
 
         `when`(getFavoriteBookmarksUsecase.get()).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase)
-        presenter.onCreate(view)
         presenter.onResume()
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
@@ -93,19 +93,24 @@ class BookmarkFavoritePresenterTest {
     }
 
     @Test
-    fun testOnResume_initialize_restart() {
+    fun testOnResume_restart() {
 
         val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(2))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase, bookmarkList)
-        presenter.onCreate(view)
+        `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(bookmarkList))
+
         presenter.onResume()
 
-        verify(view, never()).showProgress()
-        verify(view, never()).hideProgress()
-        verify(view).showBookmarkList(bookmarkList)
+        Thread.sleep(1000)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(getFavoriteBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get()
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(bookmarkList)
     }
 
     @Test
@@ -122,11 +127,14 @@ class BookmarkFavoritePresenterTest {
         finallyDisplayList.addAll(bookmarkList)
         finallyDisplayList.addAll(nextBookmarkList)
 
+        `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(bookmarkList))
+
+        presenter.onResume()
+
+        Thread.sleep(1000)
+
         `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(finallyDisplayList))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase, bookmarkList)
-        presenter.onCreate(view)
-        presenter.onResume()
         presenter.onRefreshList()
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
@@ -146,11 +154,14 @@ class BookmarkFavoritePresenterTest {
         finallyDisplayList.addAll(bookmarkList)
         finallyDisplayList.addAll(nextBookmarkList)
 
+        `when`(getFavoriteBookmarksUsecase.get()).thenReturn(Observable.just(bookmarkList))
+
+        presenter.onResume()
+
+        Thread.sleep(1000)
+
         `when`(getFavoriteBookmarksUsecase.get(2)).thenReturn(Observable.just(nextBookmarkList))
 
-        val presenter = BookmarkFavoritePresenter(getFavoriteBookmarksUsecase, bookmarkList)
-        presenter.onCreate(view)
-        presenter.onResume()
         presenter.onScrollEnd(2)
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)

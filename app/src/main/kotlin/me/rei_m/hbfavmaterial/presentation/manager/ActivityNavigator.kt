@@ -24,7 +24,7 @@ open class ActivityNavigator {
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToBookmark(activity: Activity, entryEntity: EntryEntity) {
+    open fun navigateToBookmark(activity: Activity, entryEntity: EntryEntity) {
         val intentToLaunch = BookmarkActivity.createIntent(activity, entryEntity)
         activity.startActivity(intentToLaunch)
     }

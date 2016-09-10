@@ -14,11 +14,11 @@ class HotEntryPresenter(private val getHotEntriesUsecase: GetHotEntriesUsecase) 
 
     private var subscription: CompositeSubscription? = null
 
-    private val entryList: MutableList<EntryEntity> = mutableListOf()
-
     private var isLoading = false
 
     override var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+
+    private var entryList: List<EntryEntity> = listOf()
 
     override fun onCreate(view: HotEntryContact.View,
                           entryTypeFilter: EntryTypeFilter) {
@@ -94,10 +94,7 @@ class HotEntryPresenter(private val getHotEntriesUsecase: GetHotEntriesUsecase) 
     }
 
     private fun onFindByHotEntryByTypeSuccess(entryList: List<EntryEntity>) {
-
-        this.entryList.clear()
-        this.entryList.addAll(entryList)
-
+        this.entryList = entryList
         if (this.entryList.isEmpty()) {
             view.hideEntryList()
             view.showEmpty()

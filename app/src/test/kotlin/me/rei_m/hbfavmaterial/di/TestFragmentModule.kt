@@ -3,10 +3,7 @@ package me.rei_m.hbfavmaterial.di
 import dagger.Module
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersContact
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
+import me.rei_m.hbfavmaterial.presentation.fragment.*
 import me.rei_m.hbfavmaterial.usecase.*
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
@@ -29,5 +26,13 @@ class TestFragmentModule : FragmentModule() {
         val presenter = mock(BookmarkUserContact.Actions::class.java)
         `when`(presenter.readAfterFilter).thenReturn(ReadAfterFilter.ALL)
         return presenter
+    }
+
+    override fun createHotEntryPresenter(getHotEntriesUsecase: GetHotEntriesUsecase): HotEntryContact.Actions {
+        return mock(HotEntryContact.Actions::class.java)
+    }
+
+    override fun createHotEntryPresenter(getNewEntriesUsecase: GetNewEntriesUsecase): NewEntryContact.Actions {
+        return mock(NewEntryContact.Actions::class.java)
     }
 }

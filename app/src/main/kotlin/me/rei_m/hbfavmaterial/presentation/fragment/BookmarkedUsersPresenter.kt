@@ -8,12 +8,13 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase,
-                               private var bookmarkList: List<BookmarkEntity> = mutableListOf()) : BookmarkedUsersContact.Actions {
+class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase) : BookmarkedUsersContact.Actions {
 
     private lateinit var view: BookmarkedUsersContact.View
 
     private lateinit var bookmarkEntity: BookmarkEntity
+
+    private var bookmarkList: List<BookmarkEntity> = listOf()
 
     private var subscription: CompositeSubscription? = null
 
