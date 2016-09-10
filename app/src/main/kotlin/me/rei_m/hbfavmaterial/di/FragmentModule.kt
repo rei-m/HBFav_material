@@ -37,11 +37,19 @@ open class FragmentModule {
 
     @Provides
     fun provideHotEntryPresenter(getHotEntriesUsecase: GetHotEntriesUsecase): HotEntryContact.Actions {
+        return createHotEntryPresenter(getHotEntriesUsecase)
+    }
+
+    open fun createHotEntryPresenter(getHotEntriesUsecase: GetHotEntriesUsecase): HotEntryContact.Actions {
         return HotEntryPresenter(getHotEntriesUsecase)
     }
 
     @Provides
     fun provideNewEntryPresenter(getNewEntriesUsecase: GetNewEntriesUsecase): NewEntryContact.Actions {
+        return createHotEntryPresenter(getNewEntriesUsecase)
+    }
+
+    open fun createHotEntryPresenter(getNewEntriesUsecase: GetNewEntriesUsecase): NewEntryContact.Actions {
         return NewEntryPresenter(getNewEntriesUsecase)
     }
 

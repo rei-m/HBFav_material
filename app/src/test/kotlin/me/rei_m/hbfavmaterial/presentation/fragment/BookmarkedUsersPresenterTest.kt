@@ -30,6 +30,8 @@ class BookmarkedUsersPresenterTest {
     @Mock
     lateinit var view: BookmarkedUsersContact.View
 
+    lateinit var presenter: BookmarkedUsersPresenter
+
     private val bookmarkEntity = TestUtil.createTestBookmarkEntity(1)
 
     @Before
@@ -39,16 +41,17 @@ class BookmarkedUsersPresenterTest {
                 return Schedulers.immediate()
             }
         })
+        presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
     }
 
     @After
     fun tearDown() {
+        presenter.onPause()
         RxAndroidPlugins.getInstance().reset()
     }
 
     @Test
     fun testOnCreate() {
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
         assertThat(presenter.bookmarkCommentFilter, `is`(BookmarkCommentFilter.COMMENT))
     }
@@ -61,7 +64,6 @@ class BookmarkedUsersPresenterTest {
 
         `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
@@ -77,7 +79,6 @@ class BookmarkedUsersPresenterTest {
         `when`(getBookmarkedUsersUsecase.get(bookmarkEntity))
                 .thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
         presenter.onResume()
 
@@ -93,11 +94,20 @@ class BookmarkedUsersPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase, bookmarkList)
+        `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+
         presenter.onResume()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
+        Thread.sleep(1000)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(getBookmarkedUsersUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(bookmarkEntity)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
     }
 
     @Test
@@ -109,11 +119,20 @@ class BookmarkedUsersPresenterTest {
 
         val displayedBookmarkList = arrayListOf(bookmarkList[1])
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase, bookmarkList)
+        `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
+
         presenter.onResume()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(displayedBookmarkList)
+        Thread.sleep(1000)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(getBookmarkedUsersUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(bookmarkEntity)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(displayedBookmarkList)
     }
 
     @Test
@@ -124,12 +143,17 @@ class BookmarkedUsersPresenterTest {
 
         `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase, bookmarkList)
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+
         presenter.onResume()
+
+        Thread.sleep(1000)
+
+        `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onRefreshList()
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showUserList(bookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
     }
 
     @Test
@@ -139,11 +163,17 @@ class BookmarkedUsersPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(0))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1, "hoge"))
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase, bookmarkList)
+        `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.COMMENT)
+
+        presenter.onResume()
+
+        Thread.sleep(1000)
+
         presenter.onOptionItemSelected(BookmarkCommentFilter.ALL)
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(bookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(bookmarkList)
     }
 
     @Test
@@ -155,11 +185,17 @@ class BookmarkedUsersPresenterTest {
 
         val displayedBookmarkList = arrayListOf(bookmarkList[1])
 
-        val presenter = BookmarkedUsersPresenter(getBookmarkedUsersUsecase, bookmarkList)
+        `when`(getBookmarkedUsersUsecase.get(bookmarkEntity)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onCreate(view, bookmarkEntity, BookmarkCommentFilter.ALL)
+
+        presenter.onResume()
+
+        Thread.sleep(1000)
+
         presenter.onOptionItemSelected(BookmarkCommentFilter.COMMENT)
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(1)).showUserList(displayedBookmarkList)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showUserList(displayedBookmarkList)
     }
 
     @Test

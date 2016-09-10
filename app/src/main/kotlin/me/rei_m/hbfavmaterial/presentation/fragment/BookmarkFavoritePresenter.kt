@@ -7,12 +7,13 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase,
-                                private var bookmarkList: List<BookmarkEntity> = mutableListOf()) : BookmarkFavoriteContact.Actions {
+class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase) : BookmarkFavoriteContact.Actions {
 
     private lateinit var view: BookmarkFavoriteContact.View
 
     private var subscription: CompositeSubscription? = null
+
+    private var bookmarkList: List<BookmarkEntity> = mutableListOf()
 
     private var isLoading = false
 
@@ -87,7 +88,7 @@ class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavo
             totalBookmarkList.addAll(bookmarkList)
             this.bookmarkList = totalBookmarkList
         }
-        
+
         if (this.bookmarkList.isEmpty()) {
             view.hideBookmarkList()
             view.showEmpty()

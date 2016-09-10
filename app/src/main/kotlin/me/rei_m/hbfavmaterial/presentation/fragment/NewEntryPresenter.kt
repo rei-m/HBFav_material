@@ -14,7 +14,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
 
     private var subscription: CompositeSubscription? = null
 
-    private val entryList: MutableList<EntryEntity> = mutableListOf()
+    private var entryList: List<EntryEntity> = listOf()
 
     private var isLoading = false
 
@@ -95,9 +95,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
 
     private fun onFindNewEntryByTypeSuccess(entryList: List<EntryEntity>) {
 
-        this.entryList.clear()
-        this.entryList.addAll(entryList)
-
+        this.entryList = entryList
         if (this.entryList.isEmpty()) {
             view.hideEntryList()
             view.showEmpty()

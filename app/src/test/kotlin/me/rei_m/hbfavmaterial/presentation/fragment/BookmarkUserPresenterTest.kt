@@ -30,6 +30,8 @@ class BookmarkUserPresenterTest {
     @Mock
     lateinit var view: BookmarkUserContact.View
 
+    lateinit var presenter: BookmarkUserPresenter
+
     @Before
     fun setUp() {
         RxAndroidPlugins.getInstance().registerSchedulersHook(object : RxAndroidSchedulersHook() {
@@ -37,10 +39,13 @@ class BookmarkUserPresenterTest {
                 return Schedulers.immediate()
             }
         })
+
+        presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
     }
 
     @After
     fun tearDown() {
+        presenter.onPause()
         RxAndroidPlugins.getInstance().reset()
     }
 
@@ -49,7 +54,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(arrayListOf()))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
@@ -61,7 +65,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get("hoge", ReadAfterFilter.AFTER_READ)).thenReturn(Observable.just(arrayListOf()))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, false, "hoge", ReadAfterFilter.AFTER_READ)
         presenter.onResume()
 
@@ -75,7 +78,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
@@ -93,7 +95,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get(ReadAfterFilter.AFTER_READ)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.AFTER_READ)
         presenter.onResume()
 
@@ -109,7 +110,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(arrayListOf()))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
@@ -125,7 +125,6 @@ class BookmarkUserPresenterTest {
 
         `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(TestUtil.createApiErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
 
@@ -141,13 +140,20 @@ class BookmarkUserPresenterTest {
         bookmarkList.add(TestUtil.createTestBookmarkEntity(1))
         bookmarkList.add(TestUtil.createTestBookmarkEntity(2))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase, bookmarkList)
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(bookmarkList))
+
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
+
         presenter.onResume()
 
-        verify(view, never()).showProgress()
-        verify(view, never()).hideProgress()
-        verify(view).showBookmarkList(bookmarkList)
+        Thread.sleep(1000)
+
+        presenter.onPause()
+
+        presenter.onResume()
+
+        verify(getUserBookmarksUsecase, timeout(TimeUnit.SECONDS.toMillis(1))).get(ReadAfterFilter.ALL)
+        verify(view, timeout(TimeUnit.SECONDS.toMillis(1)).times(2)).showBookmarkList(bookmarkList)
     }
 
     @Test
@@ -164,11 +170,15 @@ class BookmarkUserPresenterTest {
         finallyDisplayList.addAll(bookmarkList)
         finallyDisplayList.addAll(nextBookmarkList)
 
-        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(finallyDisplayList))
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase, bookmarkList)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
+
+        Thread.sleep(1000)
+
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(finallyDisplayList))
+
         presenter.onRefreshList()
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
@@ -188,11 +198,15 @@ class BookmarkUserPresenterTest {
         finallyDisplayList.addAll(bookmarkList)
         finallyDisplayList.addAll(nextBookmarkList)
 
-        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL, 2)).thenReturn(Observable.just(nextBookmarkList))
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase, bookmarkList)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
+
+        Thread.sleep(1000)
+
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL, 2)).thenReturn(Observable.just(nextBookmarkList))
+
         presenter.onScrollEnd(2)
 
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(finallyDisplayList)
@@ -208,18 +222,17 @@ class BookmarkUserPresenterTest {
         val nextBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
         nextBookmarkList.add(TestUtil.createTestBookmarkEntity(3))
 
-        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.AFTER_READ)).thenReturn(Observable.just(nextBookmarkList))
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.ALL)).thenReturn(Observable.just(bookmarkList))
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase, bookmarkList)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
         presenter.onResume()
-        presenter.onOptionItemSelected(ReadAfterFilter.AFTER_READ)
+
+        Thread.sleep(1000)
+
+        `when`(getUserBookmarksUsecase.get(ReadAfterFilter.AFTER_READ)).thenReturn(Observable.just(nextBookmarkList))
+
         presenter.onOptionItemSelected(ReadAfterFilter.AFTER_READ)
 
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showProgress()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideProgress()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).hideEmpty()
-        verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).startAutoLoading()
         verify(view, timeout(TimeUnit.SECONDS.toMillis(1))).showBookmarkList(nextBookmarkList)
     }
 
@@ -228,7 +241,6 @@ class BookmarkUserPresenterTest {
 
         val bookmark = TestUtil.createTestBookmarkEntity(0)
 
-        val presenter = BookmarkUserPresenter(getUserBookmarksUsecase)
         presenter.onCreate(view, true, "", ReadAfterFilter.ALL)
 
         presenter.onClickBookmark(bookmark)
