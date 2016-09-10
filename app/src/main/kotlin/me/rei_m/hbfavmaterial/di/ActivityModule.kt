@@ -44,6 +44,11 @@ open class ActivityModule() {
     @Provides
     fun provideEditUserIdDialogPresenter(getUserUsecase: GetUserUsecase,
                                          confirmExistingUserIdUsecase: ConfirmExistingUserIdUsecase): EditUserIdDialogContact.Actions {
+        return createEditUserIdDialogPresenter(getUserUsecase, confirmExistingUserIdUsecase)
+    }
+
+    open fun createEditUserIdDialogPresenter(getUserUsecase: GetUserUsecase,
+                                             confirmExistingUserIdUsecase: ConfirmExistingUserIdUsecase): EditUserIdDialogContact.Actions {
         return EditUserIdDialogPresenter(getUserUsecase, confirmExistingUserIdUsecase)
     }
 }

@@ -27,10 +27,7 @@ class EditBookmarkDialogFragmentTest {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
     }
-
-    private val snackbarTextView: TextView
-        get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
-
+    
     private fun getString(resId: Int): String {
         return fragment.getString(resId)
     }
@@ -120,13 +117,6 @@ class EditBookmarkDialogFragmentTest {
         assertThat(holder.switchReadAfter.isEnabled, `is`(false))
         assertThat(holder.switchOpen.isEnabled, `is`(false))
         assertThat(holder.editBookmark.isEnabled, `is`(false))
-    }
-
-    @Test
-    fun testShowNetworkErrorMessage() {
-        fragment.showNetworkErrorMessage()
-        assertThat(snackbarTextView.visibility, `is`(View.VISIBLE))
-        assertThat(snackbarTextView.text.toString(), `is`(getString(R.string.message_error_network)))
     }
 
     @Test
