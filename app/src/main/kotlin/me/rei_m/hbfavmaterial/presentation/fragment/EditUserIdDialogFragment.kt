@@ -79,18 +79,18 @@ class EditUserIdDialogFragment() : DialogFragment(),
         val editUserId = view.findViewById(R.id.dialog_fragment_edit_user_id_edit_user_id) as EditText
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_user_id_button_cancel) as AppCompatButton
-        buttonCancel.setOnClickListener { v ->
+        buttonCancel.setOnClickListener {
             dismiss()
         }
 
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_user_id_button_ok) as AppCompatButton
-        buttonOk.setOnClickListener { v ->
+        buttonOk.setOnClickListener {
             val inputtedUserId = editUserId.editableText.toString()
             presenter.onClickButtonOk(inputtedUserId)
         }
 
         subscription?.add(RxTextView.textChanges(editUserId)
-                .map { v -> 0 < v.length }
+                .map { 0 < it.length }
                 .subscribe { isEnabled -> buttonOk.toggle(isEnabled) })
 
         return view
@@ -135,7 +135,9 @@ class EditUserIdDialogFragment() : DialogFragment(),
     }
 
     override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError()
+        view?.findViewById(R.id.dialog_fragment_edit_user_id_layout_root)?.let {
+            (activity as AppCompatActivity).showSnackbarNetworkError(it)
+        }
     }
 
     override fun showProgress() {
