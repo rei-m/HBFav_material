@@ -24,12 +24,6 @@ class SettingPresenter(private val getUserUsecase: GetUserUsecase,
         this.view = view
     }
 
-    override fun onClickTwitterAuthorize(activity: Activity) {
-        if (isLoading) return
-        isLoading = true
-        authorizeTwitterUsecase.authorize(activity)
-    }
-
     override fun onViewCreated() {
 
         view.setUserId(getUserUsecase.get().id)
@@ -72,6 +66,12 @@ class SettingPresenter(private val getUserUsecase: GetUserUsecase,
         }
     }
 
+    override fun onClickTwitterAuthorize(activity: Activity) {
+        if (isLoading) return
+        isLoading = true
+        authorizeTwitterUsecase.authorize(activity)
+    }
+    
     override fun onDismissEditUserIdDialog() {
         view.updateUserId(getUserUsecase.get().id)
     }
