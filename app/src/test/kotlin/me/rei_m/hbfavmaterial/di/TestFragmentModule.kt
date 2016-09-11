@@ -35,4 +35,11 @@ class TestFragmentModule : FragmentModule() {
     override fun createHotEntryPresenter(getNewEntriesUsecase: GetNewEntriesUsecase): NewEntryContact.Actions {
         return mock(NewEntryContact.Actions::class.java)
     }
+
+    override fun createSettingPresenter(getUserUsecase: GetUserUsecase,
+                                        getHatenaTokenUsecase: GetHatenaTokenUsecase,
+                                        getTwitterSessionUsecase: GetTwitterSessionUsecase,
+                                        authorizeTwitterUsecase: AuthorizeTwitterUsecase): SettingContact.Actions {
+        return mock(SettingContact.Actions::class.java)
+    }
 }

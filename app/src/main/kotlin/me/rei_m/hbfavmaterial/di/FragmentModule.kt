@@ -69,6 +69,13 @@ open class FragmentModule {
                                 getHatenaTokenUsecase: GetHatenaTokenUsecase,
                                 getTwitterSessionUsecase: GetTwitterSessionUsecase,
                                 authorizeTwitterUsecase: AuthorizeTwitterUsecase): SettingContact.Actions {
+        return createSettingPresenter(getUserUsecase, getHatenaTokenUsecase, getTwitterSessionUsecase, authorizeTwitterUsecase)
+    }
+
+    open fun createSettingPresenter(getUserUsecase: GetUserUsecase,
+                                    getHatenaTokenUsecase: GetHatenaTokenUsecase,
+                                    getTwitterSessionUsecase: GetTwitterSessionUsecase,
+                                    authorizeTwitterUsecase: AuthorizeTwitterUsecase): SettingContact.Actions {
         return SettingPresenter(getUserUsecase, getHatenaTokenUsecase, getTwitterSessionUsecase, authorizeTwitterUsecase)
     }
 }
