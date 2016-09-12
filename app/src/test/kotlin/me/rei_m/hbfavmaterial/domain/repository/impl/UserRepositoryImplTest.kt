@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.domain.repository.impl
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
@@ -9,14 +8,12 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.runners.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class UserRepositoryImplTest {
-
-    @Mock
-    lateinit var mockContext: Context
 
     @Mock
     lateinit var mockPrefs: SharedPreferences
@@ -28,9 +25,8 @@ class UserRepositoryImplTest {
     fun testResolve_initialize() {
 
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(null)
-        `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)
 
-        val userRepository = UserRepositoryImpl(mockContext)
+        val userRepository = UserRepositoryImpl(mockPrefs)
         assertThat(userRepository.resolve(), `is`(UserEntity("")))
     }
 
@@ -38,9 +34,8 @@ class UserRepositoryImplTest {
     fun testResolve_after_set_account() {
 
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(Gson().toJson(UserEntity("test")))
-        `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)
 
-        val userRepository = UserRepositoryImpl(mockContext)
+        val userRepository = UserRepositoryImpl(mockPrefs)
         assertThat(userRepository.resolve(), `is`(UserEntity("test")))
     }
 
@@ -52,9 +47,7 @@ class UserRepositoryImplTest {
         `when`(mockPrefs.edit()).thenReturn(mockEditor)
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(null)
 
-        `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)
-
-        val userRepository = UserRepositoryImpl(mockContext)
+        val userRepository = UserRepositoryImpl(mockPrefs)
         userRepository.store(UserEntity("test"))
 
         verify(mockEditor).apply()
@@ -69,9 +62,7 @@ class UserRepositoryImplTest {
         `when`(mockPrefs.edit()).thenReturn(mockEditor)
         `when`(mockPrefs.getString("KEY_PREF_USER", null)).thenReturn(Gson().toJson(UserEntity("test")))
 
-        `when`(mockContext.getSharedPreferences("UserModel", Context.MODE_PRIVATE)).thenReturn(mockPrefs)
-
-        val userRepository = UserRepositoryImpl(mockContext)
+        val userRepository = UserRepositoryImpl(mockPrefs)
 
         userRepository.delete()
 

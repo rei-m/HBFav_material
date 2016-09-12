@@ -9,13 +9,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /**
- * アプリ内で使用するSharedPreferenceを取得する.
- */
-fun Context.getAppPreferences(key: String): SharedPreferences {
-    return getSharedPreferences(key, Context.MODE_PRIVATE)
-}
-
-/**
  * Asset内のJsonファイルをJSONオブジェクトに変換して取得する.
  */
 fun Context.getAssetToJson(fileName: String): JSONObject {
