@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.R
@@ -31,7 +32,7 @@ open class InfraLayerModule() {
     @Provides
     @Singleton
     fun provideHatenaTokenRepository(@ForApplication context: Context): HatenaTokenRepository {
-        return HatenaTokenRepositoryImpl(context)
+        return HatenaTokenRepositoryImpl(context.getAppPreferences("HatenaModel"))
     }
 
     @Provides
@@ -44,13 +45,14 @@ open class InfraLayerModule() {
     @Provides
     @Singleton
     fun provideUserRepository(@ForApplication context: Context): UserRepository {
-        return UserRepositoryImpl(context)
+        // UserModelから移行したのでキーはそのまま.
+        return UserRepositoryImpl(context.getAppPreferences("UserModel"))
     }
 
     @Provides
     @Singleton
     fun provideTwitterSessionRepository(@ForApplication context: Context): TwitterSessionRepository {
-        return TwitterSessionRepositoryImpl(context)
+        return TwitterSessionRepositoryImpl(context.getAppPreferences("TwitterModel"))
     }
 
     @Provides
@@ -79,5 +81,12 @@ open class InfraLayerModule() {
     @Singleton
     fun provideHatenaService(hatenaOAuthManager: HatenaOAuthManager): HatenaService {
         return HatenaServiceImpl(hatenaOAuthManager)
+    }
+
+    /**
+     * アプリ内で使用するSharedPreferenceを取得する.
+     */
+    private fun Context.getAppPreferences(key: String): SharedPreferences {
+        return getSharedPreferences(key, Context.MODE_PRIVATE)
     }
 }

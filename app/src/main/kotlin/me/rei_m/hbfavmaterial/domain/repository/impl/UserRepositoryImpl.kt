@@ -1,13 +1,11 @@
 package me.rei_m.hbfavmaterial.domain.repository.impl
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
-import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.domain.repository.UserRepository
 
-class UserRepositoryImpl(private val context: Context) : UserRepository {
+class UserRepositoryImpl(private val preferences: SharedPreferences) : UserRepository {
 
     companion object {
         private const val KEY_PREF_USER = "KEY_PREF_USER"
@@ -16,8 +14,7 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
     private var userEntity: UserEntity
 
     init {
-        val pref = getPreferences(context)
-        val userJsonString = pref.getString(KEY_PREF_USER, null)
+        val userJsonString = preferences.getString(KEY_PREF_USER, null)
         userEntity = if (userJsonString != null) {
             Gson().fromJson(userJsonString, UserEntity::class.java)
         } else {
@@ -28,20 +25,14 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
     override fun resolve(): UserEntity = userEntity
 
     override fun store(userEntity: UserEntity) {
-        getPreferences(context)
-                .edit()
+        preferences.edit()
                 .putString(KEY_PREF_USER, Gson().toJson(userEntity))
                 .apply()
         this.userEntity = userEntity
     }
 
     override fun delete() {
-        getPreferences(context).edit().remove(KEY_PREF_USER).apply()
+        preferences.edit().remove(KEY_PREF_USER).apply()
         this.userEntity = UserEntity(id = "")
-    }
-
-    private fun getPreferences(context: Context): SharedPreferences {
-        // UserModelから移行したのでキーはそのまま.
-        return context.getAppPreferences("UserModel")
     }
 }

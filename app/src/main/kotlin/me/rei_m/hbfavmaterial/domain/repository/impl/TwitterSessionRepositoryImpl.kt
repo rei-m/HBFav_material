@@ -1,13 +1,11 @@
 package me.rei_m.hbfavmaterial.domain.repository.impl
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
-import me.rei_m.hbfavmaterial.extension.getAppPreferences
 import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
 
-class TwitterSessionRepositoryImpl(private val context: Context) : TwitterSessionRepository {
+class TwitterSessionRepositoryImpl(private val preferences: SharedPreferences) : TwitterSessionRepository {
 
     companion object {
         private const val KEY_PREF_TWITTER_SESSION = "KEY_PREF_TWITTER_SESSION"
@@ -17,22 +15,20 @@ class TwitterSessionRepositoryImpl(private val context: Context) : TwitterSessio
     private var twitterSessionEntity: TwitterSessionEntity
 
     init {
-        val pref = getPreferences(context)
-        val twitterSessionJsonString = pref.getString(KEY_PREF_TWITTER_SESSION, null)
+        val twitterSessionJsonString = preferences.getString(KEY_PREF_TWITTER_SESSION, null)
         twitterSessionEntity = if (twitterSessionJsonString != null) {
             Gson().fromJson(twitterSessionJsonString, TwitterSessionEntity::class.java)
         } else {
             TwitterSessionEntity()
         }
-        val isShare = pref.getBoolean(KEY_PREF_IS_SHARE_TWITTER, false)
+        val isShare = preferences.getBoolean(KEY_PREF_IS_SHARE_TWITTER, false)
         twitterSessionEntity.isShare = isShare
     }
 
     override fun resolve(): TwitterSessionEntity = twitterSessionEntity
 
     override fun store(twitterSessionEntity: TwitterSessionEntity) {
-        getPreferences(context)
-                .edit()
+        preferences.edit()
                 .putString(KEY_PREF_TWITTER_SESSION, Gson().toJson(twitterSessionEntity))
                 .putBoolean(KEY_PREF_IS_SHARE_TWITTER, twitterSessionEntity.isShare)
                 .apply()
@@ -40,14 +36,10 @@ class TwitterSessionRepositoryImpl(private val context: Context) : TwitterSessio
     }
 
     override fun delete() {
-        getPreferences(context).edit()
+        preferences.edit()
                 .remove(KEY_PREF_TWITTER_SESSION)
                 .remove(KEY_PREF_IS_SHARE_TWITTER)
                 .apply()
         this.twitterSessionEntity = TwitterSessionEntity()
-    }
-
-    private fun getPreferences(context: Context): SharedPreferences {
-        return context.getAppPreferences("TwitterModel")
     }
 }
