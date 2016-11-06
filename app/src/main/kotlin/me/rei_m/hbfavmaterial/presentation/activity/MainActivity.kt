@@ -6,7 +6,11 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.MainActivityComponent
+import me.rei_m.hbfavmaterial.di.MainActivityModule
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.MainPageFragment
@@ -18,6 +22,7 @@ import me.rei_m.hbfavmaterial.presentation.view.widget.manager.BookmarkViewPager
  * メインActivity.
  */
 class MainActivity : BaseDrawerActivity(),
+        HasComponent<MainActivityComponent>,
         BookmarkUserFragment.OnFragmentInteractionListener,
         HotEntryFragment.OnFragmentInteractionListener,
         NewEntryFragment.OnFragmentInteractionListener {
@@ -32,9 +37,10 @@ class MainActivity : BaseDrawerActivity(),
         }
     }
 
+    private lateinit var component: MainActivityComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
 
         val currentPagerIndex = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE.index)
 
@@ -100,5 +106,15 @@ class MainActivity : BaseDrawerActivity(),
                 break
             }
         }
+    }
+
+    override fun setupActivityComponent() {
+        component = (application as App).component
+                .plus(MainActivityModule(this))
+        component.inject(this)
+    }
+
+    override fun getComponent(): MainActivityComponent {
+        return component
     }
 }

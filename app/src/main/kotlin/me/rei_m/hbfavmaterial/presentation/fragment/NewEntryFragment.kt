@@ -10,6 +10,9 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.NewEntryFragmentComponent
+import me.rei_m.hbfavmaterial.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
@@ -71,7 +74,6 @@ class NewEntryFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
 
         val entryTypeFilter = if (savedInstanceState != null) {
             savedInstanceState.getSerializable(NewEntryFragment.KEY_FILTER_TYPE) as EntryTypeFilter
@@ -220,6 +222,16 @@ class NewEntryFragment() : BaseFragment(),
 
     override fun navigateToBookmark(entryEntity: EntryEntity) {
         activityNavigator.navigateToBookmark(activity, entryEntity)
+    }
+
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(NewEntryFragmentModule(context))
+                .inject(this)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: NewEntryFragmentModule): NewEntryFragmentComponent
     }
 
     interface OnFragmentInteractionListener {

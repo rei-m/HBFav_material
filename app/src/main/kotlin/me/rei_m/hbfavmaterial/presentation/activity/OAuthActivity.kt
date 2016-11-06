@@ -9,7 +9,9 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.OAuthActivityModule
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
@@ -46,7 +48,7 @@ class OAuthActivity : BaseSingleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
+
         subscription = CompositeSubscription()
 
         webView.apply {
@@ -140,5 +142,12 @@ class OAuthActivity : BaseSingleActivity() {
             })
         }
         setResult(RESULT_OK, intent)
+    }
+
+    override fun setupActivityComponent() {
+        val component = (application as App).component
+                .plus(OAuthActivityModule(this))
+
+        component.inject(this)
     }
 }

@@ -18,7 +18,7 @@ abstract class BaseSingleActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
     }
-    
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         val id = item?.itemId

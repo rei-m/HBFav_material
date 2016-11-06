@@ -7,7 +7,11 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
+import me.rei_m.hbfavmaterial.di.BookmarkActivityModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
@@ -31,6 +35,7 @@ import javax.inject.Inject
  * ブックマークの詳細を表示するActivity.
  */
 class BookmarkActivity : BaseSingleActivity(),
+        HasComponent<BookmarkActivityComponent>,
         BookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
@@ -62,6 +67,8 @@ class BookmarkActivity : BaseSingleActivity(),
     @Inject
     lateinit var getHatenaTokenUsecase: GetHatenaTokenUsecase
 
+    private lateinit var component: BookmarkActivityComponent
+
     private var subscription: CompositeSubscription? = null
 
     private var isLoading = false
@@ -72,7 +79,7 @@ class BookmarkActivity : BaseSingleActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
+        setupActivityComponent()
 
         subscription = CompositeSubscription()
 
@@ -228,5 +235,15 @@ class BookmarkActivity : BaseSingleActivity(),
 
     override fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity) {
         navigator.navigateToBookmarkedUsers(this, bookmarkEntity)
+    }
+
+    override fun setupActivityComponent() {
+        component = (application as App).component
+                .plus(BookmarkActivityModule(this))
+        component.inject(this)
+    }
+
+    override fun getComponent(): BookmarkActivityComponent {
+        return component
     }
 }

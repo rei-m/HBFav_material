@@ -11,6 +11,9 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkUserFragmentComponent
+import me.rei_m.hbfavmaterial.di.BookmarkUserFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
@@ -106,7 +109,6 @@ class BookmarkUserFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
 
         val userId = arguments.getString(ARG_USER_ID) ?: ""
 
@@ -302,7 +304,17 @@ class BookmarkUserFragment() : BaseFragment(),
         activityNavigator.navigateToBookmark(activity, bookmarkEntity)
     }
 
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(BookmarkUserFragmentModule(context))
+                .inject(this)
+    }
+
     interface OnFragmentInteractionListener {
         fun onChangeFilter(newPageTitle: String)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: BookmarkUserFragmentModule): BookmarkUserFragmentComponent
     }
 }

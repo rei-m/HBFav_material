@@ -17,10 +17,12 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentComponent
+import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extension.toggle
-import me.rei_m.hbfavmaterial.presentation.activity.BaseActivity
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
@@ -60,8 +62,9 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val component = (activity as BaseActivity).component
-        component.inject(this)
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(EditUserIdDialogFragmentModule(context))
+                .inject(this)
         presenter.onCreate(this)
     }
 
@@ -171,6 +174,10 @@ class EditUserIdDialogFragment() : DialogFragment(),
     override fun onCancel(dialog: DialogInterface?) {
         super.onCancel(dialog)
         this.listener?.cancel()
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: EditUserIdDialogFragmentModule): EditUserIdDialogFragmentComponent
     }
 }
 

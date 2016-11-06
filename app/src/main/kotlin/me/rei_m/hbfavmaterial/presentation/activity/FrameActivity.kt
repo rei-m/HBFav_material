@@ -47,4 +47,7 @@ class FrameActivity : BaseSingleActivity() {
 
         abstract fun newInstance(): Fragment
     }
+
+    override fun setupActivityComponent() {
+    }
 }

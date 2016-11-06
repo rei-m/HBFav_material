@@ -42,4 +42,7 @@ class OthersBookmarkActivity : BaseSingleActivity() {
             setFragment(BookmarkUserFragment.newInstance(userId))
         }
     }
+
+    override fun setupActivityComponent() {
+    }
 }

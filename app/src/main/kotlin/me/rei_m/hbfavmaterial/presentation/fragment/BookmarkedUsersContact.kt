@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import me.rei_m.hbfavmaterial.di.FragmentComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 

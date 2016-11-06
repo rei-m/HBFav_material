@@ -26,4 +26,7 @@ class CreditFragment : BaseFragment() {
 
         return view
     }
+
+    override fun setupFragmentComponent() {
+    }
 }

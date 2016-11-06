@@ -58,6 +58,9 @@ class EntryWebViewFragment : BaseFragment() {
         return view
     }
 
+    override fun setupFragmentComponent() {
+    }
+
     /**
      * WebView内のコンテンツがヒストリバック可能な場合、ヒストリバックして表示する.
      *

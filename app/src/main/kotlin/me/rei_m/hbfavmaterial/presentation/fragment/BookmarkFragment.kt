@@ -84,6 +84,9 @@ class BookmarkFragment() : BaseFragment(), MovableWithAnimation {
         return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 
+    override fun setupFragmentComponent() {
+    }
+
     interface OnFragmentInteractionListener {
 
         fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity)

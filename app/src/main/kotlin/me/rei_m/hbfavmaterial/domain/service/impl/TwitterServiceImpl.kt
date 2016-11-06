@@ -5,7 +5,6 @@ import android.content.Intent
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
-import com.twitter.sdk.android.core.models.Tweet
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
@@ -54,14 +53,6 @@ class TwitterServiceImpl(val twitterSessionRepository: TwitterSessionRepository)
                 null,
                 null,
                 false,
-                null,
-                object : Callback<Tweet>() {
-                    override fun success(result: Result<Tweet>?) {
-                        result ?: return
-                    }
-
-                    override fun failure(exception: TwitterException?) {
-                    }
-                })
+                null)
     }
 }
