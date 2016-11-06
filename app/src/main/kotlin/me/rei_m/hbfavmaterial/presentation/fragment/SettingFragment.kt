@@ -152,7 +152,7 @@ class SettingFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: SettingFragmentModule): SettingFragmentComponent
+        fun plus(fragmentModule: SettingFragmentModule?): SettingFragmentComponent
     }
 
     interface OnFragmentInteractionListener {

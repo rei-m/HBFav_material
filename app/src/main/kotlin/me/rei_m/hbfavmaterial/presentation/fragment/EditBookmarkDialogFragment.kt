@@ -261,6 +261,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: EditBookmarkDialogFragmentModule): EditBookmarkDialogFragmentComponent
+        fun plus(fragmentModule: EditBookmarkDialogFragmentModule?): EditBookmarkDialogFragmentComponent
     }
 }

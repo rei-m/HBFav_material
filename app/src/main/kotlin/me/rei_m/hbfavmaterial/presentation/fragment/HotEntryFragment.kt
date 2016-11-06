@@ -231,7 +231,7 @@ class HotEntryFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: HotEntryFragmentModule): HotEntryFragmentComponent
+        fun plus(fragmentModule: HotEntryFragmentModule?): HotEntryFragmentComponent
     }
 
     interface OnFragmentInteractionListener {

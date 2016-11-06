@@ -231,7 +231,7 @@ class NewEntryFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: NewEntryFragmentModule): NewEntryFragmentComponent
+        fun plus(fragmentModule: NewEntryFragmentModule?): NewEntryFragmentComponent
     }
 
     interface OnFragmentInteractionListener {

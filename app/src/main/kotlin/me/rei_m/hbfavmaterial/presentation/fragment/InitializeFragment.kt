@@ -116,6 +116,6 @@ class InitializeFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: InitializeFragmentModule): InitializeFragmentComponent
+        fun plus(fragmentModule: InitializeFragmentModule?): InitializeFragmentComponent
     }
 }

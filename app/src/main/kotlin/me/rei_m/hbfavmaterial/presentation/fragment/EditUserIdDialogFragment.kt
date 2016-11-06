@@ -177,7 +177,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: EditUserIdDialogFragmentModule): EditUserIdDialogFragmentComponent
+        fun plus(fragmentModule: EditUserIdDialogFragmentModule?): EditUserIdDialogFragmentComponent
     }
 }
 
