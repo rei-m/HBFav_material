@@ -12,15 +12,15 @@ interface ApplicationComponent {
 
     fun plus(activityModule: BookmarkedUsersActivityModule): BookmarkedUsersActivityComponent
 
-    fun plus(activityModule: BookmarkActivityModule): BookmarkActivityComponent
+    fun plus(activityModule: BookmarkActivityModule?): BookmarkActivityComponent
 
-    fun plus(activityModule: ExplainAppActivityModule): ExplainAppActivityComponent
+    fun plus(activityModule: ExplainAppActivityModule?): ExplainAppActivityComponent
 
-    fun plus(activityModule: MainActivityModule): MainActivityComponent
+    fun plus(activityModule: MainActivityModule?): MainActivityComponent
 
-    fun plus(activityModule: OAuthActivityModule): OAuthActivityComponent
+    fun plus(activityModule: OAuthActivityModule?): OAuthActivityComponent
 
-    fun plus(activityModule: SettingActivityModule): SettingActivityComponent
+    fun plus(activityModule: SettingActivityModule?): SettingActivityComponent
 
-    fun plus(activityModule: SplashActivityModule): SplashActivityComponent
+    fun plus(activityModule: SplashActivityModule?): SplashActivityComponent
 }
