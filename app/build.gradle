@@ -93,7 +93,6 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7-kotlin:$rx_android_kotlin_version"
     compile 'com.google.dagger:dagger:2.7'
     kapt 'com.google.dagger:dagger-compiler:2.7'
-//    kaptTest 'com.google.dagger:dagger-compiler:2.7'
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.7'
 
     compile 'com.google.code.gson:gson:2.8.0'

@@ -225,6 +225,6 @@ class BookmarkFavoriteFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: BookmarkFavoriteFragmentModule): BookmarkFavoriteFragmentComponent
+        fun plus(fragmentModule: BookmarkFavoriteFragmentModule?): BookmarkFavoriteFragmentComponent
     }
 }

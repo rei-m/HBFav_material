@@ -315,6 +315,6 @@ class BookmarkUserFragment() : BaseFragment(),
     }
 
     interface Injector {
-        fun plus(fragmentModule: BookmarkUserFragmentModule): BookmarkUserFragmentComponent
+        fun plus(fragmentModule: BookmarkUserFragmentModule?): BookmarkUserFragmentComponent
     }
 }
