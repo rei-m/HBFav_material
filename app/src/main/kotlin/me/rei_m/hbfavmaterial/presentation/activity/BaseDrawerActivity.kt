@@ -11,8 +11,8 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransformation
 import javax.inject.Inject
@@ -30,8 +30,6 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        component.inject(this)
 
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.app_bar_main_toolbar) as Toolbar
@@ -55,7 +53,7 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
 
         displayUserIconAndName(userEntity.id)
     }
-    
+
     override fun onBackPressed() {
         val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
         if (drawer.isDrawerOpen(GravityCompat.START)) {

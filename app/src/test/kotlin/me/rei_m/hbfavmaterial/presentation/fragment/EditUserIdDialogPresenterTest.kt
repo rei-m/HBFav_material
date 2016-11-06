@@ -63,8 +63,6 @@ class EditUserIdDialogPresenterTest {
     @Test
     fun testOnClickButtonOk_sameId() {
 
-        `when`(confirmExistingUserIdUsecase.confirm("hoge")).thenReturn(Observable.just(true))
-
         presenter.onClickButtonOk("hoge")
 
         verify(confirmExistingUserIdUsecase, never()).confirm("hoge")

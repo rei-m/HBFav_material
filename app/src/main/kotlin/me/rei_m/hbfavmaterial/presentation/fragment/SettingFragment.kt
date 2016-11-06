@@ -10,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
+import me.rei_m.hbfavmaterial.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import javax.inject.Inject
@@ -45,7 +48,6 @@ class SettingFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
         presenter.onCreate(this)
     }
 
@@ -141,6 +143,16 @@ class SettingFragment() : BaseFragment(),
 
     override fun showNetworkErrorMessage() {
         (activity as AppCompatActivity).showSnackbarNetworkError()
+    }
+
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(SettingFragmentModule(context))
+                .inject(this)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: SettingFragmentModule?): SettingFragmentComponent
     }
 
     interface OnFragmentInteractionListener {

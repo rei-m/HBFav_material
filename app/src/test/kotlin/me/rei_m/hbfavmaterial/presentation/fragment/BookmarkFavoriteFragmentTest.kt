@@ -6,7 +6,12 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentComponent
+import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.MainActivityComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
@@ -16,8 +21,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -41,12 +47,22 @@ class BookmarkFavoriteFragmentTest {
         return fragment.getString(resId)
     }
 
+    @Mock
+    lateinit var activityNavigator: ActivityNavigator
+
+    @Mock
+    lateinit var presenter: BookmarkFavoriteContact.Actions
+
     @Before
     fun setUp() {
 
-        fragment = BookmarkFavoriteFragment.newInstance(0)
+        MockitoAnnotations.initMocks(this)
 
-        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
+        fragment = BookmarkFavoriteFragment.newInstance(0)
+        fragment.activityNavigator = activityNavigator
+        fragment.presenter = presenter
+
+        SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
     @Test
@@ -139,10 +155,22 @@ class BookmarkFavoriteFragmentTest {
     @Test
     fun testNavigateToBookmark() {
         val bookmarkEntity = TestUtil.createTestBookmarkEntity(1)
-        val navigator = spy(fragment.activityNavigator)
-        fragment.activityNavigator = navigator
         fragment.navigateToBookmark(bookmarkEntity)
-        verify(navigator).navigateToBookmark(fragment.activity, bookmarkEntity)
+        verify(activityNavigator).navigateToBookmark(fragment.activity, bookmarkEntity)
+    }
+
+    class CustomDriverActivity : DriverActivity(),
+            HasComponent<MainActivityComponent> {
+
+        override fun getComponent(): MainActivityComponent {
+
+            val activityComponent = mock(MainActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(BookmarkFavoriteFragmentModule::class.java)))
+                    .thenReturn(mock(BookmarkFavoriteFragmentComponent::class.java))
+
+            return activityComponent
+        }
     }
 
     class ViewHolder(view: View) {

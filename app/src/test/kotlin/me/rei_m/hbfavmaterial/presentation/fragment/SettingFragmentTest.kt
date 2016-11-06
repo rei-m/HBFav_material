@@ -4,6 +4,11 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.SettingActivityComponent
+import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
+import me.rei_m.hbfavmaterial.di.SettingFragmentModule
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.Matchers.`is`
@@ -11,6 +16,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -27,10 +35,20 @@ class SettingFragmentTest {
     private val snackbarTextView: TextView
         get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
 
+    @Mock
+    lateinit var navigator: ActivityNavigator
+
+    @Mock
+    lateinit var presenter: SettingContact.Actions
+
     @Before
     fun setUp() {
 
+        MockitoAnnotations.initMocks(this)
+
         fragment = SettingFragment.newInstance()
+        fragment.presenter = presenter
+        fragment.navigator = navigator
 
         SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
@@ -96,12 +114,22 @@ class SettingFragmentTest {
     }
 
     class CustomDriverActivity : DriverActivity(),
+            HasComponent<SettingActivityComponent>,
             SettingFragment.OnFragmentInteractionListener {
 
         var updatedUserId = ""
 
         override fun onUserIdUpdated(userId: String) {
             updatedUserId = userId
+        }
+
+        override fun getComponent(): SettingActivityComponent {
+            val activityComponent = mock(SettingActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(SettingFragmentModule::class.java)))
+                    .thenReturn(mock(SettingFragmentComponent::class.java))
+
+            return activityComponent
         }
     }
 

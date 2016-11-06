@@ -12,6 +12,9 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentComponent
+import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
@@ -65,7 +68,6 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
         presenter.onCreate(this)
     }
 
@@ -214,5 +216,15 @@ class BookmarkFavoriteFragment() : BaseFragment(),
 
     override fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
         activityNavigator.navigateToBookmark(activity, bookmarkEntity)
+    }
+
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(BookmarkFavoriteFragmentModule(context))
+                .inject(this)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: BookmarkFavoriteFragmentModule?): BookmarkFavoriteFragmentComponent
     }
 }

@@ -7,6 +7,10 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentComponent
+import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.SettingActivityComponent
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.Matchers.`is`
@@ -15,7 +19,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.verify
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -29,9 +35,17 @@ class EditUserIdDialogFragmentTest {
         ViewHolder(view)
     }
 
+    @Mock
+    lateinit var presenter: EditUserIdDialogContact.Actions
+
     @Before
     fun setUp() {
+
+        MockitoAnnotations.initMocks(this)
+
         fragment = EditUserIdDialogFragment.newInstance()
+        fragment.presenter = presenter
+
         SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
@@ -89,7 +103,9 @@ class EditUserIdDialogFragmentTest {
         val buttonOk by view.bindView<AppCompatButton>(R.id.dialog_fragment_edit_user_id_button_ok)
     }
 
-    class CustomDriverActivity : DriverActivity(), DialogInterface {
+    class CustomDriverActivity : DriverActivity(),
+            HasComponent<SettingActivityComponent>,
+            DialogInterface {
 
         var isDismissed = false
 
@@ -101,6 +117,15 @@ class EditUserIdDialogFragmentTest {
 
         override fun cancel() {
             isCanceled = true
+        }
+
+        override fun getComponent(): SettingActivityComponent {
+            val activityComponent = mock(SettingActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(EditUserIdDialogFragmentModule::class.java)))
+                    .thenReturn(mock(EditUserIdDialogFragmentComponent::class.java))
+
+            return activityComponent
         }
     }
 }

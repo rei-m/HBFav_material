@@ -7,7 +7,6 @@ import dagger.Provides
 import me.rei_m.hbfavmaterial.domain.repository.*
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.domain.service.TwitterService
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.usecase.*
 import me.rei_m.hbfavmaterial.usecase.impl.*
 import javax.inject.Singleton
@@ -24,27 +23,6 @@ class ApplicationModule(private val application: Application) {
     @ForApplication
     fun provideContext(): Context {
         return application
-    }
-
-    @Provides
-    @Singleton
-    fun provideActivityNavigator(): ActivityNavigator {
-        return ActivityNavigator()
-    }
-
-    @Provides
-    fun provideGetBookmarkedUsersUsecase(bookmarkRepository: BookmarkRepository): GetBookmarkedUsersUsecase {
-        return GetBookmarkedUsersUsecaseImpl(bookmarkRepository)
-    }
-
-    @Provides
-    fun provideGetFavoriteBookmarksUsecase(bookmarkRepository: BookmarkRepository, userRepository: UserRepository): GetFavoriteBookmarksUsecase {
-        return GetFavoriteBookmarksUsecaseImpl(bookmarkRepository, userRepository)
-    }
-
-    @Provides
-    fun provideGetUserBookmarksUsecase(bookmarkRepository: BookmarkRepository, userRepository: UserRepository): GetUserBookmarksUsecase {
-        return GetUserBookmarksUsecaseImpl(bookmarkRepository, userRepository)
     }
 
     @Provides
@@ -97,29 +75,18 @@ class ApplicationModule(private val application: Application) {
     }
 
     @Provides
-    fun provideGetHatenaTokenUsecase(hatenaTokenRepository: HatenaTokenRepository): GetHatenaTokenUsecase {
-        return GetHatenaTokenUsecaseImpl(hatenaTokenRepository)
+    fun provideAuthorizeTwitterUsecase(twitterService: TwitterService): AuthorizeTwitterUsecase {
+        return AuthorizeTwitterUsecaseImpl(twitterService)
     }
 
     @Provides
-    fun provideAuthorizeTwitterUsecase(twitterService: TwitterService): AuthorizeTwitterUsecase {
-        return AuthorizeTwitterUsecaseImpl(twitterService)
+    fun provideGetHatenaTokenUsecase(hatenaTokenRepository: HatenaTokenRepository): GetHatenaTokenUsecase {
+        return GetHatenaTokenUsecaseImpl(hatenaTokenRepository)
     }
 
     @Provides
     fun provideGetBookmarkEditUsecase(hatenaTokenRepository: HatenaTokenRepository,
                                       hatenaService: HatenaService): GetBookmarkEditUsecase {
         return GetBookmarkEditUsecaseImpl(hatenaTokenRepository, hatenaService)
-    }
-
-    @Provides
-    fun provideAuthorizeHatenaUsecase(hatenaTokenRepository: HatenaTokenRepository,
-                                      hatenaService: HatenaService): AuthorizeHatenaUsecase {
-        return AuthorizeHatenaUsecaseImpl(hatenaTokenRepository, hatenaService)
-    }
-
-    @Provides
-    fun provideUnAuthorizeHatenaUsecase(hatenaTokenRepository: HatenaTokenRepository): UnAuthorizeHatenaUsecase {
-        return UnAuthorizeHatenaUsecaseImpl(hatenaTokenRepository)
     }
 }

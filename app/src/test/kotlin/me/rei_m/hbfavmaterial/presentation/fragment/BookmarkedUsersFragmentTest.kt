@@ -6,19 +6,25 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityComponent
+import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
+import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.testutil.bindView
-import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -41,10 +47,22 @@ class BookmarkedUsersFragmentTest {
 
     private val bookmarkEntity = TestUtil.createTestBookmarkEntity(0)
 
+    @Mock
+    lateinit var activityNavigator: ActivityNavigator
+
+    @Mock
+    lateinit var presenter: BookmarkedUsersContact.Actions
+
     @Before
     fun setUp() {
 
+        MockitoAnnotations.initMocks(this)
+
+        `when`(presenter.bookmarkCommentFilter).thenReturn(BookmarkCommentFilter.ALL)
+
         fragment = BookmarkedUsersFragment.newInstance(bookmarkEntity)
+        fragment.activityNavigator = activityNavigator
+        fragment.presenter = presenter
 
         SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
@@ -119,19 +137,28 @@ class BookmarkedUsersFragmentTest {
 
     @Test
     fun testNavigateToOthersBookmark() {
-        val navigator = spy(fragment.activityNavigator)
-        fragment.activityNavigator = navigator
         fragment.navigateToOthersBookmark(bookmarkEntity)
-        verify(navigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
+        verify(activityNavigator).navigateToOthersBookmark(fragment.activity, bookmarkEntity.creator)
     }
 
     class CustomDriverActivity : DriverActivity(),
+            HasComponent<BookmarkedUsersActivityComponent>,
             BookmarkedUsersFragment.OnFragmentInteractionListener {
 
         var bookmarkCommentFilter: BookmarkCommentFilter? = null
 
         override fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter) {
             this.bookmarkCommentFilter = bookmarkCommentFilter
+        }
+
+        override fun getComponent(): BookmarkedUsersActivityComponent {
+
+            val activityComponent = mock(BookmarkedUsersActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(BookmarkedUsersFragmentModule::class.java)))
+                    .thenReturn(mock(BookmarkedUsersFragmentComponent::class.java))
+
+            return activityComponent
         }
     }
 

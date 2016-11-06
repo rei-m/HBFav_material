@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
@@ -23,11 +24,6 @@ class ExplainAppFragment : BaseFragment() {
 
     @Inject
     lateinit var navigator: ActivityNavigator
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        component.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -56,5 +52,14 @@ class ExplainAppFragment : BaseFragment() {
         }
 
         return view
+    }
+
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .inject(this)
+    }
+
+    interface Injector {
+        fun inject(fragment: ExplainAppFragment): ExplainAppFragment
     }
 }

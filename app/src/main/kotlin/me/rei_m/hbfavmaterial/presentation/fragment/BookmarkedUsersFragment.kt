@@ -10,6 +10,9 @@ import android.widget.ListView
 import android.widget.TextView
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
+import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.enum.FilterItem
@@ -68,7 +71,6 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
 
         val bookmarkCommentFilter = if (savedInstanceState != null) {
             savedInstanceState.getSerializable(KEY_FILTER_TYPE) as BookmarkCommentFilter
@@ -232,7 +234,17 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         activityNavigator.navigateToOthersBookmark(activity, bookmarkEntity.creator)
     }
 
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(BookmarkedUsersFragmentModule(context))
+                .inject(this)
+    }
+
     interface OnFragmentInteractionListener {
         fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: BookmarkedUsersFragmentModule?): BookmarkedUsersFragmentComponent
     }
 }

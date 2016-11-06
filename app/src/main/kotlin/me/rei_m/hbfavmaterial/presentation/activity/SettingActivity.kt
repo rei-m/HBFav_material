@@ -6,7 +6,11 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import com.twitter.sdk.android.core.TwitterAuthConfig
+import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.SettingActivityComponent
+import me.rei_m.hbfavmaterial.di.SettingActivityModule
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.show
@@ -14,15 +18,18 @@ import me.rei_m.hbfavmaterial.presentation.fragment.SettingFragment
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
 
-class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteractionListener {
+class SettingActivity : BaseDrawerActivity(),
+        HasComponent<SettingActivityComponent>,
+        SettingFragment.OnFragmentInteractionListener {
 
     companion object {
         fun createIntent(context: Context): Intent = Intent(context, SettingActivity::class.java)
     }
 
+    private lateinit var component: SettingActivityComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
 
         findViewById(R.id.pager)?.hide()
         findViewById(R.id.content)?.show()
@@ -68,5 +75,15 @@ class SettingActivity : BaseDrawerActivity(), SettingFragment.OnFragmentInteract
 
     override fun onUserIdUpdated(userId: String) {
         displayUserIconAndName(userId)
+    }
+
+    override fun setupActivityComponent() {
+        component = (application as App).component
+                .plus(SettingActivityModule(this))
+        component.inject(this)
+    }
+
+    override fun getComponent(): SettingActivityComponent {
+        return component
     }
 }

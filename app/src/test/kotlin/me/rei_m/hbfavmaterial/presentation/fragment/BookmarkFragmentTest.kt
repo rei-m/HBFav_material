@@ -3,12 +3,12 @@ package me.rei_m.hbfavmaterial.presentation.fragment
 import android.view.View
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.testutil.DriverActivity
-import me.rei_m.hbfavmaterial.testutil.TestUtil
-import me.rei_m.hbfavmaterial.testutil.bindView
 import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkContentsLayout
 import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkHeaderLayout
+import me.rei_m.hbfavmaterial.testutil.DriverActivity
+import me.rei_m.hbfavmaterial.testutil.TestUtil
+import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before

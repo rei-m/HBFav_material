@@ -11,6 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.InitializeFragmentComponent
+import me.rei_m.hbfavmaterial.di.InitializeFragmentModule
 import me.rei_m.hbfavmaterial.extension.hideKeyBoard
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
@@ -40,7 +43,6 @@ class InitializeFragment() : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component.inject(this)
         presenter.onCreate(this)
     }
 
@@ -105,5 +107,15 @@ class InitializeFragment() : BaseFragment(),
     override fun navigateToMain() {
         navigator.navigateToMain(activity)
         activity.finish()
+    }
+
+    override fun setupFragmentComponent() {
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(InitializeFragmentModule(context))
+                .inject(this)
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: InitializeFragmentModule?): InitializeFragmentComponent
     }
 }

@@ -27,4 +27,7 @@ class FromDeveloperFragment : BaseFragment() {
 
         return view
     }
+
+    override fun setupFragmentComponent() {
+    }
 }

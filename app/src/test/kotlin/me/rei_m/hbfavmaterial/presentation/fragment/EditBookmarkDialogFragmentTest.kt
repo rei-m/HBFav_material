@@ -6,6 +6,10 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
+import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentComponent
+import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.Matchers.`is`
@@ -14,7 +18,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.verify
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -27,16 +33,22 @@ class EditBookmarkDialogFragmentTest {
         val view = fragment.view ?: throw IllegalStateException("fragment's view is Null")
         ViewHolder(view)
     }
-    
+
     private fun getString(resId: Int): String {
         return fragment.getString(resId)
     }
 
+    @Mock
+    lateinit var presenter: EditBookmarkDialogContact.Actions
+
     @Before
     fun setUp() {
-        fragment = EditBookmarkDialogFragment.newInstance("title", "url")
+        MockitoAnnotations.initMocks(this)
 
-        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
+        fragment = EditBookmarkDialogFragment.newInstance("title", "url")
+        fragment.presenter = presenter
+
+        SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
     @Test
@@ -142,5 +154,18 @@ class EditBookmarkDialogFragmentTest {
         val switchDelete by view.bindView<SwitchCompat>(R.id.dialog_fragment_edit_bookmark_switch_delete)
         val buttonCancel by view.bindView<AppCompatButton>(R.id.dialog_fragment_edit_bookmark_button_cancel)
         val buttonOk by view.bindView<AppCompatButton>(R.id.dialog_fragment_edit_bookmark_button_ok)
+    }
+
+    class CustomDriverActivity : DriverActivity(),
+            HasComponent<BookmarkActivityComponent> {
+
+        override fun getComponent(): BookmarkActivityComponent {
+            val activityComponent = mock(BookmarkActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(EditBookmarkDialogFragmentModule::class.java)))
+                    .thenReturn(mock(EditBookmarkDialogFragmentComponent::class.java))
+
+            return activityComponent
+        }
     }
 }

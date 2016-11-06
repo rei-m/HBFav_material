@@ -16,10 +16,12 @@ import android.view.Window
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.RxTextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentComponent
+import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentModule
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.extension.*
-import me.rei_m.hbfavmaterial.presentation.activity.BaseActivity
 import me.rei_m.hbfavmaterial.presentation.activity.SettingActivity
 import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
@@ -86,8 +88,9 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val component = (activity as BaseActivity).component
-        component.inject(this)
+        (activity as HasComponent<Injector>).getComponent()
+                .plus(EditBookmarkDialogFragmentModule(context))
+                .inject(this)
         presenter.onCreate(this, bookmarkUrl, bookmarkTitle, bookmarkEdit)
     }
 
@@ -255,5 +258,9 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun dismissDialog() {
         dismiss()
+    }
+
+    interface Injector {
+        fun plus(fragmentModule: EditBookmarkDialogFragmentModule?): EditBookmarkDialogFragmentComponent
     }
 }

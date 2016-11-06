@@ -26,15 +26,6 @@ class SplashActivityTest {
 
     @Before
     fun setUp() {
-
-        // 実行前に差し替えたい場合の例
-//        val testApp = RuntimeEnvironment.application as App
-//        val appComponent = DaggerTestApplicationComponent.builder()
-//                .applicationModule(ApplicationModule(testApp))
-//                .infraLayerModule(InfraLayerModule())
-//                .build()
-//        testApp.component = appComponent
-
         splashActivity = Robolectric.setupActivity(SplashActivity::class.java)
     }
 

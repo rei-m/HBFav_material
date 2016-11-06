@@ -6,6 +6,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.InitializeFragmentComponent
+import me.rei_m.hbfavmaterial.di.InitializeFragmentModule
+import me.rei_m.hbfavmaterial.di.SplashActivityComponent
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.CoreMatchers.`is`
@@ -14,7 +19,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
 
@@ -35,10 +42,22 @@ class InitializeFragmentTest {
         return fragment.getString(resId)
     }
 
+    @Mock
+    lateinit var navigator: ActivityNavigator
+
+    @Mock
+    lateinit var presenter: InitializeContact.Actions
+
     @Before
     fun setUp() {
+
+        MockitoAnnotations.initMocks(this)
+
         fragment = InitializeFragment.newInstance()
-        SupportFragmentTestUtil.startFragment(fragment, DriverActivity::class.java)
+        fragment.presenter = presenter
+        fragment.navigator = navigator
+
+        SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
 
     @Test
@@ -92,8 +111,6 @@ class InitializeFragmentTest {
 
     @Test
     fun testNavigateToMain() {
-        val navigator = spy(fragment.navigator)
-        fragment.navigator = navigator
         fragment.navigateToMain()
         verify(navigator).navigateToMain(fragment.activity)
     }
@@ -102,5 +119,18 @@ class InitializeFragmentTest {
         val editHatenaId by view.bindView<EditText>(R.id.fragment_initialize_edit_hatena_id)
         val buttonSetHatenaId by view.bindView<Button>(R.id.fragment_initialize_button_set_hatena_id)
         val textInputLayoutHatenaId by view.bindView<TextInputLayout>(R.id.fragment_initialize_layout_hatena_id)
+    }
+
+    class CustomDriverActivity : DriverActivity(),
+            HasComponent<SplashActivityComponent> {
+
+        override fun getComponent(): SplashActivityComponent {
+            val activityComponent = mock(SplashActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(InitializeFragmentModule::class.java)))
+                    .thenReturn(mock(InitializeFragmentComponent::class.java))
+
+            return activityComponent
+        }
     }
 }

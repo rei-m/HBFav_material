@@ -6,8 +6,13 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.MainActivityComponent
+import me.rei_m.hbfavmaterial.di.NewEntryFragmentComponent
+import me.rei_m.hbfavmaterial.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
+import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.EntryListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.TestUtil
@@ -17,7 +22,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.fakes.RoboMenuItem
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil
@@ -35,10 +42,20 @@ class NewEntryFragmentTest {
     private val snackbarTextView: TextView
         get() = fragment.activity.findViewById(android.support.design.R.id.snackbar_text) as TextView
 
+    @Mock
+    lateinit var presenter: NewEntryContact.Actions
+
+    @Mock
+    lateinit var activityNavigator: ActivityNavigator
+
     @Before
     fun setUp() {
 
+        MockitoAnnotations.initMocks(this)
+
         fragment = NewEntryFragment.newInstance(0)
+        fragment.presenter = presenter
+        fragment.activityNavigator = activityNavigator
 
         SupportFragmentTestUtil.startFragment(fragment, CustomDriverActivity::class.java)
     }
@@ -111,10 +128,8 @@ class NewEntryFragmentTest {
     @Test
     fun testNavigateToBookmark() {
         val entryEntity = TestUtil.createTestEntryEntity(1)
-        val navigator = spy(fragment.activityNavigator)
-        fragment.activityNavigator = navigator
         fragment.navigateToBookmark(entryEntity)
-        verify(navigator).navigateToBookmark(fragment.activity, entryEntity)
+        verify(activityNavigator).navigateToBookmark(fragment.activity, entryEntity)
     }
 
     @Test
@@ -131,12 +146,22 @@ class NewEntryFragmentTest {
     }
 
     class CustomDriverActivity : DriverActivity(),
+            HasComponent<MainActivityComponent>,
             NewEntryFragment.OnFragmentInteractionListener {
 
         var newPageTitle = ""
 
         override fun onChangeFilter(newPageTitle: String) {
             this.newPageTitle = newPageTitle
+        }
+
+        override fun getComponent(): MainActivityComponent {
+            val activityComponent = mock(MainActivityComponent::class.java)
+
+            `when`(activityComponent.plus(any(NewEntryFragmentModule::class.java)))
+                    .thenReturn(mock(NewEntryFragmentComponent::class.java))
+
+            return activityComponent
         }
     }
 
