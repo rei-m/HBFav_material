@@ -245,6 +245,6 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     }
 
     interface Injector {
-        fun plus(fragmentModule: BookmarkedUsersFragmentModule): BookmarkedUsersFragmentComponent
+        fun plus(fragmentModule: BookmarkedUsersFragmentModule?): BookmarkedUsersFragmentComponent
     }
 }

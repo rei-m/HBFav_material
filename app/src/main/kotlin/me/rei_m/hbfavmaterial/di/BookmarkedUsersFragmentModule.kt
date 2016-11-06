@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersPresenter
 import me.rei_m.hbfavmaterial.usecase.impl.GetBookmarkedUsersUsecaseImpl
 
 @Module
-class BookmarkedUsersFragmentModule(private val context: Context) {
+open class BookmarkedUsersFragmentModule(private val context: Context) {
     @Provides
     fun provideBookmarkedUsersPresenter(bookmarkRepository: BookmarkRepository): BookmarkedUsersContact.Actions {
         return BookmarkedUsersPresenter(GetBookmarkedUsersUsecaseImpl(bookmarkRepository))
