@@ -4,7 +4,7 @@ import android.content.Intent
 import android.support.design.widget.FloatingActionButton
 import android.view.View
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersFragment
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import org.hamcrest.CoreMatchers.`is`

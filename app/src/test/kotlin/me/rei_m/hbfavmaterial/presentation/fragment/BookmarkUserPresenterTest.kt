@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
+import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.testutil.TestUtil
 import me.rei_m.hbfavmaterial.usecase.GetUserBookmarksUsecase
 import org.hamcrest.CoreMatchers.`is`

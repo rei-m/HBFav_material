@@ -5,7 +5,7 @@ import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.repository.BookmarkRepository
 import me.rei_m.hbfavmaterial.domain.util.ApiUtil
 import me.rei_m.hbfavmaterial.domain.util.RssXmlUtil
-import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
+import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.infra.network.HatenaApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
 import org.jsoup.Jsoup

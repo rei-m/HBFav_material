@@ -5,7 +5,7 @@ import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.domain.repository.EntryRepository
 import me.rei_m.hbfavmaterial.domain.util.ApiUtil
 import me.rei_m.hbfavmaterial.domain.util.RssXmlUtil
-import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
+import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
 import org.jsoup.Jsoup
 import rx.Observable

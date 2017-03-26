@@ -14,8 +14,8 @@ import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.enum.FilterItem
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.FilterItem
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError

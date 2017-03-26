@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.enum
+package me.rei_m.hbfavmaterial.constant
 
 import me.rei_m.hbfavmaterial.R
 

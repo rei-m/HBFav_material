@@ -5,7 +5,7 @@ import dagger.Provides
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 
 @Module
-class ActivityModule() {
+class ActivityModule {
     @Provides
     fun provideActivityNavigator(): ActivityNavigator {
         return ActivityNavigator()

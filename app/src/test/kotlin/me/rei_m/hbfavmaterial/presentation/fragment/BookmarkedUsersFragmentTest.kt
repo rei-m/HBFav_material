@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.testutil.DriverActivity

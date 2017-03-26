@@ -3,7 +3,7 @@ package me.rei_m.hbfavmaterial.usecase.impl
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.repository.BookmarkRepository
 import me.rei_m.hbfavmaterial.domain.repository.UserRepository
-import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
+import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.usecase.GetUserBookmarksUsecase
 import rx.Observable
 

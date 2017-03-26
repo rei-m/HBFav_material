@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersFragment

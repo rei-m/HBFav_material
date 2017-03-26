@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.NewEntryFragmentComponent
 import me.rei_m.hbfavmaterial.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
-import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
+import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show

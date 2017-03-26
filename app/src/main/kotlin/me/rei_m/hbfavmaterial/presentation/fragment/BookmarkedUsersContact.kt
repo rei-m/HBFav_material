@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 
 interface BookmarkedUsersContact {
 

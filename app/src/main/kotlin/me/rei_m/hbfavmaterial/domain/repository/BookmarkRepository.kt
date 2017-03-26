@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.domain.repository
 
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.enum.ReadAfterFilter
+import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import rx.Observable
 
 interface BookmarkRepository {
