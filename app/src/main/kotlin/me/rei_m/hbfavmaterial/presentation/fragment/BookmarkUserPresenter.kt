@@ -1,12 +1,11 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.GetUserBookmarksUsecase
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 
 class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmarksUsecase) : BookmarkUserContact.Actions {
 
@@ -16,7 +15,7 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
 
     private var bookmarkUserId: String = ""
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var bookmarkList: List<BookmarkEntity> = listOf()
 
@@ -35,7 +34,7 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
         if (bookmarkList.isEmpty()) {
             initializeListContents()
         } else {
@@ -44,27 +43,27 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onRefreshList() {
         if (isLoading) return
 
-        subscription?.add(request(0))
+        disposable?.add(request(0))
     }
 
     override fun onScrollEnd(nextIndex: Int) {
         if (isLoading) return
 
-        subscription?.add(request(nextIndex))
+        disposable?.add(request(nextIndex))
     }
 
     private fun initializeListContents() {
 
         if (isLoading) return
 
-        subscription?.let {
+        disposable?.let {
             view.showProgress()
             it.add(request(0))
         }
@@ -76,7 +75,7 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
 
         if (this.readAfterFilter == readAfterFilter) return
 
-        subscription?.let {
+        disposable?.let {
 
             this.readAfterFilter = readAfterFilter
 
@@ -90,7 +89,7 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
         }
     }
 
-    private fun request(nextIndex: Int): Subscription? {
+    private fun request(nextIndex: Int): Disposable? {
 
         val bookmarkObservable = if (isOwner) {
             getUserBookmarksUsecase.get(readAfterFilter, nextIndex)
@@ -98,26 +97,20 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
             getUserBookmarksUsecase.get(bookmarkUserId, readAfterFilter, nextIndex)
         }
 
-        return bookmarkObservable
-                .doOnSubscribe {
-                    isLoading = true
-                }
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onFindByUserIdSuccess(it, nextIndex)
-                }, {
-                    onFindByUserIdFailure(it)
-                })
+        isLoading = true
+
+        return bookmarkObservable.subscribeAsync({
+            onFindByUserIdSuccess(it, nextIndex)
+        }, {
+            onFindByUserIdFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        })
     }
 
     private fun onFindByUserIdSuccess(bookmarkList: List<BookmarkEntity>, nextIndex: Int) {
-        if (nextIndex === 0) {
+        if (nextIndex == 0) {
             this.bookmarkList = bookmarkList
         } else {
             val totalBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
@@ -141,7 +134,7 @@ class BookmarkUserPresenter(private val getUserBookmarksUsecase: GetUserBookmark
         }
     }
 
-    private fun onFindByUserIdFailure(@Suppress("unused") e: Throwable) {
+    private fun onFindByUserIdFailure(@Suppress("UNUSED_PARAMETER") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 

@@ -1,12 +1,11 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.ConfirmExistingUserIdUsecase
 import me.rei_m.hbfavmaterial.usecase.GetUserUsecase
-import retrofit2.adapter.rxjava.HttpException
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 
 class EditUserIdDialogPresenter(private val getUserUsecase: GetUserUsecase,
@@ -14,7 +13,7 @@ class EditUserIdDialogPresenter(private val getUserUsecase: GetUserUsecase,
 
     private lateinit var view: EditUserIdDialogContact.View
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -27,12 +26,12 @@ class EditUserIdDialogPresenter(private val getUserUsecase: GetUserUsecase,
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onClickButtonOk(userId: String) {
@@ -40,13 +39,13 @@ class EditUserIdDialogPresenter(private val getUserUsecase: GetUserUsecase,
         val userEntity = getUserUsecase.get()
 
         if (!userEntity.isSameId(userId)) {
-            subscription?.add(confirmExistingUserId(userId))
+            disposable?.add(confirmExistingUserId(userId))
         } else {
             view.dismissDialog()
         }
     }
 
-    private fun confirmExistingUserId(userId: String): Subscription? {
+    private fun confirmExistingUserId(userId: String): Disposable? {
 
         if (isLoading) return null
 
@@ -54,17 +53,13 @@ class EditUserIdDialogPresenter(private val getUserUsecase: GetUserUsecase,
         view.showProgress()
 
         return confirmExistingUserIdUsecase.confirm(userId)
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+                .subscribeAsync({
                     onConfirmExistingUserIdSuccess(it)
                 }, {
                     onConfirmExistingUserIdFailure(it)
+                }, {
+                    isLoading = false
+                    view.hideProgress()
                 })
     }
 

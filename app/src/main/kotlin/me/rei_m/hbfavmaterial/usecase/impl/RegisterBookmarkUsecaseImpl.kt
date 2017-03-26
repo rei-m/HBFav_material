@@ -1,11 +1,11 @@
 package me.rei_m.hbfavmaterial.usecase.impl
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.repository.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.usecase.RegisterBookmarkUsecase
-import rx.Observable
 
 class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaTokenRepository,
                                   private val hatenaService: HatenaService,
@@ -26,7 +26,7 @@ class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaToken
                           tags: List<String>,
                           isOpen: Boolean,
                           isCheckedReadAfter: Boolean,
-                          isShareAtTwitter: Boolean): Observable<BookmarkEditEntity> {
+                          isShareAtTwitter: Boolean): Single<BookmarkEditEntity> {
 
         if (isShareAtTwitter) {
             twitterService.postTweet(createShareText(url, title, comment))
@@ -49,7 +49,7 @@ class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaToken
     }
 
     private fun createShareText(url: String, title: String, comment: String): String {
-        return if (0 < comment.length) {
+        return if (comment.isNotEmpty()) {
             val postComment: String
             val postTitle: String
             if (MAX_LENGTH_COMMENT_AT_TWITTER < comment.length) {

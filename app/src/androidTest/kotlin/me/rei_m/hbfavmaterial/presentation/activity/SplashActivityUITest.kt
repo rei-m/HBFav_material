@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.*
 import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
 import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Rule

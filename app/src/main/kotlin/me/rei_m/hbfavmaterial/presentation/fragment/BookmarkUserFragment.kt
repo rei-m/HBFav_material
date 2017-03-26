@@ -9,27 +9,27 @@ import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
+import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.di.BookmarkUserFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkUserFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
-class BookmarkUserFragment() : BaseFragment(),
+class BookmarkUserFragment : BaseFragment(),
         BookmarkUserContact.View,
         MainPageFragment {
 
@@ -92,7 +92,7 @@ class BookmarkUserFragment() : BaseFragment(),
         arguments.getBoolean(ARG_OWNER_FLAG)
     }
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     override val pageIndex: Int
         get() = arguments.getInt(ARG_PAGE_INDEX)
@@ -128,7 +128,7 @@ class BookmarkUserFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
@@ -150,7 +150,7 @@ class BookmarkUserFragment() : BaseFragment(),
             }
         })
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
             presenter.onClickBookmark(bookmarkEntity)
         }
@@ -169,7 +169,7 @@ class BookmarkUserFragment() : BaseFragment(),
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        disposable?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             presenter.onRefreshList()
         })
 
@@ -188,15 +188,15 @@ class BookmarkUserFragment() : BaseFragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
 
         val view = view ?: return
 
         // Pull to Refresh中であれば解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
     }
@@ -244,7 +244,7 @@ class BookmarkUserFragment() : BaseFragment(),
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
     }
@@ -273,7 +273,7 @@ class BookmarkUserFragment() : BaseFragment(),
     override fun startAutoLoading() {
         val view = view ?: return
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
-        if (listView.footerViewsCount === 0) {
+        if (listView.footerViewsCount == 0) {
             View.inflate(context, R.layout.list_fotter_loading, null).let {
                 listView.addFooterView(it, null, false)
             }
@@ -304,6 +304,7 @@ class BookmarkUserFragment() : BaseFragment(),
         activityNavigator.navigateToBookmark(activity, bookmarkEntity)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(BookmarkUserFragmentModule(context))

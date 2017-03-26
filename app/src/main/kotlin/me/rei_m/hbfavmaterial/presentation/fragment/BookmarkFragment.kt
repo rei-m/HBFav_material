@@ -12,7 +12,7 @@ import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkContents
 import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkCountTextView
 import me.rei_m.hbfavmaterial.presentation.view.widget.bookmark.BookmarkHeaderLayout
 
-class BookmarkFragment() : BaseFragment(), MovableWithAnimation {
+class BookmarkFragment : BaseFragment(), MovableWithAnimation {
 
     companion object {
 

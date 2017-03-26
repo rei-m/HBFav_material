@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
@@ -18,16 +19,14 @@ import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.usecase.GetBookmarkEditUsecase
 import me.rei_m.hbfavmaterial.usecase.GetHatenaTokenUsecase
-import retrofit2.adapter.rxjava.HttpException
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
@@ -69,7 +68,7 @@ class BookmarkActivity : BaseSingleActivity(),
 
     private lateinit var component: BookmarkActivityComponent
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -81,7 +80,7 @@ class BookmarkActivity : BaseSingleActivity(),
         super.onCreate(savedInstanceState)
         setupActivityComponent()
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
@@ -112,8 +111,8 @@ class BookmarkActivity : BaseSingleActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -195,16 +194,13 @@ class BookmarkActivity : BaseSingleActivity(),
 
         isLoading = true
 
-        subscription?.add(getBookmarkEditUsecase.get(url)
-                .doOnUnsubscribe { isLoading = false }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onFindBookmarkByUrlSuccess(it)
-                }, {
-                    onFindBookmarkByUrlFailure(it)
-                }))
+        disposable?.add(getBookmarkEditUsecase.get(url).subscribeAsync({
+            onFindBookmarkByUrlSuccess(it)
+        }, {
+            onFindBookmarkByUrlFailure(it)
+        }, {
+            isLoading = false
+        }))
     }
 
     private fun onFindBookmarkByUrlSuccess(bookmarkEditEntity: BookmarkEditEntity) {

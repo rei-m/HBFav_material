@@ -1,11 +1,10 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import io.reactivex.disposables.CompositeDisposable
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.ConfirmExistingUserIdUsecase
 import me.rei_m.hbfavmaterial.usecase.GetUserUsecase
-import retrofit2.adapter.rxjava.HttpException
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 
 class InitializePresenter(private val getUserUsecase: GetUserUsecase,
@@ -13,7 +12,7 @@ class InitializePresenter(private val getUserUsecase: GetUserUsecase,
 
     private lateinit var view: InitializeContact.View
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -28,12 +27,12 @@ class InitializePresenter(private val getUserUsecase: GetUserUsecase,
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onClickButtonSetId(userId: String) {
@@ -43,19 +42,14 @@ class InitializePresenter(private val getUserUsecase: GetUserUsecase,
         isLoading = true
         view.showProgress()
 
-        subscription?.add(confirmExistingUserIdUsecase.confirm(userId)
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onConfirmExistingUserIdSuccess(it)
-                }, {
-                    onConfirmExistingUserIdFailure(it)
-                }))
+        disposable?.add(confirmExistingUserIdUsecase.confirm(userId).subscribeAsync({
+            onConfirmExistingUserIdSuccess(it)
+        }, {
+            onConfirmExistingUserIdFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        }))
     }
 
     private fun onConfirmExistingUserIdSuccess(isValid: Boolean) {

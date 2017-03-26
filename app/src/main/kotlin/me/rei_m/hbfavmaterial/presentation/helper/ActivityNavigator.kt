@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.presentation.manager
+package me.rei_m.hbfavmaterial.presentation.helper
 
 import android.app.Activity
 import android.content.Intent

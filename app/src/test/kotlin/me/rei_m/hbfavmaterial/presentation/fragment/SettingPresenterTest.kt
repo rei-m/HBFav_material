@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
 import me.rei_m.hbfavmaterial.domain.entity.UserEntity
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.usecase.AuthorizeTwitterUsecase
 import me.rei_m.hbfavmaterial.usecase.GetHatenaTokenUsecase
 import me.rei_m.hbfavmaterial.usecase.GetTwitterSessionUsecase

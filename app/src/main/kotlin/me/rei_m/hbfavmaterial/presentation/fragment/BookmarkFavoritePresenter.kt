@@ -1,17 +1,16 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.GetFavoriteBookmarksUsecase
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 
 class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase) : BookmarkFavoriteContact.Actions {
 
     private lateinit var view: BookmarkFavoriteContact.View
 
-    private var subscription: CompositeSubscription? = null
+    private var dispoable: CompositeDisposable? = null
 
     private var bookmarkList: List<BookmarkEntity> = mutableListOf()
 
@@ -22,7 +21,7 @@ class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavo
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        dispoable = CompositeDisposable()
         if (bookmarkList.isEmpty()) {
             initializeListContents()
         } else {
@@ -31,56 +30,50 @@ class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavo
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        dispoable?.dispose()
+        dispoable = null
     }
 
     override fun onRefreshList() {
 
         if (isLoading) return
 
-        subscription?.add(request(0))
+        dispoable?.add(request(0))
     }
 
     override fun onScrollEnd(nextIndex: Int) {
 
         if (isLoading) return
 
-        subscription?.add(request(nextIndex))
+        dispoable?.add(request(nextIndex))
     }
 
     private fun initializeListContents() {
 
         if (isLoading) return
 
-        subscription?.let {
+        dispoable?.let {
             view.showProgress()
             it.add(request(0))
         }
     }
 
-    private fun request(nextIndex: Int): Subscription? {
+    private fun request(nextIndex: Int): Disposable? {
 
-        return getFavoriteBookmarksUsecase.get(nextIndex)
-                .doOnSubscribe {
-                    isLoading = true
-                }
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onFindByUserIdForFavoriteSuccess(it, nextIndex)
-                }, {
-                    onFindByUserIdForFavoriteFailure(it)
-                })
+        isLoading = true
+
+        return getFavoriteBookmarksUsecase.get(nextIndex).subscribeAsync({
+            onFindByUserIdForFavoriteSuccess(it, nextIndex)
+        }, {
+            onFindByUserIdForFavoriteFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        })
     }
 
     private fun onFindByUserIdForFavoriteSuccess(bookmarkList: List<BookmarkEntity>, nextIndex: Int) {
-        if (nextIndex === 0) {
+        if (nextIndex == 0) {
             this.bookmarkList = bookmarkList
         } else {
             val totalBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
@@ -104,7 +97,7 @@ class BookmarkFavoritePresenter(private val getFavoriteBookmarksUsecase: GetFavo
         }
     }
 
-    private fun onFindByUserIdForFavoriteFailure(@Suppress("unused") e: Throwable) {
+    private fun onFindByUserIdForFavoriteFailure(@Suppress("UNUSED_PARAMETER") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 

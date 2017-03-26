@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.domain.repository
 
-import rx.Observable
+import io.reactivex.Single
 
 interface HatenaAccountRepository {
-    fun contains(userId: String): Observable<Boolean>
+    fun contains(userId: String): Single<Boolean>
 }

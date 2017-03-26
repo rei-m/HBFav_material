@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.util.AppUtil
 import javax.inject.Inject
 
@@ -54,6 +54,7 @@ class ExplainAppFragment : BaseFragment() {
         return view
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .inject(this)

@@ -8,26 +8,26 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
+import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.constant.FilterItem
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.constant.FilterItem
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 /**
  * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
  */
-class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
+class BookmarkedUsersFragment : BaseFragment(), BookmarkedUsersContact.View {
 
     companion object {
 
@@ -50,7 +50,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     @Inject
     lateinit var activityNavigator: ActivityNavigator
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -83,13 +83,13 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             val bookmarkEntity = parent?.adapter?.getItem(position) as BookmarkEntity
             presenter.onClickUser(bookmarkEntity)
         }
@@ -108,7 +108,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        disposable?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             presenter.onRefreshList()
         })
 
@@ -128,14 +128,14 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
 
         val view = view ?: return
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
     }
@@ -190,7 +190,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
 
@@ -234,6 +234,7 @@ class BookmarkedUsersFragment() : BaseFragment(), BookmarkedUsersContact.View {
         activityNavigator.navigateToOthersBookmark(activity, bookmarkEntity.creator)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(BookmarkedUsersFragmentModule(context))

@@ -95,7 +95,7 @@ dependencies {
     compile "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
-    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     compile("com.squareup.retrofit2:converter-simplexml:$retrofit_version") {
         exclude module: 'stax'
         exclude module: 'stax-api'

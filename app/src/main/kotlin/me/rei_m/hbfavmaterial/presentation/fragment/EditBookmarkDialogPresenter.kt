@@ -1,11 +1,10 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.*
-import retrofit2.adapter.rxjava.HttpException
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 
 class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
@@ -23,7 +22,7 @@ class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
 
     private var bookmarkEditEntity: BookmarkEditEntity? = null
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -45,12 +44,12 @@ class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onCheckedChangeOpen(isChecked: Boolean) {
@@ -109,19 +108,14 @@ class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
 
         val tags = bookmarkEditEntity?.tags?.toMutableList() ?: mutableListOf()
 
-        subscription?.add(registerBookmarkUsecase.register(url, title, comment, tags, isOpen, isCheckedReadAfter, isShareAtTwitter)
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    view.dismissDialog()
-                }, {
-                    view.showNetworkErrorMessage()
-                }))
+        disposable?.add(registerBookmarkUsecase.register(url, title, comment, tags, isOpen, isCheckedReadAfter, isShareAtTwitter).subscribeAsync({
+            view.dismissDialog()
+        }, {
+            view.showNetworkErrorMessage()
+        }, {
+            isLoading = false
+            view.hideProgress()
+        }))
     }
 
     private fun deleteBookmark(bookmarkUrl: String) {
@@ -131,22 +125,17 @@ class EditBookmarkDialogPresenter(private val getUserUsecase: GetUserUsecase,
         isLoading = true
         view.showProgress()
 
-        subscription?.add(deleteBookmarkUsecase.delete(bookmarkUrl)
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onDeleteBookmarkSuccess(it)
-                }, {
-                    onDeleteBookmarkFailure(it)
-                }))
+        disposable?.add(deleteBookmarkUsecase.delete(bookmarkUrl).subscribeAsync({
+            onDeleteBookmarkSuccess()
+        }, {
+            onDeleteBookmarkFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        }))
     }
 
-    private fun onDeleteBookmarkSuccess(@Suppress("unused") unit: Unit) {
+    private fun onDeleteBookmarkSuccess() {
         view.dismissDialog()
     }
 

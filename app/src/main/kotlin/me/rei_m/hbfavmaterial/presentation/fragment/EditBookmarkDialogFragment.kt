@@ -14,7 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
-import com.jakewharton.rxbinding.widget.RxTextView
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentComponent
 import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentModule
@@ -23,7 +24,6 @@ import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.extension.*
 import me.rei_m.hbfavmaterial.presentation.activity.SettingActivity
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(),
@@ -62,7 +62,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
     @Inject
     lateinit var presenter: EditBookmarkDialogContact.Actions
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private val bookmarkUrl: String by lazy {
         arguments.getString(ARG_BOOKMARK_URL)
@@ -86,6 +86,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as HasComponent<Injector>).getComponent()
@@ -96,7 +97,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater.inflate(R.layout.dialog_fragment_edit_bookmark, container, false)
 
@@ -110,32 +111,32 @@ class EditBookmarkDialogFragment : DialogFragment(),
         val editBookmark = view.findViewById(R.id.dialog_fragment_edit_bookmark_edit_bookmark) as EditText
 
         val switchOpen = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_open) as SwitchCompat
-        switchOpen.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchOpen.setOnCheckedChangeListener { _, isChecked ->
             presenter.onCheckedChangeOpen(isChecked)
         }
 
         val switchShareTwitter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_share_twitter) as SwitchCompat
-        switchShareTwitter.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchShareTwitter.setOnCheckedChangeListener { _, isChecked ->
             presenter.onCheckedChangeShareTwitter(isChecked)
         }
 
         val switchReadAfter = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_read_after) as SwitchCompat
-        switchReadAfter.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchReadAfter.setOnCheckedChangeListener { _, isChecked ->
             presenter.onCheckedChangeReadAfter(isChecked)
         }
 
         val switchDelete = view.findViewById(R.id.dialog_fragment_edit_bookmark_switch_delete) as SwitchCompat
-        switchDelete.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchDelete.setOnCheckedChangeListener { _, isChecked ->
             presenter.onCheckedChangeDelete(isChecked)
         }
 
         val buttonCancel = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_cancel) as AppCompatButton
-        buttonCancel.setOnClickListener { v ->
+        buttonCancel.setOnClickListener {
             dismiss()
         }
 
         val buttonOk = view.findViewById(R.id.dialog_fragment_edit_bookmark_button_ok) as AppCompatButton
-        buttonOk.setOnClickListener { v ->
+        buttonOk.setOnClickListener {
             presenter.onClickButtonOk(switchDelete.isChecked,
                     editBookmark.editableText.toString(),
                     switchOpen.isChecked,
@@ -157,7 +158,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
         val commentLength = resources.getInteger(R.integer.bookmark_comment_length)
 
-        subscription?.add(RxTextView.textChanges(editBookmark)
+        disposable?.add(RxTextView.textChanges(editBookmark)
                 .map { v ->
                     Math.ceil(v.toString().toByteArray().size / 3.0).toInt()
                 }
@@ -194,8 +195,8 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

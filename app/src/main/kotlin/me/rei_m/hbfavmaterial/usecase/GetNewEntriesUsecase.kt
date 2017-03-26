@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.usecase
 
-import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
-import rx.Observable
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 
 interface GetNewEntriesUsecase {
-    fun get(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>>
+    fun get(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>>
 }

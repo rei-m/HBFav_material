@@ -1,14 +1,14 @@
 package me.rei_m.hbfavmaterial.domain.repository
 
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
-import rx.Observable
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 
 interface BookmarkRepository {
 
-    fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Observable<List<BookmarkEntity>>
+    fun findByUserIdForFavorite(userId: String, startIndex: Int = 0): Single<List<BookmarkEntity>>
 
-    fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Observable<List<BookmarkEntity>>
+    fun findByUserId(userId: String, readAfterFilter: ReadAfterFilter, startIndex: Int = 0): Single<List<BookmarkEntity>>
 
-    fun findByArticleUrl(articleUrl: String): Observable<List<BookmarkEntity>>
+    fun findByArticleUrl(articleUrl: String): Single<List<BookmarkEntity>>
 }

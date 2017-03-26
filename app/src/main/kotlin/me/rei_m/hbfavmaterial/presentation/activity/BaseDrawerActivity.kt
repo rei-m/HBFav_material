@@ -12,7 +12,7 @@ import android.view.MenuItem
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.repository.UserRepository
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransformation
 import javax.inject.Inject

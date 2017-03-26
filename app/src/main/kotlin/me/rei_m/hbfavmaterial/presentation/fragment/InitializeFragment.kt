@@ -9,21 +9,21 @@ import android.support.v7.widget.AppCompatEditText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jakewharton.rxbinding.widget.RxTextView
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.InitializeFragmentComponent
 import me.rei_m.hbfavmaterial.di.InitializeFragmentModule
 import me.rei_m.hbfavmaterial.extension.hideKeyBoard
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
-import rx.subscriptions.CompositeSubscription
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import javax.inject.Inject
 
 /**
  * アプリの初期処理を行うFragment.
  */
-class InitializeFragment() : BaseFragment(),
+class InitializeFragment : BaseFragment(),
         InitializeContact.View,
         ProgressDialogController {
 
@@ -39,7 +39,7 @@ class InitializeFragment() : BaseFragment(),
 
     override var progressDialog: ProgressDialog? = null
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ class InitializeFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater.inflate(R.layout.fragment_initialize, container, false)
 
@@ -59,8 +59,8 @@ class InitializeFragment() : BaseFragment(),
             presenter.onClickButtonSetId(editId.editableText.toString())
         }
 
-        subscription?.add(RxTextView.textChanges(editId)
-                .map { v -> 0 < v.length }
+        disposable?.add(RxTextView.textChanges(editId)
+                .map { v -> v.isNotEmpty() }
                 .subscribe { isEnabled -> buttonSetId.isEnabled = isEnabled })
 
         return view
@@ -78,8 +78,8 @@ class InitializeFragment() : BaseFragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun showNetworkErrorMessage() {
@@ -109,6 +109,7 @@ class InitializeFragment() : BaseFragment(),
         activity.finish()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(InitializeFragmentModule(context))

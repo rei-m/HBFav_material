@@ -5,7 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.usecase.AuthorizeTwitterUsecase
 import me.rei_m.hbfavmaterial.usecase.GetHatenaTokenUsecase
 import me.rei_m.hbfavmaterial.usecase.GetTwitterSessionUsecase

@@ -14,13 +14,13 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import javax.inject.Inject
 
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment() : BaseFragment(),
+class SettingFragment : BaseFragment(),
         SettingContact.View,
         DialogInterface {
 
@@ -58,9 +58,7 @@ class SettingFragment() : BaseFragment(),
         view.findViewById(R.id.fragment_setting_layout_text_hatena_id).setOnClickListener {
             EditUserIdDialogFragment.newInstance().apply {
                 setTargetFragment(this@SettingFragment, 0)
-            }.let {
-                it.show(childFragmentManager, EditUserIdDialogFragment.TAG)
-            }
+            }.show(childFragmentManager, EditUserIdDialogFragment.TAG)
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth).setOnClickListener {
@@ -145,6 +143,7 @@ class SettingFragment() : BaseFragment(),
         (activity as AppCompatActivity).showSnackbarNetworkError()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(SettingFragmentModule(context))

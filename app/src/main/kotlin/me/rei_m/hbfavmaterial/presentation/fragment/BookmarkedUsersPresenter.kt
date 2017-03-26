@@ -1,12 +1,11 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.GetBookmarkedUsersUsecase
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 
 class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase) : BookmarkedUsersContact.Actions {
 
@@ -16,7 +15,7 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
 
     private var bookmarkList: List<BookmarkEntity> = listOf()
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -31,12 +30,12 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
         if (bookmarkList.isEmpty()) {
             initializeListContents()
         } else {
             if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-                view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
+                view.showUserList(bookmarkList.filter { (_, description) -> description.isNotEmpty() })
             } else {
                 view.showUserList(bookmarkList)
             }
@@ -44,15 +43,15 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     private fun initializeListContents() {
 
         if (isLoading) return
 
-        subscription?.let {
+        disposable?.let {
             view.showProgress()
             it.add(request())
         }
@@ -62,7 +61,7 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
 
         if (isLoading) return
 
-        subscription?.add(request())
+        disposable?.add(request())
     }
 
     override fun onOptionItemSelected(bookmarkCommentFilter: BookmarkCommentFilter) {
@@ -72,30 +71,24 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
         this.bookmarkCommentFilter = bookmarkCommentFilter
 
         if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-            view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
+            view.showUserList(bookmarkList.filter { (_, description) -> description.isNotEmpty() })
         } else {
             view.showUserList(bookmarkList)
         }
     }
 
-    private fun request(): Subscription? {
+    private fun request(): Disposable? {
 
-        return getBookmarkedUsersUsecase.get(bookmarkEntity)
-                .doOnSubscribe {
-                    isLoading = true
-                }
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onFindByArticleUrlSuccess(it)
-                }, {
-                    onFindByArticleUrlFailure(it)
-                })
+        isLoading = true
+
+        return getBookmarkedUsersUsecase.get(bookmarkEntity).subscribeAsync({
+            onFindByArticleUrlSuccess(it)
+        }, {
+            onFindByArticleUrlFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        })
     }
 
     private fun onFindByArticleUrlSuccess(bookmarkList: List<BookmarkEntity>) {
@@ -108,14 +101,14 @@ class BookmarkedUsersPresenter(private val getBookmarkedUsersUsecase: GetBookmar
         } else {
             view.hideEmpty()
             if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-                view.showUserList(bookmarkList.filter { bookmark -> bookmark.description.isNotEmpty() })
+                view.showUserList(bookmarkList.filter { (_, description) -> description.isNotEmpty() })
             } else {
                 view.showUserList(bookmarkList)
             }
         }
     }
 
-    private fun onFindByArticleUrlFailure(@Suppress("unused") e: Throwable) {
+    private fun onFindByArticleUrlFailure(@Suppress("UNUSED_PARAMETER") e: Throwable) {
         view.showNetworkErrorMessage()
     }
 

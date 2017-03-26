@@ -1,18 +1,17 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.usecase.GetNewEntriesUsecase
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 
 class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) : NewEntryContact.Actions {
 
     private lateinit var view: NewEntryContact.View
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var entryList: List<EntryEntity> = listOf()
 
@@ -27,7 +26,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
     }
 
     override fun onResume() {
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
         if (entryList.isEmpty()) {
             initializeListContents()
         } else {
@@ -36,8 +35,8 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
     }
 
     override fun onPause() {
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onClickEntry(entryEntity: EntryEntity) {
@@ -48,7 +47,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
 
         if (isLoading) return
 
-        subscription?.let {
+        disposable?.let {
             view.showProgress()
             it.add(request())
         }
@@ -58,7 +57,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
 
         if (isLoading) return
 
-        subscription?.add(request())
+        disposable?.add(request())
     }
 
     override fun onOptionItemSelected(entryTypeFilter: EntryTypeFilter) {
@@ -67,30 +66,24 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
 
         if (this.entryTypeFilter == entryTypeFilter) return
 
-        subscription?.let {
+        disposable?.let {
             this.entryTypeFilter = entryTypeFilter
             it.add(request())
         }
     }
 
-    private fun request(): Subscription? {
+    private fun request(): Disposable? {
 
-        return getNewEntriesUsecase.get(entryTypeFilter)
-                .doOnSubscribe {
-                    isLoading = true
-                }
-                .doOnUnsubscribe {
-                    isLoading = false
-                    view.hideProgress()
-                }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onFindNewEntryByTypeSuccess(it)
-                }, {
-                    onFindNewEntryByTypeFailure(it)
-                })
+        isLoading = true
+
+        return getNewEntriesUsecase.get(entryTypeFilter).subscribeAsync({
+            onFindNewEntryByTypeSuccess(it)
+        }, {
+            onFindNewEntryByTypeFailure(it)
+        }, {
+            isLoading = false
+            view.hideProgress()
+        })
     }
 
     private fun onFindNewEntryByTypeSuccess(entryList: List<EntryEntity>) {
@@ -105,6 +98,7 @@ class NewEntryPresenter(private val getNewEntriesUsecase: GetNewEntriesUsecase) 
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun onFindNewEntryByTypeFailure(e: Throwable) {
         view.showNetworkErrorMessage()
     }

@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.usecase
 
-import rx.Observable
+import io.reactivex.Completable
 
 interface DeleteBookmarkUsecase {
-    fun delete(bookmarkUrl: String): Observable<Unit>
+    fun delete(bookmarkUrl: String): Completable
 }

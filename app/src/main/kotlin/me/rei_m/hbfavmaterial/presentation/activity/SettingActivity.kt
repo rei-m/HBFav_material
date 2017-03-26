@@ -15,7 +15,7 @@ import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.presentation.fragment.SettingFragment
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
 
 class SettingActivity : BaseDrawerActivity(),

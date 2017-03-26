@@ -1,12 +1,12 @@
 package me.rei_m.hbfavmaterial.domain.repository
 
-import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
-import rx.Observable
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 
 interface EntryRepository {
 
-    fun findHotByEntryType(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>>
+    fun findHotByEntryType(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>>
 
-    fun findNewByEntryType(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>>
+    fun findNewByEntryType(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>>
 }

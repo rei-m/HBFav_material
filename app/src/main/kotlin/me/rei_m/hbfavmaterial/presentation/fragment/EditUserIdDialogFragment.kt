@@ -15,7 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
-import com.jakewharton.rxbinding.widget.RxTextView
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentComponent
 import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentModule
@@ -23,10 +24,9 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.extension.toggle
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
-class EditUserIdDialogFragment() : DialogFragment(),
+class EditUserIdDialogFragment : DialogFragment(),
         EditUserIdDialogContact.View,
         ProgressDialogController {
 
@@ -42,7 +42,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     private var listener: DialogInterface? = null
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     override var progressDialog: ProgressDialog? = null
 
@@ -60,6 +60,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as HasComponent<Injector>).getComponent()
@@ -70,7 +71,7 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater.inflate(R.layout.dialog_fragment_edit_user_id, container, false)
 
@@ -92,8 +93,8 @@ class EditUserIdDialogFragment() : DialogFragment(),
             presenter.onClickButtonOk(inputtedUserId)
         }
 
-        subscription?.add(RxTextView.textChanges(editUserId)
-                .map { 0 < it.length }
+        disposable?.add(RxTextView.textChanges(editUserId)
+                .map { it.isNotEmpty() }
                 .subscribe { isEnabled -> buttonOk.toggle(isEnabled) })
 
         return view
@@ -116,8 +117,8 @@ class EditUserIdDialogFragment() : DialogFragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onDetach() {

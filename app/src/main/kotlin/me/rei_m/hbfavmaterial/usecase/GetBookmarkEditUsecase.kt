@@ -1,8 +1,8 @@
 package me.rei_m.hbfavmaterial.usecase
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
-import rx.Observable
 
 interface GetBookmarkEditUsecase {
-    fun get(urlString: String): Observable<BookmarkEditEntity>
+    fun get(urlString: String): Single<BookmarkEditEntity>
 }

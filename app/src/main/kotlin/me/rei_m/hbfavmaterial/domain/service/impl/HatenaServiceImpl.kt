@@ -1,5 +1,7 @@
 package me.rei_m.hbfavmaterial.domain.service.impl
 
+import io.reactivex.Completable
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
@@ -7,7 +9,6 @@ import me.rei_m.hbfavmaterial.infra.exeption.HTTPException
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.RetrofitManager
-import rx.Observable
 import java.net.HttpURLConnection
 
 class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : HatenaService {
@@ -16,23 +17,21 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
         private const val MAX_TAGS_COUNT = 10
     }
 
-    override fun fetchRequestToken(): Observable<String> {
-        return Observable.create { t ->
+    override fun fetchRequestToken(): Single<String> {
+        return Single.create { t ->
             val authUrl = hatenaOAuthManager.retrieveRequestToken()
             if (authUrl != null) {
-                t.onNext(authUrl)
-                t.onCompleted()
+                t.onSuccess(authUrl)
             } else {
                 t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
         }
     }
 
-    override fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity> {
-        return Observable.create { t ->
+    override fun fetchAccessToken(requestToken: String): Single<OAuthTokenEntity> {
+        return Single.create { t ->
             if (hatenaOAuthManager.retrieveAccessToken(requestToken)) {
-                t.onNext(OAuthTokenEntity(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret))
-                t.onCompleted()
+                t.onSuccess(OAuthTokenEntity(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret))
             } else {
                 t.onError(HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED))
             }
@@ -40,7 +39,7 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
     }
 
     override fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
-                                   urlString: String): Observable<BookmarkEditEntity> {
+                                   urlString: String): Single<BookmarkEditEntity> {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 
@@ -49,11 +48,11 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
         return retrofit.create(HatenaOAuthApiService::class.java)
                 .getBookmark(urlString)
                 .map {
-                    response ->
+                    (_, private, _, _, tags, _, comment) ->
                     return@map BookmarkEditEntity(url = urlString,
-                            comment = response.comment,
-                            isPrivate = response.private,
-                            tags = response.tags)
+                            comment = comment,
+                            isPrivate = private,
+                            tags = tags)
                 }
     }
 
@@ -61,7 +60,7 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
                                 urlString: String,
                                 comment: String,
                                 isOpen: Boolean,
-                                tags: List<String>): Observable<BookmarkEditEntity> {
+                                tags: List<String>): Single<BookmarkEditEntity> {
 
         require(tags.size <= MAX_TAGS_COUNT) { "登録可能なタグは $MAX_TAGS_COUNT 個までです。" }
 
@@ -72,16 +71,16 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
         return retrofit.create(HatenaOAuthApiService::class.java)
                 .postBookmark(urlString, comment, if (isOpen) "0" else "1", tags.toTypedArray())
                 .map {
-                    response ->
+                    (_, private, _, _, tags1, _, comment1) ->
                     return@map BookmarkEditEntity(url = urlString,
-                            comment = response.comment,
-                            isPrivate = response.private,
-                            tags = response.tags)
+                            comment = comment1,
+                            isPrivate = private,
+                            tags = tags1)
                 }
     }
 
     override fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                                urlString: String): Observable<Unit> {
+                                urlString: String): Completable {
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oauthTokenEntity.token, oauthTokenEntity.secretToken)
 

@@ -1,19 +1,19 @@
 package me.rei_m.hbfavmaterial.domain.repository.impl
 
+import io.reactivex.Single
+import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.domain.entity.ArticleEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.domain.repository.EntryRepository
 import me.rei_m.hbfavmaterial.domain.util.ApiUtil
 import me.rei_m.hbfavmaterial.domain.util.RssXmlUtil
-import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
 import org.jsoup.Jsoup
-import rx.Observable
 
 class EntryRepositoryImpl(private val hatenaRssService: HatenaRssService,
                           private val hotEntryRssService: HatenaRssService) : EntryRepository {
 
-    override fun findHotByEntryType(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
+    override fun findHotByEntryType(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>> {
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL) {
             hotEntryRssService.hotentry()
         } else {
@@ -39,7 +39,7 @@ class EntryRepositoryImpl(private val hatenaRssService: HatenaRssService,
         }
     }
 
-    override fun findNewByEntryType(entryTypeFilter: EntryTypeFilter): Observable<List<EntryEntity>> {
+    override fun findNewByEntryType(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>> {
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL) {
             hatenaRssService.new()
         } else {

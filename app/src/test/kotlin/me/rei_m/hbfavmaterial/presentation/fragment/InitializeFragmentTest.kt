@@ -10,7 +10,7 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.InitializeFragmentComponent
 import me.rei_m.hbfavmaterial.di.InitializeFragmentModule
 import me.rei_m.hbfavmaterial.di.SplashActivityComponent
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.testutil.DriverActivity
 import me.rei_m.hbfavmaterial.testutil.bindView
 import org.hamcrest.CoreMatchers.`is`

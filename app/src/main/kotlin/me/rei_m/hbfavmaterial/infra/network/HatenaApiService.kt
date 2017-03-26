@@ -1,16 +1,16 @@
 package me.rei_m.hbfavmaterial.infra.network
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.infra.network.response.BookmarkEntryResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import rx.Observable
 
 interface HatenaApiService {
 
     @GET("entry/jsonlite/")
-    fun entry(@Query("url") entryUrl: String): Observable<BookmarkEntryResponse>
+    fun entry(@Query("url") entryUrl: String): Single<BookmarkEntryResponse>
 
     @GET("{userId}/")
-    fun userCheck(@Path("userId") userId: String): Observable<String>
+    fun userCheck(@Path("userId") userId: String): Single<String>
 }

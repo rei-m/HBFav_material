@@ -8,27 +8,27 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout
+import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.HotEntryFragmentComponent
 import me.rei_m.hbfavmaterial.di.HotEntryFragmentModule
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
-import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
 import me.rei_m.hbfavmaterial.presentation.view.adapter.EntryListAdapter
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 /**
  * HotEntryを一覧で表示するFragment.
  */
-class HotEntryFragment() : BaseFragment(),
+class HotEntryFragment : BaseFragment(),
         HotEntryContact.View,
         MainPageFragment {
 
@@ -57,7 +57,7 @@ class HotEntryFragment() : BaseFragment(),
         EntryListAdapter(activity, R.layout.list_item_entry)
     }
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     override val pageIndex: Int
         get() = arguments.getInt(ARG_PAGE_INDEX)
@@ -86,13 +86,13 @@ class HotEntryFragment() : BaseFragment(),
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         val view = inflater!!.inflate(R.layout.fragment_list, container, false)
 
         val listView = view.findViewById(R.id.fragment_list_list) as ListView
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             val entryEntity = parent?.adapter?.getItem(position) as EntryEntity
             presenter.onClickEntry(entryEntity)
         }
@@ -111,7 +111,7 @@ class HotEntryFragment() : BaseFragment(),
 
         // Pull to refreshのイベントをセット
         val swipeRefreshLayout = view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout
-        subscription?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
+        disposable?.add(RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).subscribe {
             presenter.onRefreshList()
         })
 
@@ -131,15 +131,15 @@ class HotEntryFragment() : BaseFragment(),
     override fun onDestroyView() {
         super.onDestroyView()
 
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
 
         val view = view ?: return
 
         // Pull to Refresh中であれば解除する
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
     }
@@ -184,7 +184,7 @@ class HotEntryFragment() : BaseFragment(),
 
         with(view.findViewById(R.id.fragment_list_refresh) as SwipeRefreshLayout) {
             if (isRefreshing) {
-                RxSwipeRefreshLayout.refreshing(this).call(false)
+                RxSwipeRefreshLayout.refreshing(this).accept(false)
             }
         }
     }
@@ -224,6 +224,7 @@ class HotEntryFragment() : BaseFragment(),
         activityNavigator.navigateToBookmark(activity, entryEntity)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(HotEntryFragmentModule(context))
