@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.MainActivityComponent
 import me.rei_m.hbfavmaterial.di.MainActivityModule
@@ -74,11 +75,11 @@ class MainActivity : BaseDrawerActivity(),
         // Drawer内のメニュー選択時のイベント
         when (item.itemId) {
             R.id.nav_setting -> {
-                navigator.navigateToSetting(this)
+                navigator.navigateToSetting()
                 finish()
             }
             R.id.nav_explain_app -> {
-                navigator.navigateToExplainApp(this)
+                navigator.navigateToExplainApp()
                 finish()
             }
             else -> {
@@ -110,7 +111,7 @@ class MainActivity : BaseDrawerActivity(),
 
     override fun setupActivityComponent() {
         component = (application as App).component
-                .plus(MainActivityModule(this))
+                .plus(MainActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 

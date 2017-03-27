@@ -38,11 +38,11 @@ class ExplainAppFragment : BaseFragment() {
         }
 
         view.findViewById(R.id.fragment_explain_app_layout_from_developer).setOnClickListener {
-            navigator.navigateToFromDeveloper(activity)
+            navigator.navigateToFromDeveloper()
         }
 
         view.findViewById(R.id.fragment_explain_app_layout_credit).setOnClickListener {
-            navigator.navigateToCredit(activity)
+            navigator.navigateToCredit()
         }
 
         val versionName = AppUtil.getVersionName(activity.applicationContext)

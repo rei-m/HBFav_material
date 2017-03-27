@@ -2,65 +2,65 @@ package me.rei_m.hbfavmaterial.presentation.helper
 
 import android.app.Activity
 import android.content.Intent
-import me.rei_m.hbfavmaterial.presentation.activity.*
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import me.rei_m.hbfavmaterial.presentation.activity.*
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
 
-open class ActivityNavigator {
+open class ActivityNavigator(private val activity: Activity) {
 
     companion object {
         const val REQ_CODE_OAUTH = 100
     }
 
-    open fun navigateToMain(activity: Activity, page: BookmarkPagerAdaptor.Page = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE) {
+    open fun navigateToMain(page: BookmarkPagerAdaptor.Page = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE) {
         val intentToLaunch = MainActivity.createIntent(activity, page)
         intentToLaunch.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         activity.startActivity(intentToLaunch)
     }
 
-    open fun navigateToBookmark(activity: Activity, bookmarkEntity: BookmarkEntity) {
+    open fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
         val intentToLaunch = BookmarkActivity.createIntent(activity, bookmarkEntity)
         activity.startActivity(intentToLaunch)
     }
 
-    open fun navigateToBookmark(activity: Activity, entryEntity: EntryEntity) {
+    open fun navigateToBookmark(entryEntity: EntryEntity) {
         val intentToLaunch = BookmarkActivity.createIntent(activity, entryEntity)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToBookmarkedUsers(activity: Activity, bookmarkEntity: BookmarkEntity) {
+    fun navigateToBookmarkedUsers(bookmarkEntity: BookmarkEntity) {
         val intentToLaunch = BookmarkedUsersActivity.createIntent(activity, bookmarkEntity)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToExplainApp(activity: Activity) {
+    fun navigateToExplainApp() {
         val intentToLaunch = ExplainAppActivity.createIntent(activity)
         intentToLaunch.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToFromDeveloper(activity: Activity) {
+    fun navigateToFromDeveloper() {
         val intentToLaunch = FrameActivity.createIntent(activity, FrameActivity.Tag.FROM_DEVELOPER)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToCredit(activity: Activity) {
+    fun navigateToCredit() {
         val intentToLaunch = FrameActivity.createIntent(activity, FrameActivity.Tag.CREDIT)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToOAuth(activity: Activity) {
+    fun navigateToOAuth() {
         val intentToLaunch = OAuthActivity.createIntent(activity)
         activity.startActivityForResult(intentToLaunch, REQ_CODE_OAUTH)
     }
 
-    open fun navigateToOthersBookmark(activity: Activity, userId: String) {
+    open fun navigateToOthersBookmark(userId: String) {
         val intentToLaunch = OthersBookmarkActivity.createIntent(activity, userId)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToSetting(activity: Activity) {
+    fun navigateToSetting() {
         val intentToLaunch = SettingActivity.createIntent(activity)
         intentToLaunch.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         activity.startActivity(intentToLaunch)

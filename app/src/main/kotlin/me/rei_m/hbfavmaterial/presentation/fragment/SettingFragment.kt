@@ -62,7 +62,7 @@ class SettingFragment : BaseFragment(),
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth).setOnClickListener {
-            navigator.navigateToOAuth(activity)
+            navigator.navigateToOAuth()
         }
 
         view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {

@@ -221,7 +221,7 @@ class HotEntryFragment : BaseFragment(),
     }
 
     override fun navigateToBookmark(entryEntity: EntryEntity) {
-        activityNavigator.navigateToBookmark(activity, entryEntity)
+        activityNavigator.navigateToBookmark(entryEntity)
     }
 
     @Suppress("UNCHECKED_CAST")

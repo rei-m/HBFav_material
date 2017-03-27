@@ -10,17 +10,17 @@ interface ApplicationComponent {
 
     fun inject(application: App)
 
-    fun plus(activityModule: BookmarkedUsersActivityModule): BookmarkedUsersActivityComponent
+    fun plus(bookmarkedUsersActivityModule: BookmarkedUsersActivityModule, activityModule: ActivityModule): BookmarkedUsersActivityComponent
 
-    fun plus(activityModule: BookmarkActivityModule?): BookmarkActivityComponent
+    fun plus(bookmarkActivityModule: BookmarkActivityModule?, activityModule: ActivityModule): BookmarkActivityComponent
 
-    fun plus(activityModule: ExplainAppActivityModule?): ExplainAppActivityComponent
+    fun plus(explainAppActivityModule: ExplainAppActivityModule?, activityModule: ActivityModule): ExplainAppActivityComponent
 
-    fun plus(activityModule: MainActivityModule?): MainActivityComponent
+    fun plus(mainActivityModule: MainActivityModule?, activityModule: ActivityModule): MainActivityComponent
 
-    fun plus(activityModule: OAuthActivityModule?): OAuthActivityComponent
+    fun plus(oAuthActivityModule: OAuthActivityModule?, activityModule: ActivityModule): OAuthActivityComponent
 
-    fun plus(activityModule: SettingActivityModule?): SettingActivityComponent
+    fun plus(settingActivityModule: SettingActivityModule?, activityModule: ActivityModule): SettingActivityComponent
 
-    fun plus(activityModule: SplashActivityModule?): SplashActivityComponent
+    fun plus(splashActivityModule: SplashActivityModule?, activityModule: ActivityModule): SplashActivityComponent
 }

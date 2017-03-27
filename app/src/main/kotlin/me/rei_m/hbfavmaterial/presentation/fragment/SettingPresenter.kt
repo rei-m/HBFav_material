@@ -71,7 +71,7 @@ class SettingPresenter(private val getUserUsecase: GetUserUsecase,
         isLoading = true
         authorizeTwitterUsecase.authorize(activity)
     }
-    
+
     override fun onDismissEditUserIdDialog() {
         view.updateUserId(getUserUsecase.get().id)
     }

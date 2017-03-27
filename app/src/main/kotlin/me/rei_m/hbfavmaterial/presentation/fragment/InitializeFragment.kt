@@ -105,7 +105,7 @@ class InitializeFragment : BaseFragment(),
     }
 
     override fun navigateToMain() {
-        navigator.navigateToMain(activity)
+        navigator.navigateToMain()
         activity.finish()
     }
 

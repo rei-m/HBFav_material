@@ -5,11 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersFragment
@@ -56,7 +57,7 @@ class BookmarkedUsersActivity : BaseSingleActivity(),
     }
 
     override fun setupActivityComponent() {
-        component = (application as App).component.plus(BookmarkedUsersActivityModule(this))
+        component = (application as App).component.plus(BookmarkedUsersActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 

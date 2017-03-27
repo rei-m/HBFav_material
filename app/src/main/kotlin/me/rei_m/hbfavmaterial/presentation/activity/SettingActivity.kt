@@ -8,6 +8,7 @@ import android.view.MenuItem
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SettingActivityComponent
 import me.rei_m.hbfavmaterial.di.SettingActivityModule
@@ -50,11 +51,11 @@ class SettingActivity : BaseDrawerActivity(),
             R.id.nav_setting -> {
             }
             R.id.nav_explain_app -> {
-                navigator.navigateToExplainApp(this)
+                navigator.navigateToExplainApp()
                 finish()
             }
             else -> {
-                navigator.navigateToMain(this, BookmarkPagerAdaptor.Page.forMenuId(item.itemId))
+                navigator.navigateToMain(BookmarkPagerAdaptor.Page.forMenuId(item.itemId))
                 finish()
             }
         }
@@ -79,7 +80,7 @@ class SettingActivity : BaseDrawerActivity(),
 
     override fun setupActivityComponent() {
         component = (application as App).component
-                .plus(SettingActivityModule(this))
+                .plus(SettingActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 

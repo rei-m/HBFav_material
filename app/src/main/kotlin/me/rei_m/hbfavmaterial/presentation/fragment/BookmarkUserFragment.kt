@@ -301,7 +301,7 @@ class BookmarkUserFragment : BaseFragment(),
     }
 
     override fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
-        activityNavigator.navigateToBookmark(activity, bookmarkEntity)
+        activityNavigator.navigateToBookmark(bookmarkEntity)
     }
 
     @Suppress("UNCHECKED_CAST")

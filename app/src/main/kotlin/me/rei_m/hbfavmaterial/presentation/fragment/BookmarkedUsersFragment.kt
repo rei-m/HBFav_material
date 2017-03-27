@@ -231,7 +231,7 @@ class BookmarkedUsersFragment : BaseFragment(), BookmarkedUsersContact.View {
     }
 
     override fun navigateToOthersBookmark(bookmarkEntity: BookmarkEntity) {
-        activityNavigator.navigateToOthersBookmark(activity, bookmarkEntity.creator)
+        activityNavigator.navigateToOthersBookmark(bookmarkEntity.creator)
     }
 
     @Suppress("UNCHECKED_CAST")

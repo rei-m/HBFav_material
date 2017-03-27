@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.OAuthActivityModule
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
@@ -139,7 +140,7 @@ class OAuthActivity : BaseSingleActivity() {
 
     override fun setupActivityComponent() {
         val component = (application as App).component
-                .plus(OAuthActivityModule(this))
+                .plus(OAuthActivityModule(), ActivityModule(this))
 
         component.inject(this)
     }

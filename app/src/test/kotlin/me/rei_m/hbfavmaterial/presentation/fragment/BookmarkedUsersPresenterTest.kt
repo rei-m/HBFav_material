@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import io.reactivex.android.plugins.RxAndroidPlugins
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.testutil.TestUtil

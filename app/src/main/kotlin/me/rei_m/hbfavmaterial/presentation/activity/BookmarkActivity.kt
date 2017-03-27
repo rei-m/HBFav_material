@@ -10,6 +10,7 @@ import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
 import me.rei_m.hbfavmaterial.di.BookmarkActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
@@ -102,7 +103,7 @@ class BookmarkActivity : BaseSingleActivity(),
         fab.setOnClickListener {
             // はてぶ投稿ボタン
             if (!getHatenaTokenUsecase.get().isAuthorised) {
-                navigator.navigateToOAuth(this)
+                navigator.navigateToOAuth()
             } else {
                 fetchBookmark(entryLink)
             }
@@ -222,7 +223,7 @@ class BookmarkActivity : BaseSingleActivity(),
     }
 
     override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {
-        navigator.navigateToOthersBookmark(this, bookmarkEntity.creator)
+        navigator.navigateToOthersBookmark(bookmarkEntity.creator)
     }
 
     override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
@@ -230,12 +231,12 @@ class BookmarkActivity : BaseSingleActivity(),
     }
 
     override fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity) {
-        navigator.navigateToBookmarkedUsers(this, bookmarkEntity)
+        navigator.navigateToBookmarkedUsers(bookmarkEntity)
     }
 
     override fun setupActivityComponent() {
         component = (application as App).component
-                .plus(BookmarkActivityModule(this))
+                .plus(BookmarkActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 

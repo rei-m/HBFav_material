@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SplashActivityComponent
 import me.rei_m.hbfavmaterial.di.SplashActivityModule
@@ -31,7 +32,7 @@ class SplashActivity : BaseActivity(), HasComponent<SplashActivityComponent> {
 
     override fun setupActivityComponent() {
         component = (application as App).component
-                .plus(SplashActivityModule(this))
+                .plus(SplashActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 

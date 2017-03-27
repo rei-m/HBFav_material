@@ -7,6 +7,7 @@ import android.support.design.widget.NavigationView
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.ExplainAppActivityComponent
 import me.rei_m.hbfavmaterial.di.ExplainAppActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
@@ -46,13 +47,13 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
 
         when (item.itemId) {
             R.id.nav_setting -> {
-                navigator.navigateToSetting(this)
+                navigator.navigateToSetting()
                 finish()
             }
             R.id.nav_explain_app -> {
             }
             else -> {
-                navigator.navigateToMain(this, BookmarkPagerAdaptor.Page.forMenuId(item.itemId))
+                navigator.navigateToMain(BookmarkPagerAdaptor.Page.forMenuId(item.itemId))
                 finish()
             }
         }
@@ -62,7 +63,7 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
 
     override fun setupActivityComponent() {
         component = (application as App).component
-                .plus(ExplainAppActivityModule(this))
+                .plus(ExplainAppActivityModule(), ActivityModule(this))
         component.inject(this)
     }
 
