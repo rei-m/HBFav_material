@@ -17,7 +17,11 @@ import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransform
 /**
  * ブックマーク一覧のアイテムを表示するレイアウト.
  */
-class BookmarkItemLayout : RelativeLayout {
+class BookmarkItemLayout @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyle: Int = 0
+) : RelativeLayout(context, attrs, defStyle) {
 
     companion object {
         private class ViewHolder(val name: AppCompatTextView,
@@ -25,14 +29,6 @@ class BookmarkItemLayout : RelativeLayout {
                                  val bookmarkLayout: BookmarkLayout,
                                  val timing: AppCompatTextView)
     }
-
-    constructor(context: Context?) : super(context)
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun onFinishInflate() {
         super.onFinishInflate()
