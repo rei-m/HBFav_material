@@ -5,7 +5,7 @@ import android.content.Intent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.presentation.activity.*
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdaptor
+import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
 
 open class ActivityNavigator(private val activity: Activity) {
 
@@ -13,7 +13,7 @@ open class ActivityNavigator(private val activity: Activity) {
         const val REQ_CODE_OAUTH = 100
     }
 
-    open fun navigateToMain(page: BookmarkPagerAdaptor.Page = BookmarkPagerAdaptor.Page.BOOKMARK_FAVORITE) {
+    open fun navigateToMain(page: BookmarkPagerAdapter.Page = BookmarkPagerAdapter.Page.BOOKMARK_FAVORITE) {
         val intentToLaunch = MainActivity.createIntent(activity, page)
         intentToLaunch.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         activity.startActivity(intentToLaunch)

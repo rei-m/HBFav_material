@@ -27,3 +27,8 @@ fun <T> Observable<T>.subscribeAsync(onSuccess: (T) -> Unit, onFailure: (Throwab
             .doFinally(onEventFinished)
             .subscribe(onSuccess, onFailure)
 }
+
+fun <T> Observable<T>.subscribeBus(onSuccess: (T) -> Unit): Disposable {
+    return observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onSuccess)
+}

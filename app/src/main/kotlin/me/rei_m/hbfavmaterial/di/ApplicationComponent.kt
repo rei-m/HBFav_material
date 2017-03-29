@@ -20,6 +20,8 @@ interface ApplicationComponent {
 
     fun plus(oAuthActivityModule: OAuthActivityModule?, activityModule: ActivityModule): OAuthActivityComponent
 
+    fun plus(othersActivityModule: OthersBookmarkActivityModule, activityModule: ActivityModule): OthersBookmarkActivityComponent
+
     fun plus(settingActivityModule: SettingActivityModule?, activityModule: ActivityModule): SettingActivityComponent
 
     fun plus(splashActivityModule: SplashActivityModule?, activityModule: ActivityModule): SplashActivityComponent

@@ -19,7 +19,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         private const val AUTHORIZATION_WEBSITE_URL = "https://www.hatena.ne.jp/touch/oauth/authorize"
 
-        const val AUTHORIZATION_DENY_URL = "$AUTHORIZATION_WEBSITE_URL.deny"
+        const val AUTHORIZATION_DENY_URL = "https://www.hatena.ne.jp/oauth/authorize.deny"
 
         const val CALLBACK = "https://github.com/rei-m/HBFav_material"
     }

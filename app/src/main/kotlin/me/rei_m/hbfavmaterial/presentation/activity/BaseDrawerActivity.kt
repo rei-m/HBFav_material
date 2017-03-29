@@ -1,20 +1,14 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.AppCompatTextView
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
-import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransformation
+import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
+import me.rei_m.hbfavmaterial.presentation.viewmodel.BaseDrawerActivityViewModel
 import javax.inject.Inject
 
 /**
@@ -23,66 +17,70 @@ import javax.inject.Inject
 abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
-    lateinit var navigator: ActivityNavigator
+    lateinit var viewModel: BaseDrawerActivityViewModel
 
-    @Inject
-    lateinit var userRepository: UserRepository
+    protected var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.app_bar_main_toolbar) as Toolbar
-        setSupportActionBar(toolbar)
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
-        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
+        setSupportActionBar(binding.appBar.toolbar)
 
         val toggle = ActionBarDrawerToggle(this,
-                drawer,
-                toolbar,
+                binding.drawer,
+                binding.appBar.toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
 
-        drawer.addDrawerListener(toggle)
+        binding.drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
-        navigationView.setNavigationItemSelectedListener(this)
+        binding.navigationView.setNavigationItemSelectedListener(this)
 
-        val userEntity = userRepository.resolve()
+        binding.viewModel = viewModel
 
-        displayUserIconAndName(userEntity.id)
+        this.binding = binding
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 
     override fun onBackPressed() {
-        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        binding?.drawer?.let {
+            if (it.isDrawerOpen(GravityCompat.START)) {
+                it.closeDrawer(GravityCompat.START)
+                return
+            }
         }
+        super.onBackPressed()
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val drawer = findViewById(R.id.activity_main_layout_drawer) as DrawerLayout
-        drawer.closeDrawer(GravityCompat.START)
+        binding?.drawer?.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    protected fun displayUserIconAndName(id: String) {
-        val navigationView = findViewById(R.id.activity_main_nav) as NavigationView
-
-        val headerView = navigationView.getHeaderView(0)
-        val imageOwnerIcon = headerView.findViewById(R.id.nav_header_main_image_owner_icon) as AppCompatImageView
-
-        Picasso.with(this)
-                .load(BookmarkUtil.getLargeIconImageUrlFromId(id))
-                .resizeDimen(R.dimen.icon_size_nav_crop, R.dimen.icon_size_nav_crop).centerCrop()
-                .transform(RoundedTransformation())
-                .into(imageOwnerIcon)
-
-        val textOwnerId = headerView.findViewById(R.id.nav_header_main_text_owner_name) as AppCompatTextView
-        textOwnerId.text = id
     }
 }

@@ -3,13 +3,17 @@ package me.rei_m.hbfavmaterial.usecase.impl
 import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.repository.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.domain.repository.UserRepository
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.usecase.RegisterBookmarkUsecase
 
-class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaTokenRepository,
+class RegisterBookmarkUsecaseImpl(private val userRepository: UserRepository,
+                                  private val hatenaTokenRepository: HatenaTokenRepository,
                                   private val hatenaService: HatenaService,
-                                  private val twitterService: TwitterService) : RegisterBookmarkUsecase {
+                                  private val twitterService: TwitterService,
+                                  private val twitterSessionRepository: TwitterSessionRepository) : RegisterBookmarkUsecase {
 
     companion object {
 
@@ -44,8 +48,18 @@ class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaToken
                 postTags.remove(HatenaService.TAG_READ_AFTER)
             }
         }
+        
+        return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, postTags).doAfterSuccess {
 
-        return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, postTags)
+            val userEntity = userRepository.resolve()
+            userEntity.isCheckedPostBookmarkOpen = isOpen
+            userEntity.isCheckedPostBookmarkReadAfter = isCheckedReadAfter
+            userRepository.store(userEntity)
+
+            val twitterSessionEntity = twitterSessionRepository.resolve()
+            twitterSessionEntity.isShare = isShareAtTwitter
+            twitterSessionRepository.store(twitterSessionEntity)
+        }
     }
 
     private fun createShareText(url: String, title: String, comment: String): String {

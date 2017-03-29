@@ -1,25 +1,66 @@
 package me.rei_m.hbfavmaterial.presentation.view.adapter
 
 import android.content.Context
+import android.databinding.DataBindingUtil
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableList
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.view.widget.list.UserItemLayout
+import me.rei_m.hbfavmaterial.presentation.viewmodel.UserListItemViewModel
 
 /**
  * ユーザー一覧を管理するAdaptor.
  */
 class UserListAdapter(context: Context,
-                      resource: Int) : ArrayAdapter<BookmarkEntity>(context, resource) {
+                      private val injector: Injector,
+                      bookmarkList: ObservableArrayList<BookmarkEntity>) : ArrayAdapter<BookmarkEntity>(context, 0, bookmarkList) {
+
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+
+    init {
+        bookmarkList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
+            override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+                notifyDataSetChanged()
+            }
+
+            override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+                notifyDataSetChanged()
+            }
+
+            override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
+                notifyDataSetChanged()
+            }
+
+            override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
+                notifyDataSetChanged()
+            }
+
+            override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+                notifyDataSetChanged()
+            }
+        })
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val view = convertView ?: View.inflate(context, R.layout.list_item_user, null)
+        val binding: ListItemUserBinding
+        if (convertView == null) {
+            binding = ListItemUserBinding.inflate(inflater, parent, false)
+            binding.viewModel = injector.bookmarkListItemViewModel()
+        } else {
+            binding = DataBindingUtil.getBinding(convertView)
+        }
 
-        (view as UserItemLayout).bindView(getItem(position))
+        binding.viewModel.bookmark.set(getItem(position))
 
-        return view
+        return binding.root
+    }
+
+    interface Injector {
+        fun bookmarkListItemViewModel(): UserListItemViewModel
     }
 }

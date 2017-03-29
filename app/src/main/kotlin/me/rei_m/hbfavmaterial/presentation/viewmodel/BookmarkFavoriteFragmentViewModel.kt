@@ -1,39 +1,117 @@
 package me.rei_m.hbfavmaterial.presentation.viewmodel
 
 import android.databinding.ObservableArrayList
-import io.reactivex.disposables.CompositeDisposable
+import android.databinding.ObservableBoolean
+import android.view.View
+import android.widget.AbsListView
+import android.widget.AdapterView
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
+import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.usecase.GetFavoriteBookmarksUsecase
 
+class BookmarkFavoriteFragmentViewModel(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase,
+                                        private val rxBus: RxBus,
+                                        private val navigator: ActivityNavigator) : AbsFragmentViewModel() {
 
-class BookmarkFavoriteFragmentViewModel(private val getFavoriteBookmarksUsecase: GetFavoriteBookmarksUsecase) : AbsFragmentViewModel() {
-
-    private var disposable: CompositeDisposable? = null
-
-    var bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
-        private set
-
-    override fun onStart() {
+    companion object {
+        private const val BOOKMARK_COUNT_PER_PAGE = 25
     }
 
+    val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
+
+    val isVisibleEmpty: ObservableBoolean = ObservableBoolean(false)
+
+    val isVisibleProgress: ObservableBoolean = ObservableBoolean(false)
+
+    val isRefreshing: ObservableBoolean = ObservableBoolean(false)
+
+    val hasListViewFooter: ObservableBoolean = ObservableBoolean(true)
+
+    private var isLoading: Boolean = false
+
+    private val nextIndex: Int
+        get() {
+            val pageCnt = (bookmarkList.size / BOOKMARK_COUNT_PER_PAGE)
+            val mod = (bookmarkList.size % BOOKMARK_COUNT_PER_PAGE)
+
+            return if (mod == 0) {
+                pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
+            } else {
+                (pageCnt + 1) * BOOKMARK_COUNT_PER_PAGE + 1
+            }
+        }
+
     override fun onResume() {
-        disposable = CompositeDisposable()
-        disposable?.add(getFavoriteBookmarksUsecase.get(0).subscribeAsync({
+        super.onResume()
+
+        isVisibleProgress.set(true)
+
+        registerDisposable(getFavoriteBookmarksUsecase.get(0).subscribeAsync({
             bookmarkList.clear()
-            bookmarkList.addAll(it)
+            if (it.isNotEmpty()) {
+                bookmarkList.addAll(it)
+            } else {
+                isVisibleEmpty.set(true)
+            }
         }, {
-            // TODO: Errorの場合
+            rxBus.send(FailToConnectionEvent())
         }, {
-            // TODO: ローディング解除.
+            isVisibleProgress.set(false)
         }))
     }
 
-    override fun onPause() {
-        disposable?.dispose()
-        disposable = null
+    @Suppress("UNUSED_PARAMETER")
+    fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        navigator.navigateToBookmark(bookmarkList[position])
     }
 
-    override fun onStop() {
+    @Suppress("UNUSED_PARAMETER")
+    fun onScroll(listView: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+
+        if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
+
+            if (isLoading) return
+
+            isLoading = true
+
+            registerDisposable(getFavoriteBookmarksUsecase.get(nextIndex).subscribeAsync({
+                if (it.isNotEmpty()) {
+                    // TODO: 重複チェックがいるかも
+                    bookmarkList.addAll(it)
+                } else {
+                    hasListViewFooter.set(false)
+                }
+            }, {
+                rxBus.send(FailToConnectionEvent())
+            }, {
+                isLoading = false
+            }))
+        }
+    }
+
+    fun onRefresh() {
+        if (isRefreshing.get() || isLoading) {
+            return
+        }
+
+        isRefreshing.set(true)
+        isLoading = true
+
+        registerDisposable(getFavoriteBookmarksUsecase.get(0).subscribeAsync({
+            bookmarkList.clear()
+            if (it.isNotEmpty()) {
+                bookmarkList.addAll(it)
+            } else {
+                isVisibleEmpty.set(true)
+            }
+        }, {
+            rxBus.send(FailToConnectionEvent())
+        }, {
+            isRefreshing.set(false)
+            isLoading = false
+        }))
     }
 }

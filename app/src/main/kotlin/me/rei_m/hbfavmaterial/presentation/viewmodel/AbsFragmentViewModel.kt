@@ -1,12 +1,38 @@
 package me.rei_m.hbfavmaterial.presentation.viewmodel
 
+import android.support.annotation.CallSuper
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+
 abstract class AbsFragmentViewModel {
 
-    abstract fun onStart()
+    private var disposable: CompositeDisposable? = null
+        get() {
+            if (field == null) {
+                field = CompositeDisposable()
+            }
+            return field
+        }
 
-    abstract fun onResume()
+    @CallSuper
+    open fun onStart() {
+    }
 
-    abstract fun onPause()
+    @CallSuper
+    open fun onResume() {
+    }
 
-    abstract fun onStop()
+    @CallSuper
+    open fun onPause() {
+        disposable?.dispose()
+        disposable = null
+    }
+
+    @CallSuper
+    open fun onStop() {
+    }
+
+    fun registerDisposable(vararg d: Disposable) {
+        disposable?.addAll(*d)
+    }
 }

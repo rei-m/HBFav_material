@@ -1,22 +1,29 @@
 package me.rei_m.hbfavmaterial.di
 
-import android.content.Context
+import android.support.v4.app.Fragment
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.presentation.fragment.SettingContact
-import me.rei_m.hbfavmaterial.presentation.fragment.SettingPresenter
-import me.rei_m.hbfavmaterial.usecase.AuthorizeTwitterUsecase
-import me.rei_m.hbfavmaterial.usecase.GetHatenaTokenUsecase
-import me.rei_m.hbfavmaterial.usecase.GetTwitterSessionUsecase
-import me.rei_m.hbfavmaterial.usecase.GetUserUsecase
+import me.rei_m.hbfavmaterial.domain.repository.HatenaTokenRepository
+import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel
+import me.rei_m.hbfavmaterial.usecase.impl.DisplaySettingUsecaseImpl
 
 @Module
-class SettingFragmentModule(private val context: Context) {
+class SettingFragmentModule(fragment: Fragment) {
+
     @Provides
-    fun provideSettingPresenter(getUserUsecase: GetUserUsecase,
-                                getHatenaTokenUsecase: GetHatenaTokenUsecase,
-                                getTwitterSessionUsecase: GetTwitterSessionUsecase,
-                                authorizeTwitterUsecase: AuthorizeTwitterUsecase): SettingContact.Actions {
-        return SettingPresenter(getUserUsecase, getHatenaTokenUsecase, getTwitterSessionUsecase, authorizeTwitterUsecase)
+    fun provideSettingFragmentViewModel(userRepository: UserRepository,
+                                        hatenaTokenRepository: HatenaTokenRepository,
+                                        twitterSessionRepository: TwitterSessionRepository,
+                                        rxBus: RxBus,
+                                        navigator: ActivityNavigator): SettingFragmentViewModel {
+        return SettingFragmentViewModel(DisplaySettingUsecaseImpl(userRepository,
+                hatenaTokenRepository,
+                twitterSessionRepository),
+                rxBus,
+                navigator)
     }
 }

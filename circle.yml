@@ -9,10 +9,12 @@ machine:
     version: oraclejdk8
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
+    _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1536m -XX:+HeapDumpOnOutOfMemoryError"'
 
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "android-25,build-tools-25.0.0,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository"
+    - echo y | android update sdk --no-ui --all --filter "android-25,build-tools-25.0.2,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository"
   cache_directories:
     - ~/.android
   override:
@@ -20,7 +22,7 @@ dependencies:
 
 test:
   override:
-    - ./gradlew clean testDebug -PdisablePreDex -Pcom.android.build.threadPoolSize=1 -Dorg.gradle.parallel=false  -Dorg.gradle.jvmargs="-Xmx1024m -XX:MaxPermSize=512m" -Dorg.gradle.daemon=false
+    - ./gradlew clean testDebug -PdisablePreDex -Pcom.android.build.threadPoolSize=1
 
     # start the emulator
     #- emulator -avd circleci-android22 -no-audio:

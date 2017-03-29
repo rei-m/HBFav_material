@@ -2,41 +2,41 @@ package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.content.Context
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkBinding
 import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
 import me.rei_m.hbfavmaterial.di.BookmarkActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
+import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.event.ShowArticleEvent
+import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.GetBookmarkEditUsecase
-import me.rei_m.hbfavmaterial.usecase.GetHatenaTokenUsecase
-import retrofit2.HttpException
-import java.net.HttpURLConnection
+import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkActivityViewModel
 import javax.inject.Inject
 
 /**
  * ブックマークの詳細を表示するActivity.
  */
-class BookmarkActivity : BaseSingleActivity(),
-        HasComponent<BookmarkActivityComponent>,
-        BookmarkFragment.OnFragmentInteractionListener {
+class BookmarkActivity : BaseActivity(),
+        HasComponent<BookmarkActivityComponent> {
 
     companion object {
 
@@ -59,74 +59,90 @@ class BookmarkActivity : BaseSingleActivity(),
     }
 
     @Inject
-    lateinit var navigator: ActivityNavigator
+    lateinit var rxBus: RxBus
 
     @Inject
-    lateinit var getBookmarkEditUsecase: GetBookmarkEditUsecase
-
-    @Inject
-    lateinit var getHatenaTokenUsecase: GetHatenaTokenUsecase
+    lateinit var viewModel: BookmarkActivityViewModel
 
     private lateinit var component: BookmarkActivityComponent
 
     private var disposable: CompositeDisposable? = null
 
-    private var isLoading = false
-
-    private var entryTitle: String = ""
-
-    private var entryLink: String = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActivityComponent()
 
-        disposable = CompositeDisposable()
+        val binding = DataBindingUtil.setContentView<ActivityBookmarkBinding>(this, R.layout.activity_bookmark)
+        binding.viewModel = viewModel
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
                 val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-                entryTitle = bookmarkEntity.articleEntity.title
-                entryLink = bookmarkEntity.articleEntity.url
+                viewModel.entryTitle.set(bookmarkEntity.articleEntity.title)
+                viewModel.entryLink.set(bookmarkEntity.articleEntity.url)
                 setFragment(BookmarkFragment.newInstance(bookmarkEntity))
             } else {
                 val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
-                entryTitle = entryEntity.articleEntity.title
-                entryLink = entryEntity.articleEntity.url
-                setFragment(EntryWebViewFragment.newInstance(entryLink), EntryWebViewFragment.TAG)
+                viewModel.entryTitle.set(entryEntity.articleEntity.title)
+                viewModel.entryLink.set(entryEntity.articleEntity.url)
+                setFragment(EntryWebViewFragment.newInstance(viewModel.entryLink.get()), EntryWebViewFragment.TAG)
             }
-            supportActionBar?.title = entryTitle
-        }
-
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-
-        fab.setOnClickListener {
-            // はてぶ投稿ボタン
-            if (!getHatenaTokenUsecase.get().isAuthorised) {
-                navigator.navigateToOAuth()
-            } else {
-                fetchBookmark(entryLink)
-            }
+            supportActionBar?.title = viewModel.entryTitle.get()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+        disposable = CompositeDisposable()
+        disposable?.add(rxBus.toObservable().subscribeBus({
+            when (it) {
+                is ShowArticleEvent -> {
+                    replaceFragment(EntryWebViewFragment.newInstance(it.url), EntryWebViewFragment.TAG)
+                }
+                is ShowBookmarkEditEvent -> {
+                    EditBookmarkDialogFragment
+                            .newInstance(viewModel.entryTitle.get(), it.bookmarkEdit)
+                            .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+                }
+                is FailToConnectionEvent -> {
+                    showFailToConnectionMessage()
+                }
+            }
+        }))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
         disposable?.dispose()
         disposable = null
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.onStop()
+    }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        entryTitle = savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: ""
-        entryLink = savedInstanceState?.getString(KEY_ENTRY_LINK) ?: ""
-        supportActionBar?.title = entryTitle
+        viewModel.entryTitle.set(savedInstanceState?.getString(KEY_ENTRY_TITLE) ?: "")
+        viewModel.entryLink.set(savedInstanceState?.getString(KEY_ENTRY_LINK) ?: "")
+        supportActionBar?.title = viewModel.entryTitle.get()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putString(KEY_ENTRY_TITLE, entryTitle)
-        outState?.putString(KEY_ENTRY_LINK, entryLink)
+        outState?.putString(KEY_ENTRY_TITLE, viewModel.entryTitle.get())
+        outState?.putString(KEY_ENTRY_LINK, viewModel.entryLink.get())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -137,13 +153,14 @@ class BookmarkActivity : BaseSingleActivity(),
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         val id = item?.itemId
-
         when (id) {
+            android.R.id.home ->
+                finish()
             R.id.menu_share ->
                 ShareCompat.IntentBuilder.from(this)
                         .setChooserTitle("記事をシェアします")
-                        .setSubject(entryTitle)
-                        .setText(entryLink)
+                        .setSubject(viewModel.entryTitle.get())
+                        .setText(viewModel.entryLink.get())
                         .setType("text/plain")
                         .startChooser()
             else ->
@@ -165,9 +182,7 @@ class BookmarkActivity : BaseSingleActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        data ?: return
-
-        if (requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
+        if (data == null || requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
             return
         }
 
@@ -175,63 +190,13 @@ class BookmarkActivity : BaseSingleActivity(),
             RESULT_OK -> {
                 if (data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE)) {
                     if (data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS)) {
-                        fetchBookmark(entryLink)
+                        viewModel.onAuthoriseHatena()
                     }
                 } else {
-                    showSnackbarNetworkError()
+                    showFailToConnectionMessage()
                 }
             }
-            else -> {
-
-            }
         }
-    }
-
-    private fun fetchBookmark(url: String) {
-
-        if (isLoading) {
-            return
-        }
-
-        isLoading = true
-
-        disposable?.add(getBookmarkEditUsecase.get(url).subscribeAsync({
-            onFindBookmarkByUrlSuccess(it)
-        }, {
-            onFindBookmarkByUrlFailure(it)
-        }, {
-            isLoading = false
-        }))
-    }
-
-    private fun onFindBookmarkByUrlSuccess(bookmarkEditEntity: BookmarkEditEntity) {
-        EditBookmarkDialogFragment
-                .newInstance(entryTitle, entryLink, bookmarkEditEntity)
-                .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-    }
-
-    private fun onFindBookmarkByUrlFailure(e: Throwable) {
-        if (e is HttpException) {
-            if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                EditBookmarkDialogFragment
-                        .newInstance(entryTitle, entryLink)
-                        .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-                return
-            }
-        }
-        showSnackbarNetworkError()
-    }
-
-    override fun onClickBookmarkUser(bookmarkEntity: BookmarkEntity) {
-        navigator.navigateToOthersBookmark(bookmarkEntity.creator)
-    }
-
-    override fun onClickBookmark(bookmarkEntity: BookmarkEntity) {
-        replaceFragment(EntryWebViewFragment.newInstance(bookmarkEntity.articleEntity.url), EntryWebViewFragment.TAG)
-    }
-
-    override fun onClickBookmarkCount(bookmarkEntity: BookmarkEntity) {
-        navigator.navigateToBookmarkedUsers(bookmarkEntity)
     }
 
     override fun setupActivityComponent() {
@@ -242,5 +207,9 @@ class BookmarkActivity : BaseSingleActivity(),
 
     override fun getComponent(): BookmarkActivityComponent {
         return component
+    }
+
+    private fun showFailToConnectionMessage() {
+        Snackbar.make(findViewById(R.id.content), getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
     }
 }

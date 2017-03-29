@@ -5,23 +5,21 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.domain.repository.BookmarkRepository
 import me.rei_m.hbfavmaterial.domain.repository.UserRepository
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteContact
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoritePresenter
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkFavoriteFragmentViewModel
 import me.rei_m.hbfavmaterial.usecase.impl.GetFavoriteBookmarksUsecaseImpl
 
 @Module
-class BookmarkFavoriteFragmentModule(private val fragment: Fragment) {
+class BookmarkFavoriteFragmentModule(fragment: Fragment) {
 
     @Provides
     fun provideBookmarkFavoriteViewModel(bookmarkRepository: BookmarkRepository,
-                                         userRepository: UserRepository): BookmarkFavoriteFragmentViewModel {
-        return BookmarkFavoriteFragmentViewModel(GetFavoriteBookmarksUsecaseImpl(bookmarkRepository, userRepository))
-    }
-
-    @Provides
-    fun provideBookmarkFavoritePresenter(bookmarkRepository: BookmarkRepository,
-                                         userRepository: UserRepository): BookmarkFavoriteContact.Actions {
-        return BookmarkFavoritePresenter(GetFavoriteBookmarksUsecaseImpl(bookmarkRepository, userRepository))
+                                         userRepository: UserRepository,
+                                         rxBus: RxBus,
+                                         navigator: ActivityNavigator): BookmarkFavoriteFragmentViewModel {
+        return BookmarkFavoriteFragmentViewModel(GetFavoriteBookmarksUsecaseImpl(bookmarkRepository, userRepository),
+                rxBus,
+                navigator)
     }
 }

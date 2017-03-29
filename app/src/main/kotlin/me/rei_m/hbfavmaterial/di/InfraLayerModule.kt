@@ -22,7 +22,7 @@ open class InfraLayerModule() {
 
     @Provides
     @Singleton
-    fun provideHatenaOAuthManager(@ForApplication context: Context): HatenaOAuthManager {
+    fun provideHatenaOAuthManager(context: Context): HatenaOAuthManager {
         return HatenaOAuthManager(
                 context.getString(R.string.api_key_hatena_consumer_key),
                 context.getString(R.string.api_key_hatena_consumer_secret)
@@ -31,7 +31,7 @@ open class InfraLayerModule() {
 
     @Provides
     @Singleton
-    fun provideHatenaTokenRepository(@ForApplication context: Context): HatenaTokenRepository {
+    fun provideHatenaTokenRepository(context: Context): HatenaTokenRepository {
         return HatenaTokenRepositoryImpl(context.getAppPreferences("HatenaModel"))
     }
 
@@ -44,14 +44,14 @@ open class InfraLayerModule() {
 
     @Provides
     @Singleton
-    fun provideUserRepository(@ForApplication context: Context): UserRepository {
+    fun provideUserRepository(context: Context): UserRepository {
         // UserModelから移行したのでキーはそのまま.
         return UserRepositoryImpl(context.getAppPreferences("UserModel"))
     }
 
     @Provides
     @Singleton
-    fun provideTwitterSessionRepository(@ForApplication context: Context): TwitterSessionRepository {
+    fun provideTwitterSessionRepository(context: Context): TwitterSessionRepository {
         return TwitterSessionRepositoryImpl(context.getAppPreferences("TwitterModel"))
     }
 

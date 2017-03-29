@@ -135,6 +135,7 @@ class OAuthActivity : BaseSingleActivity() {
                 putBoolean(ARG_IS_AUTHORIZE_DONE, isDone)
             })
         }
+        // TODO: 認証してなかったらキャンセルにする.
         setResult(RESULT_OK, intent)
     }
 

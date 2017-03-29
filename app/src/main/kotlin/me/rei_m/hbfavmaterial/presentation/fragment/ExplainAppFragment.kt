@@ -19,7 +19,7 @@ import javax.inject.Inject
 class ExplainAppFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(): ExplainAppFragment = ExplainAppFragment()
+        fun newInstance() = ExplainAppFragment()
     }
 
     @Inject

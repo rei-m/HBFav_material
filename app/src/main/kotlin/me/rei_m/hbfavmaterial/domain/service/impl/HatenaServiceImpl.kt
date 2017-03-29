@@ -5,10 +5,12 @@ import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.exception.NetworkFailureException
 import me.rei_m.hbfavmaterial.infra.exeption.HTTPException
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.RetrofitManager
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 
 class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : HatenaService {
@@ -45,15 +47,26 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
 
         val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
-        return retrofit.create(HatenaOAuthApiService::class.java)
-                .getBookmark(urlString)
-                .map {
-                    (_, private, _, _, tags, _, comment) ->
-                    return@map BookmarkEditEntity(url = urlString,
-                            comment = comment,
-                            isPrivate = private,
-                            tags = tags)
+        return retrofit.create(HatenaOAuthApiService::class.java).getBookmark(urlString).map { (_, private, _, _, tags, _, comment) ->
+            return@map BookmarkEditEntity(url = urlString,
+                    isFirstEdit = false,
+                    comment = comment,
+                    isPrivate = private,
+                    tags = tags)
+        }.onErrorResumeNext {
+            return@onErrorResumeNext if (it is HttpException) {
+                when (it.code()) {
+                    HttpURLConnection.HTTP_NOT_FOUND -> {
+                        Single.just(BookmarkEditEntity(url = urlString, isFirstEdit = true))
+                    }
+                    else -> {
+                        Single.error(NetworkFailureException())
+                    }
                 }
+            } else {
+                Single.error(it)
+            }
+        }
     }
 
     override fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
@@ -68,11 +81,10 @@ class HatenaServiceImpl(private val hatenaOAuthManager: HatenaOAuthManager) : Ha
 
         val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
-        return retrofit.create(HatenaOAuthApiService::class.java)
-                .postBookmark(urlString, comment, if (isOpen) "0" else "1", tags.toTypedArray())
-                .map {
-                    (_, private, _, _, tags1, _, comment1) ->
+        return retrofit.create(HatenaOAuthApiService::class.java).postBookmark(urlString, comment, if (isOpen) "0" else "1", tags.toTypedArray())
+                .map { (_, private, _, _, tags1, _, comment1) ->
                     return@map BookmarkEditEntity(url = urlString,
+                            isFirstEdit = false,
                             comment = comment1,
                             isPrivate = private,
                             tags = tags1)

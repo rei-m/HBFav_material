@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkUserFragmentViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:colorSchemeResource1="@{@color/pull_to_refresh_1}"
+            app:colorSchemeResource2="@{@color/pull_to_refresh_2}"
+            app:colorSchemeResource3="@{@color/pull_to_refresh_3}"
+            app:onRefresh="@{viewModel::onRefresh}"
+            app:refreshing="@{viewModel.isRefreshing}">
+
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onItemClick="@{viewModel::onItemClick}"
+                android:onScroll="@{viewModel::onScroll}"
+                android:visibility="@{viewModel.isVisibleProgress ? View.GONE : View.VISIBLE}"
+                app:hasFooter="@{viewModel.hasListViewFooter}" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/margin_outline"
+            android:text="@string/message_text_empty_bookmark_user"
+            android:visibility="@{viewModel.isVisibleEmpty ? View.VISIBLE : View.GONE}" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{viewModel.isVisibleProgress ? View.VISIBLE : View.GONE}" />
+
+    </FrameLayout>
+</layout>
