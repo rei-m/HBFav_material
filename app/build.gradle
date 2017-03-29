@@ -11,7 +11,7 @@ android {
     }
 
     compileSdkVersion 25
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "me.rei_m.hbfavmaterial"
         minSdkVersion 16
