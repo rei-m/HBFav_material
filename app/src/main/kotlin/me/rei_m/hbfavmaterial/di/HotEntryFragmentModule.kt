@@ -1,16 +1,22 @@
 package me.rei_m.hbfavmaterial.di
 
-import android.content.Context
+import android.support.v4.app.Fragment
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryContact
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryPresenter
-import me.rei_m.hbfavmaterial.usecase.GetHotEntriesUsecase
+import me.rei_m.hbfavmaterial.domain.repository.EntryRepository
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.viewmodel.HotEntryFragmentViewModel
+import me.rei_m.hbfavmaterial.usecase.impl.GetHotEntriesUsecaseImpl
 
 @Module
-class HotEntryFragmentModule(private val context: Context) {
+class HotEntryFragmentModule(fragment: Fragment) {
     @Provides
-    fun provideHotEntryPresenter(getHotEntriesUsecase: GetHotEntriesUsecase): HotEntryContact.Actions {
-        return HotEntryPresenter(getHotEntriesUsecase)
+    fun provideHotEntryFragmentViewModel(entryRepository: EntryRepository,
+                                         rxBus: RxBus,
+                                         navigator: ActivityNavigator): HotEntryFragmentViewModel {
+        return HotEntryFragmentViewModel(GetHotEntriesUsecaseImpl(entryRepository),
+                rxBus,
+                navigator)
     }
 }

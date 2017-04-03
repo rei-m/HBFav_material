@@ -33,6 +33,6 @@ class RoundedTransformation(private val radius: Int = 50,
     }
 
     override fun key(): String {
-        return "rounded(radius=${radius.toString()}, margin=${margin.toString()})"
+        return "rounded(radius=$radius, margin=$margin)"
     }
 }

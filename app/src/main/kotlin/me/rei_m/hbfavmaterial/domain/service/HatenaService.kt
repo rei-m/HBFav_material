@@ -1,8 +1,9 @@
 package me.rei_m.hbfavmaterial.domain.service
 
+import io.reactivex.Completable
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
-import rx.Observable
 
 interface HatenaService {
 
@@ -10,19 +11,19 @@ interface HatenaService {
         const val TAG_READ_AFTER = "あとで読む"
     }
 
-    fun fetchRequestToken(): Observable<String>
+    fun fetchRequestToken(): Single<String>
 
-    fun fetchAccessToken(requestToken: String): Observable<OAuthTokenEntity>
+    fun fetchAccessToken(requestToken: String): Single<OAuthTokenEntity>
 
     fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
-                          urlString: String): Observable<BookmarkEditEntity>
+                          urlString: String): Single<BookmarkEditEntity>
 
     fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
                        urlString: String,
                        comment: String,
                        isOpen: Boolean,
-                       tags: List<String> = listOf()): Observable<BookmarkEditEntity>
+                       tags: List<String> = listOf()): Single<BookmarkEditEntity>
 
     fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String): Observable<Unit>
+                       urlString: String): Completable
 }

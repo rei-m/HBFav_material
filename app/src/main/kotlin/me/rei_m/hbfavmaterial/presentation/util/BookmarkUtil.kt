@@ -32,7 +32,7 @@ class BookmarkUtil private constructor() {
          * Twitterのシェア用のテキストを作成する.
          */
         fun createShareText(url: String, title: String, comment: String): String {
-            return if (0 < comment.length) {
+            return if (comment.isNotEmpty()) {
                 val postComment: String
                 val postTitle: String
                 if (MAX_LENGTH_COMMENT_AT_TWITTER < comment.length) {
@@ -65,6 +65,7 @@ class BookmarkUtil private constructor() {
         /**
          * ユーザーのアイコン画像のURLを取得する.
          */
+        @JvmStatic
         fun getIconImageUrlFromId(userId: String): String {
             return "$HATENA_CDN_DOMAIN/users/${userId.take(2)}/$userId/profile.gif"
         }
@@ -72,6 +73,7 @@ class BookmarkUtil private constructor() {
         /**
          * ユーザーのアイコン画像（大）のURLを取得する.
          */
+        @JvmStatic
         fun getLargeIconImageUrlFromId(userId: String): String {
             return "$HATENA_CDN_DOMAIN/users/${userId.take(2)}/$userId/user.jpg"
         }
@@ -79,6 +81,7 @@ class BookmarkUtil private constructor() {
         /**
          * 日付の差分を計算し表示用に整形する.
          */
+        @JvmStatic
         fun getPastTimeString(bookmarkAddedDatetime: Date,
                               nowCalendar: Calendar = Calendar.getInstance(TimeZone.getDefault())): String {
 
@@ -137,6 +140,12 @@ class BookmarkUtil private constructor() {
             } else {
                 return "${diffYear.toString()}年前"
             }
+        }
+
+        @JvmStatic
+        fun getPastTimeString(bookmarkAddedDatetime: Date): String {
+            return getPastTimeString(bookmarkAddedDatetime,
+                    Calendar.getInstance(TimeZone.getDefault()))
         }
     }
 }

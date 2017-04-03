@@ -38,8 +38,8 @@
 
     <string name="text_hatena_account">はてなアカウント</string>
     <string name="text_hatena_account_connect">はてなブックマーク連携</string>
-    <string name="text_hatena_account_connect_ok">連携中</string>
-    <string name="text_hatena_account_connect_no">未連携</string>
+    <string name="text_account_connect_ok">連携中</string>
+    <string name="text_account_connect_no">未連携</string>
     <string name="text_twitter_account_connect">Twitter連携</string>
     <string name="text_review">レビュー - Play Store</string>
     <string name="text_opinion">ご意見・ご要望 - GitHub</string>

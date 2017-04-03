@@ -1,15 +1,19 @@
 package me.rei_m.hbfavmaterial.usecase.impl
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.domain.repository.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
+import me.rei_m.hbfavmaterial.domain.repository.UserRepository
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.usecase.RegisterBookmarkUsecase
-import rx.Observable
 
-class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaTokenRepository,
+class RegisterBookmarkUsecaseImpl(private val userRepository: UserRepository,
+                                  private val hatenaTokenRepository: HatenaTokenRepository,
                                   private val hatenaService: HatenaService,
-                                  private val twitterService: TwitterService) : RegisterBookmarkUsecase {
+                                  private val twitterService: TwitterService,
+                                  private val twitterSessionRepository: TwitterSessionRepository) : RegisterBookmarkUsecase {
 
     companion object {
 
@@ -26,7 +30,7 @@ class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaToken
                           tags: List<String>,
                           isOpen: Boolean,
                           isCheckedReadAfter: Boolean,
-                          isShareAtTwitter: Boolean): Observable<BookmarkEditEntity> {
+                          isShareAtTwitter: Boolean): Single<BookmarkEditEntity> {
 
         if (isShareAtTwitter) {
             twitterService.postTweet(createShareText(url, title, comment))
@@ -44,12 +48,22 @@ class RegisterBookmarkUsecaseImpl(private val hatenaTokenRepository: HatenaToken
                 postTags.remove(HatenaService.TAG_READ_AFTER)
             }
         }
+        
+        return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, postTags).doAfterSuccess {
 
-        return hatenaService.upsertBookmark(oAuthTokenEntity, url, comment, isOpen, postTags)
+            val userEntity = userRepository.resolve()
+            userEntity.isCheckedPostBookmarkOpen = isOpen
+            userEntity.isCheckedPostBookmarkReadAfter = isCheckedReadAfter
+            userRepository.store(userEntity)
+
+            val twitterSessionEntity = twitterSessionRepository.resolve()
+            twitterSessionEntity.isShare = isShareAtTwitter
+            twitterSessionRepository.store(twitterSessionEntity)
+        }
     }
 
     private fun createShareText(url: String, title: String, comment: String): String {
-        return if (0 < comment.length) {
+        return if (comment.isNotEmpty()) {
             val postComment: String
             val postTitle: String
             if (MAX_LENGTH_COMMENT_AT_TWITTER < comment.length) {

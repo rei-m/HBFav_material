@@ -1,9 +1,9 @@
 package me.rei_m.hbfavmaterial.usecase
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import rx.Observable
 
 interface GetBookmarkedUsersUsecase {
 
-    fun get(bookmarkEntity: BookmarkEntity): Observable<List<BookmarkEntity>>
+    fun get(bookmarkEntity: BookmarkEntity): Single<List<BookmarkEntity>>
 }

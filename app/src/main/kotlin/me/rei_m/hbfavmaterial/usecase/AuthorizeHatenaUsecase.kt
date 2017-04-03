@@ -1,10 +1,11 @@
 package me.rei_m.hbfavmaterial.usecase
 
-import rx.Observable
+import io.reactivex.Completable
+import io.reactivex.Single
 
 interface AuthorizeHatenaUsecase {
 
-    fun fetchRequestToken(): Observable<String>
+    fun fetchRequestToken(): Single<String>
 
-    fun authorize(requestToken: String): Observable<Unit>
+    fun authorize(requestToken: String): Completable
 }

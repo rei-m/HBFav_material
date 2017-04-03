@@ -1,6 +1,6 @@
 package me.rei_m.hbfavmaterial.domain.util
 
-import me.rei_m.hbfavmaterial.enum.EntryTypeFilter
+import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import java.text.SimpleDateFormat
 import java.util.*
 

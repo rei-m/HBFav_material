@@ -3,6 +3,8 @@
     <color name="colorPrimary">#1b69c6</color>
     <color name="colorPrimaryDark">#303F9F</color>
 
+    <color name="red">#ff0000</color>
+
     <color name="app_accent_color">#1b69c6</color>
     <color name="button_disable">#b6b9ba</color>
     <color name="border">#cccccc</color>

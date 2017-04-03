@@ -1,32 +1,32 @@
 package me.rei_m.hbfavmaterial.infra.network
 
+import io.reactivex.Single
 import me.rei_m.hbfavmaterial.infra.network.response.BookmarkRssXml
 import me.rei_m.hbfavmaterial.infra.network.response.EntryRssXml
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import rx.Observable
 
 interface HatenaRssService {
 
     @GET("{userId}/favorite.rss")
-    fun favorite(@Path("userId") userId: String, @Query("of") startIndex: Int): Observable<BookmarkRssXml>
+    fun favorite(@Path("userId") userId: String, @Query("of") startIndex: Int): Single<BookmarkRssXml>
 
     @GET("{userId}/rss")
-    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int): Observable<BookmarkRssXml>
+    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int): Single<BookmarkRssXml>
 
     @GET("{userId}/rss")
-    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int, @Query("tag") tag: String): Observable<BookmarkRssXml>
+    fun user(@Path("userId") userId: String, @Query("of") startIndex: Int, @Query("tag") tag: String): Single<BookmarkRssXml>
 
     @GET("hatena/b/hotentry")
-    fun hotentry(): Observable<EntryRssXml>
+    fun hotentry(): Single<EntryRssXml>
 
     @GET("hotentry/{entryType}")
-    fun hotentry(@Path("entryType") entryType: String): Observable<EntryRssXml>
+    fun hotentry(@Path("entryType") entryType: String): Single<EntryRssXml>
 
     @GET("entrylist.rss")
-    fun new(): Observable<EntryRssXml>
+    fun new(): Single<EntryRssXml>
 
     @GET("entrylist/{entryType}")
-    fun new(@Path("entryType") entryType: String): Observable<EntryRssXml>
+    fun new(@Path("entryType") entryType: String): Single<EntryRssXml>
 }

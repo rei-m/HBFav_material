@@ -9,17 +9,17 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.OAuthActivityModule
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.usecase.AuthorizeHatenaUsecase
 import me.rei_m.hbfavmaterial.usecase.UnAuthorizeHatenaUsecase
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class OAuthActivity : BaseSingleActivity() {
@@ -38,7 +38,7 @@ class OAuthActivity : BaseSingleActivity() {
     @Inject
     lateinit var unAuthorizeHatenaUsecase: UnAuthorizeHatenaUsecase
 
-    private var subscription: CompositeSubscription? = null
+    private var disposable: CompositeDisposable? = null
 
     private var isLoading = false
 
@@ -49,7 +49,7 @@ class OAuthActivity : BaseSingleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        subscription = CompositeSubscription()
+        disposable = CompositeDisposable()
 
         webView.apply {
             clearCache(true)
@@ -92,8 +92,8 @@ class OAuthActivity : BaseSingleActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        subscription?.unsubscribe()
-        subscription = null
+        disposable?.dispose()
+        disposable = null
     }
 
     private fun fetchRequestToken() {
@@ -102,16 +102,13 @@ class OAuthActivity : BaseSingleActivity() {
 
         isLoading = true
 
-        subscription?.add(authorizeHatenaUsecase.fetchRequestToken()
-                .doOnUnsubscribe { isLoading = false }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    webView.loadUrl(it)
-                }, {
-                    showSnackbarNetworkError()
-                }))
+        disposable?.add(authorizeHatenaUsecase.fetchRequestToken().subscribeAsync({
+            webView.loadUrl(it)
+        }, {
+            showSnackbarNetworkError()
+        }, {
+            isLoading = false
+        }))
     }
 
     private fun fetchAccessToken(oauthVerifier: String) {
@@ -120,18 +117,15 @@ class OAuthActivity : BaseSingleActivity() {
 
         isLoading = true
 
-        subscription?.add(authorizeHatenaUsecase.authorize(oauthVerifier)
-                .doOnUnsubscribe { isLoading = false }
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    setAuthorizeResult(true, true)
-                    finish()
-                }, {
-                    setAuthorizeResult(false, false)
-                    finish()
-                }))
+        disposable?.add(authorizeHatenaUsecase.authorize(oauthVerifier).subscribeAsync({
+            setAuthorizeResult(true, true)
+            finish()
+        }, {
+            setAuthorizeResult(false, false)
+            finish()
+        }, {
+            isLoading = false
+        }))
     }
 
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
@@ -141,12 +135,13 @@ class OAuthActivity : BaseSingleActivity() {
                 putBoolean(ARG_IS_AUTHORIZE_DONE, isDone)
             })
         }
+        // TODO: 認証してなかったらキャンセルにする.
         setResult(RESULT_OK, intent)
     }
 
     override fun setupActivityComponent() {
         val component = (application as App).component
-                .plus(OAuthActivityModule(this))
+                .plus(OAuthActivityModule(), ActivityModule(this))
 
         component.inject(this)
     }

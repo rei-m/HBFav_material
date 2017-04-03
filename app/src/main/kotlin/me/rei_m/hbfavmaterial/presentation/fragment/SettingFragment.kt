@@ -1,161 +1,87 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.databinding.FragmentSettingBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentModule
-import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.presentation.manager.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
+import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel
 import javax.inject.Inject
 
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment() : BaseFragment(),
-        SettingContact.View,
-        DialogInterface {
+class SettingFragment : BaseFragment() {
 
     companion object {
 
         val TAG: String = SettingFragment::class.java.simpleName
 
-        fun newInstance(): SettingFragment = SettingFragment()
+        fun newInstance() = SettingFragment()
     }
 
     @Inject
-    lateinit var navigator: ActivityNavigator
-
-    @Inject
-    lateinit var presenter: SettingContact.Actions
-
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.onCreate(this)
-    }
+    lateinit var viewModel: SettingFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view = inflater.inflate(R.layout.fragment_setting, container, false)
+        val binding = FragmentSettingBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
 
-        view.findViewById(R.id.fragment_setting_layout_text_hatena_id).setOnClickListener {
-            EditUserIdDialogFragment.newInstance().apply {
-                setTargetFragment(this@SettingFragment, 0)
-            }.let {
-                it.show(childFragmentManager, EditUserIdDialogFragment.TAG)
-            }
-        }
-
-        view.findViewById(R.id.fragment_setting_layout_text_hatena_oauth).setOnClickListener {
-            navigator.navigateToOAuth(activity)
-        }
-
-        view.findViewById(R.id.fragment_setting_layout_text_twitter_oauth).setOnClickListener {
-            presenter.onClickTwitterAuthorize(activity)
-        }
-
-        return view
+        return binding.root
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.onResume()
+        viewModel.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        presenter.onPause()
+        viewModel.onPause()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
+    override fun onStop() {
+        super.onStop()
+        viewModel.onStop()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenter.onActivityResult(requestCode, resultCode, data)
-    }
+        when (requestCode) {
+            ActivityNavigator.REQ_CODE_OAUTH -> {
 
-    override fun dismiss() {
-        presenter.onDismissEditUserIdDialog()
-    }
+                data ?: return
 
-    override fun cancel() {
-
-    }
-
-    override fun setUserId(userId: String) {
-        view?.findViewById(R.id.fragment_setting_text_user_id).let {
-            it as AppCompatTextView
-            it.text = userId
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    viewModel.onAuthoriseHatena(data.extras.getBoolean(OAuthActivity.ARG_IS_AUTHORIZE_DONE),
+                            data.extras.getBoolean(OAuthActivity.ARG_AUTHORIZE_STATUS))
+                }
+                return
+            }
         }
     }
 
-    override fun updateUserId(userId: String) {
-        setUserId(userId)
-        listener?.onUserIdUpdated(userId)
-    }
-
-    override fun setHatenaAuthoriseStatus(isAuthorised: Boolean) {
-        view?.findViewById(R.id.fragment_setting_text_user_oauth).let {
-            it as AppCompatTextView
-            val oauthTextId = if (isAuthorised)
-                R.string.text_hatena_account_connect_ok
-            else
-                R.string.text_hatena_account_connect_no
-            it.text = resources.getString(oauthTextId)
-        }
-    }
-
-    override fun setTwitterAuthoriseStatus(isAuthorised: Boolean) {
-        view?.findViewById(R.id.fragment_setting_text_twitter_oauth).let {
-            it as AppCompatTextView
-            val twitterOAuthTextId = if (isAuthorised)
-                R.string.text_hatena_account_connect_ok
-            else
-                R.string.text_hatena_account_connect_no
-            it.text = resources.getString(twitterOAuthTextId)
-        }
-    }
-
-    override fun showNetworkErrorMessage() {
-        (activity as AppCompatActivity).showSnackbarNetworkError()
-    }
-
+    @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
-                .plus(SettingFragmentModule(context))
+                .plus(SettingFragmentModule(this))
                 .inject(this)
     }
 
     interface Injector {
         fun plus(fragmentModule: SettingFragmentModule?): SettingFragmentComponent
-    }
-
-    interface OnFragmentInteractionListener {
-        fun onUserIdUpdated(userId: String)
     }
 }
