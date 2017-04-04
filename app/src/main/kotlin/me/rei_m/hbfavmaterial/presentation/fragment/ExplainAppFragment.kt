@@ -9,7 +9,7 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.util.AppUtil
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class ExplainAppFragment : BaseFragment() {
     }
 
     @Inject
-    lateinit var navigator: ActivityNavigator
+    lateinit var navigator: Navigator
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 

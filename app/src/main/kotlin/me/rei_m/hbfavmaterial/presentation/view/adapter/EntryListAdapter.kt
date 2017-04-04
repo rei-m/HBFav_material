@@ -57,6 +57,7 @@ class EntryListAdapter(context: Context,
         }
 
         binding.viewModel.entry.set(getItem(position))
+        binding.executePendingBindings()
 
         return binding.root
     }

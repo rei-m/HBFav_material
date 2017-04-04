@@ -10,7 +10,6 @@ import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkedUsersBinding
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkedUsersFragmentViewModel
 import javax.inject.Inject
@@ -22,13 +21,13 @@ class BookmarkedUsersFragment : BaseFragment() {
 
     companion object {
 
-        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_ARTICLE_URL = "ARG_ARTICLE_URL"
 
         private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
-        fun newInstance(bookmarkEntity: BookmarkEntity) = BookmarkedUsersFragment().apply {
+        fun newInstance(articleUrl: String) = BookmarkedUsersFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(ARG_BOOKMARK, bookmarkEntity)
+                putString(ARG_ARTICLE_URL, articleUrl)
             }
         }
     }
@@ -40,9 +39,7 @@ class BookmarkedUsersFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val bookmarkEntity: BookmarkEntity by lazy {
-        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
-    }
+    private val articleUrl: String by lazy { arguments.getString(ARG_ARTICLE_URL) }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -60,8 +57,8 @@ class BookmarkedUsersFragment : BaseFragment() {
         } else {
             BookmarkCommentFilter.ALL
         }
-        viewModel.bookmark = bookmarkEntity
-        viewModel.bookmarkCommentFilter = bookmarkCommentFilter
+
+        viewModel.onCreate(articleUrl, bookmarkCommentFilter)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,7 +66,7 @@ class BookmarkedUsersFragment : BaseFragment() {
         val binding = FragmentBookmarkedUsersBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = UserListAdapter(context, component, viewModel.bookmarkList)
+        val adapter = UserListAdapter(context, component, viewModel.bookmarkUserList)
         binding.listView.adapter = adapter
 
         return binding.root

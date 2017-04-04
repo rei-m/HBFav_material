@@ -4,25 +4,18 @@ import android.databinding.Observable
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
+import io.reactivex.functions.BiFunction
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
 import me.rei_m.hbfavmaterial.domain.service.HatenaService
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.presentation.event.*
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.DeleteBookmarkUsecase
-import me.rei_m.hbfavmaterial.usecase.RegisterBookmarkUsecase
-import retrofit2.HttpException
-import java.net.HttpURLConnection
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
 
-class EditBookmarkDialogFragmentViewModel(private val userRepository: UserRepository,
-                                          private val twitterSessionRepository: TwitterSessionRepository,
-                                          private val registerBookmarkUsecase: RegisterBookmarkUsecase,
-                                          private val deleteBookmarkUsecase: DeleteBookmarkUsecase,
+class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaService,
+                                          private val twitterService: TwitterService,
                                           private val rxBus: RxBus,
-                                          private val navigator: ActivityNavigator) : AbsFragmentViewModel() {
+                                          private val navigator: Navigator) : AbsFragmentViewModel() {
 
     companion object {
         private const val MAX_COMMENT_SIZE = 100
@@ -46,11 +39,11 @@ class EditBookmarkDialogFragmentViewModel(private val userRepository: UserReposi
 
     var isDelete: ObservableBoolean = ObservableBoolean(false)
 
-    private lateinit var bookmarkTitle: String
+    lateinit var articleUrl: String
 
-    private lateinit var bookmarkEdit: BookmarkEditEntity
+    private var isAuthorizedTwitter: Boolean = false
 
-    private var isLoading: Boolean = false
+    private var tags: List<String> = listOf()
 
     init {
         comment.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
@@ -64,8 +57,7 @@ class EditBookmarkDialogFragmentViewModel(private val userRepository: UserReposi
         isShareTwitter.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(p0: Observable?, p1: Int) {
                 if (isShareTwitter.get()) {
-                    val twitterSession = twitterSessionRepository.resolve()
-                    if (!twitterSession.oAuthTokenEntity.isAuthorised) {
+                    if (!isAuthorizedTwitter) {
                         navigator.navigateToSetting()
                         rxBus.send(DismissEditBookmarkDialogEvent())
                     }
@@ -74,79 +66,63 @@ class EditBookmarkDialogFragmentViewModel(private val userRepository: UserReposi
         })
     }
 
-    fun onCreate(bookmarkTitle: String, bookmarkEdit: BookmarkEditEntity) {
-        isFirstEdit.set(bookmarkEdit.isFirstEdit)
-        articleTitle.set(bookmarkTitle)
-        comment.set(bookmarkEdit.comment)
-        isOpen.set(!bookmarkEdit.isPrivate)
-        isReadAfter.set(bookmarkEdit.tags.contains(HatenaService.TAG_READ_AFTER))
+    fun onCreate(articleTitle: String, articleUrl: String) {
+        this.articleTitle.set(articleTitle)
+        this.articleUrl = articleUrl
+    }
 
-        val user = userRepository.resolve()
-        isOpen.set(user.isCheckedPostBookmarkOpen)
-        isReadAfter.set(user.isCheckedPostBookmarkReadAfter)
+    override fun onStart() {
+        super.onStart()
+        registerDisposable(io.reactivex.Observable.zip<BookmarkEditEntity, Boolean, Pair<BookmarkEditEntity, Boolean>>(hatenaService.completeFindBookmarkByUrlEvent,
+                twitterService.confirmAuthorisedEvent,
+                BiFunction { t1, t2 ->
+                    return@BiFunction Pair(t1, t2)
+                }).subscribe { (editableBookmark, isAuthorizedTwitter) ->
 
-        val twitterSession = twitterSessionRepository.resolve()
-        isShareTwitter.set(twitterSession.isShare)
+            isFirstEdit.set(editableBookmark.isFirstEdit)
+            comment.set(editableBookmark.comment)
+            isOpen.set(!editableBookmark.isPrivate)
+            isReadAfter.set(editableBookmark.tags.contains(HatenaService.TAG_READ_AFTER))
+            this.tags = editableBookmark.tags
+            this.isAuthorizedTwitter = isAuthorizedTwitter
+        })
 
-        this.bookmarkTitle = bookmarkTitle
-        this.bookmarkEdit = bookmarkEdit
+        registerDisposable(hatenaService.completeRegisterBookmarkEvent.subscribe {
+            if (isShareTwitter.get()) {
+                twitterService.postTweet(articleUrl, articleTitle.get(), comment.get())
+            }
+            rxBus.send(DismissProgressDialogEvent())
+            rxBus.send(DismissEditBookmarkDialogEvent())
+        }, hatenaService.failAuthorizeHatenaEvent.subscribe {
+            navigator.navigateToOAuth()
+            rxBus.send(DismissEditBookmarkDialogEvent())
+        }, hatenaService.completeDeleteBookmarkEvent.subscribe {
+            rxBus.send(DismissProgressDialogEvent())
+            rxBus.send(DismissEditBookmarkDialogEvent())
+        }, hatenaService.error.subscribe {
+            rxBus.send(FailToConnectionEvent())
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hatenaService.findBookmarkByUrl(articleUrl)
+        twitterService.confirmAuthorised()
     }
 
     fun onClickOk(view: View) {
+
+        rxBus.send(ShowProgressDialogEvent())
+
         if (isDelete.get()) {
-            deleteBookmark(bookmarkEdit.url)
+            hatenaService.deleteBookmark(articleUrl)
         } else {
-            registerBookmark(bookmarkEdit.url,
-                    bookmarkTitle,
+            hatenaService.registerBookmark(articleUrl,
                     comment.get(),
                     isOpen.get(),
                     isReadAfter.get(),
-                    isShareTwitter.get())
+                    tags)
         }
-    }
-
-    private fun registerBookmark(url: String,
-                                 title: String,
-                                 comment: String,
-                                 isOpen: Boolean,
-                                 isCheckedReadAfter: Boolean,
-                                 isShareAtTwitter: Boolean) {
-        if (isLoading) return
-
-        isLoading = true
-        rxBus.send(ShowProgressDialogEvent())
-
-        registerDisposable(registerBookmarkUsecase.register(url, title, comment, bookmarkEdit.tags, isOpen, isCheckedReadAfter, isShareAtTwitter).subscribeAsync({
-            rxBus.send(DismissEditBookmarkDialogEvent())
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isLoading = false
-            rxBus.send(DismissProgressDialogEvent())
-        }))
-    }
-
-    private fun deleteBookmark(bookmarkUrl: String) {
-
-        if (isLoading) return
-
-        isLoading = true
-        rxBus.send(ShowProgressDialogEvent())
-
-        registerDisposable(deleteBookmarkUsecase.delete(bookmarkUrl).subscribeAsync({
-            rxBus.send(DismissEditBookmarkDialogEvent())
-        }, {
-            if (it is HttpException) {
-                if (it.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    rxBus.send(DismissEditBookmarkDialogEvent())
-                    return@subscribeAsync
-                }
-            }
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isLoading = false
-            rxBus.send(DismissProgressDialogEvent())
-        }))
     }
 
     fun onClickCancel(view: View) {

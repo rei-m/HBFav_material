@@ -4,17 +4,15 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
-import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.domain.model.UserModel
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.UpdateHatenaIdEvent
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
 
-class BaseDrawerActivityViewModel(private val userRepository: UserRepository,
+class BaseDrawerActivityViewModel(private val userModel: UserModel,
                                   private val rxBus: RxBus,
-                                  private val navigator: ActivityNavigator) : AbsActivityViewModel() {
+                                  private val navigator: Navigator) : AbsActivityViewModel() {
 
     val userId: ObservableField<String> = ObservableField()
 
@@ -24,16 +22,18 @@ class BaseDrawerActivityViewModel(private val userRepository: UserRepository,
 
     val isVisiblePager: ObservableBoolean = ObservableBoolean(true)
 
+    override fun onStart() {
+        super.onStart()
+        registerDisposable(userModel.user.subscribe {
+            userId.set(it.id)
+        }, userModel.completeUpdateUserEvent.subscribe {
+            userId.set(it.id)
+        })
+    }
+
     override fun onResume() {
         super.onResume()
-        userId.set(userRepository.resolve().id)
-        registerDisposable(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is UpdateHatenaIdEvent -> {
-                    userId.set(it.userId)
-                }
-            }
-        }))
+        userModel.getUser()
     }
 
     fun onNavigationMainSelected(page: BookmarkPagerAdapter.Page) {

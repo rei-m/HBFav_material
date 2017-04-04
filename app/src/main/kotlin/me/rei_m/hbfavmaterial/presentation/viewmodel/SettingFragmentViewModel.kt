@@ -3,15 +3,20 @@ package me.rei_m.hbfavmaterial.presentation.viewmodel
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
-import me.rei_m.hbfavmaterial.extension.subscribeBus
-import me.rei_m.hbfavmaterial.presentation.event.*
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.DisplaySettingUsecase
+import me.rei_m.hbfavmaterial.domain.model.UserModel
+import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
+import me.rei_m.hbfavmaterial.presentation.event.RxBus
+import me.rei_m.hbfavmaterial.presentation.event.ShowEditHatenaIdDialogEvent
+import me.rei_m.hbfavmaterial.presentation.event.StartAuthoriseTwitterEvent
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
-class SettingFragmentViewModel(private val displaySettingUsecase: DisplaySettingUsecase,
+class SettingFragmentViewModel(private val userModel: UserModel,
+                               private val hatenaService: HatenaService,
+                               private val twitterService: TwitterService,
                                private val rxBus: RxBus,
-                               private val navigator: ActivityNavigator) : AbsFragmentViewModel() {
+                               private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val userId: ObservableField<String> = ObservableField("")
 
@@ -19,19 +24,24 @@ class SettingFragmentViewModel(private val displaySettingUsecase: DisplaySetting
 
     val isAuthorisedTwitter: ObservableBoolean = ObservableBoolean(false)
 
+    override fun onStart() {
+        super.onStart()
+        registerDisposable(userModel.user.subscribe {
+            userId.set(it.id)
+        }, userModel.completeUpdateUserEvent.subscribe {
+            userId.set(it.id)
+        }, hatenaService.confirmAuthorisedEvent.subscribe {
+            isAuthorisedHatena.set(it)
+        }, twitterService.confirmAuthorisedEvent.subscribe {
+            isAuthorisedTwitter.set(it)
+        })
+    }
+
     override fun onResume() {
         super.onResume()
-        registerDisposable(displaySettingUsecase.execute().subscribeAsync({
-            userId.set(it.first)
-            isAuthorisedHatena.set(it.second)
-            isAuthorisedTwitter.set(it.third)
-        }), rxBus.toObservable().subscribeBus({
-            when (it) {
-                is UpdateHatenaIdEvent -> {
-                    userId.set(it.userId)
-                }
-            }
-        }))
+        userModel.getUser()
+        hatenaService.confirmAuthorised()
+        twitterService.confirmAuthorised()
     }
 
     fun onClickHatenaId(view: View) {

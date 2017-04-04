@@ -3,26 +3,25 @@ package me.rei_m.hbfavmaterial.di
 import android.support.v4.app.Fragment
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.domain.repository.HatenaTokenRepository
-import me.rei_m.hbfavmaterial.domain.repository.TwitterSessionRepository
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.domain.model.UserModel
+import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.domain.service.TwitterService
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel
-import me.rei_m.hbfavmaterial.usecase.impl.DisplaySettingUsecaseImpl
 
 @Module
 class SettingFragmentModule(fragment: Fragment) {
 
     @Provides
-    fun provideSettingFragmentViewModel(userRepository: UserRepository,
-                                        hatenaTokenRepository: HatenaTokenRepository,
-                                        twitterSessionRepository: TwitterSessionRepository,
+    fun provideSettingFragmentViewModel(userModel: UserModel,
+                                        hatenaService: HatenaService,
+                                        twitterService: TwitterService,
                                         rxBus: RxBus,
-                                        navigator: ActivityNavigator): SettingFragmentViewModel {
-        return SettingFragmentViewModel(DisplaySettingUsecaseImpl(userRepository,
-                hatenaTokenRepository,
-                twitterSessionRepository),
+                                        navigator: Navigator): SettingFragmentViewModel {
+        return SettingFragmentViewModel(userModel,
+                hatenaService,
+                twitterService,
                 rxBus,
                 navigator)
     }

@@ -11,7 +11,7 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
 import me.rei_m.hbfavmaterial.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel
 import javax.inject.Inject
 
@@ -61,7 +61,7 @@ class SettingFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            ActivityNavigator.REQ_CODE_OAUTH -> {
+            Navigator.REQ_CODE_OAUTH -> {
 
                 data ?: return
 

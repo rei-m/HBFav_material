@@ -28,7 +28,7 @@ import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkActivityViewModel
 import javax.inject.Inject
 
@@ -81,13 +81,13 @@ class BookmarkActivity : BaseActivity(),
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
                 val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-                viewModel.entryTitle.set(bookmarkEntity.articleEntity.title)
-                viewModel.entryLink.set(bookmarkEntity.articleEntity.url)
+                viewModel.entryTitle.set(bookmarkEntity.article.title)
+                viewModel.entryLink.set(bookmarkEntity.article.url)
                 setFragment(BookmarkFragment.newInstance(bookmarkEntity))
             } else {
                 val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
-                viewModel.entryTitle.set(entryEntity.articleEntity.title)
-                viewModel.entryLink.set(entryEntity.articleEntity.url)
+                viewModel.entryTitle.set(entryEntity.article.title)
+                viewModel.entryLink.set(entryEntity.article.url)
                 setFragment(EntryWebViewFragment.newInstance(viewModel.entryLink.get()), EntryWebViewFragment.TAG)
             }
             supportActionBar?.title = viewModel.entryTitle.get()
@@ -110,7 +110,7 @@ class BookmarkActivity : BaseActivity(),
                 }
                 is ShowBookmarkEditEvent -> {
                     EditBookmarkDialogFragment
-                            .newInstance(viewModel.entryTitle.get(), it.bookmarkEdit)
+                            .newInstance(it.articleTitle, it.articleUrl)
                             .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
                 }
                 is FailToConnectionEvent -> {
@@ -182,7 +182,7 @@ class BookmarkActivity : BaseActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (data == null || requestCode != ActivityNavigator.REQ_CODE_OAUTH) {
+        if (data == null || requestCode != Navigator.REQ_CODE_OAUTH) {
             return
         }
 

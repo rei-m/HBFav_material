@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkUserEntity
 import me.rei_m.hbfavmaterial.presentation.viewmodel.UserListItemViewModel
 
 /**
@@ -17,12 +18,12 @@ import me.rei_m.hbfavmaterial.presentation.viewmodel.UserListItemViewModel
  */
 class UserListAdapter(context: Context,
                       private val injector: Injector,
-                      bookmarkList: ObservableArrayList<BookmarkEntity>) : ArrayAdapter<BookmarkEntity>(context, 0, bookmarkList) {
+                      bookmarkUserList: ObservableArrayList<BookmarkUserEntity>) : ArrayAdapter<BookmarkUserEntity>(context, 0, bookmarkUserList) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     init {
-        bookmarkList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
+        bookmarkUserList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
             override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
                 notifyDataSetChanged()
             }
@@ -55,7 +56,8 @@ class UserListAdapter(context: Context,
             binding = DataBindingUtil.getBinding(convertView)
         }
 
-        binding.viewModel.bookmark.set(getItem(position))
+        binding.viewModel.bookmarkUser.set(getItem(position))
+        binding.executePendingBindings()
 
         return binding.root
     }

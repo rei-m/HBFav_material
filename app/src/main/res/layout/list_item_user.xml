@@ -22,8 +22,8 @@
             android:layout_width="@dimen/icon_size_list"
             android:layout_height="@dimen/icon_size_list"
             android:layout_margin="@dimen/margin_outline"
-            android:contentDescription="@{viewModel.bookmark.creator}"
-            app:imageUrl="@{BookmarkUtil.getIconImageUrlFromId(viewModel.bookmark.creator)}"
+            android:contentDescription="@{viewModel.bookmarkUser.creator}"
+            app:imageUrl="@{viewModel.bookmarkUser.iconUrl}"
             app:isRound="@{true}" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_marginRight="@dimen/margin_outline"
             android:layout_marginStart="@dimen/margin_content_from_screen"
             android:layout_marginTop="@dimen/margin_outline"
-            android:text="@{viewModel.bookmark.creator}" />
+            android:text="@{viewModel.bookmarkUser.creator}" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
             android:layout_marginEnd="@dimen/margin_outline"
             android:layout_marginRight="@dimen/margin_outline"
             android:layout_marginTop="@dimen/margin_outline"
-            android:text="@{BookmarkUtil.getPastTimeString(viewModel.bookmark.date)}"
+            android:text="@{BookmarkUtil.getPastTimeString(viewModel.bookmarkUser.createdAt)}"
             android:textSize="@dimen/text_size_caption" />
 
         <TextView
@@ -57,7 +57,7 @@
             android:layout_marginRight="@dimen/margin_outline"
             android:layout_marginStart="@dimen/margin_content_from_screen"
             android:layout_marginTop="@dimen/margin"
-            android:text="@{viewModel.bookmark.description}" />
+            android:text="@{viewModel.bookmarkUser.comment}" />
 
     </RelativeLayout>
 </layout>

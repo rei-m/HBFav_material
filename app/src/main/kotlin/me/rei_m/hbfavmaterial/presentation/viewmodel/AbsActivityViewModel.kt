@@ -24,12 +24,12 @@ abstract class AbsActivityViewModel {
 
     @CallSuper
     open fun onPause() {
-        disposable?.dispose()
-        disposable = null
     }
 
     @CallSuper
     open fun onStop() {
+        disposable?.dispose()
+        disposable = null
     }
 
     fun registerDisposable(vararg d: Disposable) {

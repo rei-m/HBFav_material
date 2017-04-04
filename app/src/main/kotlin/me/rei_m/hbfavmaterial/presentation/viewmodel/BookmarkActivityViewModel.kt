@@ -2,60 +2,35 @@ package me.rei_m.hbfavmaterial.presentation.viewmodel
 
 import android.databinding.ObservableField
 import android.view.View
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
+import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.DisplayBookmarkEditFormUsecase
-import me.rei_m.hbfavmaterial.exception.HatenaUnAuthorizedException
+import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
-class BookmarkActivityViewModel(private val displayBookmarkEditFormUsecase: DisplayBookmarkEditFormUsecase,
+class BookmarkActivityViewModel(private val hatenaService: HatenaService,
                                 private val rxBus: RxBus,
-                                private val navigator: ActivityNavigator) : AbsActivityViewModel() {
+                                private val navigator: Navigator) : AbsActivityViewModel() {
 
     val entryTitle: ObservableField<String> = ObservableField()
 
     val entryLink: ObservableField<String> = ObservableField()
 
-    private var isLoading: Boolean = false
-    
-    fun onClickFab(view: View) {
-
-        if (isLoading) {
-            return
-        }
-
-        isLoading = true
-
-        registerDisposable(displayBookmarkEditFormUsecase.execute(entryLink.get()).subscribeAsync({
-            rxBus.send(ShowBookmarkEditEvent(entryTitle.get(), it))
-        }, {
-            when (it) {
-                is HatenaUnAuthorizedException -> {
-                    navigator.navigateToOAuth()
-                }
-                else -> {
-                    rxBus.send(FailToConnectionEvent())
-                }
+    override fun onStart() {
+        super.onStart()
+        registerDisposable(hatenaService.confirmAuthorisedEvent.subscribe {
+            if (it) {
+                rxBus.send(ShowBookmarkEditEvent(entryTitle.get(), entryLink.get()))
+            } else {
+                navigator.navigateToOAuth()
             }
-        }, {
-            isLoading = false
-        }))
+        })
+    }
+
+    fun onClickFab(view: View) {
+        hatenaService.confirmAuthorised()
     }
 
     fun onAuthoriseHatena() {
-        registerDisposable(displayBookmarkEditFormUsecase.execute(entryLink.get()).subscribeAsync({
-            rxBus.send(ShowBookmarkEditEvent(entryTitle.get(), it))
-        }, {
-            when (it) {
-                is HatenaUnAuthorizedException -> {
-                    navigator.navigateToOAuth()
-                }
-                else -> {
-                    rxBus.send(FailToConnectionEvent())
-                }
-            }
-        }))
+        hatenaService.confirmAuthorised()
     }
 }

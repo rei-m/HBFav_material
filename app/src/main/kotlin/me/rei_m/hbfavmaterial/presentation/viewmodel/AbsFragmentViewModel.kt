@@ -13,7 +13,7 @@ abstract class AbsFragmentViewModel {
             }
             return field
         }
-
+    
     @CallSuper
     open fun onStart() {
     }
@@ -24,12 +24,12 @@ abstract class AbsFragmentViewModel {
 
     @CallSuper
     open fun onPause() {
-        disposable?.dispose()
-        disposable = null
     }
 
     @CallSuper
     open fun onStop() {
+        disposable?.dispose()
+        disposable = null
     }
 
     fun registerDisposable(vararg d: Disposable) {

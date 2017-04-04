@@ -14,12 +14,10 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.OAuthActivityModule
+import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.usecase.AuthorizeHatenaUsecase
-import me.rei_m.hbfavmaterial.usecase.UnAuthorizeHatenaUsecase
 import javax.inject.Inject
 
 class OAuthActivity : BaseSingleActivity() {
@@ -33,25 +31,15 @@ class OAuthActivity : BaseSingleActivity() {
     }
 
     @Inject
-    lateinit var authorizeHatenaUsecase: AuthorizeHatenaUsecase
-
-    @Inject
-    lateinit var unAuthorizeHatenaUsecase: UnAuthorizeHatenaUsecase
+    lateinit var hatenaService: HatenaService
 
     private var disposable: CompositeDisposable? = null
 
-    private var isLoading = false
-
-    private val webView: WebView by lazy {
-        WebView(this)
-    }
+    private var webView: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        disposable = CompositeDisposable()
-
-        webView.apply {
+        val webView = WebView(this).apply {
             clearCache(true)
             settings.javaScriptEnabled = true
             setWebChromeClient(WebChromeClient())
@@ -62,12 +50,10 @@ class OAuthActivity : BaseSingleActivity() {
                         hide()
                         val oauthVerifier = Uri.parse(url).getQueryParameter("oauth_verifier")
                         oauthVerifier ?: finish()
-                        fetchAccessToken(oauthVerifier)
+                        hatenaService.registerAccessToken(oauthVerifier)
                     } else if (url?.startsWith(HatenaOAuthManager.AUTHORIZATION_DENY_URL) ?: false) {
                         stopLoading()
-                        unAuthorizeHatenaUsecase.unAuthorize()
-                        setAuthorizeResult(false, true)
-                        finish()
+                        hatenaService.deleteAccessToken()
                     } else {
                         super.onPageStarted(view, url, favicon)
                     }
@@ -83,49 +69,49 @@ class OAuthActivity : BaseSingleActivity() {
             addView(webView)
         }
         findViewById(R.id.fab)?.hide()
+        this.webView = webView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(hatenaService.completeFetchRequestTokenEvent.subscribe {
+            webView?.loadUrl(it)
+        }, hatenaService.completeRegisterAccessTokenEvent.subscribe {
+            setAuthorizeResult(true, true)
+            finish()
+        }, hatenaService.completeDeleteAccessTokenEvent.subscribe {
+            setAuthorizeResult(false, true)
+            finish()
+        }, hatenaService.failAuthorizeHatenaEvent.subscribe {
+            setAuthorizeResult(false, false)
+            finish()
+        }, hatenaService.error.subscribe {
+            showSnackbarNetworkError()
+        })
     }
 
     override fun onResume() {
         super.onResume()
-        fetchRequestToken()
+        hatenaService.fetchRequestToken()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         disposable?.dispose()
         disposable = null
     }
 
-    private fun fetchRequestToken() {
-
-        if (isLoading) return
-
-        isLoading = true
-
-        disposable?.add(authorizeHatenaUsecase.fetchRequestToken().subscribeAsync({
-            webView.loadUrl(it)
-        }, {
-            showSnackbarNetworkError()
-        }, {
-            isLoading = false
-        }))
+    override fun onDestroy() {
+        super.onDestroy()
+        webView = null
     }
 
-    private fun fetchAccessToken(oauthVerifier: String) {
+    override fun setupActivityComponent() {
+        val component = (application as App).component
+                .plus(OAuthActivityModule(), ActivityModule(this))
 
-        if (isLoading) return
-
-        isLoading = true
-
-        disposable?.add(authorizeHatenaUsecase.authorize(oauthVerifier).subscribeAsync({
-            setAuthorizeResult(true, true)
-            finish()
-        }, {
-            setAuthorizeResult(false, false)
-            finish()
-        }, {
-            isLoading = false
-        }))
+        component.inject(this)
     }
 
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
@@ -137,12 +123,5 @@ class OAuthActivity : BaseSingleActivity() {
         }
         // TODO: 認証してなかったらキャンセルにする.
         setResult(RESULT_OK, intent)
-    }
-
-    override fun setupActivityComponent() {
-        val component = (application as App).component
-                .plus(OAuthActivityModule(), ActivityModule(this))
-
-        component.inject(this)
     }
 }

@@ -6,9 +6,7 @@ import android.support.design.widget.NavigationView
 import android.support.design.widget.TextInputLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
-import android.view.View
 import android.widget.ImageView
-import android.widget.ListView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
@@ -50,26 +48,6 @@ class BindingHelper {
         @BindingAdapter("onRefresh")
         fun onRefresh(view: SwipeRefreshLayout, listener: SwipeRefreshLayout.OnRefreshListener) {
             view.setOnRefreshListener(listener)
-        }
-
-        @JvmStatic
-        @BindingAdapter("hasFooter")
-        fun hasFooter(view: ListView, hasFooter: Boolean) {
-            if (hasFooter) {
-                if (0 < view.footerViewsCount) {
-                    return
-                }
-                View.inflate(view.context, R.layout.list_fotter_loading, null).let {
-                    view.addFooterView(it, null, false)
-                }
-            } else {
-                if (view.footerViewsCount == 0) {
-                    return
-                }
-                view.findViewById(R.layout.list_fotter_loading).let {
-                    view.removeFooterView(it)
-                }
-            }
         }
 
         @JvmStatic

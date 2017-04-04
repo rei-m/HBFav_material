@@ -15,7 +15,6 @@ import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
 import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentComponent
 import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.*
@@ -29,15 +28,15 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
         val TAG: String = EditBookmarkDialogFragment::class.java.simpleName
 
-        private const val ARG_BOOKMARK_TITLE = "ARG_BOOKMARK_TITLE"
+        private const val ARG_ARTICLE_TITLE = "ARG_ARTICLE_TITLE"
 
-        private const val ARG_BOOKMARK = "ARG_BOOKMARK"
+        private const val ARG_ARTICLE_URL = "ARG_ARTICLE_URL"
 
         fun newInstance(title: String,
-                        bookmarkEditEntity: BookmarkEditEntity) = EditBookmarkDialogFragment().apply {
+                        url: String) = EditBookmarkDialogFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_BOOKMARK_TITLE, title)
-                putSerializable(ARG_BOOKMARK, bookmarkEditEntity)
+                putString(ARG_ARTICLE_TITLE, title)
+                putString(ARG_ARTICLE_URL, url)
             }
         }
     }
@@ -52,12 +51,12 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     private var disposable: CompositeDisposable? = null
 
-    private val bookmarkTitle: String by lazy {
-        arguments.getString(ARG_BOOKMARK_TITLE)
+    private val articleTitle: String by lazy {
+        arguments.getString(ARG_ARTICLE_TITLE)
     }
 
-    private val bookmarkEdit: BookmarkEditEntity by lazy {
-        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEditEntity
+    private val articleUrl: String by lazy {
+        arguments.getString(ARG_ARTICLE_URL)
     }
 
     override var progressDialog: ProgressDialog? = null
@@ -75,7 +74,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
                 .plus(EditBookmarkDialogFragmentModule(context))
                 .inject(this)
 
-        viewModel.onCreate(bookmarkTitle, bookmarkEdit)
+        viewModel.onCreate(articleTitle, articleUrl)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
