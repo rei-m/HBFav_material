@@ -1,13 +1,13 @@
-package me.rei_m.hbfavmaterial.domain.service.impl
+package me.rei_m.hbfavmaterial.application.impl
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.domain.entity.EditableBookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
@@ -26,38 +26,30 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
     }
 
     private val completeFetchRequestTokenEventSubject = PublishSubject.create<String>()
+    private val completeRegisterAccessTokenEventSubject = PublishSubject.create<Unit>()
+    private val completeDeleteAccessTokenEventSubject = PublishSubject.create<Unit>()
+    private val confirmAuthorisedEventSubject = PublishSubject.create<Boolean>()
+    private val completeFindBookmarkByUrlEventSubject = PublishSubject.create<EditableBookmarkEntity>()
+    private val completeRegisterBookmarkEventSubject = PublishSubject.create<Unit>()
+    private val completeDeleteBookmarkEventSubject = PublishSubject.create<Unit>()
+    private val failAuthorizeHatenaEventSubject = PublishSubject.create<Unit>()
+    private val errorSubject = PublishSubject.create<Unit>()
 
     override val completeFetchRequestTokenEvent: Observable<String> = completeFetchRequestTokenEventSubject
 
-    private val completeRegisterAccessTokenEventSubject = PublishSubject.create<Unit>()
-
     override val completeRegisterAccessTokenEvent: Observable<Unit> = completeRegisterAccessTokenEventSubject
-
-    private val completeDeleteAccessTokenEventSubject = PublishSubject.create<Unit>()
 
     override val completeDeleteAccessTokenEvent: Observable<Unit> = completeDeleteAccessTokenEventSubject
 
-    private val confirmAuthorisedEventSubject = PublishSubject.create<Boolean>()
-
     override val confirmAuthorisedEvent: Observable<Boolean> = confirmAuthorisedEventSubject
 
-    private val completeFindBookmarkByUrlEventSubject = PublishSubject.create<BookmarkEditEntity>()
-
-    override val completeFindBookmarkByUrlEvent: Observable<BookmarkEditEntity> = completeFindBookmarkByUrlEventSubject
-
-    private val completeRegisterBookmarkEventSubject = PublishSubject.create<Unit>()
+    override val completeFindBookmarkByUrlEvent: Observable<EditableBookmarkEntity> = completeFindBookmarkByUrlEventSubject
 
     override val completeRegisterBookmarkEvent: Observable<Unit> = completeRegisterBookmarkEventSubject
 
-    private val completeDeleteBookmarkEventSubject = PublishSubject.create<Unit>()
-
     override val completeDeleteBookmarkEvent: Observable<Unit> = completeDeleteBookmarkEventSubject
 
-    private val failAuthorizeHatenaEventSubject = PublishSubject.create<Unit>()
-
     override val failAuthorizeHatenaEvent: Observable<Unit> = failAuthorizeHatenaEventSubject
-
-    private val errorSubject = PublishSubject.create<Unit>()
 
     override val error: Observable<Unit> = errorSubject
 
@@ -121,7 +113,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
 
         retrofit.create(HatenaOAuthApiService::class.java).getBookmark(urlString).map { (_, private, _, _, tags, _, comment) ->
-            return@map BookmarkEditEntity(url = urlString,
+            return@map EditableBookmarkEntity(url = urlString,
                     isFirstEdit = false,
                     comment = comment,
                     isPrivate = private,
@@ -130,7 +122,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             return@onErrorResumeNext if (it is HttpException) {
                 when (it.code()) {
                     HttpURLConnection.HTTP_NOT_FOUND -> {
-                        Single.just(BookmarkEditEntity(url = urlString, isFirstEdit = true))
+                        Single.just(EditableBookmarkEntity(url = urlString, isFirstEdit = true))
                     }
                     else -> {
                         Single.error(it)
@@ -170,7 +162,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             }
         }
 
-        require(postTags.size <= MAX_TAGS_COUNT) { "登録可能なタグは $MAX_TAGS_COUNT 個までです。" }
+        require(postTags.size <= MAX_TAGS_COUNT) { "登録可能なタグは ${MAX_TAGS_COUNT} 個までです。" }
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 

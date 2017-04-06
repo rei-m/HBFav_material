@@ -14,16 +14,24 @@ import org.jsoup.Jsoup
 class HotEntryModel(private val hatenaRssService: HatenaRssService,
                     private val hotEntryRssService: HatenaRssService) {
 
-    private val entryListSubject = PublishSubject.create<List<EntryEntity>>()
+    var entryList: List<EntryEntity> = listOf()
+        private set(value) {
+            field = value
+            entryListUpdatedEventSubject.onNext(value)
+        }
 
-    val entryList: Observable<List<EntryEntity>> = entryListSubject
+    var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+        private set(value) {
+            field = value
+            entryTypeFilterUpdatedEventSubject.onNext(value)
+        }
 
-    private var entryTypeFilterSubject = PublishSubject.create<EntryTypeFilter>()
-
-    val entryTypeFilter: Observable<EntryTypeFilter> = entryTypeFilterSubject
-
+    private val entryListUpdatedEventSubject = PublishSubject.create<List<EntryEntity>>()
+    private val entryTypeFilterUpdatedEventSubject = PublishSubject.create<EntryTypeFilter>()
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val entryListUpdatedEvent: Observable<List<EntryEntity>> = entryListUpdatedEventSubject
+    val entryTypeFilterUpdatedEvent: Observable<EntryTypeFilter> = entryTypeFilterUpdatedEventSubject
     val error: Observable<Unit> = errorSubject
 
     private var isLoading: Boolean = false
@@ -59,8 +67,10 @@ class HotEntryModel(private val hatenaRssService: HatenaRssService,
                         subject = it.subject)
             }
         }.subscribeAsync({
-            entryTypeFilterSubject.onNext(entryTypeFilter)
-            entryListSubject.onNext(it)
+            entryList = it
+            if (this.entryTypeFilter != entryTypeFilter) {
+                this.entryTypeFilter = entryTypeFilter
+            }
         }, {
             errorSubject.onNext(Unit)
         }, {

@@ -16,7 +16,7 @@ import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.ExplainAppFragment
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import javax.inject.Inject
 
 /**

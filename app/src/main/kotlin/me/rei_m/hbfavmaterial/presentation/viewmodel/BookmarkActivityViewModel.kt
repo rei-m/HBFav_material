@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.presentation.viewmodel
 
 import android.databinding.ObservableField
 import android.view.View
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator

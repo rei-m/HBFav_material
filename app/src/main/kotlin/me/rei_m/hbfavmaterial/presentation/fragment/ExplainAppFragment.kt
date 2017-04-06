@@ -10,7 +10,6 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
-import me.rei_m.hbfavmaterial.presentation.util.AppUtil
 import javax.inject.Inject
 
 /**
@@ -45,7 +44,7 @@ class ExplainAppFragment : BaseFragment() {
             navigator.navigateToCredit()
         }
 
-        val versionName = AppUtil.getVersionName(activity.applicationContext)
+        val versionName = getAppContext().packageManager.getPackageInfo(context.packageName, 0).versionName
         with(view.findViewById(R.id.fragment_explain_app_text_version)) {
             this as AppCompatTextView
             text = "${getString(R.string.text_version)} : $versionName"

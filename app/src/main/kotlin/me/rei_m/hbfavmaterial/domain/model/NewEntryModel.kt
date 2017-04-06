@@ -13,31 +13,41 @@ import org.jsoup.Jsoup
 
 class NewEntryModel(private val hatenaRssService: HatenaRssService) {
 
-    private val entryListSubject = PublishSubject.create<List<EntryEntity>>()
+    var entryList: List<EntryEntity> = listOf()
+        private set(value) {
+            field = value
+            entryListUpdatedEventSubject.onNext(value)
+        }
 
-    val entryList: Observable<List<EntryEntity>> = entryListSubject
+    var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+        private set(value) {
+            field = value
+            entryTypeFilterUpdatedEventSubject.onNext(value)
+        }
 
-    private var entryTypeFilterSubject = PublishSubject.create<EntryTypeFilter>()
-
-    val entryTypeFilter: Observable<EntryTypeFilter> = entryTypeFilterSubject
-
+    private val entryListUpdatedEventSubject = PublishSubject.create<List<EntryEntity>>()
+    private val entryTypeFilterUpdatedEventSubject = PublishSubject.create<EntryTypeFilter>()
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val entryListUpdatedEvent: Observable<List<EntryEntity>> = entryListUpdatedEventSubject
+    val entryTypeFilterUpdatedEvent: Observable<EntryTypeFilter> = entryTypeFilterUpdatedEventSubject
     val error: Observable<Unit> = errorSubject
 
-    private val loadingSubject = PublishSubject.create<Boolean>()
-
-    val loading: Observable<Boolean> = loadingSubject
+    private var isLoading: Boolean = false
 
     fun getList(entryTypeFilter: EntryTypeFilter) {
+
+        if (isLoading) {
+            return
+        }
+
+        isLoading = true
 
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL) {
             hatenaRssService.new()
         } else {
             hatenaRssService.new(ApiUtil.getEntryTypeRss(entryTypeFilter))
         }
-
-        loadingSubject.onNext(true)
 
         rss.map { response ->
             response.list.map {
@@ -56,12 +66,14 @@ class NewEntryModel(private val hatenaRssService: HatenaRssService) {
                         subject = it.subject)
             }
         }.subscribeAsync({
-            entryTypeFilterSubject.onNext(entryTypeFilter)
-            entryListSubject.onNext(it)
+            entryList = it
+            if (this.entryTypeFilter != entryTypeFilter) {
+                this.entryTypeFilter = entryTypeFilter
+            }
         }, {
             errorSubject.onNext(Unit)
         }, {
-            loadingSubject.onNext(false)
+            isLoading = false
         })
     }
 }

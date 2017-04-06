@@ -18,11 +18,7 @@ enum class ReadAfterFilter(override val menuId: Int,
 
     companion object {
         fun forMenuId(menuId: Int): ReadAfterFilter {
-            for (value: ReadAfterFilter in values()) {
-                if (value.menuId == menuId) {
-                    return value
-                }
-            }
+            values().filter { it.menuId == menuId }.forEach { return it }
             throw AssertionError("no enum found for the id. you forgot to implement?")
         }
     }

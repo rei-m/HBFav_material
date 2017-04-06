@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.presentation.view.adapter
+package me.rei_m.hbfavmaterial.presentation.widget.adapter
 
 import android.content.Context
 import android.databinding.DataBindingUtil
@@ -8,21 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import me.rei_m.hbfavmaterial.databinding.ListItemBookmarkBinding
+import me.rei_m.hbfavmaterial.databinding.ListItemEntryBinding
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkListItemViewModel
+import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import me.rei_m.hbfavmaterial.presentation.viewmodel.EntryListItemViewModel
 
 /**
- * ブックマーク一覧を管理するAdaptor.
+ * エントリー一覧を管理するAdaptor.
  */
-class BookmarkListAdapter(context: Context,
-                          private val injector: Injector,
-                          bookmarkList: ObservableArrayList<BookmarkEntity>) : ArrayAdapter<BookmarkEntity>(context, 0, bookmarkList) {
+class EntryListAdapter(context: Context,
+                       private val injector: Injector,
+                       entryList: ObservableArrayList<EntryEntity>) : ArrayAdapter<EntryEntity>(context, 0, entryList) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     init {
-        bookmarkList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
+        entryList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
             override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
                 notifyDataSetChanged()
             }
@@ -47,22 +48,21 @@ class BookmarkListAdapter(context: Context,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 
-        val binding: ListItemBookmarkBinding
+        val binding: ListItemEntryBinding
         if (convertView == null) {
-            binding = ListItemBookmarkBinding.inflate(inflater, parent, false)
-            binding.viewModel = injector.bookmarkListItemViewModel()
+            binding = ListItemEntryBinding.inflate(inflater, parent, false)
+            binding.viewModel = injector.entryListItemViewModel()
         } else {
             binding = DataBindingUtil.getBinding(convertView)
         }
 
-        binding.viewModel.bookmark.set(getItem(position))
-        // 即座に描画しないと上へスクロールした時にカクつく
+        binding.viewModel.entry.set(getItem(position))
         binding.executePendingBindings()
 
         return binding.root
     }
 
     interface Injector {
-        fun bookmarkListItemViewModel(): BookmarkListItemViewModel
+        fun entryListItemViewModel(): EntryListItemViewModel
     }
 }

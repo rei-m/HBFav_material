@@ -14,8 +14,8 @@ import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.viewmodel.UserBookmarkFragmentViewModel
 import javax.inject.Inject
 

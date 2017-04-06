@@ -14,7 +14,7 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.OAuthActivityModule
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager

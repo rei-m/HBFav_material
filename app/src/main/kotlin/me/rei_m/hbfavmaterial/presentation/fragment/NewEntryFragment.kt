@@ -9,8 +9,8 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.NewEntryFragmentComponent
 import me.rei_m.hbfavmaterial.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
-import me.rei_m.hbfavmaterial.presentation.view.adapter.EntryListAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.EntryListAdapter
 import me.rei_m.hbfavmaterial.presentation.viewmodel.NewEntryFragmentViewModel
 import javax.inject.Inject
 

@@ -8,7 +8,7 @@ import me.rei_m.hbfavmaterial.domain.model.UserModel
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 
 class BaseDrawerActivityViewModel(private val userModel: UserModel,
                                   private val rxBus: RxBus,
@@ -24,16 +24,14 @@ class BaseDrawerActivityViewModel(private val userModel: UserModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(userModel.user.subscribe {
-            userId.set(it.id)
-        }, userModel.completeUpdateUserEvent.subscribe {
+        registerDisposable(userModel.userUpdatedEvent.subscribe {
             userId.set(it.id)
         })
     }
 
     override fun onResume() {
         super.onResume()
-        userModel.getUser()
+        userId.set(userModel.user.id)
     }
 
     fun onNavigationMainSelected(page: BookmarkPagerAdapter.Page) {

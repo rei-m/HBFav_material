@@ -6,10 +6,10 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.domain.model.UserModel
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
-import me.rei_m.hbfavmaterial.domain.service.impl.HatenaServiceImpl
-import me.rei_m.hbfavmaterial.domain.service.impl.TwitterServiceImpl
+import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.application.TwitterService
+import me.rei_m.hbfavmaterial.application.impl.HatenaServiceImpl
+import me.rei_m.hbfavmaterial.application.impl.TwitterServiceImpl
 import me.rei_m.hbfavmaterial.infra.network.HatenaApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.RetrofitManager

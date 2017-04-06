@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.presentation.view.widget.graphics
+package me.rei_m.hbfavmaterial.presentation.widget.graphics
 
 import android.graphics.*
 import android.graphics.Bitmap.Config

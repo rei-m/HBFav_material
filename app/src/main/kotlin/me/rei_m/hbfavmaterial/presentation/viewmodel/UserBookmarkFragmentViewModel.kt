@@ -36,26 +36,21 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(userBookmarkModel.bookmarkList.subscribe {
+        registerDisposable(userBookmarkModel.bookmarkListUpdatedEvent.subscribe {
             bookmarkList.clear()
             bookmarkList.addAll(it)
             isVisibleEmpty.set(it.isEmpty())
             isVisibleProgress.set(false)
             isRefreshing.set(false)
             rxBus.send(UpdateMainPageFilterEvent())
-        }, userBookmarkModel.hasNextPage.subscribe {
+        }, userBookmarkModel.hasNextPageUpdatedEvent.subscribe {
             if (!it) {
                 rxBus.send(ReadAllListItemEvent())
             }
+        }, userBookmarkModel.readAfterFilterUpdatedEvent.subscribe {
+            readAfterFilter = it
         }, userBookmarkModel.error.subscribe {
             rxBus.send(FailToConnectionEvent())
-        }, userBookmarkModel.readAfterFilter.subscribe {
-            readAfterFilter = it
-        }, userModel.user.subscribe {
-            if (userBookmarkModel.userId != it.id) {
-                userBookmarkModel.userId = it.id
-                userBookmarkModel.getList(readAfterFilter)
-            }
         })
     }
 
@@ -64,10 +59,9 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
         if (bookmarkList.isEmpty()) {
             isVisibleProgress.set(true)
             if (isOwner) {
-                userModel.getUser()
+                userBookmarkModel.getList(userModel.user.id, readAfterFilter)
             } else {
-                userBookmarkModel.userId = bookmarkUserId
-                userBookmarkModel.getList(readAfterFilter)
+                userBookmarkModel.getList(bookmarkUserId, readAfterFilter)
             }
         }
     }
@@ -86,18 +80,28 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
     @Suppress("UNUSED_PARAMETER")
     fun onScroll(listView: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
         if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-            userBookmarkModel.getNextPage()
+            if (userBookmarkModel.hasNextPage) {
+                userBookmarkModel.getNextPage()
+            }
         }
     }
 
     fun onRefresh() {
         isRefreshing.set(true)
-        userBookmarkModel.getList(readAfterFilter)
+        if (isOwner) {
+            userBookmarkModel.getList(userModel.user.id, readAfterFilter)
+        } else {
+            userBookmarkModel.getList(bookmarkUserId, readAfterFilter)
+        }
     }
 
     fun onOptionItemSelected(readAfterFilter: ReadAfterFilter) {
         if (this.readAfterFilter == readAfterFilter) return
         isVisibleProgress.set(true)
-        userBookmarkModel.getList(readAfterFilter)
+        if (isOwner) {
+            userBookmarkModel.getList(userModel.user.id, readAfterFilter)
+        } else {
+            userBookmarkModel.getList(bookmarkUserId, readAfterFilter)
+        }
     }
 }

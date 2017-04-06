@@ -4,8 +4,8 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
 import me.rei_m.hbfavmaterial.domain.model.UserModel
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.event.ShowEditHatenaIdDialogEvent
@@ -26,9 +26,7 @@ class SettingFragmentViewModel(private val userModel: UserModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(userModel.user.subscribe {
-            userId.set(it.id)
-        }, userModel.completeUpdateUserEvent.subscribe {
+        registerDisposable(userModel.userUpdatedEvent.subscribe {
             userId.set(it.id)
         }, hatenaService.confirmAuthorisedEvent.subscribe {
             isAuthorisedHatena.set(it)
@@ -39,7 +37,7 @@ class SettingFragmentViewModel(private val userModel: UserModel,
 
     override fun onResume() {
         super.onResume()
-        userModel.getUser()
+        userId.set(userModel.user.id)
         hatenaService.confirmAuthorised()
         twitterService.confirmAuthorised()
     }

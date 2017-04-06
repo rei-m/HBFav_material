@@ -2,7 +2,7 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Subcomponent
 import me.rei_m.hbfavmaterial.presentation.fragment.FavoriteBookmarkFragment
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
 
 @Subcomponent(modules = arrayOf(BookmarkFavoriteFragmentModule::class))
 interface BookmarkFavoriteFragmentComponent : BookmarkListAdapter.Injector {

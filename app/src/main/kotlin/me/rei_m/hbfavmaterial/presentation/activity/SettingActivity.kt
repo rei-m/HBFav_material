@@ -14,14 +14,14 @@ import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.di.SettingActivityComponent
 import me.rei_m.hbfavmaterial.di.SettingActivityModule
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.ProgressDialogController
 import me.rei_m.hbfavmaterial.presentation.fragment.SettingFragment
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import javax.inject.Inject
 
 class SettingActivity : BaseDrawerActivity(),

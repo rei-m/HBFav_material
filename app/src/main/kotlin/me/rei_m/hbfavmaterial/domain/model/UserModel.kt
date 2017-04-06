@@ -18,46 +18,26 @@ class UserModel(private val preferences: SharedPreferences,
         private const val KEY_PREF_USER = "KEY_PREF_USER"
     }
 
-    private val userSubject: PublishSubject<UserEntity> = PublishSubject.create()
+    var user: UserEntity = getUserFromPreferences()
+        private set(value) {
+            field = value
+            storeUserToPreferences(value)
+            userUpdatedEventSubject.onNext(value)
+        }
 
-    val user: Observable<UserEntity> = userSubject
-
-    private val confirmCompleteRegistrationEventSubject = PublishSubject.create<Boolean>()
-
-    val confirmCompleteRegistrationEvent: Observable<Boolean> = confirmCompleteRegistrationEventSubject
-
-    private val completeUpdateUserEventSubject = PublishSubject.create<UserEntity>()
-
-    val completeUpdateUserEvent: Observable<UserEntity> = completeUpdateUserEventSubject
-
+    private val userUpdatedEventSubject = PublishSubject.create<UserEntity>()
     private val unauthorisedEventSubject = PublishSubject.create<Unit>()
-
-    val unauthorisedEvent: Observable<Unit> = unauthorisedEventSubject
-
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val userUpdatedEvent: Observable<UserEntity> = userUpdatedEventSubject
+    val unauthorisedEvent: Observable<Unit> = unauthorisedEventSubject
     val error: Observable<Unit> = errorSubject
-
-    fun getUser() {
-        userSubject.onNext(getUserFromPreferences())
-    }
-
-    fun confirmCompleteRegistration() {
-        confirmCompleteRegistrationEventSubject.onNext(getUserFromPreferences().isCompleteSetting)
-    }
 
     fun setUpUserId(userId: String) {
 
-        val currentUser = getUserFromPreferences()
-        if (currentUser.id == userId) {
-            completeUpdateUserEventSubject.onNext(currentUser)
-            return
-        }
-
         hatenaApiService.userCheck(userId).map {
             // 原因はわからないがカンマ等の記号が入っている場合にTopページを取得しているケースがある
-            // 基本的には入力時に弾く予定だが、Modelの仕様としては考慮してトップページが返ってきたら
-            // 存在しないユーザー = 404として扱う
+            // Modelの仕様としては考慮してトップページが返ってきたら 存在しないユーザー = 404として扱う
             return@map !it.contains("<title>はてなブックマーク</title>")
         }.onErrorResumeNext {
             return@onErrorResumeNext if (it is HttpException) {
@@ -74,28 +54,13 @@ class UserModel(private val preferences: SharedPreferences,
             }
         }.subscribeAsync({ isValidId ->
             if (isValidId) {
-                val user = UserEntity(userId)
-                preferences.edit()
-                        .putString(KEY_PREF_USER, Gson().toJson(user))
-                        .apply()
-                completeUpdateUserEventSubject.onNext(user)
+                user = UserEntity(userId)
             } else {
                 unauthorisedEventSubject.onNext(Unit)
             }
         }, {
             errorSubject.onNext(Unit)
         })
-    }
-
-    fun updateCheckedPostStatus(isCheckedPostBookmarkOpen: Boolean,
-                                isCheckedPostBookmarkReadAfter: Boolean) {
-        val user = getUserFromPreferences()
-        user.isCheckedPostBookmarkOpen = isCheckedPostBookmarkOpen
-        user.isCheckedPostBookmarkReadAfter = isCheckedPostBookmarkReadAfter
-        preferences.edit()
-                .putString(KEY_PREF_USER, Gson().toJson(user))
-                .apply()
-        completeUpdateUserEventSubject.onNext(user)
     }
 
     private fun getUserFromPreferences(): UserEntity {
@@ -105,5 +70,11 @@ class UserModel(private val preferences: SharedPreferences,
         } else {
             UserEntity(id = "")
         }
+    }
+
+    private fun storeUserToPreferences(user: UserEntity) {
+        preferences.edit()
+                .putString(KEY_PREF_USER, Gson().toJson(user))
+                .apply()
     }
 }

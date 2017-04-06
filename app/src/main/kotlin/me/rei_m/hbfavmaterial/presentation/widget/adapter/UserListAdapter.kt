@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.presentation.view.adapter
+package me.rei_m.hbfavmaterial.presentation.widget.adapter
 
 import android.content.Context
 import android.databinding.DataBindingUtil

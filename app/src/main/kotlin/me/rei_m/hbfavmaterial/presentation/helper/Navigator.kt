@@ -5,7 +5,7 @@ import android.content.Intent
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
 import me.rei_m.hbfavmaterial.presentation.activity.*
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 
 open class Navigator(private val activity: Activity) {
 

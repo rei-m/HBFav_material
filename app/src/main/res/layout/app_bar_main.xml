@@ -32,7 +32,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <me.rei_m.hbfavmaterial.presentation.view.widget.viewpager.BookmarkViewPager
+        <me.rei_m.hbfavmaterial.presentation.widget.viewpager.BookmarkViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

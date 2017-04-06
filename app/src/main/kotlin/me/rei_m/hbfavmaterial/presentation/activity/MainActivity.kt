@@ -20,8 +20,8 @@ import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
 import me.rei_m.hbfavmaterial.presentation.fragment.MainPageFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
-import me.rei_m.hbfavmaterial.presentation.view.widget.viewpager.BookmarkViewPager
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.viewpager.BookmarkViewPager
 import javax.inject.Inject
 
 /**

@@ -37,9 +37,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
     override fun onStart() {
         super.onStart()
 
-        bookmarkModel.articleUrl = articleUrl
-
-        registerDisposable(bookmarkModel.userList.subscribe {
+        registerDisposable(bookmarkModel.userListUpdatedEvent.subscribe {
             bookmarkUserList.clear()
             bookmarkUserList.addAll(it)
             isVisibleEmpty.set(it.isEmpty())
@@ -47,7 +45,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
             isRefreshing.set(false)
         }, bookmarkModel.error.subscribe {
             rxBus.send(FailToConnectionEvent())
-        }, bookmarkModel.bookmarkCommentFilter.subscribe {
+        }, bookmarkModel.bookmarkCommentFilterUpdatedEvent.subscribe {
             bookmarkCommentFilter = it
         })
     }
@@ -56,7 +54,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
         super.onResume()
         if (bookmarkUserList.isEmpty()) {
             isVisibleProgress.set(true)
-            bookmarkModel.getUserList(bookmarkCommentFilter)
+            bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter)
         }
     }
 
@@ -67,11 +65,11 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
 
     fun onRefresh() {
         isRefreshing.set(true)
-        bookmarkModel.getUserList(bookmarkCommentFilter)
+        bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter)
     }
 
     fun onOptionItemSelected(bookmarkCommentFilter: BookmarkCommentFilter) {
         if (this.bookmarkCommentFilter == bookmarkCommentFilter) return
-        bookmarkModel.getUserList(bookmarkCommentFilter)
+        bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter)
     }
 }

@@ -28,23 +28,18 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(favoriteBookmarkModel.bookmarkList.subscribe {
+        registerDisposable(favoriteBookmarkModel.bookmarkListUpdatedEvent.subscribe {
             bookmarkList.clear()
             bookmarkList.addAll(it)
             isVisibleEmpty.set(it.isEmpty())
             isVisibleProgress.set(false)
             isRefreshing.set(false)
-        }, favoriteBookmarkModel.hasNextPage.subscribe {
+        }, favoriteBookmarkModel.hasNextPageUpdatedEvent.subscribe {
             if (!it) {
                 rxBus.send(ReadAllListItemEvent())
             }
         }, favoriteBookmarkModel.error.subscribe {
             rxBus.send(FailToConnectionEvent())
-        }, userModel.user.subscribe {
-            if (favoriteBookmarkModel.userId != it.id) {
-                favoriteBookmarkModel.userId = it.id
-                favoriteBookmarkModel.getList()
-            }
         })
     }
 
@@ -52,7 +47,7 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
         super.onResume()
         if (bookmarkList.isEmpty()) {
             isVisibleProgress.set(true)
-            userModel.getUser()
+            favoriteBookmarkModel.getList(userModel.user.id)
         }
     }
 
@@ -70,12 +65,14 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
     @Suppress("UNUSED_PARAMETER")
     fun onScroll(listView: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
         if (0 < totalItemCount && totalItemCount == firstVisibleItem + visibleItemCount) {
-            favoriteBookmarkModel.getNextPage()
+            if (favoriteBookmarkModel.hasNextPage) {
+                favoriteBookmarkModel.getNextPage()
+            }
         }
     }
 
     fun onRefresh() {
         isRefreshing.set(true)
-        favoriteBookmarkModel.getList()
+        favoriteBookmarkModel.getList(userModel.user.id)
     }
 }

@@ -19,37 +19,39 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val TAG_READ_AFTER = "あとで読む"
     }
 
-    private val bookmarkListSubject = PublishSubject.create<List<BookmarkEntity>>()
+    var bookmarkList: List<BookmarkEntity> = listOf()
+        private set(value) {
+            field = value
+            bookmarkListUpdatedEventSubject.onNext(value)
+        }
 
-    val bookmarkList: Observable<List<BookmarkEntity>> = bookmarkListSubject
+    var hasNextPage: Boolean = false
+        private set(value) {
+            field = value
+            hasNextPageUpdatedEventSubject.onNext(value)
+        }
 
-    private val hasNextPageSubject = PublishSubject.create<Boolean>()
+    var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL
+        private set(value) {
+            field = value
+            readAfterFilterUpdatedEventSubject.onNext(value)
+        }
 
-    val hasNextPage: Observable<Boolean> = hasNextPageSubject
-
-    private var readAfterFilterSubject = PublishSubject.create<ReadAfterFilter>()
-
-    val readAfterFilter: Observable<ReadAfterFilter> = readAfterFilterSubject
-    
+    private val bookmarkListUpdatedEventSubject = PublishSubject.create<List<BookmarkEntity>>()
+    private val hasNextPageUpdatedEventSubject = PublishSubject.create<Boolean>()
+    private val readAfterFilterUpdatedEventSubject = PublishSubject.create<ReadAfterFilter>()
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val bookmarkListUpdatedEvent: Observable<List<BookmarkEntity>> = bookmarkListUpdatedEventSubject
+    val hasNextPageUpdatedEvent: Observable<Boolean> = hasNextPageUpdatedEventSubject
+    val readAfterFilterUpdatedEvent: Observable<ReadAfterFilter> = readAfterFilterUpdatedEventSubject
     val error: Observable<Unit> = errorSubject
-
-    private val bookmarkListHolder: MutableList<BookmarkEntity> = mutableListOf()
-
-    private var hasNextPageHolder: Boolean = true
-
-    private var readAfterFilterHolder: ReadAfterFilter = ReadAfterFilter.ALL
 
     private var isLoading: Boolean = false
 
-    var userId: String = ""
+    private var userId: String = ""
 
-    fun getList(readAfterFilter: ReadAfterFilter) {
-
-        require(userId.isNotEmpty(), {
-            "Set userId before call"
-        })
+    fun getList(userId: String, readAfterFilter: ReadAfterFilter) {
 
         if (isLoading) {
             return
@@ -66,17 +68,12 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
         rss.map {
             parseResponse(it)
         }.subscribeAsync({
-            bookmarkListHolder.clear()
-            if (it.isNotEmpty()) {
-                bookmarkListHolder.addAll(it)
-                hasNextPageHolder = true
-            } else {
-                hasNextPageHolder = false
+            this.userId = userId
+            bookmarkList = it
+            hasNextPage = it.isNotEmpty()
+            if (this.readAfterFilter != readAfterFilter) {
+                this.readAfterFilter = readAfterFilter
             }
-            bookmarkListSubject.onNext(bookmarkListHolder)
-            hasNextPageSubject.onNext(hasNextPageHolder)
-            readAfterFilterSubject.onNext(readAfterFilter)
-            readAfterFilterHolder = readAfterFilter
         }, {
             errorSubject.onNext(Unit)
         }, {
@@ -87,17 +84,17 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
     fun getNextPage() {
 
         require(userId.isNotEmpty(), {
-            "Set userId before call"
+            "Call getList before call getNextPage"
         })
 
-        if (isLoading || !hasNextPageHolder) {
+        if (isLoading || !hasNextPage) {
             return
         }
 
         isLoading = true
 
-        val pageCnt = (bookmarkListHolder.size / BOOKMARK_COUNT_PER_PAGE)
-        val mod = (bookmarkListHolder.size % BOOKMARK_COUNT_PER_PAGE)
+        val pageCnt = (bookmarkList.size / BOOKMARK_COUNT_PER_PAGE)
+        val mod = (bookmarkList.size % BOOKMARK_COUNT_PER_PAGE)
 
         val nextIndex = if (mod == 0) {
             pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
@@ -105,7 +102,7 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
             (pageCnt + 1) * BOOKMARK_COUNT_PER_PAGE + 1
         }
 
-        val rss = if (readAfterFilterHolder == ReadAfterFilter.AFTER_READ) {
+        val rss = if (readAfterFilter == ReadAfterFilter.AFTER_READ) {
             hatenaRssService.user(userId, nextIndex, TAG_READ_AFTER)
         } else {
             hatenaRssService.user(userId, nextIndex)
@@ -115,13 +112,14 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
             parseResponse(it)
         }.subscribeAsync({
             if (it.isNotEmpty()) {
-                bookmarkListHolder.addAll(it)
-                bookmarkListSubject.onNext(bookmarkListHolder)
-                hasNextPageHolder = true
+                val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+                bookmarkList.addAll(this.bookmarkList)
+                bookmarkList.addAll(it)
+                this.bookmarkList = bookmarkList
+                hasNextPage = true
             } else {
-                hasNextPageHolder = false
+                hasNextPage = false
             }
-            hasNextPageSubject.onNext(hasNextPageHolder)
         }, {
             errorSubject.onNext(Unit)
         }, {

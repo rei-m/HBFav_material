@@ -28,7 +28,7 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(newEntryModel.entryList.subscribe {
+        registerDisposable(newEntryModel.entryListUpdatedEvent.subscribe {
             entryList.clear()
             entryList.addAll(it)
             isVisibleEmpty.set(it.isEmpty())
@@ -37,7 +37,7 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel,
             rxBus.send(UpdateMainPageFilterEvent())
         }, newEntryModel.error.subscribe {
             rxBus.send(FailToConnectionEvent())
-        }, newEntryModel.entryTypeFilter.subscribe {
+        }, newEntryModel.entryTypeFilterUpdatedEvent.subscribe {
             entryTypeFilter = it
         })
     }

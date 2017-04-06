@@ -16,31 +16,31 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val BOOKMARK_COUNT_PER_PAGE = 25
     }
 
-    private val bookmarkListSubject = PublishSubject.create<List<BookmarkEntity>>()
+    var bookmarkList: List<BookmarkEntity> = listOf()
+        private set(value) {
+            field = value
+            bookmarkListUpdatedEventSubject.onNext(value)
+        }
 
-    val bookmarkList: Observable<List<BookmarkEntity>> = bookmarkListSubject
+    var hasNextPage: Boolean = false
+        private set(value) {
+            field = value
+            hasNextPageUpdatedEventSubject.onNext(value)
+        }
 
-    private val hasNextPageSubject = PublishSubject.create<Boolean>()
-
-    val hasNextPage: Observable<Boolean> = hasNextPageSubject
-
+    private val bookmarkListUpdatedEventSubject = PublishSubject.create<List<BookmarkEntity>>()
+    private val hasNextPageUpdatedEventSubject = PublishSubject.create<Boolean>()
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val bookmarkListUpdatedEvent: Observable<List<BookmarkEntity>> = bookmarkListUpdatedEventSubject
+    val hasNextPageUpdatedEvent: Observable<Boolean> = hasNextPageUpdatedEventSubject
     val error: Observable<Unit> = errorSubject
-
-    private val bookmarkListHolder: MutableList<BookmarkEntity> = mutableListOf()
-
-    private var hasNextPageHolder: Boolean = true
 
     private var isLoading: Boolean = false
 
-    var userId: String = ""
+    private var userId: String = ""
 
-    fun getList() {
-
-        require(userId.isNotEmpty(), {
-            "Set userId before call"
-        })
+    fun getList(userId: String) {
 
         if (isLoading) {
             return
@@ -51,15 +51,9 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         hatenaRssService.favorite(userId, 0).map {
             parseResponse(it)
         }.subscribeAsync({
-            bookmarkListHolder.clear()
-            if (it.isNotEmpty()) {
-                bookmarkListHolder.addAll(it)
-                hasNextPageHolder = true
-            } else {
-                hasNextPageHolder = false
-            }
-            bookmarkListSubject.onNext(bookmarkListHolder)
-            hasNextPageSubject.onNext(hasNextPageHolder)
+            this.userId = userId
+            bookmarkList = it
+            hasNextPage = it.isNotEmpty()
         }, {
             errorSubject.onNext(Unit)
         }, {
@@ -70,17 +64,17 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
     fun getNextPage() {
 
         require(userId.isNotEmpty(), {
-            "Set userId before call"
+            "Call getList before call getNextPage"
         })
 
-        if (isLoading || !hasNextPageHolder) {
+        if (isLoading || !hasNextPage) {
             return
         }
 
         isLoading = true
 
-        val pageCnt = (bookmarkListHolder.size / BOOKMARK_COUNT_PER_PAGE)
-        val mod = (bookmarkListHolder.size % BOOKMARK_COUNT_PER_PAGE)
+        val pageCnt = (bookmarkList.size / BOOKMARK_COUNT_PER_PAGE)
+        val mod = (bookmarkList.size % BOOKMARK_COUNT_PER_PAGE)
 
         val nextIndex = if (mod == 0) {
             pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
@@ -92,13 +86,14 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
             parseResponse(it)
         }.subscribeAsync({
             if (it.isNotEmpty()) {
-                bookmarkListHolder.addAll(it)
-                bookmarkListSubject.onNext(bookmarkListHolder)
-                hasNextPageHolder = true
+                val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+                bookmarkList.addAll(this.bookmarkList)
+                bookmarkList.addAll(it)
+                this.bookmarkList = bookmarkList
+                hasNextPage = true
             } else {
-                hasNextPageHolder = false
+                hasNextPage = false
             }
-            hasNextPageSubject.onNext(hasNextPageHolder)
         }, {
             errorSubject.onNext(Unit)
         }, {

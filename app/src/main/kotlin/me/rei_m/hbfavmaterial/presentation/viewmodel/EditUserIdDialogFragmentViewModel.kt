@@ -15,9 +15,7 @@ class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(userModel.user.subscribe {
-            userId.set(it.id)
-        }, userModel.completeUpdateUserEvent.subscribe {
+        registerDisposable(userModel.userUpdatedEvent.subscribe {
             idErrorMessage.set("")
             userId.set(it.id)
             rxBus.send(UpdateHatenaIdEvent(userId.get()))
@@ -34,7 +32,7 @@ class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
 
     override fun onResume() {
         super.onResume()
-        userModel.getUser()
+        userId.set(userModel.user.id)
     }
 
     fun onClickSetUp(view: View) {

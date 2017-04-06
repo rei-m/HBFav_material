@@ -20,12 +20,7 @@ class InitializeFragmentViewModel(private val userModel: UserModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(userModel.confirmCompleteRegistrationEvent.subscribe {
-            if (it) {
-                navigator.navigateToMain()
-                rxBus.send(FinishActivityEvent())
-            }
-        }, userModel.completeUpdateUserEvent.subscribe {
+        registerDisposable(userModel.userUpdatedEvent.subscribe {
             idErrorMessage.set("")
             rxBus.send(FinishActivityEvent())
             rxBus.send(DismissProgressDialogEvent())
@@ -41,7 +36,10 @@ class InitializeFragmentViewModel(private val userModel: UserModel,
 
     override fun onResume() {
         super.onResume()
-        userModel.confirmCompleteRegistration()
+        if (userModel.user.isCompleteSetting) {
+            navigator.navigateToMain()
+            rxBus.send(FinishActivityEvent())
+        }
     }
 
     fun onClickButtonSetId(view: View) {

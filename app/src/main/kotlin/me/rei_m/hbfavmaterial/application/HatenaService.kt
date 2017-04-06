@@ -1,7 +1,7 @@
-package me.rei_m.hbfavmaterial.domain.service
+package me.rei_m.hbfavmaterial.application
 
 import io.reactivex.Observable
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
+import me.rei_m.hbfavmaterial.domain.entity.EditableBookmarkEntity
 
 interface HatenaService {
 
@@ -17,7 +17,7 @@ interface HatenaService {
 
     val confirmAuthorisedEvent: Observable<Boolean>
     
-    val completeFindBookmarkByUrlEvent: Observable<BookmarkEditEntity>
+    val completeFindBookmarkByUrlEvent: Observable<EditableBookmarkEntity>
 
     val completeRegisterBookmarkEvent: Observable<Unit>
 

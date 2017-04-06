@@ -5,9 +5,9 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
 import io.reactivex.functions.BiFunction
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
+import me.rei_m.hbfavmaterial.domain.entity.EditableBookmarkEntity
+import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
@@ -73,7 +73,7 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(io.reactivex.Observable.zip<BookmarkEditEntity, Boolean, Pair<BookmarkEditEntity, Boolean>>(hatenaService.completeFindBookmarkByUrlEvent,
+        registerDisposable(io.reactivex.Observable.zip<EditableBookmarkEntity, Boolean, Pair<EditableBookmarkEntity, Boolean>>(hatenaService.completeFindBookmarkByUrlEvent,
                 twitterService.confirmAuthorisedEvent,
                 BiFunction { t1, t2 ->
                     return@BiFunction Pair(t1, t2)

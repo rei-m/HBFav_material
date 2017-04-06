@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.domain.service.impl
+package me.rei_m.hbfavmaterial.application.impl
 
 import android.app.Activity
 import android.content.Intent
@@ -9,9 +9,9 @@ import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
-import me.rei_m.hbfavmaterial.domain.service.TwitterService
 
 class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterService {
 

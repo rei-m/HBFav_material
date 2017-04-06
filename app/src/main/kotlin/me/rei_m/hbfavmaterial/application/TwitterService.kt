@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.domain.service
+package me.rei_m.hbfavmaterial.application
 
 import android.app.Activity
 import android.content.Intent

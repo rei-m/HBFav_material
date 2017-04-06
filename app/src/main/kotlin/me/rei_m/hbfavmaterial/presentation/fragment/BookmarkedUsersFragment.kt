@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.view.*
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.constant.FilterItem
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkedUsersBinding
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.presentation.view.adapter.UserListAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkedUsersFragmentViewModel
 import javax.inject.Inject
 
@@ -111,7 +110,7 @@ class BookmarkedUsersFragment : BaseFragment() {
             return super.onOptionsItemSelected(item)
         }
 
-        val commentFilter = FilterItem.forMenuId(id) as BookmarkCommentFilter
+        val commentFilter = BookmarkCommentFilter.forMenuId(id)
 
         viewModel.onOptionItemSelected(commentFilter)
 

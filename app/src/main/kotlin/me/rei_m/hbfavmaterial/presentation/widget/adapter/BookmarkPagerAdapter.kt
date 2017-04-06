@@ -1,4 +1,4 @@
-package me.rei_m.hbfavmaterial.presentation.view.adapter
+package me.rei_m.hbfavmaterial.presentation.widget.adapter
 
 import android.content.Context
 import android.support.v4.app.Fragment
@@ -64,11 +64,7 @@ class BookmarkPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
 
         companion object {
             fun forMenuId(menuId: Int): Page {
-                for (page: Page in values()) {
-                    if (page.navId == menuId) {
-                        return page
-                    }
-                }
+                values().filter { it.navId == menuId }.forEach { return it }
                 throw AssertionError("no menu enum found for the id. you forgot to implement?")
             }
         }

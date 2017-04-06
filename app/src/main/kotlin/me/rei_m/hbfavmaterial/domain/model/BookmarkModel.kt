@@ -11,23 +11,29 @@ import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 
 class BookmarkModel(private val hatenaApiService: HatenaApiService) {
 
-    var articleUrl: String = ""
+    var userList: List<BookmarkUserEntity> = listOf()
+        private set(value) {
+            field = value
+            userListUpdatedEventSubject.onNext(value)
+        }
 
-    private val userListSubject = PublishSubject.create<List<BookmarkUserEntity>>()
+    var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
+        private set(value) {
+            field = value
+            bookmarkCommentFilterUpdatedEventSubject.onNext(value)
+        }
 
-    val userList: Observable<List<BookmarkUserEntity>> = userListSubject
-
-    private var bookmarkCommentFilterSubject = PublishSubject.create<BookmarkCommentFilter>()
-
-    val bookmarkCommentFilter: Observable<BookmarkCommentFilter> = bookmarkCommentFilterSubject
-
+    private val userListUpdatedEventSubject = PublishSubject.create<List<BookmarkUserEntity>>()
+    private val bookmarkCommentFilterUpdatedEventSubject = PublishSubject.create<BookmarkCommentFilter>()
     private val errorSubject = PublishSubject.create<Unit>()
 
+    val userListUpdatedEvent: Observable<List<BookmarkUserEntity>> = userListUpdatedEventSubject
+    val bookmarkCommentFilterUpdatedEvent: Observable<BookmarkCommentFilter> = bookmarkCommentFilterUpdatedEventSubject
     val error: Observable<Unit> = errorSubject
 
     private var isLoading: Boolean = false
-
-    fun getUserList(bookmarkCommentFilter: BookmarkCommentFilter) {
+    
+    fun getUserList(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter) {
 
         require(articleUrl.isNotEmpty()) {
             "Set articleUrl before call"
@@ -53,8 +59,10 @@ class BookmarkModel(private val hatenaApiService: HatenaApiService) {
                 bookmarkList
             }
         }.subscribeAsync({
-            userListSubject.onNext(it)
-            bookmarkCommentFilterSubject.onNext(bookmarkCommentFilter)
+            userList = it
+            if (this.bookmarkCommentFilter != bookmarkCommentFilter) {
+                this.bookmarkCommentFilter = bookmarkCommentFilter
+            }
         }, {
             errorSubject.onNext(Unit)
         }, {

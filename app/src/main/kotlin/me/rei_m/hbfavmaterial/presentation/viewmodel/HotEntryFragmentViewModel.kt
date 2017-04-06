@@ -28,7 +28,7 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
 
     override fun onStart() {
         super.onStart()
-        registerDisposable(hotEntryModel.entryList.subscribe {
+        registerDisposable(hotEntryModel.entryListUpdatedEvent.subscribe {
             entryList.clear()
             entryList.addAll(it)
             isVisibleEmpty.set(it.isEmpty())
@@ -37,7 +37,7 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
             rxBus.send(UpdateMainPageFilterEvent())
         }, hotEntryModel.error.subscribe {
             rxBus.send(FailToConnectionEvent())
-        }, hotEntryModel.entryTypeFilter.subscribe {
+        }, hotEntryModel.entryTypeFilterUpdatedEvent.subscribe {
             entryTypeFilter = it
         })
     }
