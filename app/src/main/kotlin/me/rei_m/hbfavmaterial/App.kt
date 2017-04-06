@@ -25,7 +25,7 @@ open class App : Application() {
                 .infraLayerModule(InfraLayerModule())
                 .build()
     }
-    
+
     override fun onCreate() {
         super.onCreate()
 
@@ -41,7 +41,7 @@ open class App : Application() {
         }
 
         // Set up Fabric
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
+        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val authConfig = TwitterAuthConfig(getString(R.string.api_key_twitter_consumer_key),
                 getString(R.string.api_key_twitter_consumer_secret))
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build(), Twitter(authConfig))

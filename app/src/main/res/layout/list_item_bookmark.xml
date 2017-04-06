@@ -78,8 +78,8 @@
                 android:layout_marginEnd="@dimen/margin_half"
                 android:layout_marginRight="@dimen/margin_half"
                 android:layout_marginTop="@dimen/margin"
-                android:contentDescription="@{viewModel.bookmark.articleEntity.title}"
-                app:imageUrl="@{viewModel.bookmark.articleEntity.iconUrl}"
+                android:contentDescription="@{viewModel.bookmark.article.title}"
+                app:imageUrl="@{viewModel.bookmark.article.iconUrl}"
                 app:isRound="@{true}" />
 
             <TextView
@@ -89,7 +89,7 @@
                 android:layout_marginTop="@dimen/margin"
                 android:layout_toEndOf="@id/layout_bookmark_image_article_icon"
                 android:layout_toRightOf="@id/layout_bookmark_image_article_icon"
-                android:text="@{viewModel.bookmark.articleEntity.title}"
+                android:text="@{viewModel.bookmark.article.title}"
                 android:textColor="@color/colorPrimaryDark" />
 
         </RelativeLayout>

@@ -20,7 +20,7 @@ object TestUtil {
 
     fun createTestBookmarkEntity(no: Int, description: String = ""): BookmarkEntity {
         return BookmarkEntity(
-                articleEntity = ArticleEntity(
+                article = ArticleEntity(
                         title = "ArticleEntity_title_$no",
                         url = "ArticleEntity_url_$no",
                         bookmarkCount = no,
@@ -36,7 +36,7 @@ object TestUtil {
 
     fun createTestEntryEntity(no: Int): EntryEntity {
         return EntryEntity(
-                articleEntity = ArticleEntity(
+                article = ArticleEntity(
                         title = "ArticleEntity_title_$no",
                         url = "ArticleEntity_url_$no",
                         bookmarkCount = no,

@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{viewModel.entry.articleEntity.title}"
+                android:text="@{viewModel.entry.article.title}"
                 android:textColor="@color/colorPrimaryDark" />
 
             <ImageView
@@ -42,9 +42,9 @@
                 android:layout_height="@dimen/image_size_article"
                 android:layout_marginLeft="@dimen/margin_half"
                 android:layout_marginStart="@dimen/margin_half"
-                android:contentDescription="@{viewModel.entry.articleEntity.title}"
-                android:visibility="@{viewModel.entry.articleEntity.bodyImageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
-                app:imageUrl="@{viewModel.entry.articleEntity.bodyImageUrl}" />
+                android:contentDescription="@{viewModel.entry.article.title}"
+                android:visibility="@{viewModel.entry.article.bodyImageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
+                app:imageUrl="@{viewModel.entry.article.bodyImageUrl}" />
         </LinearLayout>
 
         <ImageView
@@ -56,7 +56,7 @@
             android:layout_marginLeft="@dimen/margin_outline"
             android:layout_marginRight="@dimen/margin_half"
             android:layout_marginStart="@dimen/margin_outline"
-            app:imageUrl="@{viewModel.entry.articleEntity.iconUrl}"
+            app:imageUrl="@{viewModel.entry.article.iconUrl}"
             app:isRound="@{true}"
             tools:ignore="ContentDescription" />
 
@@ -69,7 +69,7 @@
             android:layout_marginRight="@dimen/margin_outline"
             android:layout_toEndOf="@id/list_item_entry_image_article_icon"
             android:layout_toRightOf="@id/list_item_entry_image_article_icon"
-            android:text="@{viewModel.entry.articleEntity.url}"
+            android:text="@{viewModel.entry.article.url}"
             android:textSize="@dimen/text_size_caption" />
 
         <TextView
@@ -80,7 +80,7 @@
             android:layout_marginTop="@dimen/margin_half"
             android:layout_toEndOf="@id/list_item_entry_image_article_icon"
             android:layout_toRightOf="@id/list_item_entry_image_article_icon"
-            android:text='@{viewModel.entry.articleEntity.bookmarkCount + " users"}'
+            android:text='@{viewModel.entry.article.bookmarkCount + " users"}'
             android:textColor="@android:color/holo_red_light"
             android:textSize="@dimen/text_size_caption" />
 

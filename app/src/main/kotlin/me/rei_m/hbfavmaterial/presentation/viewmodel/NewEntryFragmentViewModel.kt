@@ -6,15 +6,15 @@ import android.view.View
 import android.widget.AdapterView
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
+import me.rei_m.hbfavmaterial.domain.model.NewEntryModel
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.GetNewEntriesUsecase
+import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
-class NewEntryFragmentViewModel(private val getNewEntriesUsecase: GetNewEntriesUsecase,
+class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel,
                                 private val rxBus: RxBus,
-                                private val navigator: ActivityNavigator) : AbsFragmentViewModel() {
+                                private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val entryList: ObservableArrayList<EntryEntity> = ObservableArrayList()
 
@@ -26,25 +26,34 @@ class NewEntryFragmentViewModel(private val getNewEntriesUsecase: GetNewEntriesU
 
     var entryTypeFilter = EntryTypeFilter.ALL
 
-    private var isLoading: Boolean = false
+    override fun onStart() {
+        super.onStart()
+        registerDisposable(newEntryModel.entryList.subscribe {
+            entryList.clear()
+            entryList.addAll(it)
+            isVisibleEmpty.set(it.isEmpty())
+            isVisibleProgress.set(false)
+            isRefreshing.set(false)
+            rxBus.send(UpdateMainPageFilterEvent())
+        }, newEntryModel.error.subscribe {
+            rxBus.send(FailToConnectionEvent())
+        }, newEntryModel.entryTypeFilter.subscribe {
+            entryTypeFilter = it
+        })
+    }
 
     override fun onResume() {
         super.onResume()
+        if (entryList.isEmpty()) {
+            isVisibleProgress.set(true)
+            newEntryModel.getList(entryTypeFilter)
+        }
+    }
 
-        isVisibleProgress.set(true)
-
-        registerDisposable(getNewEntriesUsecase.get(entryTypeFilter).subscribeAsync({
-            entryList.clear()
-            if (it.isNotEmpty()) {
-                entryList.addAll(it)
-            } else {
-                isVisibleEmpty.set(true)
-            }
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isVisibleProgress.set(false)
-        }))
+    override fun onPause() {
+        super.onPause()
+        isVisibleProgress.set(false)
+        isRefreshing.set(false)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -53,50 +62,13 @@ class NewEntryFragmentViewModel(private val getNewEntriesUsecase: GetNewEntriesU
     }
 
     fun onRefresh() {
-        if (isRefreshing.get() || isLoading) {
-            return
-        }
-
         isRefreshing.set(true)
-        isLoading = true
-
-        registerDisposable(getNewEntriesUsecase.get(entryTypeFilter).subscribeAsync({
-            entryList.clear()
-            if (it.isNotEmpty()) {
-                entryList.addAll(it)
-            } else {
-                isVisibleEmpty.set(true)
-            }
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isRefreshing.set(false)
-            isLoading = false
-        }))
+        newEntryModel.getList(entryTypeFilter)
     }
 
     fun onOptionItemSelected(entryTypeFilter: EntryTypeFilter) {
-
-        if (isLoading || this.entryTypeFilter == entryTypeFilter) return
-
-        this.entryTypeFilter = entryTypeFilter
-
-        isLoading = true
-
+        if (this.entryTypeFilter == entryTypeFilter) return
         isVisibleProgress.set(true)
-
-        registerDisposable(getNewEntriesUsecase.get(entryTypeFilter).subscribeAsync({
-            entryList.clear()
-            if (it.isNotEmpty()) {
-                entryList.addAll(it)
-            } else {
-                isVisibleEmpty.set(true)
-            }
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isVisibleProgress.set(false)
-            isLoading = false
-        }))
+        newEntryModel.getList(entryTypeFilter)
     }
 }

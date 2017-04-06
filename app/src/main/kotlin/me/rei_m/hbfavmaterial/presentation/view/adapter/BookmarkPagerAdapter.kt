@@ -8,10 +8,10 @@ import android.view.Menu
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFavoriteFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.FavoriteBookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
 
 /**
  * メインページのフラグメントを管理するAdaptor.
@@ -22,14 +22,14 @@ class BookmarkPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
                     val titleResId: Int) {
 
         BOOKMARK_FAVORITE(R.id.nav_bookmark_favorite, R.string.fragment_title_bookmark_favorite) {
-            override fun newInstance(): Fragment = BookmarkFavoriteFragment.newInstance(ordinal)
+            override fun newInstance(): Fragment = FavoriteBookmarkFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 menu.hide()
             }
         },
         BOOKMARK_OWN(R.id.nav_bookmark_own, R.string.fragment_title_bookmark_own) {
-            override fun newInstance(): Fragment = BookmarkUserFragment.newInstance(ordinal)
+            override fun newInstance(): Fragment = UserBookmarkFragment.newInstance(ordinal)
 
             override fun toggleMenu(menu: Menu) {
                 with(menu) {

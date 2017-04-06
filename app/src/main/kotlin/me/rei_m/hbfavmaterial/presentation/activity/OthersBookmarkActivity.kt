@@ -18,7 +18,7 @@ import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
 import javax.inject.Inject
 
 /**
@@ -61,7 +61,7 @@ class OthersBookmarkActivity : BaseActivity(),
         }
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkUserFragment.newInstance(userId))
+            setFragment(UserBookmarkFragment.newInstance(userId))
         }
     }
 

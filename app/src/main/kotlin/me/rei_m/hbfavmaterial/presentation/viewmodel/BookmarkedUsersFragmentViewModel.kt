@@ -5,18 +5,17 @@ import android.databinding.ObservableBoolean
 import android.view.View
 import android.widget.AdapterView
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.extension.subscribeAsync
+import me.rei_m.hbfavmaterial.domain.entity.BookmarkUserEntity
+import me.rei_m.hbfavmaterial.domain.model.BookmarkModel
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.usecase.GetBookmarkedUsersUsecase
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 
-class BookmarkedUsersFragmentViewModel(private val getBookmarkedUsersUsecase: GetBookmarkedUsersUsecase,
+class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
                                        private val rxBus: RxBus,
-                                       private val navigator: ActivityNavigator) : AbsFragmentViewModel() {
+                                       private val navigator: Navigator) : AbsFragmentViewModel() {
 
-    val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
+    val bookmarkUserList: ObservableArrayList<BookmarkUserEntity> = ObservableArrayList()
 
     val isVisibleEmpty: ObservableBoolean = ObservableBoolean(false)
 
@@ -24,88 +23,55 @@ class BookmarkedUsersFragmentViewModel(private val getBookmarkedUsersUsecase: Ge
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
-    var bookmark: BookmarkEntity? = null
+    var articleUrl: String = ""
+        private set
 
     var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
+        private set
 
-    private val originalBookmarkList: MutableList<BookmarkEntity> = mutableListOf()
+    fun onCreate(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter) {
+        this.articleUrl = articleUrl
+        this.bookmarkCommentFilter = bookmarkCommentFilter
+    }
 
-    private var isLoading: Boolean = false
+    override fun onStart() {
+        super.onStart()
+
+        bookmarkModel.articleUrl = articleUrl
+
+        registerDisposable(bookmarkModel.userList.subscribe {
+            bookmarkUserList.clear()
+            bookmarkUserList.addAll(it)
+            isVisibleEmpty.set(it.isEmpty())
+            isVisibleProgress.set(false)
+            isRefreshing.set(false)
+        }, bookmarkModel.error.subscribe {
+            rxBus.send(FailToConnectionEvent())
+        }, bookmarkModel.bookmarkCommentFilter.subscribe {
+            bookmarkCommentFilter = it
+        })
+    }
 
     override fun onResume() {
         super.onResume()
-
-        val bookmark = this.bookmark ?: return
-
-        isVisibleProgress.set(true)
-
-        registerDisposable(getBookmarkedUsersUsecase.get(bookmark).subscribeAsync({
-            originalBookmarkList.clear()
-            bookmarkList.clear()
-            if (it.isNotEmpty()) {
-                originalBookmarkList.addAll(it)
-                if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-                    bookmarkList.addAll(originalBookmarkList.filter { (_, description) -> description.isNotEmpty() })
-                } else {
-                    bookmarkList.addAll(originalBookmarkList)
-                }
-            } else {
-                isVisibleEmpty.set(true)
-            }
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isVisibleProgress.set(false)
-        }))
+        if (bookmarkUserList.isEmpty()) {
+            isVisibleProgress.set(true)
+            bookmarkModel.getUserList(bookmarkCommentFilter)
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        navigator.navigateToOthersBookmark(bookmarkList[position].creator)
+        navigator.navigateToOthersBookmark(bookmarkUserList[position].creator)
     }
 
     fun onRefresh() {
-        val bookmark = this.bookmark ?: return
-
-        if (isRefreshing.get() || isLoading) {
-            return
-        }
-
         isRefreshing.set(true)
-        isLoading = true
-
-        registerDisposable(getBookmarkedUsersUsecase.get(bookmark).subscribeAsync({
-            originalBookmarkList.clear()
-            bookmarkList.clear()
-            if (it.isNotEmpty()) {
-                originalBookmarkList.addAll(it)
-                if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-                    bookmarkList.addAll(originalBookmarkList.filter { (_, description) -> description.isNotEmpty() })
-                } else {
-                    bookmarkList.addAll(originalBookmarkList)
-                }
-            } else {
-                isVisibleEmpty.set(true)
-            }
-        }, {
-            rxBus.send(FailToConnectionEvent())
-        }, {
-            isRefreshing.set(false)
-            isLoading = false
-        }))
+        bookmarkModel.getUserList(bookmarkCommentFilter)
     }
 
     fun onOptionItemSelected(bookmarkCommentFilter: BookmarkCommentFilter) {
-
         if (this.bookmarkCommentFilter == bookmarkCommentFilter) return
-
-        this.bookmarkCommentFilter = bookmarkCommentFilter
-
-        bookmarkList.clear()
-        if (bookmarkCommentFilter == BookmarkCommentFilter.COMMENT) {
-            bookmarkList.addAll(originalBookmarkList.filter { (_, description) -> description.isNotEmpty() })
-        } else {
-            bookmarkList.addAll(originalBookmarkList)
-        }
+        bookmarkModel.getUserList(bookmarkCommentFilter)
     }
 }

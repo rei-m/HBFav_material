@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import me.rei_m.hbfavmaterial.R
@@ -27,7 +26,7 @@ class NewEntryFragment : BaseFragment(),
 
         private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
-        fun newInstance(pageIndex: Int): NewEntryFragment = NewEntryFragment().apply {
+        fun newInstance(pageIndex: Int) = NewEntryFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)
             }
@@ -44,15 +43,6 @@ class NewEntryFragment : BaseFragment(),
     lateinit var viewModel: NewEntryFragmentViewModel
 
     private lateinit var component: NewEntryFragmentComponent
-
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,11 +86,6 @@ class NewEntryFragment : BaseFragment(),
         viewModel.onStop()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_entry, menu)
     }
@@ -112,8 +97,6 @@ class NewEntryFragment : BaseFragment(),
         val filter = EntryTypeFilter.forMenuId(item.itemId)
 
         viewModel.onOptionItemSelected(filter)
-
-        listener?.onChangeFilter(pageTitle)
 
         return true
     }
@@ -132,9 +115,5 @@ class NewEntryFragment : BaseFragment(),
 
     interface Injector {
         fun plus(fragmentModule: NewEntryFragmentModule?): NewEntryFragmentComponent
-    }
-
-    interface OnFragmentInteractionListener {
-        fun onChangeFilter(newPageTitle: String)
     }
 }

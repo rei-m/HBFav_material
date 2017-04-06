@@ -1,9 +1,7 @@
 package me.rei_m.hbfavmaterial.domain.service
 
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Observable
 import me.rei_m.hbfavmaterial.domain.entity.BookmarkEditEntity
-import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 
 interface HatenaService {
 
@@ -11,19 +9,39 @@ interface HatenaService {
         const val TAG_READ_AFTER = "あとで読む"
     }
 
-    fun fetchRequestToken(): Single<String>
+    val completeFetchRequestTokenEvent: Observable<String>
 
-    fun fetchAccessToken(requestToken: String): Single<OAuthTokenEntity>
+    val completeRegisterAccessTokenEvent: Observable<Unit>
 
-    fun findBookmarkByUrl(oauthTokenEntity: OAuthTokenEntity,
-                          urlString: String): Single<BookmarkEditEntity>
+    val completeDeleteAccessTokenEvent: Observable<Unit>
 
-    fun upsertBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String,
-                       comment: String,
-                       isOpen: Boolean,
-                       tags: List<String> = listOf()): Single<BookmarkEditEntity>
+    val confirmAuthorisedEvent: Observable<Boolean>
+    
+    val completeFindBookmarkByUrlEvent: Observable<BookmarkEditEntity>
 
-    fun deleteBookmark(oauthTokenEntity: OAuthTokenEntity,
-                       urlString: String): Completable
+    val completeRegisterBookmarkEvent: Observable<Unit>
+
+    val completeDeleteBookmarkEvent: Observable<Unit>
+
+    val failAuthorizeHatenaEvent: Observable<Unit>
+
+    val error: Observable<Unit>
+
+    fun fetchRequestToken()
+
+    fun registerAccessToken(requestToken: String)
+
+    fun deleteAccessToken()
+
+    fun confirmAuthorised()
+
+    fun findBookmarkByUrl(urlString: String)
+
+    fun registerBookmark(urlString: String,
+                         comment: String,
+                         isOpen: Boolean,
+                         isReadAfter: Boolean,
+                         tags: List<String> = listOf())
+
+    fun deleteBookmark(urlString: String)
 }

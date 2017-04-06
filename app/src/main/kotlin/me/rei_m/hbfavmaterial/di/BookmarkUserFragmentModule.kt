@@ -3,22 +3,23 @@ package me.rei_m.hbfavmaterial.di
 import android.support.v4.app.Fragment
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.domain.repository.BookmarkRepository
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.domain.model.UserBookmarkModel
+import me.rei_m.hbfavmaterial.domain.model.UserModel
+import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
+import me.rei_m.hbfavmaterial.infra.network.RetrofitManager
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkUserFragmentViewModel
-import me.rei_m.hbfavmaterial.usecase.impl.GetUserBookmarksUsecaseImpl
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.viewmodel.UserBookmarkFragmentViewModel
 
 @Module
 class BookmarkUserFragmentModule(fragment: Fragment) {
 
     @Provides
-    fun provideBookmarkUserViewModel(bookmarkRepository: BookmarkRepository,
-                                     userRepository: UserRepository,
+    fun provideBookmarkUserViewModel(userModel: UserModel,
                                      rxBus: RxBus,
-                                     navigator: ActivityNavigator): BookmarkUserFragmentViewModel {
-        return BookmarkUserFragmentViewModel(GetUserBookmarksUsecaseImpl(bookmarkRepository, userRepository),
+                                     navigator: Navigator): UserBookmarkFragmentViewModel {
+        return UserBookmarkFragmentViewModel(UserBookmarkModel(RetrofitManager.xml.create(HatenaRssService::class.java)),
+                userModel,
                 rxBus,
                 navigator)
     }

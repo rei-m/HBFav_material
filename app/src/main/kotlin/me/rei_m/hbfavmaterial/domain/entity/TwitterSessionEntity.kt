@@ -7,6 +7,6 @@ import java.io.Serializable
  */
 data class TwitterSessionEntity(var userId: Long = 0,
                                 var userName: String = "",
-                                var oAuthTokenEntity: OAuthTokenEntity = OAuthTokenEntity()) : Serializable {
+                                var oAuthToken: OAuthTokenEntity = OAuthTokenEntity()) : Serializable {
     var isShare: Boolean = false
 }

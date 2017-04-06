@@ -1,6 +1,5 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import me.rei_m.hbfavmaterial.R
@@ -27,7 +26,7 @@ class HotEntryFragment : BaseFragment(),
 
         private const val KEY_FILTER_TYPE = "KEY_FILTER_TYPE"
 
-        fun newInstance(pageIndex: Int): HotEntryFragment = HotEntryFragment().apply {
+        fun newInstance(pageIndex: Int) = HotEntryFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)
             }
@@ -44,15 +43,6 @@ class HotEntryFragment : BaseFragment(),
     lateinit var viewModel: HotEntryFragmentViewModel
 
     private lateinit var component: HotEntryFragmentComponent
-
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +69,8 @@ class HotEntryFragment : BaseFragment(),
     override fun onStart() {
         super.onStart()
         viewModel.onStart()
+
+        viewModel.entryTypeFilter
     }
 
     override fun onResume() {
@@ -96,11 +88,6 @@ class HotEntryFragment : BaseFragment(),
         viewModel.onStop()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_entry, menu)
     }
@@ -112,8 +99,6 @@ class HotEntryFragment : BaseFragment(),
         val filter = EntryTypeFilter.forMenuId(item.itemId)
 
         viewModel.onOptionItemSelected(filter)
-
-        listener?.onChangeFilter(pageTitle)
 
         return true
     }
@@ -132,9 +117,5 @@ class HotEntryFragment : BaseFragment(),
 
     interface Injector {
         fun plus(fragmentModule: HotEntryFragmentModule?): HotEntryFragmentComponent
-    }
-
-    interface OnFragmentInteractionListener {
-        fun onChangeFilter(newPageTitle: String)
     }
 }

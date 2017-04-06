@@ -17,10 +17,9 @@ import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkUserFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
+import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
 import me.rei_m.hbfavmaterial.presentation.fragment.MainPageFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.view.widget.viewpager.BookmarkViewPager
 import javax.inject.Inject
@@ -30,15 +29,14 @@ import javax.inject.Inject
  */
 class MainActivity : BaseDrawerActivity(),
         HasComponent<MainActivityComponent>,
-        BookmarkUserFragment.OnFragmentInteractionListener,
-        HotEntryFragment.OnFragmentInteractionListener,
-        NewEntryFragment.OnFragmentInteractionListener {
+        UserBookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
 
         private const val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
 
-        fun createIntent(context: Context, page: BookmarkPagerAdapter.Page): Intent {
+        fun createIntent(context: Context,
+                         page: BookmarkPagerAdapter.Page): Intent {
             return Intent(context, MainActivity::class.java)
                     .putExtra(ARG_PAGER_INDEX, page.index)
         }
@@ -100,6 +98,15 @@ class MainActivity : BaseDrawerActivity(),
         disposable = CompositeDisposable()
         disposable?.add(rxBus.toObservable().subscribeBus({
             when (it) {
+                is UpdateMainPageFilterEvent -> {
+                    for (fragment in supportFragmentManager.fragments) {
+                        fragment as MainPageFragment
+                        if (fragment.pageIndex == binding?.appBar?.pager?.currentItem) {
+                            supportActionBar?.title = fragment.pageTitle
+                            break
+                        }
+                    }
+                }
                 is FinishActivityEvent -> {
                     finish()
                 }

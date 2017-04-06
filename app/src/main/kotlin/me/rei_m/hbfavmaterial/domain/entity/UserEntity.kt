@@ -12,5 +12,5 @@ data class UserEntity(val id: String,
     val isCompleteSetting: Boolean
         get() = id.isNotBlank()
 
-    fun isSameId(target: String): Boolean = id.equals(target)
+    fun isSameId(target: String): Boolean = id == target
 }

@@ -48,7 +48,7 @@ class BookmarkedUsersActivity : BaseActivity(),
         displayTitle(BookmarkCommentFilter.ALL)
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkedUsersFragment.newInstance(bookmarkEntity), BookmarkedUsersFragment::class.java.simpleName)
+            setFragment(BookmarkedUsersFragment.newInstance(bookmarkEntity.article.url), BookmarkedUsersFragment::class.java.simpleName)
         }
     }
 
@@ -71,7 +71,7 @@ class BookmarkedUsersActivity : BaseActivity(),
     }
 
     private fun displayTitle(commentFilter: BookmarkCommentFilter) {
-        val bookmarkCountString = bookmarkEntity.articleEntity.bookmarkCount.toString()
+        val bookmarkCountString = bookmarkEntity.article.bookmarkCount.toString()
         supportActionBar?.title = "$bookmarkCountString users - ${commentFilter.title(applicationContext)}"
     }
 

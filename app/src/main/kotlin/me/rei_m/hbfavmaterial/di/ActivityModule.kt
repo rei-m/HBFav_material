@@ -3,9 +3,9 @@ package me.rei_m.hbfavmaterial.di
 import android.app.Activity
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.domain.model.UserModel
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.BaseDrawerActivityViewModel
 
 @Module
@@ -17,15 +17,15 @@ class ActivityModule(private val activity: Activity) {
     }
 
     @Provides
-    fun provideActivityNavigator(): ActivityNavigator {
-        return ActivityNavigator(activity)
+    fun provideActivityNavigator(): Navigator {
+        return Navigator(activity)
     }
 
     @Provides
-    fun provideBaseDrawerActivityViewModel(userRepository: UserRepository,
+    fun provideBaseDrawerActivityViewModel(userModel: UserModel,
                                            rxBus: RxBus,
-                                           navigator: ActivityNavigator): BaseDrawerActivityViewModel {
-        return BaseDrawerActivityViewModel(userRepository,
+                                           navigator: Navigator): BaseDrawerActivityViewModel {
+        return BaseDrawerActivityViewModel(userModel,
                 rxBus,
                 navigator)
     }

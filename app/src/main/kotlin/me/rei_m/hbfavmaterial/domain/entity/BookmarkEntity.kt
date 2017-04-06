@@ -6,7 +6,7 @@ import java.util.*
 /**
  * ブックマーク情報のEntity.
  */
-data class BookmarkEntity(val articleEntity: ArticleEntity,
+data class BookmarkEntity(val article: ArticleEntity,
                           val description: String,
                           val creator: String,
                           val date: Date,

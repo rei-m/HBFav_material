@@ -1,26 +1,25 @@
 package me.rei_m.hbfavmaterial.di
 
+import android.content.Context
 import android.support.v4.app.Fragment
 import dagger.Module
 import dagger.Provides
-import me.rei_m.hbfavmaterial.domain.repository.HatenaAccountRepository
-import me.rei_m.hbfavmaterial.domain.repository.UserRepository
+import me.rei_m.hbfavmaterial.R
+import me.rei_m.hbfavmaterial.domain.model.UserModel
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.helper.ActivityNavigator
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.viewmodel.InitializeFragmentViewModel
-import me.rei_m.hbfavmaterial.usecase.impl.SetUpHatenaIdUsecaseImpl
-import me.rei_m.hbfavmaterial.usecase.impl.StartApplicationUsecaseImpl
 
 @Module
 class InitializeFragmentModule(fragment: Fragment) {
     @Provides
-    fun provideInitializeFragmentViewModel(userRepository: UserRepository,
-                                           hatenaAccountRepository: HatenaAccountRepository,
+    fun provideInitializeFragmentViewModel(context: Context,
+                                           userModel: UserModel,
                                            rxBus: RxBus,
-                                           navigator: ActivityNavigator): InitializeFragmentViewModel {
-        return InitializeFragmentViewModel(StartApplicationUsecaseImpl(userRepository),
-                SetUpHatenaIdUsecaseImpl(hatenaAccountRepository, userRepository),
+                                           navigator: Navigator): InitializeFragmentViewModel {
+        return InitializeFragmentViewModel(userModel,
                 rxBus,
-                navigator)
+                navigator,
+                context.getString(R.string.message_error_input_user_id))
     }
 }

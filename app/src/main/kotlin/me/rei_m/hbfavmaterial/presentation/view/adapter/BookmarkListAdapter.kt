@@ -56,6 +56,8 @@ class BookmarkListAdapter(context: Context,
         }
 
         binding.viewModel.bookmark.set(getItem(position))
+        // 即座に描画しないと上へスクロールした時にカクつく
+        binding.executePendingBindings()
 
         return binding.root
     }
