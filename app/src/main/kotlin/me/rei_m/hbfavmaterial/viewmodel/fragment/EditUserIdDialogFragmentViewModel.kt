@@ -18,7 +18,6 @@ class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
         registerDisposable(userModel.userUpdatedEvent.subscribe {
             idErrorMessage.set("")
             userId.set(it.id)
-            rxBus.send(UpdateHatenaIdEvent(userId.get()))
             rxBus.send(DismissProgressDialogEvent())
             rxBus.send(DismissEditHatenaIdDialogEvent())
         }, userModel.unauthorisedEvent.subscribe {
