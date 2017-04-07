@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.FragmentFavoriteBookmarkBinding
-import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentComponent
-import me.rei_m.hbfavmaterial.di.BookmarkFavoriteFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkListAdapter
-import me.rei_m.hbfavmaterial.presentation.view.adapter.BookmarkPagerAdapter
-import me.rei_m.hbfavmaterial.presentation.viewmodel.FavoriteBookmarkFragmentViewModel
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentModule
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.viewmodel.fragment.FavoriteBookmarkFragmentViewModel
 import javax.inject.Inject
 
 /**
@@ -111,7 +111,7 @@ class FavoriteBookmarkFragment : BaseFragment(),
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkFavoriteFragmentModule(this))
+                .plus(BookmarkFavoriteFragmentModule())
         component.inject(this)
     }
 

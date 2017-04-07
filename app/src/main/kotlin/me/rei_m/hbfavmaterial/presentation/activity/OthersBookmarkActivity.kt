@@ -9,13 +9,13 @@ import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityOthersBookmarkBinding
-import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.OthersBookmarkActivityComponent
-import me.rei_m.hbfavmaterial.di.OthersBookmarkActivityModule
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.OthersBookmarkActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.OthersBookmarkActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
@@ -40,7 +40,7 @@ class OthersBookmarkActivity : BaseActivity(),
     @Inject
     lateinit var rxBus: RxBus
 
-    private lateinit var component: OthersBookmarkActivityComponent
+    private var component: OthersBookmarkActivityComponent? = null
 
     private var disposable: CompositeDisposable? = null
 
@@ -83,13 +83,25 @@ class OthersBookmarkActivity : BaseActivity(),
         disposable = null
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
-                .plus(OthersBookmarkActivityModule(), ActivityModule(this))
-        component.inject(this)
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
     }
 
-    override fun getComponent(): OthersBookmarkActivityComponent {
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
+    }
+
+    override fun getComponent(): OthersBookmarkActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@OthersBookmarkActivity.component = component
+        return@let component
+    }
+
+    private fun createActivityComponent(): OthersBookmarkActivityComponent {
+        val component = (application as App).component
+                .plus(OthersBookmarkActivityModule(), ActivityModule(this))
+        component.inject(this)
         return component
     }
 

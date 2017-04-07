@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BaseDrawerActivityViewModel
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import javax.inject.Inject
 
 /**

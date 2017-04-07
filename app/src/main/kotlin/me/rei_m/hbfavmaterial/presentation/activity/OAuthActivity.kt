@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.widget.Toolbar
+import android.view.MenuItem
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -12,15 +14,15 @@ import android.widget.FrameLayout
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ActivityModule
-import me.rei_m.hbfavmaterial.di.OAuthActivityModule
-import me.rei_m.hbfavmaterial.domain.service.HatenaService
+import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.OAuthActivityModule
 import javax.inject.Inject
 
-class OAuthActivity : BaseSingleActivity() {
+class OAuthActivity : BaseActivity() {
 
     companion object {
 
@@ -39,6 +41,13 @@ class OAuthActivity : BaseSingleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity)
+        val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
         val webView = WebView(this).apply {
             clearCache(true)
             settings.javaScriptEnabled = true
@@ -107,10 +116,23 @@ class OAuthActivity : BaseSingleActivity() {
         webView = null
     }
 
-    override fun setupActivityComponent() {
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        val id = item?.itemId
+
+        when (id) {
+            android.R.id.home ->
+                finish()
+            else ->
+                return super.onOptionsItemSelected(item)
+        }
+
+        return true
+    }
+
+    override fun setUpActivityComponent() {
         val component = (application as App).component
                 .plus(OAuthActivityModule(), ActivityModule(this))
-
         component.inject(this)
     }
 

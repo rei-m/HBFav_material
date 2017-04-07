@@ -18,9 +18,6 @@ interface HatenaRssService {
     @GET("{userId}/rss")
     fun user(@Path("userId") userId: String, @Query("of") startIndex: Int, @Query("tag") tag: String): Single<BookmarkRssXml>
 
-    @GET("hatena/b/hotentry")
-    fun hotentry(): Single<EntryRssXml>
-
     @GET("hotentry/{entryType}")
     fun hotentry(@Path("entryType") entryType: String): Single<EntryRssXml>
 

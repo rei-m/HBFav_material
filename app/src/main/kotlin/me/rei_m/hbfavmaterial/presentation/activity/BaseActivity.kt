@@ -5,10 +5,10 @@ import android.support.v7.app.AppCompatActivity
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    abstract fun setupActivityComponent()
+    abstract fun setUpActivityComponent()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActivityComponent()
+        setUpActivityComponent()
     }
 }

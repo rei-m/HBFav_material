@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.presentation.viewmodel.HotEntryFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.fragment.HotEntryFragmentViewModel" />
     </data>
 
     <FrameLayout

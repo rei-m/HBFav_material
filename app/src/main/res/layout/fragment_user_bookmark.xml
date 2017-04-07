@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.presentation.viewmodel.UserBookmarkFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.fragment.UserBookmarkFragmentViewModel" />
     </data>
 
     <FrameLayout

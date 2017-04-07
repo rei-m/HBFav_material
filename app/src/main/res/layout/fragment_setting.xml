@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.fragment.SettingFragmentViewModel" />
     </data>
 
     <RelativeLayout
@@ -128,9 +128,9 @@
             android:layout_marginStart="@dimen/margin_content_from_screen"
             android:background="@drawable/bg_border_bottom_accent"
             android:gravity="center_vertical"
+            android:onClick="@{viewModel::onClickTwitterAuthStatus}"
             android:orientation="vertical"
             android:paddingEnd="@dimen/margin_outline"
-            android:onClick="@{viewModel::onClickTwitterAuthStatus}"
             android:paddingLeft="0dp"
             android:paddingRight="@dimen/margin_outline"
             android:paddingStart="0dp">

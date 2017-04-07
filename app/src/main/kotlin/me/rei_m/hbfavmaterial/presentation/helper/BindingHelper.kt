@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
-import me.rei_m.hbfavmaterial.presentation.view.widget.graphics.RoundedTransformation
+import me.rei_m.hbfavmaterial.presentation.widget.graphics.RoundedTransformation
 
 
 class BindingHelper {

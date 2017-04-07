@@ -9,12 +9,12 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkedUsersBinding
-import me.rei_m.hbfavmaterial.di.ActivityModule
-import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityComponent
-import me.rei_m.hbfavmaterial.di.BookmarkedUsersActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.extension.setFragment
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkedUsersActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkedUsersActivityModule
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersFragment
 
 class BookmarkedUsersActivity : BaseActivity(),
@@ -31,9 +31,9 @@ class BookmarkedUsersActivity : BaseActivity(),
         }
     }
 
-    private lateinit var component: BookmarkedUsersActivityComponent
+    private var component: BookmarkedUsersActivityComponent? = null
 
-    private val bookmarkEntity: BookmarkEntity by lazy {
+    private val bookmark: BookmarkEntity by lazy {
         intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
     }
 
@@ -48,8 +48,13 @@ class BookmarkedUsersActivity : BaseActivity(),
         displayTitle(BookmarkCommentFilter.ALL)
 
         if (savedInstanceState == null) {
-            setFragment(BookmarkedUsersFragment.newInstance(bookmarkEntity.article.url), BookmarkedUsersFragment::class.java.simpleName)
+            setFragment(BookmarkedUsersFragment.newInstance(bookmark.article.url), BookmarkedUsersFragment::class.java.simpleName)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -70,18 +75,25 @@ class BookmarkedUsersActivity : BaseActivity(),
         displayTitle(bookmarkCommentFilter)
     }
 
-    private fun displayTitle(commentFilter: BookmarkCommentFilter) {
-        val bookmarkCountString = bookmarkEntity.article.bookmarkCount.toString()
-        supportActionBar?.title = "$bookmarkCountString users - ${commentFilter.title(applicationContext)}"
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
+    override fun getComponent(): BookmarkedUsersActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@BookmarkedUsersActivity.component = component
+        return@let component
+    }
+
+    private fun createActivityComponent(): BookmarkedUsersActivityComponent {
+        val component = (application as App).component
                 .plus(BookmarkedUsersActivityModule(), ActivityModule(this))
         component.inject(this)
+        return component
     }
 
-    override fun getComponent(): BookmarkedUsersActivityComponent {
-        return component
+    private fun displayTitle(commentFilter: BookmarkCommentFilter) {
+        val bookmarkCountString = bookmark.article.bookmarkCount.toString()
+        supportActionBar?.title = "$bookmarkCountString users - ${commentFilter.title(applicationContext)}"
     }
 }
