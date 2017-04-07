@@ -1,7 +1,7 @@
 package me.rei_m.hbfavmaterial.application
 
 import io.reactivex.Observable
-import me.rei_m.hbfavmaterial.domain.entity.EditableBookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.EditableBookmarkEntity
 
 interface HatenaService {
 

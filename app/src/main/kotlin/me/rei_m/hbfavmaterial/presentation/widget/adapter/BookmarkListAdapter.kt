@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemBookmarkBinding
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkListItemViewModel
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.viewmodel.widget.BookmarkListItemViewModel
 
 /**
  * ブックマーク一覧を管理するAdaptor.

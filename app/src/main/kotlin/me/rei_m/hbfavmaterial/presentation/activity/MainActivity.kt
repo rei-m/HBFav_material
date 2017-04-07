@@ -9,11 +9,11 @@ import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.MainActivityComponent
-import me.rei_m.hbfavmaterial.di.MainActivityModule
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
@@ -45,7 +45,7 @@ class MainActivity : BaseDrawerActivity(),
     @Inject
     lateinit var rxBus: RxBus
 
-    private lateinit var component: MainActivityComponent
+    private var component: MainActivityComponent? = null
 
     private var disposable: CompositeDisposable? = null
 
@@ -129,6 +129,11 @@ class MainActivity : BaseDrawerActivity(),
         viewModel.onStop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_setting -> {
@@ -149,13 +154,20 @@ class MainActivity : BaseDrawerActivity(),
         supportActionBar?.title = newPageTitle
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
-                .plus(MainActivityModule(), ActivityModule(this))
-        component.inject(this)
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
     }
 
-    override fun getComponent(): MainActivityComponent {
+    override fun getComponent(): MainActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@MainActivity.component = component
+        return@let component
+    }
+
+    private fun createActivityComponent(): MainActivityComponent {
+        val component = (application as App).component
+                .plus(MainActivityModule(), ActivityModule(this))
+        component.inject(this)
         return component
     }
 

@@ -6,12 +6,12 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentNewEntryBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.NewEntryFragmentComponent
-import me.rei_m.hbfavmaterial.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.extension.getAppContext
+import me.rei_m.hbfavmaterial.presentation.fragment.di.NewEntryFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.NewEntryFragmentModule
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.EntryListAdapter
-import me.rei_m.hbfavmaterial.presentation.viewmodel.NewEntryFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.NewEntryFragmentViewModel
 import javax.inject.Inject
 
 /**
@@ -109,7 +109,7 @@ class NewEntryFragment : BaseFragment(),
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         component = (activity as HasComponent<Injector>).getComponent()
-                .plus(NewEntryFragmentModule(this))
+                .plus(NewEntryFragmentModule())
         component.inject(this)
     }
 

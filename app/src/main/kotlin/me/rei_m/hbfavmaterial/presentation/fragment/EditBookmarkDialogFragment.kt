@@ -12,13 +12,13 @@ import android.view.Window
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
-import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentComponent
-import me.rei_m.hbfavmaterial.di.EditBookmarkDialogFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.*
-import me.rei_m.hbfavmaterial.presentation.viewmodel.EditBookmarkDialogFragmentViewModel
+import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentModule
+import me.rei_m.hbfavmaterial.viewmodel.fragment.EditBookmarkDialogFragmentViewModel
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment(),
@@ -71,7 +71,7 @@ class EditBookmarkDialogFragment : DialogFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as HasComponent<Injector>).getComponent()
-                .plus(EditBookmarkDialogFragmentModule(context))
+                .plus(EditBookmarkDialogFragmentModule())
                 .inject(this)
 
         viewModel.onCreate(articleTitle, articleUrl)

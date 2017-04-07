@@ -12,15 +12,15 @@ import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkBinding
-import me.rei_m.hbfavmaterial.di.ActivityModule
-import me.rei_m.hbfavmaterial.di.BookmarkActivityComponent
-import me.rei_m.hbfavmaterial.di.BookmarkActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.event.ShowArticleEvent
@@ -29,7 +29,7 @@ import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkActivityViewModel
+import me.rei_m.hbfavmaterial.viewmodel.activity.BookmarkActivityViewModel
 import javax.inject.Inject
 
 /**
@@ -64,7 +64,7 @@ class BookmarkActivity : BaseActivity(),
     @Inject
     lateinit var viewModel: BookmarkActivityViewModel
 
-    private lateinit var component: BookmarkActivityComponent
+    private var component: BookmarkActivityComponent? = null
 
     private var disposable: CompositeDisposable? = null
 
@@ -130,6 +130,11 @@ class BookmarkActivity : BaseActivity(),
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -199,13 +204,20 @@ class BookmarkActivity : BaseActivity(),
         }
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
-                .plus(BookmarkActivityModule(), ActivityModule(this))
-        component.inject(this)
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
     }
 
-    override fun getComponent(): BookmarkActivityComponent {
+    override fun getComponent(): BookmarkActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@BookmarkActivity.component = component
+        return@let component
+    }
+
+    private fun createActivityComponent(): BookmarkActivityComponent {
+        val component = (application as App).component
+                .plus(BookmarkActivityModule(), ActivityModule(this))
+        component.inject(this)
         return component
     }
 

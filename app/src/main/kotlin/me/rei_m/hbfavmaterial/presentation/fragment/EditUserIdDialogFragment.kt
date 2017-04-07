@@ -11,15 +11,15 @@ import android.view.Window
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditUserIdBinding
-import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentComponent
-import me.rei_m.hbfavmaterial.di.EditUserIdDialogFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
 import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.event.DismissEditHatenaIdDialogEvent
 import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.viewmodel.EditUserIdDialogFragmentViewModel
+import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentModule
+import me.rei_m.hbfavmaterial.viewmodel.fragment.EditUserIdDialogFragmentViewModel
 import javax.inject.Inject
 
 class EditUserIdDialogFragment : DialogFragment() {
@@ -51,7 +51,7 @@ class EditUserIdDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as HasComponent<Injector>).getComponent()
-                .plus(EditUserIdDialogFragmentModule(this))
+                .plus(EditUserIdDialogFragmentModule())
                 .inject(this)
     }
 

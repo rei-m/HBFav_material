@@ -4,12 +4,14 @@ import android.net.Uri
 import oauth.signpost.OAuth
 import oauth.signpost.http.HttpParameters
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
 import java.net.HttpURLConnection
 
 class HatenaOAuthManager(private val consumerKey: String,
-                         private val consumerSecret: String) {
+                         private val consumerSecret: String,
+                         private val httpClient: OkHttpClient) {
 
     companion object {
 
@@ -48,7 +50,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         val signedRequest = consumer.sign(request).unwrap() as Request
 
-        val response = HttpClient.instance.newCall(signedRequest).execute()
+        val response = httpClient.newCall(signedRequest).execute()
 
         if (response.code() != HttpURLConnection.HTTP_OK) {
             return null
@@ -104,7 +106,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         val signedRequest = consumer.sign(request).unwrap() as Request
 
-        val response = HttpClient.instance.newCall(signedRequest).execute()
+        val response = httpClient.newCall(signedRequest).execute()
 
         if (response.code() != HttpURLConnection.HTTP_OK) {
             consumer.setTokenWithSecret(null, null)

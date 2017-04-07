@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemEntryBinding
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.domain.entity.EntryEntity
-import me.rei_m.hbfavmaterial.presentation.viewmodel.EntryListItemViewModel
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.EntryEntity
+import me.rei_m.hbfavmaterial.viewmodel.widget.EntryListItemViewModel
 
 /**
  * エントリー一覧を管理するAdaptor.

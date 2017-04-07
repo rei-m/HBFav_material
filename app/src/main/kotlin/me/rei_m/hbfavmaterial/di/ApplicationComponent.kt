@@ -2,10 +2,13 @@ package me.rei_m.hbfavmaterial.di
 
 import dagger.Component
 import me.rei_m.hbfavmaterial.App
+import me.rei_m.hbfavmaterial.infra.di.InfraLayerModule
+import me.rei_m.hbfavmaterial.model.di.ModelModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.*
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class, InfraLayerModule::class))
+@Component(modules = arrayOf(ApplicationModule::class, InfraLayerModule::class, ModelModule::class))
 interface ApplicationComponent {
 
     fun inject(application: App)

@@ -8,11 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.databinding.FragmentSettingBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.SettingFragmentComponent
-import me.rei_m.hbfavmaterial.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
+import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
-import me.rei_m.hbfavmaterial.presentation.viewmodel.SettingFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.SettingFragmentViewModel
 import javax.inject.Inject
 
 /**
@@ -77,7 +77,7 @@ class SettingFragment : BaseFragment() {
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
-                .plus(SettingFragmentModule(this))
+                .plus(SettingFragmentModule())
                 .inject(this)
     }
 

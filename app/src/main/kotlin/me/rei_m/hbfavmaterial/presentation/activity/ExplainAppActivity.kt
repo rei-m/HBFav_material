@@ -7,12 +7,12 @@ import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ActivityModule
-import me.rei_m.hbfavmaterial.di.ExplainAppActivityComponent
-import me.rei_m.hbfavmaterial.di.ExplainAppActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
 import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.ExplainAppFragment
@@ -31,7 +31,7 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
     @Inject
     lateinit var rxBus: RxBus
 
-    private lateinit var component: ExplainAppActivityComponent
+    private var component: ExplainAppActivityComponent? = null
 
     private var disposable: CompositeDisposable? = null
 
@@ -63,6 +63,11 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         disposable = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
@@ -80,13 +85,20 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         return super.onNavigationItemSelected(item)
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
-                .plus(ExplainAppActivityModule(), ActivityModule(this))
-        component.inject(this)
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
+    }
+    
+    override fun getComponent(): ExplainAppActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@ExplainAppActivity.component = component
+        return@let component
     }
 
-    override fun getComponent(): ExplainAppActivityComponent {
+    private fun createActivityComponent(): ExplainAppActivityComponent {
+        val component = (application as App).component
+                .plus(ExplainAppActivityModule(), ActivityModule(this))
+        component.inject(this)
         return component
     }
 }

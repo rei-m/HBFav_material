@@ -14,9 +14,9 @@ object HttpClientBuilder {
 
         val logging = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
-            logging.level = HttpLoggingInterceptor.Level.BODY;
+            logging.level = HttpLoggingInterceptor.Level.BODY
         } else {
-            logging.level = HttpLoggingInterceptor.Level.NONE;
+            logging.level = HttpLoggingInterceptor.Level.NONE
         }
 
         return instance.newBuilder()
@@ -28,11 +28,11 @@ object HttpClientBuilder {
 
         val logging = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
-            logging.level = HttpLoggingInterceptor.Level.BODY;
+            logging.level = HttpLoggingInterceptor.Level.BODY
         } else {
-            logging.level = HttpLoggingInterceptor.Level.NONE;
+            logging.level = HttpLoggingInterceptor.Level.NONE
         }
-        
+
         return HttpClientBuilder.newBuilder()
                 .addInterceptor(SigningInterceptor(consumer))
                 .addInterceptor(CacheControlInterceptor())

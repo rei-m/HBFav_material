@@ -10,8 +10,8 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.application.TwitterService
-import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
-import me.rei_m.hbfavmaterial.domain.entity.TwitterSessionEntity
+import me.rei_m.hbfavmaterial.model.entity.OAuthTokenEntity
+import me.rei_m.hbfavmaterial.model.entity.TwitterSessionEntity
 
 class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterService {
 

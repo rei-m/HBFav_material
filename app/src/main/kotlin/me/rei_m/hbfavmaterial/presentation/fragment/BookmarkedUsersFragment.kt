@@ -6,11 +6,11 @@ import android.view.*
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkedUsersBinding
-import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentComponent
-import me.rei_m.hbfavmaterial.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentModule
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.UserListAdapter
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkedUsersFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkedUsersFragmentViewModel
 import javax.inject.Inject
 
 /**
@@ -127,7 +127,7 @@ class BookmarkedUsersFragment : BaseFragment() {
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkedUsersFragmentModule(this))
+                .plus(BookmarkedUsersFragmentModule())
         component.inject(this)
     }
 

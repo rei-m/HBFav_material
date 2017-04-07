@@ -4,17 +4,16 @@ import android.app.ProgressDialog
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivitySplashBinding
-import me.rei_m.hbfavmaterial.di.ActivityModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.SplashActivityComponent
-import me.rei_m.hbfavmaterial.di.SplashActivityModule
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.ProgressDialogController
@@ -23,7 +22,7 @@ import javax.inject.Inject
 /**
  * 最初に起動するActivity.
  */
-class SplashActivity : AppCompatActivity(),
+class SplashActivity : BaseActivity(),
         HasComponent<SplashActivityComponent>,
         ProgressDialogController {
 
@@ -38,7 +37,6 @@ class SplashActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component = createActivityComponent()
 
         val binding = DataBindingUtil.setContentView<ActivitySplashBinding>(this, R.layout.activity_splash)
 
@@ -47,12 +45,6 @@ class SplashActivity : AppCompatActivity(),
         if (savedInstanceState == null) {
             setFragment(InitializeFragment.newInstance(), InitializeFragment::class.java.simpleName)
         }
-    }
-
-    override fun getComponent(): SplashActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@SplashActivity.component = component
-        return@let component
     }
 
     override fun onResume() {
@@ -82,6 +74,21 @@ class SplashActivity : AppCompatActivity(),
         disposable = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
+    }
+
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
+    }
+
+    override fun getComponent(): SplashActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@SplashActivity.component = component
+        return@let component
+    }
+    
     private fun createActivityComponent(): SplashActivityComponent {
         val component = (application as App).component
                 .plus(SplashActivityModule(), ActivityModule(this))

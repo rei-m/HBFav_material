@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import me.rei_m.hbfavmaterial.databinding.FragmentInitializeBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.InitializeFragmentComponent
-import me.rei_m.hbfavmaterial.di.InitializeFragmentModule
-import me.rei_m.hbfavmaterial.presentation.viewmodel.InitializeFragmentViewModel
+import me.rei_m.hbfavmaterial.presentation.fragment.di.InitializeFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.InitializeFragmentModule
+import me.rei_m.hbfavmaterial.viewmodel.fragment.InitializeFragmentViewModel
 import javax.inject.Inject
 
 /**
@@ -54,7 +54,7 @@ class InitializeFragment : BaseFragment() {
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         (activity as HasComponent<Injector>).getComponent()
-                .plus(InitializeFragmentModule(this))
+                .plus(InitializeFragmentModule())
                 .inject(this)
     }
 

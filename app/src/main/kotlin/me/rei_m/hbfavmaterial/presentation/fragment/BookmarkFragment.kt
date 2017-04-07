@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkBinding
-import me.rei_m.hbfavmaterial.di.BookmarkFragmentComponent
-import me.rei_m.hbfavmaterial.di.BookmarkFragmentModule
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.viewmodel.BookmarkFragmentViewModel
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFragmentComponent
+import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFragmentModule
+import me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkFragmentViewModel
 import javax.inject.Inject
 
 class BookmarkFragment : BaseFragment(), MovableWithAnimation {
@@ -56,7 +56,7 @@ class BookmarkFragment : BaseFragment(), MovableWithAnimation {
     @Suppress("UNCHECKED_CAST")
     override fun setupFragmentComponent() {
         component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkFragmentModule(this))
+                .plus(BookmarkFragmentModule())
         component.inject(this)
     }
 

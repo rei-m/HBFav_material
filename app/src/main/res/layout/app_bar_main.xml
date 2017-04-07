@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.presentation.viewmodel.BaseDrawerActivityViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout

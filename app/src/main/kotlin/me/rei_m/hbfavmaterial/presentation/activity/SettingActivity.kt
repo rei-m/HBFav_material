@@ -10,13 +10,13 @@ import com.twitter.sdk.android.core.TwitterAuthConfig
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.ActivityModule
-import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.di.SettingActivityComponent
-import me.rei_m.hbfavmaterial.di.SettingActivityModule
 import me.rei_m.hbfavmaterial.application.TwitterService
+import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
+import me.rei_m.hbfavmaterial.presentation.activity.di.SettingActivityComponent
+import me.rei_m.hbfavmaterial.presentation.activity.di.SettingActivityModule
 import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.ProgressDialogController
@@ -40,7 +40,7 @@ class SettingActivity : BaseDrawerActivity(),
     @Inject
     lateinit var twitterService: TwitterService
 
-    private lateinit var component: SettingActivityComponent
+    private var component: SettingActivityComponent? = null
 
     private var disposable: CompositeDisposable? = null
 
@@ -89,6 +89,11 @@ class SettingActivity : BaseDrawerActivity(),
         disposable = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        component = null
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
@@ -121,13 +126,20 @@ class SettingActivity : BaseDrawerActivity(),
         }
     }
 
-    override fun setupActivityComponent() {
-        component = (application as App).component
-                .plus(SettingActivityModule(), ActivityModule(this))
-        component.inject(this)
+    override fun setUpActivityComponent() {
+        component = createActivityComponent()
     }
 
-    override fun getComponent(): SettingActivityComponent {
+    override fun getComponent(): SettingActivityComponent = component ?: let {
+        val component = createActivityComponent()
+        this@SettingActivity.component = component
+        return@let component
+    }
+
+    private fun createActivityComponent(): SettingActivityComponent {
+        val component = (application as App).component
+                .plus(SettingActivityModule(), ActivityModule(this))
+        component.inject(this)
         return component
     }
 

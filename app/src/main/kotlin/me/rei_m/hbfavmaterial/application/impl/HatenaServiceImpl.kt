@@ -6,17 +6,18 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.application.HatenaService
-import me.rei_m.hbfavmaterial.domain.entity.EditableBookmarkEntity
-import me.rei_m.hbfavmaterial.domain.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
-import me.rei_m.hbfavmaterial.infra.network.RetrofitManager
+import me.rei_m.hbfavmaterial.infra.network.SignedRetrofitFactory
+import me.rei_m.hbfavmaterial.model.entity.EditableBookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.OAuthTokenEntity
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 
 class HatenaServiceImpl(private val preferences: SharedPreferences,
-                        private val hatenaOAuthManager: HatenaOAuthManager) : HatenaService {
+                        private val hatenaOAuthManager: HatenaOAuthManager,
+                        private val signedRetrofitFactory: SignedRetrofitFactory) : HatenaService {
 
     companion object {
 
@@ -110,7 +111,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
-        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
+        val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
 
         retrofit.create(HatenaOAuthApiService::class.java).getBookmark(urlString).map { (_, private, _, _, tags, _, comment) ->
             return@map EditableBookmarkEntity(url = urlString,
@@ -162,11 +163,11 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             }
         }
 
-        require(postTags.size <= MAX_TAGS_COUNT) { "登録可能なタグは ${MAX_TAGS_COUNT} 個までです。" }
+        require(postTags.size <= MAX_TAGS_COUNT) { "登録可能なタグは $MAX_TAGS_COUNT 個までです。" }
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
-        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
+        val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
 
         val isOpenValue = if (isOpen) "0" else "1"
 
@@ -188,7 +189,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
-        val retrofit = RetrofitManager.createOAuthRetrofit(hatenaOAuthManager.consumer)
+        val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
 
         retrofit.create(HatenaOAuthApiService::class.java).deleteBookmark(urlString).subscribeAsync({
             completeDeleteBookmarkEventSubject.onNext(Unit)

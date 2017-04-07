@@ -11,7 +11,8 @@ import io.fabric.sdk.android.Fabric
 import me.rei_m.hbfavmaterial.di.ApplicationComponent
 import me.rei_m.hbfavmaterial.di.ApplicationModule
 import me.rei_m.hbfavmaterial.di.DaggerApplicationComponent
-import me.rei_m.hbfavmaterial.di.InfraLayerModule
+import me.rei_m.hbfavmaterial.infra.di.InfraLayerModule
+import me.rei_m.hbfavmaterial.model.di.ModelModule
 
 open class App : Application() {
 
@@ -23,6 +24,7 @@ open class App : Application() {
         return DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this))
                 .infraLayerModule(InfraLayerModule())
+                .modelModule(ModelModule())
                 .build()
     }
 

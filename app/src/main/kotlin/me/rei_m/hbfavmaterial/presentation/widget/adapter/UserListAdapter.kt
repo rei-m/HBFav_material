@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.domain.entity.BookmarkUserEntity
-import me.rei_m.hbfavmaterial.presentation.viewmodel.UserListItemViewModel
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.BookmarkUserEntity
+import me.rei_m.hbfavmaterial.viewmodel.widget.UserListItemViewModel
 
 /**
  * ユーザー一覧を管理するAdaptor.
