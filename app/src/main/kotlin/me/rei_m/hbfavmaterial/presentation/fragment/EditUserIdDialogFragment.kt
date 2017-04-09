@@ -2,23 +2,18 @@ package me.rei_m.hbfavmaterial.presentation.fragment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import io.reactivex.disposables.CompositeDisposable
-import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditUserIdBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
-import me.rei_m.hbfavmaterial.extension.subscribeBus
-import me.rei_m.hbfavmaterial.presentation.event.DismissEditHatenaIdDialogEvent
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.EditUserIdDialogFragmentViewModel
 import javax.inject.Inject
 
@@ -33,9 +28,6 @@ class EditUserIdDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModel: EditUserIdDialogFragmentViewModel
-
-    @Inject
-    lateinit var rxBus: RxBus
 
     private var binding: DialogFragmentEditUserIdBinding? = null
 
@@ -60,44 +52,40 @@ class EditUserIdDialogFragment : DialogFragment() {
         val binding = DialogFragmentEditUserIdBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
+        viewModel.onCreateView(SnackbarFactory(binding.root))
+
         this.binding = binding
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.dismissDialogEvent.subscribe {
+            dismiss()
+        })
         viewModel.onStart()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.onResume()
-        disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is DismissEditHatenaIdDialogEvent -> {
-                    dismiss()
-                }
-                is FailToConnectionEvent -> {
-                    showFailToConnectionMessage()
-                }
-            }
-        }))
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onDestroyView() {
+        viewModel.onDestroyView()
         binding = null
         super.onDestroyView()
     }
@@ -105,12 +93,6 @@ class EditUserIdDialogFragment : DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
-    }
-
-    private fun showFailToConnectionMessage() {
-        binding?.root?.let {
-            Snackbar.make(it, getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
-        }
     }
 
     interface Injector {

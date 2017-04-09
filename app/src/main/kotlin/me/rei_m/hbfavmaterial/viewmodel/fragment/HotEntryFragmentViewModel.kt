@@ -4,16 +4,15 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.view.View
 import android.widget.AdapterView
+import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.model.HotEntryModel
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
-                                private val rxBus: RxBus,
                                 private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val entryList: ObservableArrayList<EntryEntity> = ObservableArrayList()
@@ -25,6 +24,20 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
     var entryTypeFilter = EntryTypeFilter.ALL
+        private set
+
+    private var updateFilterEventSubject = PublishSubject.create<Unit>()
+    val updateFilterEvent: io.reactivex.Observable<Unit> = updateFilterEventSubject
+
+    private var snackbarFactory: SnackbarFactory? = null
+
+    fun onCreate(entryTypeFilter: EntryTypeFilter) {
+        this.entryTypeFilter = entryTypeFilter
+    }
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
+    }
 
     override fun onStart() {
         super.onStart()
@@ -34,11 +47,13 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
             isVisibleEmpty.set(it.isEmpty())
             isVisibleProgress.set(false)
             isRefreshing.set(false)
-            rxBus.send(UpdateMainPageFilterEvent())
         }, hotEntryModel.error.subscribe {
-            rxBus.send(FailToConnectionEvent())
+            isVisibleProgress.set(false)
+            isRefreshing.set(false)
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         }, hotEntryModel.entryTypeFilterUpdatedEvent.subscribe {
             entryTypeFilter = it
+            updateFilterEventSubject.onNext(Unit)
         })
     }
 
@@ -54,6 +69,10 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
         super.onPause()
         isVisibleProgress.set(false)
         isRefreshing.set(false)
+    }
+
+    fun onDestroyView() {
+        snackbarFactory = null
     }
 
     @Suppress("UNUSED_PARAMETER")

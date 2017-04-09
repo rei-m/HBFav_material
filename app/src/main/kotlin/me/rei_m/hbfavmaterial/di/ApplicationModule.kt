@@ -11,7 +11,6 @@ import me.rei_m.hbfavmaterial.application.impl.HatenaServiceImpl
 import me.rei_m.hbfavmaterial.application.impl.TwitterServiceImpl
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.SignedRetrofitFactory
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
@@ -22,12 +21,6 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun provideContext(): Context {
         return application
-    }
-
-    @Provides
-    @Singleton
-    fun provideRxBus(): RxBus {
-        return RxBus()
     }
 
     @Provides

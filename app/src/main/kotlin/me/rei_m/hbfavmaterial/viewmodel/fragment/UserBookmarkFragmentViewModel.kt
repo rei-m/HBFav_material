@@ -5,19 +5,17 @@ import android.databinding.ObservableBoolean
 import android.view.View
 import android.widget.AbsListView
 import android.widget.AdapterView
+import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.model.UserBookmarkModel
 import me.rei_m.hbfavmaterial.model.UserModel
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkModel,
                                     private val userModel: UserModel,
-                                    private val rxBus: RxBus,
                                     private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
@@ -28,11 +26,32 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
+    private var readAllItemEventSubject = PublishSubject.create<Unit>()
+    val readAllItemEvent: io.reactivex.Observable<Unit> = readAllItemEventSubject
+
+    private var updateFilterEventSubject = PublishSubject.create<Unit>()
+    val updateFilterEvent: io.reactivex.Observable<Unit> = updateFilterEventSubject
+
+    private var snackbarFactory: SnackbarFactory? = null
+
     var isOwner: Boolean = false
+        private set
 
     var bookmarkUserId: String = ""
+        private set
 
     var readAfterFilter = ReadAfterFilter.ALL
+        private set
+
+    fun onCreate(isOwner: Boolean, bookmarkUserId: String, readAfterFilter: ReadAfterFilter) {
+        this.isOwner = isOwner
+        this.bookmarkUserId = bookmarkUserId
+        this.readAfterFilter = readAfterFilter
+    }
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
+    }
 
     override fun onStart() {
         super.onStart()
@@ -42,15 +61,17 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
             isVisibleEmpty.set(it.isEmpty())
             isVisibleProgress.set(false)
             isRefreshing.set(false)
-            rxBus.send(UpdateMainPageFilterEvent())
         }, userBookmarkModel.hasNextPageUpdatedEvent.subscribe {
             if (!it) {
-                rxBus.send(ReadAllListItemEvent())
+                readAllItemEventSubject.onNext(Unit)
             }
         }, userBookmarkModel.readAfterFilterUpdatedEvent.subscribe {
             readAfterFilter = it
+            updateFilterEventSubject.onNext(Unit)
         }, userBookmarkModel.error.subscribe {
-            rxBus.send(FailToConnectionEvent())
+            isVisibleProgress.set(false)
+            isRefreshing.set(false)
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         })
     }
 
@@ -72,6 +93,10 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
         isRefreshing.set(false)
     }
 
+    fun onDestroyView() {
+        snackbarFactory = null
+    }
+    
     @Suppress("UNUSED_PARAMETER")
     fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         navigator.navigateToBookmark(bookmarkList[position])

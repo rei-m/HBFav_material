@@ -9,11 +9,9 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.FragmentFavoriteBookmarkBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.extension.subscribeBus
-import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.FavoriteBookmarkFragmentViewModel
@@ -45,16 +43,13 @@ class FavoriteBookmarkFragment : BaseFragment(),
     @Inject
     lateinit var viewModel: FavoriteBookmarkFragmentViewModel
 
-    @Inject
-    lateinit var rxBus: RxBus
-
     private lateinit var component: BookmarkFavoriteFragmentComponent
 
     private var binding: FragmentFavoriteBookmarkBinding? = null
 
-    private var footerView: View? = null
-
     private var disposable: CompositeDisposable? = null
+
+    private var footerView: View? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -67,6 +62,8 @@ class FavoriteBookmarkFragment : BaseFragment(),
         footerView = View.inflate(binding.listView.context, R.layout.list_fotter_loading, null)
         binding.listView.addFooterView(footerView)
 
+        viewModel.onCreateView(SnackbarFactory(binding.root))
+
         this.binding = binding
 
         return binding.root
@@ -74,15 +71,11 @@ class FavoriteBookmarkFragment : BaseFragment(),
 
     override fun onStart() {
         super.onStart()
-        viewModel.onStart()
         disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is ReadAllListItemEvent -> {
-                    binding?.listView?.removeFooterView(footerView)
-                }
-            }
-        }))
+        disposable?.addAll(viewModel.readAllItemEvent.subscribe {
+            binding?.listView?.removeFooterView(footerView)
+        })
+        viewModel.onStart()
     }
 
     override fun onResume() {
@@ -103,6 +96,7 @@ class FavoriteBookmarkFragment : BaseFragment(),
     }
 
     override fun onDestroyView() {
+        viewModel.onDestroyView()
         footerView = null
         binding = null
         super.onDestroyView()

@@ -13,18 +13,13 @@ import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.extension.subscribeBus
+import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
 import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityComponent
 import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityModule
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.ShowArticleEvent
-import me.rei_m.hbfavmaterial.presentation.event.ShowBookmarkEditEvent
 import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
@@ -36,7 +31,8 @@ import javax.inject.Inject
  * ブックマークの詳細を表示するActivity.
  */
 class BookmarkActivity : BaseActivity(),
-        HasComponent<BookmarkActivityComponent> {
+        HasComponent<BookmarkActivityComponent>,
+        BookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
 
@@ -57,9 +53,6 @@ class BookmarkActivity : BaseActivity(),
             }
         }
     }
-
-    @Inject
-    lateinit var rxBus: RxBus
 
     @Inject
     lateinit var viewModel: BookmarkActivityViewModel
@@ -96,40 +89,30 @@ class BookmarkActivity : BaseActivity(),
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.showBookmarkEditEvent.subscribe {
+            EditBookmarkDialogFragment
+                    .newInstance(viewModel.entryTitle.get(), viewModel.entryLink.get())
+                    .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+        })
         viewModel.onStart()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.onResume()
-        disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is ShowArticleEvent -> {
-                    replaceFragment(EntryWebViewFragment.newInstance(it.url), EntryWebViewFragment.TAG)
-                }
-                is ShowBookmarkEditEvent -> {
-                    EditBookmarkDialogFragment
-                            .newInstance(it.articleTitle, it.articleUrl)
-                            .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
-                }
-                is FailToConnectionEvent -> {
-                    showFailToConnectionMessage()
-                }
-            }
-        }))
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onDestroy() {
@@ -212,6 +195,10 @@ class BookmarkActivity : BaseActivity(),
         val component = createActivityComponent()
         this@BookmarkActivity.component = component
         return@let component
+    }
+
+    override fun onShowArticle(url: String) {
+        replaceFragment(EntryWebViewFragment.newInstance(url), EntryWebViewFragment.TAG)
     }
 
     private fun createActivityComponent(): BookmarkActivityComponent {

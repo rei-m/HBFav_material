@@ -9,11 +9,9 @@ import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentUserBookmarkBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.extension.subscribeBus
-import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkUserFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkUserFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.UserBookmarkFragmentViewModel
@@ -71,9 +69,6 @@ class UserBookmarkFragment : BaseFragment(),
     @Inject
     lateinit var viewModel: UserBookmarkFragmentViewModel
 
-    @Inject
-    lateinit var rxBus: RxBus
-
     private lateinit var component: BookmarkUserFragmentComponent
 
     private var binding: FragmentUserBookmarkBinding? = null
@@ -111,9 +106,7 @@ class UserBookmarkFragment : BaseFragment(),
             ReadAfterFilter.ALL
         }
 
-        viewModel.isOwner = isOwner
-        viewModel.bookmarkUserId = userId
-        viewModel.readAfterFilter = readAfterFilter
+        viewModel.onCreate(isOwner, userId, readAfterFilter)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -128,6 +121,8 @@ class UserBookmarkFragment : BaseFragment(),
         footerView = View.inflate(binding.listView.context, R.layout.list_fotter_loading, null)
         binding.listView.addFooterView(footerView)
 
+        viewModel.onCreateView(SnackbarFactory(binding.root))
+
         this.binding = binding
 
         return binding.root
@@ -135,15 +130,13 @@ class UserBookmarkFragment : BaseFragment(),
 
     override fun onStart() {
         super.onStart()
-        viewModel.onStart()
         disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is ReadAllListItemEvent -> {
-                    binding?.listView?.removeFooterView(footerView)
-                }
-            }
-        }))
+        disposable?.addAll(viewModel.readAllItemEvent.subscribe {
+            binding?.listView?.removeFooterView(footerView)
+        }, viewModel.updateFilterEvent.subscribe {
+            listener?.onUpdateFilter(pageIndex)
+        })
+        viewModel.onStart()
     }
 
     override fun onResume() {
@@ -164,6 +157,7 @@ class UserBookmarkFragment : BaseFragment(),
     }
 
     override fun onDestroyView() {
+        viewModel.onDestroyView()
         footerView = null
         binding = null
         super.onDestroyView()
@@ -188,8 +182,6 @@ class UserBookmarkFragment : BaseFragment(),
 
         viewModel.onOptionItemSelected(filter)
 
-        listener?.onChangeFilter(pageTitle)
-
         return true
     }
 
@@ -206,7 +198,7 @@ class UserBookmarkFragment : BaseFragment(),
     }
 
     interface OnFragmentInteractionListener {
-        fun onChangeFilter(newPageTitle: String)
+        fun onUpdateFilter(pageIndex: Int)
     }
 
     interface Injector {

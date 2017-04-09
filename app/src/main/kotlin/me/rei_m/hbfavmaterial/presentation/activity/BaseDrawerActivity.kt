@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
 import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
@@ -20,6 +21,8 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
     lateinit var viewModel: BaseDrawerActivityViewModel
 
     protected var binding: ActivityMainBinding? = null
+
+    private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,10 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.movePageEvent.subscribe {
+            finish()
+        })
         viewModel.onStart()
     }
 
@@ -62,6 +69,8 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onDestroy() {

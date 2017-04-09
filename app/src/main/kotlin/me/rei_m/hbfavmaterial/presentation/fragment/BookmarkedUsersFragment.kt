@@ -9,6 +9,7 @@ import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkedUsersBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkedUsersFragmentViewModel
 import javax.inject.Inject
@@ -68,6 +69,8 @@ class BookmarkedUsersFragment : BaseFragment() {
         val adapter = UserListAdapter(context, component, viewModel.bookmarkUserList)
         binding.listView.adapter = adapter
 
+        viewModel.onCreateView(SnackbarFactory(binding.root))
+
         return binding.root
     }
 
@@ -89,6 +92,11 @@ class BookmarkedUsersFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+    }
+
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
     }
 
     override fun onDetach() {

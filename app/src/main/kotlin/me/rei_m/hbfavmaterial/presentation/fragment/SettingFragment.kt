@@ -1,17 +1,20 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.FragmentSettingBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
 import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.SettingFragmentViewModel
 import javax.inject.Inject
 
@@ -30,16 +33,35 @@ class SettingFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: SettingFragmentViewModel
 
+    private var disposable: CompositeDisposable? = null
+
+    private var listener: OnFragmentInteractionListener? = null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding = FragmentSettingBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+
+        viewModel.onCreateView(SnackbarFactory(binding.root))
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.showEditHatenaIdDialogEvent.subscribe {
+            listener?.onShowEditHatenaIdDialog()
+        }, viewModel.startAuthoriseTwitterEvent.subscribe {
+            listener?.onStartAuthoriseTwitter()
+        })
         viewModel.onStart()
     }
 
@@ -51,11 +73,23 @@ class SettingFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+    }
+
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,6 +113,12 @@ class SettingFragment : BaseFragment() {
         (activity as HasComponent<Injector>).getComponent()
                 .plus(SettingFragmentModule())
                 .inject(this)
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onShowEditHatenaIdDialog()
+
+        fun onStartAuthoriseTwitter()
     }
 
     interface Injector {

@@ -3,33 +3,29 @@ package me.rei_m.hbfavmaterial.presentation.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
-import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
 import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityComponent
 import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityModule
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.UpdateMainPageFilterEvent
+import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.MainPageFragment
+import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.viewpager.BookmarkViewPager
-import javax.inject.Inject
 
 /**
  * メインActivity.
  */
 class MainActivity : BaseDrawerActivity(),
         HasComponent<MainActivityComponent>,
-        UserBookmarkFragment.OnFragmentInteractionListener {
+        UserBookmarkFragment.OnFragmentInteractionListener,
+        HotEntryFragment.OnFragmentInteractionListener,
+        NewEntryFragment.OnFragmentInteractionListener {
 
     companion object {
 
@@ -42,12 +38,7 @@ class MainActivity : BaseDrawerActivity(),
         }
     }
 
-    @Inject
-    lateinit var rxBus: RxBus
-
     private var component: MainActivityComponent? = null
-
-    private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,33 +86,11 @@ class MainActivity : BaseDrawerActivity(),
     override fun onResume() {
         super.onResume()
         viewModel.onResume()
-        disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is UpdateMainPageFilterEvent -> {
-                    for (fragment in supportFragmentManager.fragments) {
-                        fragment as MainPageFragment
-                        if (fragment.pageIndex == binding?.appBar?.pager?.currentItem) {
-                            supportActionBar?.title = fragment.pageTitle
-                            break
-                        }
-                    }
-                }
-                is FinishActivityEvent -> {
-                    finish()
-                }
-                is FailToConnectionEvent -> {
-                    showFailToConnectionMessage()
-                }
-            }
-        }))
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onStop() {
@@ -150,8 +119,11 @@ class MainActivity : BaseDrawerActivity(),
         return super.onNavigationItemSelected(item)
     }
 
-    override fun onChangeFilter(newPageTitle: String) {
-        supportActionBar?.title = newPageTitle
+    override fun onUpdateFilter(pageIndex: Int) {
+        if (pageIndex == binding?.appBar?.pager?.currentItem) {
+            val fragment = supportFragmentManager.fragments[pageIndex] as MainPageFragment
+            supportActionBar?.title = fragment.pageTitle
+        }
     }
 
     override fun setUpActivityComponent() {
@@ -169,9 +141,5 @@ class MainActivity : BaseDrawerActivity(),
                 .plus(MainActivityModule(), ActivityModule(this))
         component.inject(this)
         return component
-    }
-
-    private fun showFailToConnectionMessage() {
-        Snackbar.make(findViewById(R.id.content), getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
     }
 }

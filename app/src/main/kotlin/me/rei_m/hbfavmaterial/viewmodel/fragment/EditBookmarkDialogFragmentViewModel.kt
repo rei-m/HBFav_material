@@ -1,20 +1,23 @@
 package me.rei_m.hbfavmaterial.viewmodel.fragment
 
+import android.app.ProgressDialog
 import android.databinding.Observable
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
 import io.reactivex.functions.BiFunction
+import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.model.entity.EditableBookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaService,
                                           private val twitterService: TwitterService,
-                                          private val rxBus: RxBus,
-                                          private val navigator: Navigator) : AbsFragmentViewModel() {
+                                          private val navigator: Navigator,
+                                          private val progressDialog: ProgressDialog) : AbsFragmentViewModel() {
 
     companion object {
         private const val MAX_COMMENT_SIZE = 100
@@ -38,7 +41,12 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
 
     var isDelete: ObservableBoolean = ObservableBoolean(false)
 
+    private var dismissDialogEventSubject = PublishSubject.create<Unit>()
+    val dismissDialogEvent: io.reactivex.Observable<Unit> = dismissDialogEventSubject
+
     lateinit var articleUrl: String
+
+    private var snackbarFactory: SnackbarFactory? = null
 
     private var isAuthorizedTwitter: Boolean = false
 
@@ -58,7 +66,7 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
                 if (isShareTwitter.get()) {
                     if (!isAuthorizedTwitter) {
                         navigator.navigateToSetting()
-                        rxBus.send(DismissEditBookmarkDialogEvent())
+                        dismissDialogEventSubject.onNext(Unit)
                     }
                 }
             }
@@ -68,6 +76,10 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
     fun onCreate(articleTitle: String, articleUrl: String) {
         this.articleTitle.set(articleTitle)
         this.articleUrl = articleUrl
+    }
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
     }
 
     override fun onStart() {
@@ -90,16 +102,16 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
             if (isShareTwitter.get()) {
                 twitterService.postTweet(articleUrl, articleTitle.get(), comment.get())
             }
-            rxBus.send(DismissProgressDialogEvent())
-            rxBus.send(DismissEditBookmarkDialogEvent())
+            progressDialog.dismiss()
+            dismissDialogEventSubject.onNext(Unit)
         }, hatenaService.failAuthorizeHatenaEvent.subscribe {
             navigator.navigateToOAuth()
-            rxBus.send(DismissEditBookmarkDialogEvent())
+            dismissDialogEventSubject.onNext(Unit)
         }, hatenaService.completeDeleteBookmarkEvent.subscribe {
-            rxBus.send(DismissProgressDialogEvent())
-            rxBus.send(DismissEditBookmarkDialogEvent())
+            progressDialog.dismiss()
+            dismissDialogEventSubject.onNext(Unit)
         }, hatenaService.error.subscribe {
-            rxBus.send(FailToConnectionEvent())
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         })
     }
 
@@ -109,9 +121,13 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
         twitterService.confirmAuthorised()
     }
 
+    fun onDestroyView() {
+        snackbarFactory = null
+    }
+
     fun onClickOk(view: View) {
 
-        rxBus.send(ShowProgressDialogEvent())
+        progressDialog.show()
 
         if (isDelete.get()) {
             hatenaService.deleteBookmark(articleUrl)
@@ -125,6 +141,6 @@ class EditBookmarkDialogFragmentViewModel(private val hatenaService: HatenaServi
     }
 
     fun onClickCancel(view: View) {
-        rxBus.send(DismissEditBookmarkDialogEvent())
+        dismissDialogEventSubject.onNext(Unit)
     }
 }

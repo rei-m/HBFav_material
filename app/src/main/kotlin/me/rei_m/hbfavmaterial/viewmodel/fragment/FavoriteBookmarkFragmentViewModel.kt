@@ -5,17 +5,16 @@ import android.databinding.ObservableBoolean
 import android.view.View
 import android.widget.AbsListView
 import android.widget.AdapterView
+import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.model.FavoriteBookmarkModel
 import me.rei_m.hbfavmaterial.model.UserModel
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.ReadAllListItemEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: FavoriteBookmarkModel,
                                         private val userModel: UserModel,
-                                        private val rxBus: RxBus,
                                         private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
@@ -25,6 +24,15 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
     val isVisibleProgress: ObservableBoolean = ObservableBoolean(false)
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
+
+    private var readAllItemEventSubject = PublishSubject.create<Unit>()
+    val readAllItemEvent: io.reactivex.Observable<Unit> = readAllItemEventSubject
+
+    private var snackbarFactory: SnackbarFactory? = null
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
+    }
 
     override fun onStart() {
         super.onStart()
@@ -36,10 +44,12 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
             isRefreshing.set(false)
         }, favoriteBookmarkModel.hasNextPageUpdatedEvent.subscribe {
             if (!it) {
-                rxBus.send(ReadAllListItemEvent())
+                readAllItemEventSubject.onNext(Unit)
             }
         }, favoriteBookmarkModel.error.subscribe {
-            rxBus.send(FailToConnectionEvent())
+            isVisibleProgress.set(false)
+            isRefreshing.set(false)
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         })
     }
 
@@ -55,6 +65,10 @@ class FavoriteBookmarkFragmentViewModel(private val favoriteBookmarkModel: Favor
         super.onPause()
         isVisibleProgress.set(false)
         isRefreshing.set(false)
+    }
+
+    fun onDestroyView() {
+        snackbarFactory = null
     }
 
     @Suppress("UNUSED_PARAMETER")
