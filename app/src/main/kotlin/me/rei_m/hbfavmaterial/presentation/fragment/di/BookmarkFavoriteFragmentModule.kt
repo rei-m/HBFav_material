@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.model.FavoriteBookmarkModel
 import me.rei_m.hbfavmaterial.model.UserModel
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.viewmodel.fragment.FavoriteBookmarkFragmentViewModel
 
@@ -14,11 +13,9 @@ class BookmarkFavoriteFragmentModule {
     @Provides
     fun provideBookmarkFavoriteViewModel(favoriteBookmarkModel: FavoriteBookmarkModel,
                                          userModel: UserModel,
-                                         rxBus: RxBus,
                                          navigator: Navigator): FavoriteBookmarkFragmentViewModel {
         return FavoriteBookmarkFragmentViewModel(favoriteBookmarkModel,
                 userModel,
-                rxBus,
                 navigator)
     }
 }

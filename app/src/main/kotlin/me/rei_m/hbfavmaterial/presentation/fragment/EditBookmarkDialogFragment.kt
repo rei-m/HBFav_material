@@ -1,28 +1,23 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import io.reactivex.disposables.CompositeDisposable
-import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
-import me.rei_m.hbfavmaterial.extension.subscribeBus
-import me.rei_m.hbfavmaterial.presentation.event.*
 import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.EditBookmarkDialogFragmentViewModel
 import javax.inject.Inject
 
-class EditBookmarkDialogFragment : DialogFragment(),
-        ProgressDialogController {
+class EditBookmarkDialogFragment : DialogFragment() {
 
     companion object {
 
@@ -44,9 +39,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
     @Inject
     lateinit var viewModel: EditBookmarkDialogFragmentViewModel
 
-    @Inject
-    lateinit var rxBus: RxBus
-
     private var binding: DialogFragmentEditBookmarkBinding? = null
 
     private var disposable: CompositeDisposable? = null
@@ -58,8 +50,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
     private val articleUrl: String by lazy {
         arguments.getString(ARG_ARTICLE_URL)
     }
-
-    override var progressDialog: ProgressDialog? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {
@@ -79,54 +69,42 @@ class EditBookmarkDialogFragment : DialogFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        disposable = CompositeDisposable()
-
         val binding = DialogFragmentEditBookmarkBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+
+        viewModel.onCreateView(SnackbarFactory(binding.root))
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.dismissDialogEvent.subscribe {
+            dismiss()
+        })
         viewModel.onStart()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.onResume()
-        disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is ShowProgressDialogEvent -> {
-                    showProgressDialog(activity)
-                }
-                is DismissProgressDialogEvent -> {
-                    closeProgressDialog()
-                }
-                is DismissEditBookmarkDialogEvent -> {
-                    dismiss()
-                }
-                is FailToConnectionEvent -> {
-                    showFailToConnectionMessage()
-                }
-            }
-        }))
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+        disposable?.dispose()
+        disposable = null
     }
 
     override fun onDestroyView() {
+        viewModel.onDestroyView()
         binding = null
         super.onDestroyView()
     }
@@ -134,12 +112,6 @@ class EditBookmarkDialogFragment : DialogFragment(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
-    }
-
-    private fun showFailToConnectionMessage() {
-        binding?.root?.let {
-            Snackbar.make(it, getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
-        }
     }
 
     interface Injector {

@@ -1,10 +1,10 @@
 package me.rei_m.hbfavmaterial.presentation.activity.di
 
 import android.app.Activity
+import android.app.ProgressDialog
 import dagger.Module
 import dagger.Provides
 import me.rei_m.hbfavmaterial.model.UserModel
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 
@@ -22,11 +22,14 @@ class ActivityModule(private val activity: Activity) {
     }
 
     @Provides
+    fun provideProgressDialog(): ProgressDialog {
+        return ProgressDialog(activity)
+    }
+
+    @Provides
     fun provideBaseDrawerActivityViewModel(userModel: UserModel,
-                                           rxBus: RxBus,
                                            navigator: Navigator): BaseDrawerActivityViewModel {
         return BaseDrawerActivityViewModel(userModel,
-                rxBus,
                 navigator)
     }
 }

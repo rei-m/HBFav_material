@@ -3,19 +3,18 @@ package me.rei_m.hbfavmaterial.viewmodel.fragment
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.view.View
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.model.UserModel
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
-import me.rei_m.hbfavmaterial.presentation.event.ShowEditHatenaIdDialogEvent
-import me.rei_m.hbfavmaterial.presentation.event.StartAuthoriseTwitterEvent
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class SettingFragmentViewModel(private val userModel: UserModel,
                                private val hatenaService: HatenaService,
                                private val twitterService: TwitterService,
-                               private val rxBus: RxBus,
                                private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val userId: ObservableField<String> = ObservableField("")
@@ -23,6 +22,18 @@ class SettingFragmentViewModel(private val userModel: UserModel,
     val isAuthorisedHatena: ObservableBoolean = ObservableBoolean(false)
 
     val isAuthorisedTwitter: ObservableBoolean = ObservableBoolean(false)
+
+    private var showEditHatenaIdDialogEventSubject = PublishSubject.create<Unit>()
+    val showEditHatenaIdDialogEvent: Observable<Unit> = showEditHatenaIdDialogEventSubject
+
+    private var startAuthoriseTwitterEventSubject = PublishSubject.create<Unit>()
+    val startAuthoriseTwitterEvent: Observable<Unit> = startAuthoriseTwitterEventSubject
+
+    private var snackbarFactory: SnackbarFactory? = null
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
+    }
 
     override fun onStart() {
         super.onStart()
@@ -42,8 +53,12 @@ class SettingFragmentViewModel(private val userModel: UserModel,
         twitterService.confirmAuthorised()
     }
 
+    fun onDestroyView() {
+        snackbarFactory = null
+    }
+
     fun onClickHatenaId(view: View) {
-        rxBus.send(ShowEditHatenaIdDialogEvent())
+        showEditHatenaIdDialogEventSubject.onNext(Unit)
     }
 
     fun onClickHatenaAuthStatus(view: View) {
@@ -55,11 +70,11 @@ class SettingFragmentViewModel(private val userModel: UserModel,
             isAuthorisedHatena.set(isAuthorise)
         } else {
             // 認可を選択せずにresultCodeが設定された場合はネットワークエラーのケース.
-            rxBus.send(FailToConnectionEvent())
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         }
     }
 
     fun onClickTwitterAuthStatus(view: View) {
-        rxBus.send(StartAuthoriseTwitterEvent())
+        startAuthoriseTwitterEventSubject.onNext(Unit)
     }
 }

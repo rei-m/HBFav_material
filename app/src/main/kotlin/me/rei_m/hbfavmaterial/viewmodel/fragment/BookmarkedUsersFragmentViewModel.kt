@@ -4,15 +4,14 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.view.View
 import android.widget.AdapterView
+import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.model.BookmarkModel
 import me.rei_m.hbfavmaterial.model.entity.BookmarkUserEntity
-import me.rei_m.hbfavmaterial.presentation.event.FailToConnectionEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 
 class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
-                                       private val rxBus: RxBus,
                                        private val navigator: Navigator) : AbsFragmentViewModel() {
 
     val bookmarkUserList: ObservableArrayList<BookmarkUserEntity> = ObservableArrayList()
@@ -29,9 +28,15 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
     var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
         private set
 
+    private var snackbarFactory: SnackbarFactory? = null
+
     fun onCreate(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter) {
         this.articleUrl = articleUrl
         this.bookmarkCommentFilter = bookmarkCommentFilter
+    }
+
+    fun onCreateView(snackbarFactory: SnackbarFactory) {
+        this.snackbarFactory = snackbarFactory
     }
 
     override fun onStart() {
@@ -44,7 +49,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
             isVisibleProgress.set(false)
             isRefreshing.set(false)
         }, bookmarkModel.error.subscribe {
-            rxBus.send(FailToConnectionEvent())
+            snackbarFactory?.create(R.string.message_error_network)?.show()
         }, bookmarkModel.bookmarkCommentFilterUpdatedEvent.subscribe {
             bookmarkCommentFilter = it
         })
@@ -56,6 +61,10 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
             isVisibleProgress.set(true)
             bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter)
         }
+    }
+
+    fun onDestroyView() {
+        snackbarFactory = null
     }
 
     @Suppress("UNUSED_PARAMETER")

@@ -1,7 +1,9 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentNewEntryBinding
@@ -9,6 +11,7 @@ import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.presentation.fragment.di.NewEntryFragmentComponent
 import me.rei_m.hbfavmaterial.presentation.fragment.di.NewEntryFragmentModule
+import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.EntryListAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.NewEntryFragmentViewModel
@@ -44,6 +47,17 @@ class NewEntryFragment : BaseFragment(),
 
     private lateinit var component: NewEntryFragmentComponent
 
+    private var disposable: CompositeDisposable? = null
+
+    private var listener: OnFragmentInteractionListener? = null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -52,7 +66,7 @@ class NewEntryFragment : BaseFragment(),
         } else {
             EntryTypeFilter.ALL
         }
-        viewModel.entryTypeFilter = entryTypeFilter
+        viewModel.onCreate(entryTypeFilter)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -63,11 +77,17 @@ class NewEntryFragment : BaseFragment(),
         val adapter = EntryListAdapter(context, component, viewModel.entryList)
         binding.listView.adapter = adapter
 
+        viewModel.onCreateView(SnackbarFactory(binding.root))
+
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+        disposable = CompositeDisposable()
+        disposable?.addAll(viewModel.updateFilterEvent.subscribe {
+            listener?.onUpdateFilter(pageIndex)
+        })
         viewModel.onStart()
     }
 
@@ -84,6 +104,18 @@ class NewEntryFragment : BaseFragment(),
     override fun onStop() {
         super.onStop()
         viewModel.onStop()
+        disposable?.dispose()
+        disposable = null
+    }
+
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -111,6 +143,10 @@ class NewEntryFragment : BaseFragment(),
         component = (activity as HasComponent<Injector>).getComponent()
                 .plus(NewEntryFragmentModule())
         component.inject(this)
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onUpdateFilter(pageIndex: Int)
     }
 
     interface Injector {

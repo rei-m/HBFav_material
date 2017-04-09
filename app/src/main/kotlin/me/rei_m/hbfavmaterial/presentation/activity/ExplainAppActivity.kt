@@ -4,20 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.HasComponent
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.extension.subscribeBus
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
 import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityComponent
 import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityModule
-import me.rei_m.hbfavmaterial.presentation.event.FinishActivityEvent
-import me.rei_m.hbfavmaterial.presentation.event.RxBus
 import me.rei_m.hbfavmaterial.presentation.fragment.ExplainAppFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
-import javax.inject.Inject
 
 /**
  * アプリについての情報を表示するActivity.
@@ -28,12 +23,7 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         fun createIntent(context: Context): Intent = Intent(context, ExplainAppActivity::class.java)
     }
 
-    @Inject
-    lateinit var rxBus: RxBus
-
     private var component: ExplainAppActivityComponent? = null
-
-    private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,24 +33,6 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         if (savedInstanceState == null) {
             setFragment(ExplainAppFragment.newInstance())
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        disposable = CompositeDisposable()
-        disposable?.add(rxBus.toObservable().subscribeBus({
-            when (it) {
-                is FinishActivityEvent -> {
-                    finish()
-                }
-            }
-        }))
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onDestroy() {
@@ -88,7 +60,7 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
     override fun setUpActivityComponent() {
         component = createActivityComponent()
     }
-    
+
     override fun getComponent(): ExplainAppActivityComponent = component ?: let {
         val component = createActivityComponent()
         this@ExplainAppActivity.component = component
