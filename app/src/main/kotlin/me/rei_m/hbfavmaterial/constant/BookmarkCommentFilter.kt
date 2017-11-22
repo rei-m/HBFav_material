@@ -1,12 +1,14 @@
 package me.rei_m.hbfavmaterial.constant
 
+import android.support.annotation.IdRes
+import android.support.annotation.StringRes
 import me.rei_m.hbfavmaterial.R
 
 /**
  * ブックマークのフィルタ.
  */
-enum class BookmarkCommentFilter(override val menuId: Int,
-                                 override val titleResId: Int) : FilterItem {
+enum class BookmarkCommentFilter(@IdRes override val menuId: Int,
+                                 @StringRes override val titleResId: Int) : FilterItem {
     ALL(
             R.id.fragment_bookmarked_users_menu_filter_users_all,
             R.string.filter_bookmark_users_all

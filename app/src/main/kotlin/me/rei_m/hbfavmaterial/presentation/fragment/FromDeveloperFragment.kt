@@ -20,7 +20,7 @@ class FromDeveloperFragment : BaseFragment() {
 
         val view = inflater.inflate(R.layout.fragment_from_developer, container, false)
 
-        with(view.findViewById(R.id.fragment_from_developer_web_view)) {
+        with(view.findViewById<View>(R.id.fragment_from_developer_web_view)) {
             this as WebView
             loadUrl(getString(R.string.url_from_developer))
         }

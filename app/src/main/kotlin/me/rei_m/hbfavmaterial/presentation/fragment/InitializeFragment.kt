@@ -41,7 +41,7 @@ class InitializeFragment : BaseFragment() {
         super.onStart()
         disposable = CompositeDisposable()
         disposable?.addAll(viewModel.completeSetUpEvent.subscribe {
-            activity.finish()
+            activity?.finish()
         })
         viewModel.onStart()
     }

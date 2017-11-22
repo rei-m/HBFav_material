@@ -56,7 +56,7 @@ class UserListAdapter(context: Context,
             binding = DataBindingUtil.getBinding(convertView)
         }
 
-        binding.viewModel.bookmarkUser.set(getItem(position))
+        binding.viewModel!!.bookmarkUser.set(getItem(position))
         binding.executePendingBindings()
 
         return binding.root

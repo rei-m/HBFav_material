@@ -43,12 +43,12 @@ class EditBookmarkDialogFragment : DialogFragment() {
 
     private var disposable: CompositeDisposable? = null
 
-    private val articleTitle: String by lazy {
-        arguments.getString(ARG_ARTICLE_TITLE)
+    private val articleTitle: String? by lazy {
+        arguments?.getString(ARG_ARTICLE_TITLE)
     }
 
-    private val articleUrl: String by lazy {
-        arguments.getString(ARG_ARTICLE_URL)
+    private val articleUrl: String? by lazy {
+        arguments?.getString(ARG_ARTICLE_URL)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -64,7 +64,7 @@ class EditBookmarkDialogFragment : DialogFragment() {
                 .plus(EditBookmarkDialogFragmentModule())
                 .inject(this)
 
-        viewModel.onCreate(articleTitle, articleUrl)
+        viewModel.onCreate(articleTitle!!, articleUrl!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

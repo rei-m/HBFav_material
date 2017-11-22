@@ -19,7 +19,7 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val TAG_READ_AFTER = "あとで読む"
     }
 
-    var bookmarkList: List<BookmarkEntity> = listOf()
+    private var bookmarkList: List<BookmarkEntity> = listOf()
         private set(value) {
             field = value
             bookmarkListUpdatedEventSubject.onNext(value)
@@ -31,7 +31,7 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
             hasNextPageUpdatedEventSubject.onNext(value)
         }
 
-    var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL
+    private var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL
         private set(value) {
             field = value
             readAfterFilterUpdatedEventSubject.onNext(value)

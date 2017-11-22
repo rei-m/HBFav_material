@@ -13,13 +13,13 @@ import org.jsoup.Jsoup
 
 class NewEntryModel(private val hatenaRssService: HatenaRssService) {
 
-    var entryList: List<EntryEntity> = listOf()
+    private var entryList: List<EntryEntity> = listOf()
         private set(value) {
             field = value
             entryListUpdatedEventSubject.onNext(value)
         }
 
-    var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+    private var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
         private set(value) {
             field = value
             entryTypeFilterUpdatedEventSubject.onNext(value)

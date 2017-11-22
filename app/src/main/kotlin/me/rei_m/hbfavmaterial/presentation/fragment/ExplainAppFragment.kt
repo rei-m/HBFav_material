@@ -28,24 +28,24 @@ class ExplainAppFragment : BaseFragment() {
 
         val view = inflater.inflate(R.layout.fragment_explain_app, container, false)
 
-        view.findViewById(R.id.fragment_explain_app_layout_review).setOnClickListener {
-            getAppContext().openUrl(getString(R.string.url_review))
+        view.findViewById<View>(R.id.fragment_explain_app_layout_review).setOnClickListener {
+            getAppContext()?.openUrl(getString(R.string.url_review))
         }
 
-        view.findViewById(R.id.fragment_explain_app_layout_opinion).setOnClickListener {
-            getAppContext().openUrl(getString(R.string.url_opinion))
+        view.findViewById<View>(R.id.fragment_explain_app_layout_opinion).setOnClickListener {
+            getAppContext()?.openUrl(getString(R.string.url_opinion))
         }
 
-        view.findViewById(R.id.fragment_explain_app_layout_from_developer).setOnClickListener {
+        view.findViewById<View>(R.id.fragment_explain_app_layout_from_developer).setOnClickListener {
             navigator.navigateToFromDeveloper()
         }
 
-        view.findViewById(R.id.fragment_explain_app_layout_credit).setOnClickListener {
+        view.findViewById<View>(R.id.fragment_explain_app_layout_credit).setOnClickListener {
             navigator.navigateToCredit()
         }
 
-        val versionName = getAppContext().packageManager.getPackageInfo(context.packageName, 0).versionName
-        with(view.findViewById(R.id.fragment_explain_app_text_version)) {
+        val versionName = getAppContext()?.packageManager?.getPackageInfo(context?.packageName, 0)?.versionName
+        with(view.findViewById<View>(R.id.fragment_explain_app_text_version)) {
             this as AppCompatTextView
             text = "${getString(R.string.text_version)} : $versionName"
         }

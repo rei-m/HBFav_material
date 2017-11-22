@@ -16,7 +16,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val BOOKMARK_COUNT_PER_PAGE = 25
     }
 
-    var bookmarkList: List<BookmarkEntity> = listOf()
+    private var bookmarkList: List<BookmarkEntity> = listOf()
         private set(value) {
             field = value
             bookmarkListUpdatedEventSubject.onNext(value)

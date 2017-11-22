@@ -40,7 +40,7 @@ class BookmarkFragment : BaseFragment(), MovableWithAnimation {
     private var listener: OnFragmentInteractionListener? = null
 
     private val bookmarkEntity: BookmarkEntity by lazy {
-        arguments.getSerializable(ARG_BOOKMARK) as BookmarkEntity
+        arguments?.getSerializable(ARG_BOOKMARK) as BookmarkEntity
     }
 
     override fun onAttach(context: Context?) {
@@ -97,7 +97,7 @@ class BookmarkFragment : BaseFragment(), MovableWithAnimation {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity)
+        val animator = createAnimatorMoveSlide(transit, enter, nextAnim, activity!!)
         return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 

@@ -39,7 +39,7 @@ class BookmarkedUsersFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val articleUrl: String by lazy { arguments.getString(ARG_ARTICLE_URL) }
+    private val articleUrl: String? by lazy { arguments?.getString(ARG_ARTICLE_URL) }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -58,15 +58,14 @@ class BookmarkedUsersFragment : BaseFragment() {
             BookmarkCommentFilter.ALL
         }
 
-        viewModel.onCreate(articleUrl, bookmarkCommentFilter)
+        viewModel.onCreate(articleUrl!!, bookmarkCommentFilter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentBookmarkedUsersBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = UserListAdapter(context, component, viewModel.bookmarkUserList)
+        val adapter = UserListAdapter(context!!, component, viewModel.bookmarkUserList)
         binding.listView.adapter = adapter
 
         viewModel.onCreateView(SnackbarFactory(binding.root))
@@ -127,9 +126,9 @@ class BookmarkedUsersFragment : BaseFragment() {
         return true
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(KEY_FILTER_TYPE, viewModel.bookmarkCommentFilter)
+        outState.putSerializable(KEY_FILTER_TYPE, viewModel.bookmarkCommentFilter)
     }
 
     @Suppress("UNCHECKED_CAST")

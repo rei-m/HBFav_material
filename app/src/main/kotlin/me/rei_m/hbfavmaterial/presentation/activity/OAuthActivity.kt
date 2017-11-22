@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.webkit.WebChromeClient
@@ -43,7 +44,7 @@ class OAuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity)
-        val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.activity_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -74,10 +75,10 @@ class OAuthActivity : BaseActivity() {
             })
         }
 
-        with(findViewById(R.id.content) as FrameLayout) {
+        with(findViewById<FrameLayout>(R.id.content)) {
             addView(webView)
         }
-        findViewById(R.id.fab)?.hide()
+        findViewById<FloatingActionButton>(R.id.fab)?.hide()
         this.webView = webView
     }
 

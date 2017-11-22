@@ -15,13 +15,13 @@ import org.jsoup.Jsoup
 class HotEntryModel(private val hatenaRssService: HatenaRssService,
                     private val hotEntryRssService: HatenaHotEntryRssService) {
 
-    var entryList: List<EntryEntity> = listOf()
+    private var entryList: List<EntryEntity> = listOf()
         private set(value) {
             field = value
             entryListUpdatedEventSubject.onNext(value)
         }
 
-    var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
+    private var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
         private set(value) {
             field = value
             entryTypeFilterUpdatedEventSubject.onNext(value)

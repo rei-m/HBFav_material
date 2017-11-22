@@ -37,10 +37,10 @@ class HotEntryFragment : BaseFragment(),
     }
 
     override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
+        get() = arguments!!.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext(), viewModel.entryTypeFilter.title(getAppContext()))
+        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext()!!, viewModel.entryTypeFilter.title(getAppContext()!!))
 
     @Inject
     lateinit var viewModel: HotEntryFragmentViewModel
@@ -69,12 +69,11 @@ class HotEntryFragment : BaseFragment(),
         viewModel.onCreate(entryTypeFilter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentHotEntryBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = EntryListAdapter(context, component, viewModel.entryList)
+        val adapter = EntryListAdapter(context!!, component, viewModel.entryList)
         binding.listView.adapter = adapter
 
         viewModel.onCreateView(SnackbarFactory(binding.root))
@@ -133,9 +132,9 @@ class HotEntryFragment : BaseFragment(),
         return true
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(KEY_FILTER_TYPE, viewModel.entryTypeFilter)
+        outState.putSerializable(KEY_FILTER_TYPE, viewModel.entryTypeFilter)
     }
 
     @Suppress("UNCHECKED_CAST")

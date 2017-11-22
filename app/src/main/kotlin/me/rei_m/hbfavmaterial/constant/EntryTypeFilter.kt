@@ -1,12 +1,14 @@
 package me.rei_m.hbfavmaterial.constant
 
+import android.support.annotation.IdRes
+import android.support.annotation.StringRes
 import me.rei_m.hbfavmaterial.R
 
 /**
  * エントリーの種類.
  */
-enum class EntryTypeFilter(override val menuId: Int,
-                           override val titleResId: Int) : FilterItem {
+enum class EntryTypeFilter(@IdRes override val menuId: Int,
+                           @StringRes override val titleResId: Int) : FilterItem {
     ALL(
             R.id.fragment_entry_menu_category_all,
             R.string.category_title_all

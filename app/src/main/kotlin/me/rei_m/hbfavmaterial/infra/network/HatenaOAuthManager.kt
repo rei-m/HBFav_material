@@ -56,8 +56,8 @@ class HatenaOAuthManager(private val consumerKey: String,
             return null
         }
 
-        var oauthToken: String = ""
-        var oauthTokenSecret: String = ""
+        var oauthToken = ""
+        var oauthTokenSecret = ""
 
         response.body().string().split("&").forEach {
             val param = it.split("=")

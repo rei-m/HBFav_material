@@ -29,11 +29,11 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
 
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
-        setSupportActionBar(binding.appBar.toolbar)
+        setSupportActionBar(binding.appBar?.toolbar)
 
         val toggle = ActionBarDrawerToggle(this,
                 binding.drawer,
-                binding.appBar.toolbar,
+                binding.appBar?.toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
 

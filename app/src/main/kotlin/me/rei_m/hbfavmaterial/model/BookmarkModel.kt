@@ -11,13 +11,13 @@ import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 
 class BookmarkModel(private val hatenaApiService: HatenaApiService) {
 
-    var userList: List<BookmarkUserEntity> = listOf()
+    private var userList: List<BookmarkUserEntity> = listOf()
         private set(value) {
             field = value
             userListUpdatedEventSubject.onNext(value)
         }
 
-    var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
+    private var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
         private set(value) {
             field = value
             bookmarkCommentFilterUpdatedEventSubject.onNext(value)

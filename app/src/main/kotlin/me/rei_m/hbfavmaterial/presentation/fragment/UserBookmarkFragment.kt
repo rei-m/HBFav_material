@@ -61,10 +61,10 @@ class UserBookmarkFragment : BaseFragment(),
     }
 
     override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
+        get() = arguments!!.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext(), viewModel.readAfterFilter.title(getAppContext()))
+        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext()!!, viewModel.readAfterFilter.title(getAppContext()!!))
 
     @Inject
     lateinit var viewModel: UserBookmarkFragmentViewModel
@@ -80,7 +80,7 @@ class UserBookmarkFragment : BaseFragment(),
     private var listener: OnFragmentInteractionListener? = null
 
     private val isOwner: Boolean by lazy {
-        arguments.getBoolean(ARG_OWNER_FLAG)
+        arguments!!.getBoolean(ARG_OWNER_FLAG)
     }
 
     override fun onAttach(context: Context?) {
@@ -94,7 +94,7 @@ class UserBookmarkFragment : BaseFragment(),
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        val userId = arguments.getString(ARG_USER_ID) ?: ""
+        val userId = arguments!!.getString(ARG_USER_ID) ?: ""
 
         require(isOwner || (!isOwner && userId.isNotEmpty())) {
             "UserId is empty !!"
@@ -109,12 +109,11 @@ class UserBookmarkFragment : BaseFragment(),
         viewModel.onCreate(isOwner, userId, readAfterFilter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentUserBookmarkBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = BookmarkListAdapter(context, component, viewModel.bookmarkList)
+        val adapter = BookmarkListAdapter(context!!, component, viewModel.bookmarkList)
         binding.listView.adapter = adapter
 
         // ここイマイチすぎる。。。RecyclerViewに書き換えつつ綺麗にしたい.
@@ -185,9 +184,9 @@ class UserBookmarkFragment : BaseFragment(),
         return true
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(KEY_FILTER_TYPE, viewModel.readAfterFilter)
+        outState.putSerializable(KEY_FILTER_TYPE, viewModel.readAfterFilter)
     }
 
     @Suppress("UNCHECKED_CAST")

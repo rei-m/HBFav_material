@@ -35,10 +35,10 @@ class FavoriteBookmarkFragment : BaseFragment(),
     }
 
     override val pageIndex: Int
-        get() = arguments.getInt(ARG_PAGE_INDEX)
+        get() = arguments!!.getInt(ARG_PAGE_INDEX)
 
     override val pageTitle: String
-        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext(), "")
+        get() = BookmarkPagerAdapter.Page.values()[pageIndex].title(getAppContext()!!, "")
 
     @Inject
     lateinit var viewModel: FavoriteBookmarkFragmentViewModel
@@ -51,12 +51,11 @@ class FavoriteBookmarkFragment : BaseFragment(),
 
     private var footerView: View? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentFavoriteBookmarkBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = BookmarkListAdapter(context, component, viewModel.bookmarkList)
+        val adapter = BookmarkListAdapter(context!!, component, viewModel.bookmarkList)
         binding.listView.adapter = adapter
 
         footerView = View.inflate(binding.listView.context, R.layout.list_fotter_loading, null)

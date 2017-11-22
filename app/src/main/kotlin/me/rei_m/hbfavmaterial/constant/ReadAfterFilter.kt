@@ -1,12 +1,14 @@
 package me.rei_m.hbfavmaterial.constant
 
+import android.support.annotation.IdRes
+import android.support.annotation.StringRes
 import me.rei_m.hbfavmaterial.R
 
 /**
  * 後で見るのフィルタ.
  */
-enum class ReadAfterFilter(override val menuId: Int,
-                           override val titleResId: Int) : FilterItem {
+enum class ReadAfterFilter(@IdRes override val menuId: Int,
+                           @StringRes override val titleResId: Int) : FilterItem {
     ALL(
             R.id.fragment_bookmark_user_menu_filter_bookmark_all,
             R.string.filter_bookmark_users_all

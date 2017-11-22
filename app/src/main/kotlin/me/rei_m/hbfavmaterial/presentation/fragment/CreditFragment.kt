@@ -20,7 +20,7 @@ class CreditFragment : BaseFragment() {
 
         val view = inflater.inflate(R.layout.fragment_licence, container, false)
 
-        with(view.findViewById(R.id.fragment_licence_web_view) as WebView) {
+        with(view.findViewById<WebView>(R.id.fragment_licence_web_view)) {
             loadUrl(getString(R.string.url_credit))
         }
 
