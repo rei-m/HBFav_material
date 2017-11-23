@@ -4,23 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.FragmentFavoriteBookmarkBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFavoriteFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.FavoriteBookmarkFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.FavoriteBookmarkFragmentViewModelModule
+import me.rei_m.hbfavmaterial.viewmodel.widget.di.BookmarkListItemViewModelModule
 import javax.inject.Inject
 
 /**
  * お気に入りのブックマークを一覧で表示するFragment.
  */
-class FavoriteBookmarkFragment : BaseFragment(),
+class FavoriteBookmarkFragment : DaggerFragment(),
         MainPageFragment {
 
     companion object {
@@ -43,7 +45,8 @@ class FavoriteBookmarkFragment : BaseFragment(),
     @Inject
     lateinit var viewModel: FavoriteBookmarkFragmentViewModel
 
-    private lateinit var component: BookmarkFavoriteFragmentComponent
+    @Inject
+    lateinit var injector: BookmarkListAdapter.Injector
 
     private var binding: FragmentFavoriteBookmarkBinding? = null
 
@@ -55,7 +58,7 @@ class FavoriteBookmarkFragment : BaseFragment(),
         val binding = FragmentFavoriteBookmarkBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = BookmarkListAdapter(context!!, component, viewModel.bookmarkList)
+        val adapter = BookmarkListAdapter(context!!, injector, viewModel.bookmarkList)
         binding.listView.adapter = adapter
 
         footerView = View.inflate(binding.listView.context, R.layout.list_fotter_loading, null)
@@ -101,14 +104,13 @@ class FavoriteBookmarkFragment : BaseFragment(),
         super.onDestroyView()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkFavoriteFragmentModule())
-        component.inject(this)
-    }
-
-    interface Injector {
-        fun plus(fragmentModule: BookmarkFavoriteFragmentModule?): BookmarkFavoriteFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(
+                FavoriteBookmarkFragmentViewModelModule::class,
+                BookmarkListItemViewModelModule::class)
+        )
+        internal abstract fun contributeInjector(): FavoriteBookmarkFragment
     }
 }

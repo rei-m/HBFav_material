@@ -5,8 +5,10 @@ import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.getAppContext
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
@@ -15,7 +17,7 @@ import javax.inject.Inject
 /**
  * このアプリについてを表示するFragment.
  */
-class ExplainAppFragment : BaseFragment() {
+class ExplainAppFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = ExplainAppFragment()
@@ -53,13 +55,10 @@ class ExplainAppFragment : BaseFragment() {
         return view
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        (activity as HasComponent<Injector>).getComponent()
-                .inject(this)
-    }
-
-    interface Injector {
-        fun inject(fragment: ExplainAppFragment): ExplainAppFragment
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector
+        internal abstract fun contributeInjector(): ExplainAppFragment
     }
 }

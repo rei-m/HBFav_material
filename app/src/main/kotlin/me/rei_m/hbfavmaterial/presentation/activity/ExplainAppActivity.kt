@@ -1,29 +1,30 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import me.rei_m.hbfavmaterial.App
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityComponent
-import me.rei_m.hbfavmaterial.presentation.activity.di.ExplainAppActivityModule
 import me.rei_m.hbfavmaterial.presentation.fragment.ExplainAppFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 
 /**
  * アプリについての情報を表示するActivity.
  */
-class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivityComponent> {
+class ExplainAppActivity : BaseDrawerActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent = Intent(context, ExplainAppActivity::class.java)
     }
-
-    private var component: ExplainAppActivityComponent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +34,6 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         if (savedInstanceState == null) {
             setFragment(ExplainAppFragment.newInstance())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -57,20 +53,29 @@ class ExplainAppActivity : BaseDrawerActivity(), HasComponent<ExplainAppActivity
         return super.onNavigationItemSelected(item)
     }
 
-    override fun setUpActivityComponent() {
-        component = createActivityComponent()
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(
+            ActivityModule::class,
+            BaseDrawerActivityViewModelModule::class,
+            ExplainAppFragment.Module::class)
+    )
+    interface Subcomponent : AndroidInjector<ExplainAppActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<ExplainAppActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: ExplainAppActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
     }
 
-    override fun getComponent(): ExplainAppActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@ExplainAppActivity.component = component
-        return@let component
-    }
-
-    private fun createActivityComponent(): ExplainAppActivityComponent {
-        val component = (application as App).component
-                .plus(ExplainAppActivityModule(), ActivityModule(this))
-        component.inject(this)
-        return component
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(ExplainAppActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

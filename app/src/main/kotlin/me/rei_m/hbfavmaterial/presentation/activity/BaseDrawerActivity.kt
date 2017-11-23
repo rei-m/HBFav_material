@@ -6,16 +6,18 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
+import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
 import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import javax.inject.Inject
 
+
 /**
  * Drawer付きActivityの基底クラス.
  */
-abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+abstract class BaseDrawerActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModel: BaseDrawerActivityViewModel

@@ -3,21 +3,24 @@ package me.rei_m.hbfavmaterial.presentation.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkedUsersBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkedUsersFragmentModule
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.UserListAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkedUsersFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.BookmarkedUsersFragmentViewModelModule
+import me.rei_m.hbfavmaterial.viewmodel.widget.di.UserListItemViewModelModule
 import javax.inject.Inject
+
 
 /**
  * 対象の記事をブックマークしているユーザの一覧を表示するFragment.
  */
-class BookmarkedUsersFragment : BaseFragment() {
+class BookmarkedUsersFragment : DaggerFragment() {
 
     companion object {
 
@@ -35,7 +38,8 @@ class BookmarkedUsersFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: BookmarkedUsersFragmentViewModel
 
-    private lateinit var component: BookmarkedUsersFragmentComponent
+    @Inject
+    lateinit var injector: UserListAdapter.Injector
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -65,7 +69,7 @@ class BookmarkedUsersFragment : BaseFragment() {
         val binding = FragmentBookmarkedUsersBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = UserListAdapter(context!!, component, viewModel.bookmarkUserList)
+        val adapter = UserListAdapter(context!!, injector, viewModel.bookmarkUserList)
         binding.listView.adapter = adapter
 
         viewModel.onCreateView(SnackbarFactory(binding.root))
@@ -131,18 +135,17 @@ class BookmarkedUsersFragment : BaseFragment() {
         outState.putSerializable(KEY_FILTER_TYPE, viewModel.bookmarkCommentFilter)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkedUsersFragmentModule())
-        component.inject(this)
-    }
-
     interface OnFragmentInteractionListener {
         fun onChangeFilter(bookmarkCommentFilter: BookmarkCommentFilter)
     }
 
-    interface Injector {
-        fun plus(fragmentModule: BookmarkedUsersFragmentModule?): BookmarkedUsersFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(
+                BookmarkedUsersFragmentViewModelModule::class,
+                UserListItemViewModelModule::class)
+        )
+        internal abstract fun contributeInjector(): BookmarkedUsersFragment
     }
 }

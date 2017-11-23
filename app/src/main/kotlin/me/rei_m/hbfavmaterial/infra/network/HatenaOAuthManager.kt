@@ -39,7 +39,7 @@ class HatenaOAuthManager(private val consumerKey: String,
             consumer.setAdditionalParameters(it)
         }
 
-        val authorizeUrl = HttpUrl.parse(REQUEST_TOKEN_ENDPOINT_URL)
+        val authorizeUrl = HttpUrl.parse(REQUEST_TOKEN_ENDPOINT_URL)!!
                 .newBuilder()
                 .addQueryParameter("scope", "read_public,write_public")
                 .build()
@@ -59,7 +59,7 @@ class HatenaOAuthManager(private val consumerKey: String,
         var oauthToken = ""
         var oauthTokenSecret = ""
 
-        response.body().string().split("&").forEach {
+        response.body()!!.string().split("&").forEach {
             val param = it.split("=")
             when (param[0]) {
                 OAuth.OAUTH_TOKEN -> oauthToken = Uri.decode(param[1])
@@ -73,7 +73,7 @@ class HatenaOAuthManager(private val consumerKey: String,
 
         consumer.setTokenWithSecret(oauthToken, oauthTokenSecret)
 
-        return HttpUrl.parse(AUTHORIZATION_WEBSITE_URL)
+        return HttpUrl.parse(AUTHORIZATION_WEBSITE_URL)!!
                 .newBuilder()
                 .addQueryParameter(OAuth.OAUTH_TOKEN, oauthToken)
                 .build().toString()
@@ -96,7 +96,7 @@ class HatenaOAuthManager(private val consumerKey: String,
             consumer.setAdditionalParameters(it)
         }
 
-        val authorizeUrl = HttpUrl.parse(ACCESS_TOKEN_ENDPOINT_URL)
+        val authorizeUrl = HttpUrl.parse(ACCESS_TOKEN_ENDPOINT_URL)!!
                 .newBuilder()
                 .build()
 
@@ -113,7 +113,7 @@ class HatenaOAuthManager(private val consumerKey: String,
             return false
         }
 
-        response.body().string().split("&").forEach {
+        response.body()!!.string().split("&").forEach {
             val param = it.split("=")
             when (param[0]) {
                 OAuth.OAUTH_TOKEN -> oauthToken = Uri.decode(param[1])

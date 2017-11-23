@@ -1,10 +1,12 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import me.rei_m.hbfavmaterial.R
@@ -12,7 +14,7 @@ import me.rei_m.hbfavmaterial.R
 /**
  * 記事のコンテンツをWebViewに表示するFragment.
  */
-class EntryWebViewFragment : BaseFragment() {
+class EntryWebViewFragment : Fragment() {
 
     companion object {
 
@@ -46,19 +48,15 @@ class EntryWebViewFragment : BaseFragment() {
                 setGeolocationEnabled(true)
                 setSupportMultipleWindows(true)
             }
-            setWebChromeClient(WebChromeClient())
-            setWebViewClient(object : WebViewClient() {
-                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-            })
+            webChromeClient = WebChromeClient()
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
+                        super.shouldOverrideUrlLoading(view, request)
+            }
             loadUrl(entryUrl)
         }
 
         return view
-    }
-
-    override fun setupFragmentComponent() {
     }
 
     /**

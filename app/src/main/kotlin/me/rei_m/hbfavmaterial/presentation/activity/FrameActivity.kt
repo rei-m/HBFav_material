@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
@@ -12,7 +13,7 @@ import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.CreditFragment
 import me.rei_m.hbfavmaterial.presentation.fragment.FromDeveloperFragment
 
-class FrameActivity : BaseActivity() {
+class FrameActivity : AppCompatActivity() {
 
     companion object {
 
@@ -53,9 +54,6 @@ class FrameActivity : BaseActivity() {
         }
 
         return true
-    }
-
-    override fun setUpActivityComponent() {
     }
 
     enum class Tag {

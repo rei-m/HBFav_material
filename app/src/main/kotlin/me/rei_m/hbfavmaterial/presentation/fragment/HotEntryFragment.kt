@@ -3,24 +3,26 @@ package me.rei_m.hbfavmaterial.presentation.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentHotEntryBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.presentation.fragment.di.HotEntryFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.HotEntryFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.EntryListAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.HotEntryFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.HotEntryFragmentViewModelModule
+import me.rei_m.hbfavmaterial.viewmodel.widget.di.EntryListItemViewModelModule
 import javax.inject.Inject
 
 /**
  * HotEntryを一覧で表示するFragment.
  */
-class HotEntryFragment : BaseFragment(),
+class HotEntryFragment : DaggerFragment(),
         MainPageFragment {
 
     companion object {
@@ -45,7 +47,8 @@ class HotEntryFragment : BaseFragment(),
     @Inject
     lateinit var viewModel: HotEntryFragmentViewModel
 
-    private lateinit var component: HotEntryFragmentComponent
+    @Inject
+    lateinit var injector: EntryListAdapter.Injector
 
     private var disposable: CompositeDisposable? = null
 
@@ -73,7 +76,7 @@ class HotEntryFragment : BaseFragment(),
         val binding = FragmentHotEntryBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = EntryListAdapter(context!!, component, viewModel.entryList)
+        val adapter = EntryListAdapter(context!!, injector, viewModel.entryList)
         binding.listView.adapter = adapter
 
         viewModel.onCreateView(SnackbarFactory(binding.root))
@@ -137,18 +140,17 @@ class HotEntryFragment : BaseFragment(),
         outState.putSerializable(KEY_FILTER_TYPE, viewModel.entryTypeFilter)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        component = (activity as HasComponent<Injector>).getComponent()
-                .plus(HotEntryFragmentModule())
-        component.inject(this)
-    }
-
     interface OnFragmentInteractionListener {
         fun onUpdateFilter(pageIndex: Int)
     }
 
-    interface Injector {
-        fun plus(fragmentModule: HotEntryFragmentModule?): HotEntryFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(
+                HotEntryFragmentViewModelModule::class,
+                EntryListItemViewModelModule::class)
+        )
+        internal abstract fun contributeInjector(): HotEntryFragment
     }
 }

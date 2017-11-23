@@ -1,20 +1,22 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditBookmarkBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
-import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.EditBookmarkDialogFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.EditBookmarkDialogFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.EditBookmarkDialogFragmentViewModelModule
 import javax.inject.Inject
 
 class EditBookmarkDialogFragment : DialogFragment() {
@@ -57,13 +59,14 @@ class EditBookmarkDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as HasComponent<Injector>).getComponent()
-                .plus(EditBookmarkDialogFragmentModule())
-                .inject(this)
-
         viewModel.onCreate(articleTitle!!, articleUrl!!)
     }
 
@@ -114,7 +117,10 @@ class EditBookmarkDialogFragment : DialogFragment() {
         adjustScreenWidth()
     }
 
-    interface Injector {
-        fun plus(fragmentModule: EditBookmarkDialogFragmentModule?): EditBookmarkDialogFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(EditBookmarkDialogFragmentViewModelModule::class))
+        internal abstract fun contributeInjector(): EditBookmarkDialogFragment
     }
 }

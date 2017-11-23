@@ -6,16 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.FragmentBookmarkBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkFragmentModule
 import me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.BookmarkFragmentViewModelModule
 import javax.inject.Inject
 
-class BookmarkFragment : BaseFragment(), MovableWithAnimation {
+class BookmarkFragment : DaggerFragment(), MovableWithAnimation {
 
     companion object {
 
@@ -32,8 +33,6 @@ class BookmarkFragment : BaseFragment(), MovableWithAnimation {
 
     @Inject
     lateinit var viewModel: BookmarkFragmentViewModel
-
-    private lateinit var component: BookmarkFragmentComponent
 
     private var disposable: CompositeDisposable? = null
 
@@ -101,18 +100,14 @@ class BookmarkFragment : BaseFragment(), MovableWithAnimation {
         return animator ?: super.onCreateAnimation(transit, enter, nextAnim)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkFragmentModule())
-        component.inject(this)
-    }
-
     interface OnFragmentInteractionListener {
         fun onShowArticle(url: String)
     }
 
-    interface Injector {
-        fun plus(fragmentModule: BookmarkFragmentModule?): BookmarkFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(BookmarkFragmentViewModelModule::class))
+        internal abstract fun contributeInjector(): BookmarkFragment
     }
 }

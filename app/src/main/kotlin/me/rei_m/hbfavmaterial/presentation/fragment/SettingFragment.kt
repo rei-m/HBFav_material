@@ -7,21 +7,22 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.FragmentSettingBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.presentation.activity.OAuthActivity
-import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.SettingFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.SettingFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.SettingFragmentViewModelModule
 import javax.inject.Inject
 
 /**
  * ユーザーの設定を行うFragment.
  */
-class SettingFragment : BaseFragment() {
+class SettingFragment : DaggerFragment() {
 
     companion object {
 
@@ -108,20 +109,16 @@ class SettingFragment : BaseFragment() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        (activity as HasComponent<Injector>).getComponent()
-                .plus(SettingFragmentModule())
-                .inject(this)
-    }
-
     interface OnFragmentInteractionListener {
         fun onShowEditHatenaIdDialog()
 
         fun onStartAuthoriseTwitter()
     }
 
-    interface Injector {
-        fun plus(fragmentModule: SettingFragmentModule?): SettingFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(SettingFragmentViewModelModule::class))
+        internal abstract fun contributeInjector(): SettingFragment
     }
 }

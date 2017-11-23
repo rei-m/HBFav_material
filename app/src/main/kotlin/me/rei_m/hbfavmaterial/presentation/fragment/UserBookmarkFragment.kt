@@ -3,24 +3,26 @@ package me.rei_m.hbfavmaterial.presentation.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.databinding.FragmentUserBookmarkBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.getAppContext
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkUserFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.BookmarkUserFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkListAdapter
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.viewmodel.fragment.UserBookmarkFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.UserBookmarkFragmentViewModelModule
+import me.rei_m.hbfavmaterial.viewmodel.widget.di.BookmarkListItemViewModelModule
 import javax.inject.Inject
 
 /**
  * 特定のユーザーのブックマークを一覧で表示するFragment.
  */
-class UserBookmarkFragment : BaseFragment(),
+class UserBookmarkFragment : DaggerFragment(),
         MainPageFragment {
 
     companion object {
@@ -69,7 +71,8 @@ class UserBookmarkFragment : BaseFragment(),
     @Inject
     lateinit var viewModel: UserBookmarkFragmentViewModel
 
-    private lateinit var component: BookmarkUserFragmentComponent
+    @Inject
+    lateinit var injector: BookmarkListAdapter.Injector
 
     private var binding: FragmentUserBookmarkBinding? = null
 
@@ -113,7 +116,7 @@ class UserBookmarkFragment : BaseFragment(),
         val binding = FragmentUserBookmarkBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        val adapter = BookmarkListAdapter(context!!, component, viewModel.bookmarkList)
+        val adapter = BookmarkListAdapter(context!!, injector, viewModel.bookmarkList)
         binding.listView.adapter = adapter
 
         // ここイマイチすぎる。。。RecyclerViewに書き換えつつ綺麗にしたい.
@@ -189,18 +192,16 @@ class UserBookmarkFragment : BaseFragment(),
         outState.putSerializable(KEY_FILTER_TYPE, viewModel.readAfterFilter)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        component = (activity as HasComponent<Injector>).getComponent()
-                .plus(BookmarkUserFragmentModule())
-        component.inject(this)
-    }
-
     interface OnFragmentInteractionListener {
         fun onUpdateFilter(pageIndex: Int)
     }
 
-    interface Injector {
-        fun plus(fragmentModule: BookmarkUserFragmentModule?): BookmarkUserFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(
+                UserBookmarkFragmentViewModelModule::class,
+                BookmarkListItemViewModelModule::class))
+        internal abstract fun contributeInjector(): UserBookmarkFragment
     }
 }

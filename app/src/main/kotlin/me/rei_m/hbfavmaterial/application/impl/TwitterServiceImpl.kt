@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
 import io.reactivex.Observable
@@ -41,7 +40,7 @@ class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterSe
 
         if (twitterSession.oAuthToken.isAuthorised) {
             val token = TwitterAuthToken(twitterSession.oAuthToken.token, twitterSession.oAuthToken.secretToken)
-            Twitter.getSessionManager().activeSession = TwitterSession(token, twitterSession.userId, twitterSession.userName)
+            TwitterCore.getInstance().sessionManager.activeSession = TwitterSession(token, twitterSession.userId, twitterSession.userName)
         }
         this.twitterSession = twitterSession
     }
@@ -82,7 +81,7 @@ class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterSe
 
         val text = createShareText(articleUrl, articleTitle, comment)
 
-        Twitter.getApiClient().statusesService.update(text,
+        TwitterCore.getInstance().apiClient.statusesService.update(text,
                 null,
                 null,
                 null,

@@ -1,20 +1,22 @@
 package me.rei_m.hbfavmaterial.presentation.fragment
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.DialogFragmentEditUserIdBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.extension.adjustScreenWidth
-import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.EditUserIdDialogFragmentModule
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.EditUserIdDialogFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.EditUserIdDialogFragmentViewModelModule
 import javax.inject.Inject
 
 class EditUserIdDialogFragment : DialogFragment() {
@@ -39,12 +41,9 @@ class EditUserIdDialogFragment : DialogFragment() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (activity as HasComponent<Injector>).getComponent()
-                .plus(EditUserIdDialogFragmentModule())
-                .inject(this)
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -95,7 +94,10 @@ class EditUserIdDialogFragment : DialogFragment() {
         adjustScreenWidth()
     }
 
-    interface Injector {
-        fun plus(fragmentModule: EditUserIdDialogFragmentModule?): EditUserIdDialogFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(EditUserIdDialogFragmentViewModelModule::class))
+        internal abstract fun contributeInjector(): EditUserIdDialogFragment
     }
 }

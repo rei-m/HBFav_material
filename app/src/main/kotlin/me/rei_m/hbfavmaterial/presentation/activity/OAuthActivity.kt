@@ -1,5 +1,6 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,18 +13,22 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
+import dagger.multibindings.IntoMap
 import io.reactivex.disposables.CompositeDisposable
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.OAuthActivityModule
 import javax.inject.Inject
 
-class OAuthActivity : BaseActivity() {
+class OAuthActivity : DaggerAppCompatActivity() {
 
     companion object {
 
@@ -131,12 +136,6 @@ class OAuthActivity : BaseActivity() {
         return true
     }
 
-    override fun setUpActivityComponent() {
-        val component = (application as App).component
-                .plus(OAuthActivityModule(), ActivityModule(this))
-        component.inject(this)
-    }
-
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
         val intent = Intent().apply {
             putExtras(Bundle().apply {
@@ -146,5 +145,27 @@ class OAuthActivity : BaseActivity() {
         }
         // TODO: 認証してなかったらキャンセルにする.
         setResult(RESULT_OK, intent)
+    }
+
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(ActivityModule::class))
+    interface Subcomponent : AndroidInjector<OAuthActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<OAuthActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: OAuthActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
+    }
+
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(OAuthActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

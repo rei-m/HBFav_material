@@ -19,9 +19,7 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun provideContext(): Context {
-        return application
-    }
+    fun provideContext(): Context = application.applicationContext
 
     @Provides
     @Singleton
@@ -33,14 +31,12 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun provideTwitterService(): TwitterService {
-        return TwitterServiceImpl(application.getSharedPreferences("TwitterModel", Context.MODE_PRIVATE))
-    }
+    fun provideTwitterService(): TwitterService =
+            TwitterServiceImpl(application.getSharedPreferences("TwitterModel", Context.MODE_PRIVATE))
 
     @Provides
     @Singleton
     fun provideHatenaService(hatenaOAuthManager: HatenaOAuthManager,
-                             signedRetrofitFactory: SignedRetrofitFactory): HatenaService {
-        return HatenaServiceImpl(application.getSharedPreferences("HatenaModel", Context.MODE_PRIVATE), hatenaOAuthManager, signedRetrofitFactory)
-    }
+                             signedRetrofitFactory: SignedRetrofitFactory): HatenaService =
+            HatenaServiceImpl(application.getSharedPreferences("HatenaModel", Context.MODE_PRIVATE), hatenaOAuthManager, signedRetrofitFactory)
 }

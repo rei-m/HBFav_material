@@ -4,19 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.ContributesAndroidInjector
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import me.rei_m.hbfavmaterial.databinding.FragmentInitializeBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.InitializeFragmentComponent
-import me.rei_m.hbfavmaterial.presentation.fragment.di.InitializeFragmentModule
+import me.rei_m.hbfavmaterial.di.ForFragment
 import me.rei_m.hbfavmaterial.presentation.helper.SnackbarFactory
 import me.rei_m.hbfavmaterial.viewmodel.fragment.InitializeFragmentViewModel
+import me.rei_m.hbfavmaterial.viewmodel.fragment.di.InitializeFragmentViewModelModule
 import javax.inject.Inject
 
 /**
  * アプリの初期処理を行うFragment.
  */
-class InitializeFragment : BaseFragment() {
+class InitializeFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = InitializeFragment()
@@ -68,14 +69,10 @@ class InitializeFragment : BaseFragment() {
         super.onDestroyView()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun setupFragmentComponent() {
-        (activity as HasComponent<Injector>).getComponent()
-                .plus(InitializeFragmentModule())
-                .inject(this)
-    }
-
-    interface Injector {
-        fun plus(fragmentModule: InitializeFragmentModule?): InitializeFragmentComponent
+    @dagger.Module
+    abstract inner class Module {
+        @ForFragment
+        @ContributesAndroidInjector(modules = arrayOf(InitializeFragmentViewModelModule::class))
+        internal abstract fun contributeInjector(): InitializeFragment
     }
 }
