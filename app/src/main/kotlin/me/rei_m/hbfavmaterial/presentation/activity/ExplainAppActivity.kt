@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,8 +14,9 @@ import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.ExplainAppFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.ExplainAppFragment
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 
 /**
@@ -41,17 +43,20 @@ class ExplainAppActivity : BaseDrawerActivity() {
 
         when (item.itemId) {
             R.id.nav_setting -> {
-                viewModel.onNavigationSettingSelected()
+                onNavigationSettingSelected()
             }
             R.id.nav_explain_app -> {
             }
             else -> {
-                viewModel.onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
+                onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
             }
         }
 
         return super.onNavigationItemSelected(item)
     }
+
+    override fun provideViewModel(): BaseDrawerActivityViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(BaseDrawerActivityViewModel::class.java)
 
     @ForActivity
     @dagger.Subcomponent(modules = arrayOf(

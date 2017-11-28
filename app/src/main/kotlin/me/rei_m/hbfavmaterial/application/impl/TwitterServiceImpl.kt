@@ -6,9 +6,11 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.identity.TwitterAuthClient
+import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import me.rei_m.hbfavmaterial.application.TwitterService
+import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.model.entity.OAuthTokenEntity
 import me.rei_m.hbfavmaterial.model.entity.TwitterSessionEntity
 
@@ -24,7 +26,7 @@ class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterSe
 
     private var twitterSession: TwitterSessionEntity
 
-    private val confirmAuthorisedEventSubject = PublishSubject.create<Boolean>()
+    private val confirmAuthorisedEventSubject = BehaviorSubject.create<Boolean>()
 
     override val confirmAuthorisedEvent: Observable<Boolean> = confirmAuthorisedEventSubject
 
@@ -78,9 +80,15 @@ class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterSe
     }
 
     override fun postTweet(articleUrl: String, articleTitle: String, comment: String) {
-
         val text = createShareText(articleUrl, articleTitle, comment)
+        Completable.create {
+            postTweet(text)
+        }.subscribeAsync({
 
+        })
+    }
+
+    private fun postTweet(text: String) {
         TwitterCore.getInstance().apiClient.statusesService.update(text,
                 null,
                 null,
@@ -90,6 +98,7 @@ class TwitterServiceImpl(private val preferences: SharedPreferences) : TwitterSe
                 null,
                 false,
                 null)
+                .execute()
     }
 
     private fun createShareText(url: String, title: String, comment: String): String {

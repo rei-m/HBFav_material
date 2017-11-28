@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkedUsersFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.fragment.BookmarkedUsersFragmentViewModel" />
     </data>
 
     <FrameLayout
@@ -40,6 +40,14 @@
             android:padding="@dimen/margin_outline"
             android:text="@string/message_text_empty_user"
             android:visibility="@{viewModel.isVisibleEmpty ? View.VISIBLE : View.GONE}" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/margin_outline"
+            android:text="@string/message_error_network"
+            android:visibility="@{viewModel.isVisibleError ? View.VISIBLE : View.GONE}" />
 
         <ProgressBar
             android:layout_width="wrap_content"

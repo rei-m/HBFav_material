@@ -13,7 +13,7 @@ import me.rei_m.hbfavmaterial.databinding.ActivitySplashBinding
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.InitializeFragment
 
 /**
  * 最初に起動するActivity.

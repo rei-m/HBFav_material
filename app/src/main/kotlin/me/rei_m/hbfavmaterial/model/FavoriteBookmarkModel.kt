@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.model
 
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
@@ -16,65 +17,64 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val BOOKMARK_COUNT_PER_PAGE = 25
     }
 
-    private var bookmarkList: List<BookmarkEntity> = listOf()
-        private set(value) {
-            field = value
-            bookmarkListUpdatedEventSubject.onNext(value)
-        }
+    private val isLoadingSubject = BehaviorSubject.create<Boolean>()
+    private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
+    private val bookmarkListSubject = BehaviorSubject.create<List<BookmarkEntity>>()
+    private val hasNextPageSubject = BehaviorSubject.create<Boolean>()
+    private val isRaisedErrorSubject = BehaviorSubject.create<Boolean>()
 
-    var hasNextPage: Boolean = false
-        private set(value) {
-            field = value
-            hasNextPageUpdatedEventSubject.onNext(value)
-        }
+    private val isRaisedGetNextPageErrorSubject = PublishSubject.create<Unit>()
+    private val isRaisedRefreshErrorSubject = PublishSubject.create<Unit>()
 
-    private val bookmarkListUpdatedEventSubject = PublishSubject.create<List<BookmarkEntity>>()
-    private val hasNextPageUpdatedEventSubject = PublishSubject.create<Boolean>()
-    private val errorSubject = PublishSubject.create<Unit>()
+    val isLoading: Observable<Boolean> = isLoadingSubject
+    val isRefreshing: Observable<Boolean> = isRefreshingSubject
+    val bookmarkList: Observable<List<BookmarkEntity>> = bookmarkListSubject
+    val hasNextPage: Observable<Boolean> = hasNextPageSubject
+    val isRaisedError: Observable<Boolean> = isRaisedErrorSubject
 
-    val bookmarkListUpdatedEvent: Observable<List<BookmarkEntity>> = bookmarkListUpdatedEventSubject
-    val hasNextPageUpdatedEvent: Observable<Boolean> = hasNextPageUpdatedEventSubject
-    val error: Observable<Unit> = errorSubject
+    val isRaisedGetNextPageError: Observable<Unit> = isRaisedGetNextPageErrorSubject
+    val isRaisedRefreshError: Observable<Unit> = isRaisedRefreshErrorSubject
 
-    private var isLoading: Boolean = false
+    private var isLoadingNextPage = false
 
-    private var userId: String = ""
+    init {
+        isLoadingSubject.onNext(false)
+        isRefreshingSubject.onNext(false)
+    }
 
     fun getList(userId: String) {
 
-        if (isLoading) {
+        if (isLoadingSubject.value) {
             return
         }
 
-        isLoading = true
+        bookmarkListSubject.onNext(listOf())
+
+        isLoadingSubject.onNext(true)
 
         hatenaRssService.favorite(userId, 0).map {
             parseResponse(it)
         }.subscribeAsync({
-            this.userId = userId
-            bookmarkList = it
-            hasNextPage = it.isNotEmpty()
+            bookmarkListSubject.onNext(it)
+            hasNextPageSubject.onNext(it.isNotEmpty())
+            isRaisedErrorSubject.onNext(false)
         }, {
-            errorSubject.onNext(Unit)
+            isRaisedErrorSubject.onNext(true)
         }, {
-            isLoading = false
+            isLoadingSubject.onNext(false)
         })
     }
 
-    fun getNextPage() {
+    fun getNextPage(userId: String) {
 
-        require(userId.isNotEmpty(), {
-            "Call getList before call getNextPage"
-        })
-
-        if (isLoading || !hasNextPage) {
+        if (isLoadingNextPage || !hasNextPageSubject.value) {
             return
         }
 
-        isLoading = true
+        isLoadingNextPage = true
 
-        val pageCnt = (bookmarkList.size / BOOKMARK_COUNT_PER_PAGE)
-        val mod = (bookmarkList.size % BOOKMARK_COUNT_PER_PAGE)
+        val pageCnt = (bookmarkListSubject.value.size / BOOKMARK_COUNT_PER_PAGE)
+        val mod = (bookmarkListSubject.value.size % BOOKMARK_COUNT_PER_PAGE)
 
         val nextIndex = if (mod == 0) {
             pageCnt * BOOKMARK_COUNT_PER_PAGE + 1
@@ -86,18 +86,37 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
             parseResponse(it)
         }.subscribeAsync({
             if (it.isNotEmpty()) {
-                val bookmarkList: MutableList<BookmarkEntity> = mutableListOf()
-                bookmarkList.addAll(this.bookmarkList)
-                bookmarkList.addAll(it)
-                this.bookmarkList = bookmarkList
-                hasNextPage = true
+                bookmarkListSubject.onNext(bookmarkListSubject.value + it)
+                hasNextPageSubject.onNext(true)
             } else {
-                hasNextPage = false
+                hasNextPageSubject.onNext(false)
             }
         }, {
-            errorSubject.onNext(Unit)
+            isRaisedGetNextPageErrorSubject.onNext(Unit)
         }, {
-            isLoading = false
+            isLoadingNextPage = false
+        })
+    }
+
+    fun refreshList(userId: String) {
+
+        if (isRefreshingSubject.value) {
+            return
+        }
+
+        isRefreshingSubject.onNext(true)
+
+        hatenaRssService.favorite(userId, 0).map {
+            parseResponse(it)
+        }.subscribeAsync({
+            bookmarkListSubject.onNext(listOf())
+            bookmarkListSubject.onNext(it)
+            hasNextPageSubject.onNext(it.isNotEmpty())
+            isRaisedErrorSubject.onNext(false)
+        }, {
+            isRaisedRefreshErrorSubject.onNext(Unit)
+        }, {
+            isRefreshingSubject.onNext(false)
         })
     }
 

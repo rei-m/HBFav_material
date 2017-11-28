@@ -9,6 +9,7 @@ import me.rei_m.hbfavmaterial.infra.network.HatenaBookmarkService
 import me.rei_m.hbfavmaterial.infra.network.HatenaHotEntryRssService
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
 import me.rei_m.hbfavmaterial.model.*
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -36,6 +37,13 @@ class ModelModule {
     @Provides
     @Singleton
     fun provideUserBookmarkModel(hatenaRssService: HatenaRssService): UserBookmarkModel {
+        return UserBookmarkModel(hatenaRssService)
+    }
+
+    @Provides
+    @Singleton
+    @Named("othersUserBookmarkModel")
+    fun provideOthersUserBookmarkModel(hatenaRssService: HatenaRssService): UserBookmarkModel {
         return UserBookmarkModel(hatenaRssService)
     }
 

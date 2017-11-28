@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.fragment.EditUserIdDialogFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.dialog.EditUserIdDialogFragmentViewModel" />
     </data>
 
     <LinearLayout

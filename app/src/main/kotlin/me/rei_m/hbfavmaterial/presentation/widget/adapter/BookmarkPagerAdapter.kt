@@ -8,10 +8,10 @@ import android.view.Menu
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.show
-import me.rei_m.hbfavmaterial.presentation.fragment.FavoriteBookmarkFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.FavoriteBookmarkFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.HotEntryFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.NewEntryFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.UserBookmarkFragment
 
 /**
  * メインページのフラグメントを管理するAdaptor.

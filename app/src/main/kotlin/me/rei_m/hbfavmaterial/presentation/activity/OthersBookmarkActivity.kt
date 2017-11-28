@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.view.MenuItem
 import dagger.Binds
 import dagger.android.ActivityKey
 import dagger.android.AndroidInjector
@@ -16,7 +17,7 @@ import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.openUrl
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.OthersBookmarkFragment
 
 /**
  * 他人のブックマークを表示するActivity.
@@ -50,14 +51,27 @@ class OthersBookmarkActivity : DaggerAppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            setFragment(UserBookmarkFragment.newInstance(userId))
+            setFragment(OthersBookmarkFragment.newInstance(userId))
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        val id = item?.itemId
+        when (id) {
+            android.R.id.home ->
+                finish()
+            else ->
+                return super.onOptionsItemSelected(item)
+        }
+
+        return true
+    }
+    
     @ForActivity
     @dagger.Subcomponent(modules = arrayOf(
             ActivityModule::class,
-            UserBookmarkFragment.Module::class)
+            OthersBookmarkFragment.Module::class)
     )
     interface Subcomponent : AndroidInjector<OthersBookmarkActivity> {
         @dagger.Subcomponent.Builder

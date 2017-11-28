@@ -10,8 +10,8 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.CreditFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.FromDeveloperFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.CreditFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.FromDeveloperFragment
 
 class FrameActivity : AppCompatActivity() {
 

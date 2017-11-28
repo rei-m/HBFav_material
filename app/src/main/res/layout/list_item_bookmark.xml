@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.widget.BookmarkListItemViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.adapter.BookmarkListItemViewModel" />
     </data>
 
     <RelativeLayout

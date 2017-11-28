@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.widget.UserListItemViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.adapter.UserListItemViewModel" />
     </data>
 
     <RelativeLayout

@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,9 +16,10 @@ import me.rei_m.hbfavmaterial.application.TwitterService
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.SettingFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.dialog.EditUserIdDialogFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.SettingFragment
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 import javax.inject.Inject
 
@@ -48,10 +50,10 @@ class SettingActivity : BaseDrawerActivity(),
             R.id.nav_setting -> {
             }
             R.id.nav_explain_app -> {
-                viewModel.onNavigationExplainAppSelected()
+                onNavigationExplainAppSelected()
             }
             else -> {
-                viewModel.onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
+                onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
             }
         }
 
@@ -82,6 +84,9 @@ class SettingActivity : BaseDrawerActivity(),
     override fun onStartAuthoriseTwitter() {
         twitterService.authorize(this)
     }
+
+    override fun provideViewModel(): BaseDrawerActivityViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(BaseDrawerActivityViewModel::class.java)
 
     @ForActivity
     @dagger.Subcomponent(modules = arrayOf(

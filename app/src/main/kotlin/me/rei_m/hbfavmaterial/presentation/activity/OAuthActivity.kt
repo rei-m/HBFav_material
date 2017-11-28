@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
@@ -74,8 +75,8 @@ class OAuthActivity : DaggerAppCompatActivity() {
                     }
                 }
 
-                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                    return super.shouldOverrideUrlLoading(view, url)
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    return super.shouldOverrideUrlLoading(view, request)
                 }
             })
         }
@@ -98,10 +99,10 @@ class OAuthActivity : DaggerAppCompatActivity() {
         }, hatenaService.completeDeleteAccessTokenEvent.subscribe {
             setAuthorizeResult(false, true)
             finish()
-        }, hatenaService.failAuthorizeHatenaEvent.subscribe {
+        }, hatenaService.unauthorizedEvent.subscribe {
             setAuthorizeResult(false, false)
             finish()
-        }, hatenaService.error.subscribe {
+        }, hatenaService.raisedErrorEvent.subscribe {
             showSnackbarNetworkError()
         })
     }

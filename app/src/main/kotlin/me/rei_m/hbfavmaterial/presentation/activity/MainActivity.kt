@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +14,10 @@ import dagger.multibindings.IntoMap
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.*
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.*
 import me.rei_m.hbfavmaterial.presentation.widget.viewpager.BookmarkViewPager
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 
 /**
@@ -62,10 +64,11 @@ class MainActivity : BaseDrawerActivity(),
                     }
 
                     for (fragment in supportFragmentManager.fragments) {
-                        fragment as MainPageFragment
-                        if (fragment.pageIndex == position) {
-                            supportActionBar?.title = fragment.pageTitle
-                            break
+                        if (fragment is MainPageFragment) {
+                            if (fragment.pageIndex == position) {
+                                supportActionBar?.title = fragment.pageTitle
+                                break
+                            }
                         }
                     }
                 }
@@ -75,33 +78,13 @@ class MainActivity : BaseDrawerActivity(),
         viewModel.onNavigationPageSelected(currentPage)
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_setting -> {
-                viewModel.onNavigationSettingSelected()
+                onNavigationSettingSelected()
             }
             R.id.nav_explain_app -> {
-                viewModel.onNavigationExplainAppSelected()
+                onNavigationExplainAppSelected()
             }
             else -> {
                 viewModel.onNavigationPageSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
@@ -117,6 +100,9 @@ class MainActivity : BaseDrawerActivity(),
             supportActionBar?.title = fragment.pageTitle
         }
     }
+
+    override fun provideViewModel(): BaseDrawerActivityViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(BaseDrawerActivityViewModel::class.java)
 
     @ForActivity
     @dagger.Subcomponent(modules = arrayOf(

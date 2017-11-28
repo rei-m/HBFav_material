@@ -11,39 +11,45 @@ import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemEntryBinding
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
-import me.rei_m.hbfavmaterial.viewmodel.widget.EntryListItemViewModel
+import me.rei_m.hbfavmaterial.viewmodel.widget.adapter.EntryListItemViewModel
 
 /**
  * エントリー一覧を管理するAdaptor.
  */
-class EntryListAdapter(context: Context,
+class EntryListAdapter(context: Context?,
                        private val injector: Injector,
-                       entryList: ObservableArrayList<EntryEntity>) : ArrayAdapter<EntryEntity>(context, 0, entryList) {
+                       private val entryList: ObservableArrayList<EntryEntity>) : ArrayAdapter<EntryEntity>(context, 0, entryList) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
+    private val entryListChangedCallback = object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
+        override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+    }
+
     init {
-        entryList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
-            override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
+        entryList.addOnListChangedCallback(entryListChangedCallback)
+    }
 
-            override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-        })
+    fun releaseCallback() {
+        entryList.removeOnListChangedCallback(entryListChangedCallback)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {

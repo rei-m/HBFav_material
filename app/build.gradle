@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.cookpad.android.licensetools'
 apply plugin: 'spoon'
+apply plugin: 'io.fabric'
 
 android {
     signingConfigs {
@@ -89,6 +90,8 @@ dependencies {
     compile "com.android.support:design:$android_support_lib_version"
     compile "com.android.support:support-annotations:$android_support_lib_version"
 
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
+
     compile "android.arch.lifecycle:extensions:1.0.0"
     testCompile "android.arch.core:core-testing:1.0.0"
     compile "android.arch.lifecycle:reactivestreams:1.0.0"
@@ -170,9 +173,14 @@ spoon {
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://dl.bintray.com/kotlin/kotlinx.dom"
-    }
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url "http://dl.bintray.com/kotlin/kotlinx.dom" }
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

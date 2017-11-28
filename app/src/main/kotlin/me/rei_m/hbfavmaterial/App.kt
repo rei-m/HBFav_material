@@ -7,10 +7,7 @@ import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
-import com.twitter.sdk.android.core.DefaultLogger
-import com.twitter.sdk.android.core.Twitter
-import com.twitter.sdk.android.core.TwitterAuthConfig
-import com.twitter.sdk.android.core.TwitterConfig
+import com.twitter.sdk.android.core.*
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import dagger.android.support.DaggerApplication
@@ -41,7 +38,6 @@ open class App : DaggerApplication() {
         }
 
         // Set up Fabric
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val authConfig = TwitterAuthConfig(getString(R.string.api_key_twitter_consumer_key),
                 getString(R.string.api_key_twitter_consumer_secret))
 
@@ -50,8 +46,10 @@ open class App : DaggerApplication() {
                 .twitterAuthConfig(authConfig)
                 .debug(true)
                 .build()
+
         Twitter.initialize(config)
 
+        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         Fabric.with(this, Crashlytics.Builder().core(crashlyticsCore).build())
 
         // Set up FireBase Analytics

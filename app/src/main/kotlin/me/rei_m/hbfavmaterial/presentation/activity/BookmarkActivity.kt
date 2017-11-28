@@ -1,6 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -23,10 +24,10 @@ import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.widget.dialog.EditBookmarkDialogFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.BookmarkFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.viewmodel.activity.BookmarkActivityViewModel
 import me.rei_m.hbfavmaterial.viewmodel.activity.di.BookmarkActivityViewModelModule
 import javax.inject.Inject
@@ -58,6 +59,11 @@ class BookmarkActivity : DaggerAppCompatActivity(),
     }
 
     @Inject
+    lateinit var navigator: Navigator
+
+    @Inject
+    lateinit var viewModelFactory: BookmarkActivityViewModel.Factory
+
     lateinit var viewModel: BookmarkActivityViewModel
 
     private var disposable: CompositeDisposable? = null
@@ -65,6 +71,8 @@ class BookmarkActivity : DaggerAppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookmarkActivityViewModel::class.java)
+        
         val binding = DataBindingUtil.setContentView<ActivityBookmarkBinding>(this, R.layout.activity_bookmark)
         binding.viewModel = viewModel
 
@@ -88,32 +96,22 @@ class BookmarkActivity : DaggerAppCompatActivity(),
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         disposable = CompositeDisposable()
         disposable?.addAll(viewModel.showBookmarkEditEvent.subscribe {
             EditBookmarkDialogFragment
                     .newInstance(viewModel.entryTitle.get(), viewModel.entryLink.get())
                     .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+        }, viewModel.unauthorisedEvent.subscribe {
+            navigator.navigateToOAuth()
         })
-        viewModel.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
     }
 
     override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
         disposable?.dispose()
         disposable = null
+        super.onPause()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

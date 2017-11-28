@@ -18,7 +18,7 @@ import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkedUsersFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.BookmarkedUsersFragment
 
 class BookmarkedUsersActivity : DaggerAppCompatActivity(),
         BookmarkedUsersFragment.OnFragmentInteractionListener {

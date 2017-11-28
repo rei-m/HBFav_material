@@ -11,39 +11,45 @@ import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemUserBinding
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.model.entity.BookmarkUserEntity
-import me.rei_m.hbfavmaterial.viewmodel.widget.UserListItemViewModel
+import me.rei_m.hbfavmaterial.viewmodel.widget.adapter.UserListItemViewModel
 
 /**
  * ユーザー一覧を管理するAdaptor.
  */
-class UserListAdapter(context: Context,
+class UserListAdapter(context: Context?,
                       private val injector: Injector,
-                      bookmarkUserList: ObservableArrayList<BookmarkUserEntity>) : ArrayAdapter<BookmarkUserEntity>(context, 0, bookmarkUserList) {
+                      private val bookmarkUserList: ObservableArrayList<BookmarkUserEntity>) : ArrayAdapter<BookmarkUserEntity>(context, 0, bookmarkUserList) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
+    private val bookmarkUserListChangedCallback = object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
+        override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
+            notifyDataSetChanged()
+        }
+
+        override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
+            notifyDataSetChanged()
+        }
+
+        override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+            notifyDataSetChanged()
+        }
+    }
+
     init {
-        bookmarkUserList.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
-            override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
+        bookmarkUserList.addOnListChangedCallback(bookmarkUserListChangedCallback)
+    }
 
-            override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-        })
+    fun releaseCallback() {
+        bookmarkUserList.removeOnListChangedCallback(bookmarkUserListChangedCallback)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
@@ -51,7 +57,7 @@ class UserListAdapter(context: Context,
         val binding: ListItemUserBinding
         if (convertView == null) {
             binding = ListItemUserBinding.inflate(inflater, parent, false)
-            binding.viewModel = injector.bookmarkListItemViewModel()
+            binding.viewModel = injector.userListItemViewModel()
         } else {
             binding = DataBindingUtil.getBinding(convertView)
         }
@@ -63,6 +69,6 @@ class UserListAdapter(context: Context,
     }
 
     interface Injector {
-        fun bookmarkListItemViewModel(): UserListItemViewModel
+        fun userListItemViewModel(): UserListItemViewModel
     }
 }
