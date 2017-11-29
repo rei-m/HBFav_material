@@ -80,84 +80,84 @@ dependencies {
     ext.retrofit_version = '2.3.0'
     ext.okhttp_version = '3.9.1'
     ext.dagger_version = '2.13'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support:multidex:1.0.2'
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "com.android.support:appcompat-v7:$android_support_lib_version"
-    compile "com.android.support:support-v4:$android_support_lib_version"
-    compile "com.android.support:design:$android_support_lib_version"
-    compile "com.android.support:support-annotations:$android_support_lib_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$android_support_lib_version"
+    implementation "com.android.support:support-v4:$android_support_lib_version"
+    implementation "com.android.support:design:$android_support_lib_version"
+    implementation "com.android.support:support-annotations:$android_support_lib_version"
 
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
 
-    compile "android.arch.lifecycle:extensions:1.0.0"
-    testCompile "android.arch.core:core-testing:1.0.0"
-    compile "android.arch.lifecycle:reactivestreams:1.0.0"
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    testImplementation "android.arch.core:core-testing:1.0.0"
+    implementation "android.arch.lifecycle:reactivestreams:1.0.0"
 
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 
     kapt 'com.android.databinding:compiler:3.0.1'
 
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile "com.google.dagger:dagger:$dagger_version"
-    compile "com.google.dagger:dagger-android:$dagger_version"
-    compile "com.google.dagger:dagger-android-support:$dagger_version"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
-    compile "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    compile 'se.akerfeldt:okhttp-signpost:1.1.0'
-    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
-    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
-    compile("com.squareup.retrofit2:converter-simplexml:$retrofit_version") {
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation 'se.akerfeldt:okhttp-signpost:1.1.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    implementation("com.squareup.retrofit2:converter-simplexml:$retrofit_version") {
         exclude module: 'stax'
         exclude module: 'stax-api'
         exclude module: 'xpp3'
     }
-    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    compile "com.squareup.retrofit2:converter-scalars:$retrofit_version"
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-    androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-    compile 'org.jsoup:jsoup:1.11.2'
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    implementation 'org.jsoup:jsoup:1.11.2'
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
-    compile('com.twitter.sdk.android:twitter:3.2.0@aar') {
+    implementation('com.twitter.sdk.android:twitter:3.2.0@aar') {
         transitive = true;
     }
-    compile 'com.google.firebase:firebase-core:11.6.0'
+    implementation 'com.google.firebase:firebase-core:11.6.0'
 
-    testCompile "org.robolectric:robolectric:3.5.1"
-    testCompile "org.robolectric:shadows-support-v4:3.3.2"
+    testImplementation "org.robolectric:robolectric:3.5.1"
+    testImplementation "org.robolectric:shadows-support-v4:3.3.2"
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
-    testCompile 'org.mockito:mockito-core:2.12.0'
+    testImplementation 'org.mockito:mockito-core:2.12.0'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1') {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1') {
         exclude module: 'support-annotations'
     }
-    androidTestCompile('com.android.support.test.espresso:espresso-intents:3.0.1') {
+    androidTestImplementation('com.android.support.test.espresso:espresso-intents:3.0.1') {
         exclude module: 'support-annotations'
     }
-    androidTestCompile('com.android.support.test:runner:1.0.1') {
+    androidTestImplementation('com.android.support.test:runner:1.0.1') {
         exclude module: 'support-annotations'
     }
-    androidTestCompile('com.android.support.test:rules:1.0.1') {
+    androidTestImplementation('com.android.support.test:rules:1.0.1') {
         exclude module: 'support-annotations'
     }
-    androidTestCompile 'org.mockito:mockito-core:2.12.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestCompile group: 'com.squareup.spoon', name: 'spoon-client', version: '1.7.1'
+    androidTestImplementation 'org.mockito:mockito-core:2.12.0'
+    androidTestImplementation 'com.google.dexmaker:dexmaker:1.2'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestImplementation group: 'com.squareup.spoon', name: 'spoon-client', version: '1.7.1'
 }
 
 spoon {
