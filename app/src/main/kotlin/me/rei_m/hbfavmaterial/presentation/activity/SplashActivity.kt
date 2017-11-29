@@ -1,24 +1,24 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import me.rei_m.hbfavmaterial.App
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
+import dagger.multibindings.IntoMap
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivitySplashBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityComponent
-import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.InitializeFragment
 
 /**
  * 最初に起動するActivity.
  */
-class SplashActivity : BaseActivity(),
-        HasComponent<SplashActivityComponent> {
-
-    private var component: SplashActivityComponent? = null
+class SplashActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,25 +32,28 @@ class SplashActivity : BaseActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(
+            ActivityModule::class,
+            InitializeFragment.Module::class)
+    )
+    interface Subcomponent : AndroidInjector<SplashActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<SplashActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: SplashActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
     }
 
-    override fun setUpActivityComponent() {
-        component = createActivityComponent()
-    }
-
-    override fun getComponent(): SplashActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@SplashActivity.component = component
-        return@let component
-    }
-
-    private fun createActivityComponent(): SplashActivityComponent {
-        val component = (application as App).component
-                .plus(SplashActivityModule(), ActivityModule(this))
-        component.inject(this)
-        return component
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(SplashActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

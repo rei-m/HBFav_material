@@ -1,28 +1,35 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
+import dagger.multibindings.IntoMap
 import io.reactivex.disposables.CompositeDisposable
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.application.HatenaService
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.showSnackbarNetworkError
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.OAuthActivityModule
 import javax.inject.Inject
 
-class OAuthActivity : BaseActivity() {
+class OAuthActivity : DaggerAppCompatActivity() {
 
     companion object {
 
@@ -43,7 +50,7 @@ class OAuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity)
-        val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.activity_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -68,16 +75,16 @@ class OAuthActivity : BaseActivity() {
                     }
                 }
 
-                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                    return super.shouldOverrideUrlLoading(view, url)
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    return super.shouldOverrideUrlLoading(view, request)
                 }
             })
         }
 
-        with(findViewById(R.id.content) as FrameLayout) {
+        with(findViewById<FrameLayout>(R.id.content)) {
             addView(webView)
         }
-        findViewById(R.id.fab)?.hide()
+        findViewById<FloatingActionButton>(R.id.fab)?.hide()
         this.webView = webView
     }
 
@@ -92,10 +99,10 @@ class OAuthActivity : BaseActivity() {
         }, hatenaService.completeDeleteAccessTokenEvent.subscribe {
             setAuthorizeResult(false, true)
             finish()
-        }, hatenaService.failAuthorizeHatenaEvent.subscribe {
+        }, hatenaService.unauthorizedEvent.subscribe {
             setAuthorizeResult(false, false)
             finish()
-        }, hatenaService.error.subscribe {
+        }, hatenaService.raisedErrorEvent.subscribe {
             showSnackbarNetworkError()
         })
     }
@@ -130,12 +137,6 @@ class OAuthActivity : BaseActivity() {
         return true
     }
 
-    override fun setUpActivityComponent() {
-        val component = (application as App).component
-                .plus(OAuthActivityModule(), ActivityModule(this))
-        component.inject(this)
-    }
-
     private fun setAuthorizeResult(isAuthorize: Boolean, isDone: Boolean) {
         val intent = Intent().apply {
             putExtras(Bundle().apply {
@@ -145,5 +146,27 @@ class OAuthActivity : BaseActivity() {
         }
         // TODO: 認証してなかったらキャンセルにする.
         setResult(RESULT_OK, intent)
+    }
+
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(ActivityModule::class))
+    interface Subcomponent : AndroidInjector<OAuthActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<OAuthActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: OAuthActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
+    }
+
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(OAuthActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

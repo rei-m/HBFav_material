@@ -6,7 +6,7 @@ import android.view.Menu
  * メニューを非表示にする.
  */
 fun Menu.hide() {
-    for (i_menu in 0..size() - 1) {
+    for (i_menu in 0 until size()) {
         val item = getItem(i_menu)
         item.isVisible = false
     }
@@ -16,7 +16,7 @@ fun Menu.hide() {
  * メニューを表示する.
  */
 fun Menu.show() {
-    for (i_menu in 0..size() - 1) {
+    for (i_menu in 0 until size()) {
         val item = getItem(i_menu)
         item.isVisible = true
     }

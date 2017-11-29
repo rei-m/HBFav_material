@@ -1,5 +1,7 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -8,30 +10,32 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ShareCompat
 import android.view.Menu
 import android.view.MenuItem
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
+import dagger.multibindings.IntoMap
 import io.reactivex.disposables.CompositeDisposable
-import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkBinding
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityComponent
-import me.rei_m.hbfavmaterial.presentation.activity.di.BookmarkActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.BookmarkFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.EditBookmarkDialogFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.widget.dialog.EditBookmarkDialogFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.BookmarkFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.EntryWebViewFragment
 import me.rei_m.hbfavmaterial.viewmodel.activity.BookmarkActivityViewModel
+import me.rei_m.hbfavmaterial.viewmodel.activity.di.BookmarkActivityViewModelModule
 import javax.inject.Inject
 
 /**
  * ブックマークの詳細を表示するActivity.
  */
-class BookmarkActivity : BaseActivity(),
-        HasComponent<BookmarkActivityComponent>,
+class BookmarkActivity : DaggerAppCompatActivity(),
         BookmarkFragment.OnFragmentInteractionListener {
 
     companion object {
@@ -55,15 +59,20 @@ class BookmarkActivity : BaseActivity(),
     }
 
     @Inject
-    lateinit var viewModel: BookmarkActivityViewModel
+    lateinit var navigator: Navigator
 
-    private var component: BookmarkActivityComponent? = null
+    @Inject
+    lateinit var viewModelFactory: BookmarkActivityViewModel.Factory
+
+    lateinit var viewModel: BookmarkActivityViewModel
 
     private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookmarkActivityViewModel::class.java)
+        
         val binding = DataBindingUtil.setContentView<ActivityBookmarkBinding>(this, R.layout.activity_bookmark)
         binding.viewModel = viewModel
 
@@ -87,37 +96,22 @@ class BookmarkActivity : BaseActivity(),
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         disposable = CompositeDisposable()
         disposable?.addAll(viewModel.showBookmarkEditEvent.subscribe {
             EditBookmarkDialogFragment
                     .newInstance(viewModel.entryTitle.get(), viewModel.entryLink.get())
                     .show(supportFragmentManager, EditBookmarkDialogFragment.TAG)
+        }, viewModel.unauthorisedEvent.subscribe {
+            navigator.navigateToOAuth()
         })
-        viewModel.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
     }
 
     override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
         disposable?.dispose()
         disposable = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
+        super.onPause()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -187,28 +181,39 @@ class BookmarkActivity : BaseActivity(),
         }
     }
 
-    override fun setUpActivityComponent() {
-        component = createActivityComponent()
-    }
-
-    override fun getComponent(): BookmarkActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@BookmarkActivity.component = component
-        return@let component
-    }
-
     override fun onShowArticle(url: String) {
         replaceFragment(EntryWebViewFragment.newInstance(url), EntryWebViewFragment.TAG)
     }
 
-    private fun createActivityComponent(): BookmarkActivityComponent {
-        val component = (application as App).component
-                .plus(BookmarkActivityModule(), ActivityModule(this))
-        component.inject(this)
-        return component
-    }
-
     private fun showFailToConnectionMessage() {
         Snackbar.make(findViewById(R.id.content), getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
+    }
+
+
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(
+            ActivityModule::class,
+            BookmarkActivityViewModelModule::class,
+            BookmarkFragment.Module::class,
+            EditBookmarkDialogFragment.Module::class)
+    )
+    interface Subcomponent : AndroidInjector<BookmarkActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<BookmarkActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: BookmarkActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
+    }
+
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(BookmarkActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

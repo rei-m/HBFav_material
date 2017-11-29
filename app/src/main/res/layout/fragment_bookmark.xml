@@ -11,7 +11,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.fragment.BookmarkFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.fragment.BookmarkFragmentViewModel" />
     </data>
 
     <ScrollView

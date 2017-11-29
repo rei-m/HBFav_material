@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.application.HatenaService
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
@@ -26,15 +27,32 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         private const val MAX_TAGS_COUNT = 10
     }
 
+    private val editableBookmarkSubject = PublishSubject.create<EditableBookmarkEntity>()
+
+    private val registeredEventSubject = PublishSubject.create<Unit>()
+
+    private val deletedEventSubject = PublishSubject.create<Unit>()
+
+    private val unauthorizedEventSubject = PublishSubject.create<Unit>()
+
+    private val raisedErrorEventSubject = PublishSubject.create<Unit>()
+
+    private val isLoadingSubject = BehaviorSubject.create<Boolean>()
+
     private val completeFetchRequestTokenEventSubject = PublishSubject.create<String>()
     private val completeRegisterAccessTokenEventSubject = PublishSubject.create<Unit>()
     private val completeDeleteAccessTokenEventSubject = PublishSubject.create<Unit>()
     private val confirmAuthorisedEventSubject = PublishSubject.create<Boolean>()
-    private val completeFindBookmarkByUrlEventSubject = PublishSubject.create<EditableBookmarkEntity>()
-    private val completeRegisterBookmarkEventSubject = PublishSubject.create<Unit>()
-    private val completeDeleteBookmarkEventSubject = PublishSubject.create<Unit>()
-    private val failAuthorizeHatenaEventSubject = PublishSubject.create<Unit>()
-    private val errorSubject = PublishSubject.create<Unit>()
+
+    override val editableBookmark: Observable<EditableBookmarkEntity> = editableBookmarkSubject
+
+    override val registeredEvent: Observable<Unit> = registeredEventSubject
+
+    override val deletedEvent: Observable<Unit> = deletedEventSubject
+
+    override val unauthorizedEvent: Observable<Unit> = unauthorizedEventSubject
+
+    override val raisedErrorEvent: Observable<Unit> = raisedErrorEventSubject
 
     override val completeFetchRequestTokenEvent: Observable<String> = completeFetchRequestTokenEventSubject
 
@@ -44,15 +62,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
 
     override val confirmAuthorisedEvent: Observable<Boolean> = confirmAuthorisedEventSubject
 
-    override val completeFindBookmarkByUrlEvent: Observable<EditableBookmarkEntity> = completeFindBookmarkByUrlEventSubject
-
-    override val completeRegisterBookmarkEvent: Observable<Unit> = completeRegisterBookmarkEventSubject
-
-    override val completeDeleteBookmarkEvent: Observable<Unit> = completeDeleteBookmarkEventSubject
-
-    override val failAuthorizeHatenaEvent: Observable<Unit> = failAuthorizeHatenaEventSubject
-
-    override val error: Observable<Unit> = errorSubject
+    override val isLoading: Observable<Boolean> = isLoadingSubject
 
     override fun fetchRequestToken() {
         Single.create<String> {
@@ -61,10 +71,10 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             if (it != null) {
                 completeFetchRequestTokenEventSubject.onNext(it)
             } else {
-                failAuthorizeHatenaEventSubject.onNext(Unit)
+                unauthorizedEventSubject.onNext(Unit)
             }
         }, {
-            errorSubject.onNext(Unit)
+            raisedErrorEventSubject.onNext(Unit)
         })
     }
 
@@ -83,10 +93,10 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             if (it) {
                 completeRegisterAccessTokenEventSubject.onNext(Unit)
             } else {
-                failAuthorizeHatenaEventSubject.onNext(Unit)
+                unauthorizedEventSubject.onNext(Unit)
             }
         }, {
-            errorSubject.onNext(Unit)
+            raisedErrorEventSubject.onNext(Unit)
         })
     }
 
@@ -105,9 +115,11 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val oAuthToken = getTokenFromPreferences()
 
         if (!oAuthToken.isAuthorised) {
-            failAuthorizeHatenaEventSubject.onNext(Unit)
+            unauthorizedEventSubject.onNext(Unit)
             return
         }
+
+        isLoadingSubject.onNext(true)
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
@@ -133,9 +145,11 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
                 Single.error(it)
             }
         }.subscribeAsync({
-            completeFindBookmarkByUrlEventSubject.onNext(it)
+            editableBookmarkSubject.onNext(it)
         }, {
-            errorSubject.onNext(Unit)
+            raisedErrorEventSubject.onNext(Unit)
+        }, {
+            isLoadingSubject.onNext(false)
         })
     }
 
@@ -148,7 +162,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val oAuthToken = getTokenFromPreferences()
 
         if (!oAuthToken.isAuthorised) {
-            failAuthorizeHatenaEventSubject.onNext(Unit)
+            unauthorizedEventSubject.onNext(Unit)
             return
         }
 
@@ -165,6 +179,8 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
 
         require(postTags.size <= MAX_TAGS_COUNT) { "登録可能なタグは $MAX_TAGS_COUNT 個までです。" }
 
+        isLoadingSubject.onNext(true)
+
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
         val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
@@ -172,9 +188,11 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val isOpenValue = if (isOpen) "0" else "1"
 
         retrofit.create(HatenaOAuthApiService::class.java).postBookmark(urlString, comment, isOpenValue, postTags.toTypedArray()).subscribeAsync({
-            completeRegisterBookmarkEventSubject.onNext(Unit)
+            registeredEventSubject.onNext(Unit)
         }, {
-            errorSubject.onNext(Unit)
+            raisedErrorEventSubject.onNext(Unit)
+        }, {
+            isLoadingSubject.onNext(false)
         })
     }
 
@@ -183,25 +201,29 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val oAuthToken = getTokenFromPreferences()
 
         if (!oAuthToken.isAuthorised) {
-            failAuthorizeHatenaEventSubject.onNext(Unit)
+            unauthorizedEventSubject.onNext(Unit)
             return
         }
+
+        isLoadingSubject.onNext(true)
 
         hatenaOAuthManager.consumer.setTokenWithSecret(oAuthToken.token, oAuthToken.secretToken)
 
         val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
 
         retrofit.create(HatenaOAuthApiService::class.java).deleteBookmark(urlString).subscribeAsync({
-            completeDeleteBookmarkEventSubject.onNext(Unit)
+            deletedEventSubject.onNext(Unit)
         }, {
             if (it is HttpException) {
                 // 見つからなかった場合はすでに消えているので成功したとみなす.
                 if (it.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    completeDeleteBookmarkEventSubject.onNext(Unit)
+                    deletedEventSubject.onNext(Unit)
                     return@subscribeAsync
                 }
             }
-            errorSubject.onNext(Unit)
+            raisedErrorEventSubject.onNext(Unit)
+        }, {
+            isLoadingSubject.onNext(false)
         })
     }
 

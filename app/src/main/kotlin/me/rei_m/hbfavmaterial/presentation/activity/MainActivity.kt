@@ -1,28 +1,29 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
-import me.rei_m.hbfavmaterial.App
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityComponent
-import me.rei_m.hbfavmaterial.presentation.activity.di.MainActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.HotEntryFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.MainPageFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.NewEntryFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.UserBookmarkFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.*
 import me.rei_m.hbfavmaterial.presentation.widget.viewpager.BookmarkViewPager
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
+import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 
 /**
  * メインActivity.
  */
 class MainActivity : BaseDrawerActivity(),
-        HasComponent<MainActivityComponent>,
         UserBookmarkFragment.OnFragmentInteractionListener,
         HotEntryFragment.OnFragmentInteractionListener,
         NewEntryFragment.OnFragmentInteractionListener {
@@ -37,8 +38,6 @@ class MainActivity : BaseDrawerActivity(),
                     .putExtra(ARG_PAGER_INDEX, page.index)
         }
     }
-
-    private var component: MainActivityComponent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,10 +64,11 @@ class MainActivity : BaseDrawerActivity(),
                     }
 
                     for (fragment in supportFragmentManager.fragments) {
-                        fragment as MainPageFragment
-                        if (fragment.pageIndex == position) {
-                            supportActionBar?.title = fragment.pageTitle
-                            break
+                        if (fragment is MainPageFragment) {
+                            if (fragment.pageIndex == position) {
+                                supportActionBar?.title = fragment.pageTitle
+                                break
+                            }
                         }
                     }
                 }
@@ -78,38 +78,13 @@ class MainActivity : BaseDrawerActivity(),
         viewModel.onNavigationPageSelected(currentPage)
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_setting -> {
-                viewModel.onNavigationSettingSelected()
+                onNavigationSettingSelected()
             }
             R.id.nav_explain_app -> {
-                viewModel.onNavigationExplainAppSelected()
+                onNavigationExplainAppSelected()
             }
             else -> {
                 viewModel.onNavigationPageSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
@@ -126,20 +101,35 @@ class MainActivity : BaseDrawerActivity(),
         }
     }
 
-    override fun setUpActivityComponent() {
-        component = createActivityComponent()
+    override fun provideViewModel(): BaseDrawerActivityViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(BaseDrawerActivityViewModel::class.java)
+
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(
+            ActivityModule::class,
+            BaseDrawerActivityViewModelModule::class,
+            FavoriteBookmarkFragment.Module::class,
+            UserBookmarkFragment.Module::class,
+            HotEntryFragment.Module::class,
+            NewEntryFragment.Module::class)
+    )
+    interface Subcomponent : AndroidInjector<MainActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<MainActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: MainActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
     }
 
-    override fun getComponent(): MainActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@MainActivity.component = component
-        return@let component
-    }
-
-    private fun createActivityComponent(): MainActivityComponent {
-        val component = (application as App).component
-                .plus(MainActivityModule(), ActivityModule(this))
-        component.inject(this)
-        return component
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(MainActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

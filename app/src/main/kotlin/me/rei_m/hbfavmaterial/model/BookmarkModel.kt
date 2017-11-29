@@ -1,6 +1,8 @@
 package me.rei_m.hbfavmaterial.model
 
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
@@ -11,41 +13,73 @@ import me.rei_m.hbfavmaterial.presentation.util.BookmarkUtil
 
 class BookmarkModel(private val hatenaApiService: HatenaApiService) {
 
-    var userList: List<BookmarkUserEntity> = listOf()
-        private set(value) {
-            field = value
-            userListUpdatedEventSubject.onNext(value)
-        }
+    private val isLoadingSubject = BehaviorSubject.create<Boolean>()
+    private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
+    private val bookmarkUserListSubject = BehaviorSubject.create<List<BookmarkUserEntity>>()
+    private val isRaisedGetErrorSubject = BehaviorSubject.create<Boolean>()
 
-    var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL
-        private set(value) {
-            field = value
-            bookmarkCommentFilterUpdatedEventSubject.onNext(value)
-        }
+    private val isRaisedRefreshErrorSubject = PublishSubject.create<Unit>()
 
-    private val userListUpdatedEventSubject = PublishSubject.create<List<BookmarkUserEntity>>()
-    private val bookmarkCommentFilterUpdatedEventSubject = PublishSubject.create<BookmarkCommentFilter>()
-    private val errorSubject = PublishSubject.create<Unit>()
+    val isLoading: Observable<Boolean> = isLoadingSubject
+    val isRefreshing: Observable<Boolean> = isRefreshingSubject
+    val bookmarkUserList: Observable<List<BookmarkUserEntity>> = bookmarkUserListSubject
+    val isRaisedGetError: Observable<Boolean> = isRaisedGetErrorSubject
 
-    val userListUpdatedEvent: Observable<List<BookmarkUserEntity>> = userListUpdatedEventSubject
-    val bookmarkCommentFilterUpdatedEvent: Observable<BookmarkCommentFilter> = bookmarkCommentFilterUpdatedEventSubject
-    val error: Observable<Unit> = errorSubject
+    val isRaisedRefreshError: Observable<Unit> = isRaisedRefreshErrorSubject
 
-    private var isLoading: Boolean = false
+    init {
+        isLoadingSubject.onNext(false)
+        isRefreshingSubject.onNext(false)
+    }
 
     fun getUserList(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter) {
 
         require(articleUrl.isNotEmpty()) {
-            "Set articleUrl before call"
+            "Url is Empty"
         }
 
-        if (isLoading) {
+        if (isLoadingSubject.value) {
             return
         }
 
-        isLoading = true
+        isLoadingSubject.onNext(true)
 
-        hatenaApiService.entry(articleUrl).map { (_, bookmarks) ->
+        fetch(articleUrl, bookmarkCommentFilter).subscribeAsync({
+            bookmarkUserListSubject.onNext(listOf())
+            bookmarkUserListSubject.onNext(it)
+            isRaisedGetErrorSubject.onNext(false)
+        }, {
+            isRaisedGetErrorSubject.onNext(true)
+        }, {
+            isLoadingSubject.onNext(false)
+        })
+    }
+
+    fun refreshUserList(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter) {
+
+        require(articleUrl.isNotEmpty()) {
+            "Url is Empty"
+        }
+
+        if (isRefreshingSubject.value) {
+            return
+        }
+
+        isRefreshingSubject.onNext(true)
+
+        fetch(articleUrl, bookmarkCommentFilter).subscribeAsync({
+            bookmarkUserListSubject.onNext(listOf())
+            bookmarkUserListSubject.onNext(it)
+            isRaisedGetErrorSubject.onNext(false)
+        }, {
+            isRaisedRefreshErrorSubject.onNext(Unit)
+        }, {
+            isRefreshingSubject.onNext(false)
+        })
+    }
+
+    private fun fetch(articleUrl: String, bookmarkCommentFilter: BookmarkCommentFilter): Single<List<BookmarkUserEntity>> {
+        return hatenaApiService.entry(articleUrl).map { (_, bookmarks) ->
             val bookmarkList = bookmarks.map { (timestamp, comment, user, _) ->
                 BookmarkUserEntity(creator = user,
                         iconUrl = BookmarkUtil.getIconImageUrlFromId(user),
@@ -58,15 +92,6 @@ class BookmarkModel(private val hatenaApiService: HatenaApiService) {
             } else {
                 bookmarkList
             }
-        }.subscribeAsync({
-            userList = it
-            if (this.bookmarkCommentFilter != bookmarkCommentFilter) {
-                this.bookmarkCommentFilter = bookmarkCommentFilter
-            }
-        }, {
-            errorSubject.onNext(Unit)
-        }, {
-            isLoading = false
-        })
+        }
     }
 }

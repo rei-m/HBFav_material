@@ -6,34 +6,41 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
-import io.reactivex.disposables.CompositeDisposable
+import dagger.android.support.DaggerAppCompatActivity
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.databinding.ActivityMainBinding
+import me.rei_m.hbfavmaterial.presentation.helper.Navigator
+import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
 import javax.inject.Inject
+
 
 /**
  * Drawer付きActivityの基底クラス.
  */
-abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+abstract class BaseDrawerActivity : DaggerAppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
-    lateinit var viewModel: BaseDrawerActivityViewModel
+    lateinit var navigator: Navigator
+
+    @Inject
+    lateinit var viewModelFactory: BaseDrawerActivityViewModel.Factory
 
     protected var binding: ActivityMainBinding? = null
 
-    private var disposable: CompositeDisposable? = null
+    protected lateinit var viewModel: BaseDrawerActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = provideViewModel()
 
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
-        setSupportActionBar(binding.appBar.toolbar)
+        setSupportActionBar(binding.appBar?.toolbar)
 
         val toggle = ActionBarDrawerToggle(this,
                 binding.drawer,
-                binding.appBar.toolbar,
+                binding.appBar?.toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
 
@@ -45,32 +52,6 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
         binding.viewModel = viewModel
 
         this.binding = binding
-    }
-
-    override fun onStart() {
-        super.onStart()
-        disposable = CompositeDisposable()
-        disposable?.addAll(viewModel.movePageEvent.subscribe {
-            finish()
-        })
-        viewModel.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
-        disposable?.dispose()
-        disposable = null
     }
 
     override fun onDestroy() {
@@ -91,5 +72,22 @@ abstract class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationI
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         binding?.drawer?.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    abstract fun provideViewModel(): BaseDrawerActivityViewModel
+
+    fun onNavigationMainSelected(page: BookmarkPagerAdapter.Page) {
+        navigator.navigateToMain(page)
+        finish()
+    }
+
+    fun onNavigationSettingSelected() {
+        navigator.navigateToSetting()
+        finish()
+    }
+
+    fun onNavigationExplainAppSelected() {
+        navigator.navigateToExplainApp()
+        finish()
     }
 }

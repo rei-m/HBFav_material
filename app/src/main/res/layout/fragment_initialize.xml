@@ -11,7 +11,7 @@
 
         <variable
             name="viewModel"
-            type="me.rei_m.hbfavmaterial.viewmodel.fragment.InitializeFragmentViewModel" />
+            type="me.rei_m.hbfavmaterial.viewmodel.widget.fragment.InitializeFragmentViewModel" />
     </data>
 
     <ScrollView

@@ -1,6 +1,8 @@
 package me.rei_m.hbfavmaterial.model
 
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
@@ -15,43 +17,77 @@ import org.jsoup.Jsoup
 class HotEntryModel(private val hatenaRssService: HatenaRssService,
                     private val hotEntryRssService: HatenaHotEntryRssService) {
 
-    var entryList: List<EntryEntity> = listOf()
-        private set(value) {
-            field = value
-            entryListUpdatedEventSubject.onNext(value)
-        }
+    private val isLoadingSubject = BehaviorSubject.create<Boolean>()
+    private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
+    private val entryListSubject = BehaviorSubject.create<List<EntryEntity>>()
+    private val entryTypeFilterSubject = BehaviorSubject.create<EntryTypeFilter>()
+    private val isRaisedGetErrorSubject = BehaviorSubject.create<Boolean>()
 
-    var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL
-        private set(value) {
-            field = value
-            entryTypeFilterUpdatedEventSubject.onNext(value)
-        }
+    private val isRaisedRefreshErrorSubject = PublishSubject.create<Unit>()
 
-    private val entryListUpdatedEventSubject = PublishSubject.create<List<EntryEntity>>()
-    private val entryTypeFilterUpdatedEventSubject = PublishSubject.create<EntryTypeFilter>()
-    private val errorSubject = PublishSubject.create<Unit>()
+    val isLoading: Observable<Boolean> = isLoadingSubject
+    val isRefreshing: Observable<Boolean> = isRefreshingSubject
+    val entryList: Observable<List<EntryEntity>> = entryListSubject
+    val entryTypeFilter: Observable<EntryTypeFilter> = entryTypeFilterSubject
+    val isRaisedGetError: Observable<Boolean> = isRaisedGetErrorSubject
 
-    val entryListUpdatedEvent: Observable<List<EntryEntity>> = entryListUpdatedEventSubject
-    val entryTypeFilterUpdatedEvent: Observable<EntryTypeFilter> = entryTypeFilterUpdatedEventSubject
-    val error: Observable<Unit> = errorSubject
+    val isRaisedRefreshError: Observable<Unit> = isRaisedRefreshErrorSubject
 
-    private var isLoading: Boolean = false
+    init {
+        isLoadingSubject.onNext(false)
+        isRefreshingSubject.onNext(false)
+        entryTypeFilterSubject.onNext(EntryTypeFilter.ALL)
+    }
 
     fun getList(entryTypeFilter: EntryTypeFilter) {
 
-        if (isLoading) {
+        if (isLoadingSubject.value) {
             return
         }
 
-        isLoading = true
+        isLoadingSubject.onNext(true)
 
+        fetch(entryTypeFilter).subscribeAsync({
+            entryListSubject.onNext(listOf())
+            entryListSubject.onNext(it)
+            if (entryTypeFilterSubject.value != entryTypeFilter) {
+                entryTypeFilterSubject.onNext(entryTypeFilter)
+            }
+            isRaisedGetErrorSubject.onNext(false)
+        }, {
+            isRaisedGetErrorSubject.onNext(true)
+        }, {
+            isLoadingSubject.onNext(false)
+        })
+    }
+
+    fun refreshList() {
+
+        if (isRefreshingSubject.value) {
+            return
+        }
+
+        isRefreshingSubject.onNext(true)
+
+        fetch(entryTypeFilterSubject.value).subscribeAsync({
+            entryListSubject.onNext(listOf())
+            entryListSubject.onNext(it)
+            isRaisedGetErrorSubject.onNext(false)
+        }, {
+            isRaisedRefreshErrorSubject.onNext(Unit)
+        }, {
+            isRefreshingSubject.onNext(false)
+        })
+    }
+
+    private fun fetch(entryTypeFilter: EntryTypeFilter): Single<List<EntryEntity>> {
         val rss = if (entryTypeFilter == EntryTypeFilter.ALL) {
             hotEntryRssService.hotentry()
         } else {
             hatenaRssService.hotentry(ApiUtil.getEntryTypeRss(entryTypeFilter))
         }
 
-        rss.map { response ->
+        return rss.map { response ->
             response.list.map {
                 val parsedContent = Jsoup.parse(it.content)
                 val articleEntity = ArticleEntity(
@@ -67,15 +103,6 @@ class HotEntryModel(private val hatenaRssService: HatenaRssService,
                         date = RssXmlUtil.parseStringToDate(it.dateString),
                         subject = it.subject)
             }
-        }.subscribeAsync({
-            entryList = it
-            if (this.entryTypeFilter != entryTypeFilter) {
-                this.entryTypeFilter = entryTypeFilter
-            }
-        }, {
-            errorSubject.onNext(Unit)
-        }, {
-            isLoading = false
-        })
+        }
     }
 }

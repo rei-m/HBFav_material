@@ -9,6 +9,16 @@ interface HatenaService {
         const val TAG_READ_AFTER = "あとで読む"
     }
 
+    val editableBookmark: Observable<EditableBookmarkEntity>
+
+    val registeredEvent: Observable<Unit>
+
+    val deletedEvent: Observable<Unit>
+
+    val unauthorizedEvent: Observable<Unit>
+
+    val raisedErrorEvent: Observable<Unit>
+
     val completeFetchRequestTokenEvent: Observable<String>
 
     val completeRegisterAccessTokenEvent: Observable<Unit>
@@ -16,17 +26,9 @@ interface HatenaService {
     val completeDeleteAccessTokenEvent: Observable<Unit>
 
     val confirmAuthorisedEvent: Observable<Boolean>
+
+    val isLoading: Observable<Boolean>
     
-    val completeFindBookmarkByUrlEvent: Observable<EditableBookmarkEntity>
-
-    val completeRegisterBookmarkEvent: Observable<Unit>
-
-    val completeDeleteBookmarkEvent: Observable<Unit>
-
-    val failAuthorizeHatenaEvent: Observable<Unit>
-
-    val error: Observable<Unit>
-
     fun fetchRequestToken()
 
     fun registerAccessToken(requestToken: String)

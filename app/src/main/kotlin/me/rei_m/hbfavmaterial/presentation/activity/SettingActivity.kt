@@ -1,25 +1,29 @@
 package me.rei_m.hbfavmaterial.presentation.activity
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import com.twitter.sdk.android.core.TwitterAuthConfig
-import me.rei_m.hbfavmaterial.App
+import dagger.Binds
+import dagger.android.ActivityKey
+import dagger.android.AndroidInjector
+import dagger.multibindings.IntoMap
 import me.rei_m.hbfavmaterial.R
 import me.rei_m.hbfavmaterial.application.TwitterService
-import me.rei_m.hbfavmaterial.di.HasComponent
+import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
-import me.rei_m.hbfavmaterial.presentation.activity.di.SettingActivityComponent
-import me.rei_m.hbfavmaterial.presentation.activity.di.SettingActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.EditUserIdDialogFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.SettingFragment
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
+import me.rei_m.hbfavmaterial.presentation.widget.dialog.EditUserIdDialogFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.SettingFragment
+import me.rei_m.hbfavmaterial.viewmodel.activity.BaseDrawerActivityViewModel
+import me.rei_m.hbfavmaterial.viewmodel.activity.di.BaseDrawerActivityViewModelModule
 import javax.inject.Inject
 
 class SettingActivity : BaseDrawerActivity(),
-        HasComponent<SettingActivityComponent>,
         SettingFragment.OnFragmentInteractionListener {
 
     companion object {
@@ -28,8 +32,6 @@ class SettingActivity : BaseDrawerActivity(),
 
     @Inject
     lateinit var twitterService: TwitterService
-
-    private var component: SettingActivityComponent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +43,6 @@ class SettingActivity : BaseDrawerActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
@@ -53,10 +50,10 @@ class SettingActivity : BaseDrawerActivity(),
             R.id.nav_setting -> {
             }
             R.id.nav_explain_app -> {
-                viewModel.onNavigationExplainAppSelected()
+                onNavigationExplainAppSelected()
             }
             else -> {
-                viewModel.onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
+                onNavigationMainSelected(BookmarkPagerAdapter.Page.forMenuId(item.itemId))
             }
         }
 
@@ -78,16 +75,6 @@ class SettingActivity : BaseDrawerActivity(),
         }
     }
 
-    override fun setUpActivityComponent() {
-        component = createActivityComponent()
-    }
-
-    override fun getComponent(): SettingActivityComponent = component ?: let {
-        val component = createActivityComponent()
-        this@SettingActivity.component = component
-        return@let component
-    }
-
     override fun onShowEditHatenaIdDialog() {
         if (supportFragmentManager.findFragmentByTag(EditUserIdDialogFragment.TAG) == null) {
             EditUserIdDialogFragment.newInstance().show(supportFragmentManager, EditUserIdDialogFragment.TAG)
@@ -98,10 +85,33 @@ class SettingActivity : BaseDrawerActivity(),
         twitterService.authorize(this)
     }
 
-    private fun createActivityComponent(): SettingActivityComponent {
-        val component = (application as App).component
-                .plus(SettingActivityModule(), ActivityModule(this))
-        component.inject(this)
-        return component
+    override fun provideViewModel(): BaseDrawerActivityViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(BaseDrawerActivityViewModel::class.java)
+
+    @ForActivity
+    @dagger.Subcomponent(modules = arrayOf(
+            ActivityModule::class,
+            BaseDrawerActivityViewModelModule::class,
+            SettingFragment.Module::class,
+            EditUserIdDialogFragment.Module::class)
+    )
+    interface Subcomponent : AndroidInjector<SettingActivity> {
+        @dagger.Subcomponent.Builder
+        abstract class Builder : AndroidInjector.Builder<SettingActivity>() {
+
+            abstract fun activityModule(module: ActivityModule): Builder
+
+            override fun seedInstance(instance: SettingActivity) {
+                activityModule(ActivityModule(instance))
+            }
+        }
+    }
+
+    @dagger.Module(subcomponents = arrayOf(Subcomponent::class))
+    abstract inner class Module {
+        @Binds
+        @IntoMap
+        @ActivityKey(SettingActivity::class)
+        internal abstract fun bind(builder: Subcomponent.Builder): AndroidInjector.Factory<out Activity>
     }
 }

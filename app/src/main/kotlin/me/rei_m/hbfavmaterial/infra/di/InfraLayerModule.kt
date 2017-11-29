@@ -22,9 +22,7 @@ open class InfraLayerModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient {
-        return HttpClientBuilder.newBuilder().build()
-    }
+    fun provideHttpClient(): OkHttpClient = HttpClientBuilder.newBuilder().build()
 
     @Singleton
     @Provides

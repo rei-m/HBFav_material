@@ -82,3 +82,7 @@
 -keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
+
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

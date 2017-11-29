@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaBookmarkService
@@ -18,22 +19,28 @@ class UserModel(private val preferences: SharedPreferences,
         private const val KEY_PREF_USER = "KEY_PREF_USER"
     }
 
-    var user: UserEntity = getUserFromPreferences()
-        private set(value) {
-            field = value
-            storeUserToPreferences(value)
-            userUpdatedEventSubject.onNext(value)
+    private val isLoadingSubject = BehaviorSubject.create<Boolean>()
+    private val userSubject = BehaviorSubject.create<UserEntity>()
+    private val unauthorisedSubject = BehaviorSubject.create<Unit>()
+
+    private val isRaisedErrorSubject = PublishSubject.create<Unit>()
+
+    val user: Observable<UserEntity> = userSubject
+    val isLoading: Observable<Boolean> = isLoadingSubject
+    val unauthorised: Observable<Unit> = unauthorisedSubject
+
+    val isRaisedError: Observable<Unit> = isRaisedErrorSubject
+
+    init {
+        userSubject.onNext(getUserFromPreferences())
+        userSubject.doAfterNext {
+            storeUserToPreferences(it)
         }
-
-    private val userUpdatedEventSubject = PublishSubject.create<UserEntity>()
-    private val unauthorisedEventSubject = PublishSubject.create<Unit>()
-    private val errorSubject = PublishSubject.create<Unit>()
-
-    val userUpdatedEvent: Observable<UserEntity> = userUpdatedEventSubject
-    val unauthorisedEvent: Observable<Unit> = unauthorisedEventSubject
-    val error: Observable<Unit> = errorSubject
+    }
 
     fun setUpUserId(userId: String) {
+
+        isLoadingSubject.onNext(true)
 
         hatenaBookmarkService.userCheck(userId).map {
             // 特定の記号が入っている場合にTopページを取得しているケースがある.
@@ -54,12 +61,14 @@ class UserModel(private val preferences: SharedPreferences,
             }
         }.subscribeAsync({ isValidId ->
             if (isValidId) {
-                user = UserEntity(userId)
+                userSubject.onNext(UserEntity(userId))
             } else {
-                unauthorisedEventSubject.onNext(Unit)
+                unauthorisedSubject.onNext(Unit)
             }
         }, {
-            errorSubject.onNext(Unit)
+            isRaisedErrorSubject.onNext(Unit)
+        }, {
+            isLoadingSubject.onNext(false)
         })
     }
 

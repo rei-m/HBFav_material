@@ -12,11 +12,10 @@ import android.view.WindowManager
 import com.squareup.spoon.Spoon
 import me.rei_m.hbfavmaterial.App
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.di.*
 import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityComponent
 import me.rei_m.hbfavmaterial.presentation.activity.di.SplashActivityModule
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeContact
-import me.rei_m.hbfavmaterial.presentation.fragment.InitializeFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.InitializeContact
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.InitializeFragment
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import org.hamcrest.Matchers.not
 import org.junit.Before

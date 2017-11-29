@@ -3,16 +3,17 @@ package me.rei_m.hbfavmaterial.presentation.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import me.rei_m.hbfavmaterial.R
-import me.rei_m.hbfavmaterial.extension.hide
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.CreditFragment
-import me.rei_m.hbfavmaterial.presentation.fragment.FromDeveloperFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.CreditFragment
+import me.rei_m.hbfavmaterial.presentation.widget.fragment.FromDeveloperFragment
 
-class FrameActivity : BaseActivity() {
+class FrameActivity : AppCompatActivity() {
 
     companion object {
 
@@ -28,7 +29,7 @@ class FrameActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
-        val toolbar = findViewById(R.id.activity_toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.activity_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -38,7 +39,7 @@ class FrameActivity : BaseActivity() {
             setFragment(tag.newInstance())
             supportActionBar?.title = getString(tag.titleStringId)
         }
-        findViewById(R.id.fab)?.hide()
+        findViewById<FloatingActionButton>(R.id.fab)?.hide()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -53,9 +54,6 @@ class FrameActivity : BaseActivity() {
         }
 
         return true
-    }
-
-    override fun setUpActivityComponent() {
     }
 
     enum class Tag {

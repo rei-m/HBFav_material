@@ -61,7 +61,7 @@ class BindingHelper {
         fun userId(view: NavigationView, userId: String) {
 
             val headerView = view.getHeaderView(0)
-            val imageOwnerIcon = headerView.findViewById(R.id.nav_header_main_image_owner_icon) as ImageView
+            val imageOwnerIcon = headerView.findViewById<ImageView>(R.id.nav_header_main_image_owner_icon)
 
             Picasso.with(view.context)
                     .load(BookmarkUtil.getLargeIconImageUrlFromId(userId))
@@ -69,7 +69,7 @@ class BindingHelper {
                     .transform(RoundedTransformation())
                     .into(imageOwnerIcon)
 
-            val textOwnerId = headerView.findViewById(R.id.nav_header_main_text_owner_name) as TextView
+            val textOwnerId = headerView.findViewById<TextView>(R.id.nav_header_main_text_owner_name)
             textOwnerId.text = userId
         }
 
