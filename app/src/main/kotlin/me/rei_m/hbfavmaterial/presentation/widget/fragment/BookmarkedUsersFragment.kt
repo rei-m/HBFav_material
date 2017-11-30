@@ -32,6 +32,8 @@ class BookmarkedUsersFragment : DaggerFragment() {
 
         private const val ARG_ARTICLE_URL = "ARG_ARTICLE_URL"
 
+        private const val KEY_BOOKMARK_COMMENT_FILTER = "KEY_BOOKMARK_COMMENT_FILTER"
+
         fun newInstance(articleUrl: String) = BookmarkedUsersFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_ARTICLE_URL, articleUrl)
@@ -78,6 +80,10 @@ class BookmarkedUsersFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            val bookmarkCommentFilter = BookmarkCommentFilter.values()[savedInstanceState.getInt(KEY_BOOKMARK_COMMENT_FILTER)]
+            viewModelFactory.bookmarkCommentFilter = bookmarkCommentFilter
+        }
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookmarkedUsersFragmentViewModel::class.java)
         setHasOptionsMenu(true)
     }
@@ -111,6 +117,11 @@ class BookmarkedUsersFragment : DaggerFragment() {
         disposable?.dispose()
         disposable = null
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_BOOKMARK_COMMENT_FILTER, viewModel.bookmarkCommentFilter.get().ordinal)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

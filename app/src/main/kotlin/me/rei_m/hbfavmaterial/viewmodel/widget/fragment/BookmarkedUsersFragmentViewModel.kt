@@ -15,7 +15,8 @@ import me.rei_m.hbfavmaterial.model.BookmarkModel
 import me.rei_m.hbfavmaterial.model.entity.BookmarkUserEntity
 
 class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
-                                       private val articleUrl: String = "") : ViewModel() {
+                                       private val articleUrl: String,
+                                       bookmarkCommentFilter: BookmarkCommentFilter) : ViewModel() {
 
     val bookmarkUserList: ObservableArrayList<BookmarkUserEntity> = ObservableArrayList()
 
@@ -25,7 +26,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
-    val bookmarkCommentFilter: ObservableField<BookmarkCommentFilter> = ObservableField(BookmarkCommentFilter.ALL)
+    val bookmarkCommentFilter: ObservableField<BookmarkCommentFilter> = ObservableField(bookmarkCommentFilter)
 
     val isVisibleError: ObservableBoolean = ObservableBoolean(false)
 
@@ -38,7 +39,7 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
 
     private val bookmarkCommentFilterChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter.get())
+            bookmarkModel.getUserList(articleUrl, this@BookmarkedUsersFragmentViewModel.bookmarkCommentFilter.get())
         }
     }
 
@@ -58,9 +59,9 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
             isVisibleError.set(it)
         })
 
-        bookmarkCommentFilter.addOnPropertyChangedCallback(bookmarkCommentFilterChangedCallback)
+        this.bookmarkCommentFilter.addOnPropertyChangedCallback(bookmarkCommentFilterChangedCallback)
 
-        bookmarkModel.getUserList(articleUrl, bookmarkCommentFilter.get())
+        bookmarkModel.getUserList(articleUrl, this.bookmarkCommentFilter.get())
     }
 
     override fun onCleared() {
@@ -79,11 +80,12 @@ class BookmarkedUsersFragmentViewModel(private val bookmarkModel: BookmarkModel,
     }
 
     class Factory(private val bookmarkModel: BookmarkModel,
-                  private val articleUrl: String) : ViewModelProvider.Factory {
+                  private val articleUrl: String,
+                  var bookmarkCommentFilter: BookmarkCommentFilter = BookmarkCommentFilter.ALL) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(BookmarkedUsersFragmentViewModel::class.java)) {
-                return BookmarkedUsersFragmentViewModel(bookmarkModel, articleUrl) as T
+                return BookmarkedUsersFragmentViewModel(bookmarkModel, articleUrl, bookmarkCommentFilter) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }

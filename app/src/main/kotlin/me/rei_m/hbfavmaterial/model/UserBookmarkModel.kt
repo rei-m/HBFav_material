@@ -52,18 +52,18 @@ class UserBookmarkModel(private val hatenaRssService: HatenaRssService) {
 
     fun getList(userId: String, readAfterFilter: ReadAfterFilter) {
 
+        if (isLoadingSubject.value) {
+            return
+        }
+
         if (userIdSubject.hasValue()) {
-            if (userIdSubject.value == userId) {
-                bookmarkListSubject.onNext(bookmarkListSubject.value)
-                hasNextPageSubject.onNext(bookmarkListSubject.value.isNotEmpty())
+            if (userIdSubject.value == userId && readAfterFilterSubject.value == readAfterFilter) {
+                bookmarkListSubject.retry()
+                hasNextPageSubject.retry()
                 return
             } else {
                 bookmarkListSubject.onNext(listOf())
             }
-        }
-
-        if (isLoadingSubject.value) {
-            return
         }
 
         isLoadingSubject.onNext(true)

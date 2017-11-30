@@ -23,12 +23,13 @@ import javax.inject.Inject
 /**
  * 自分のブックマークを一覧で表示するFragment.
  */
-class UserBookmarkFragment : DaggerFragment(),
-        MainPageFragment {
+class UserBookmarkFragment : DaggerFragment(), MainPageFragment {
 
     companion object {
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
+
+        private const val KEY_READ_AFTER_FILTER = "KEY_READ_AFTER_FILTER"
 
         /**
          * 自分のブックマークを表示する
@@ -89,6 +90,10 @@ class UserBookmarkFragment : DaggerFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            val readAfterFilter = ReadAfterFilter.values()[savedInstanceState.getInt(KEY_READ_AFTER_FILTER)]
+            viewModelFactory.readAfterFilter = readAfterFilter
+        }
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserBookmarkFragmentViewModel::class.java)
         setHasOptionsMenu(true)
     }
@@ -139,6 +144,11 @@ class UserBookmarkFragment : DaggerFragment(),
         super.onPause()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_READ_AFTER_FILTER, viewModel.readAfterFilter.get().ordinal)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_bookmark_user, menu)
     }
@@ -150,12 +160,13 @@ class UserBookmarkFragment : DaggerFragment(),
         val filter = ReadAfterFilter.forMenuId(item.itemId)
 
         viewModel.onOptionItemSelected(filter)
+        listener?.onUpdateFilter(pageTitle)
 
         return true
     }
 
     interface OnFragmentInteractionListener {
-        fun onUpdateFilter(pageIndex: Int)
+        fun onUpdateFilter(pageTitle: String)
     }
 
     @dagger.Module

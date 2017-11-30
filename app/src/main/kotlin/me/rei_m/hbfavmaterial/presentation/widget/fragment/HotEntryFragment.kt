@@ -30,6 +30,8 @@ class HotEntryFragment : DaggerFragment(),
 
         private const val ARG_PAGE_INDEX = "ARG_PAGE_INDEX"
 
+        private const val KEY_ENTRY_TYPE_FILTER = "KEY_ENTRY_TYPE_FILTER"
+
         fun newInstance(pageIndex: Int) = HotEntryFragment().apply {
             arguments = Bundle().apply {
                 putInt(ARG_PAGE_INDEX, pageIndex)
@@ -82,6 +84,10 @@ class HotEntryFragment : DaggerFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            val entryTypeFilter = EntryTypeFilter.values()[savedInstanceState.getInt(KEY_ENTRY_TYPE_FILTER)]
+            viewModelFactory.entryTypeFilter = entryTypeFilter
+        }
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HotEntryFragmentViewModel::class.java)
         setHasOptionsMenu(true)
     }
@@ -117,6 +123,11 @@ class HotEntryFragment : DaggerFragment(),
         super.onPause()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_ENTRY_TYPE_FILTER, viewModel.entryTypeFilter.get().ordinal)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.fragment_entry, menu)
     }
@@ -128,13 +139,13 @@ class HotEntryFragment : DaggerFragment(),
         val filter = EntryTypeFilter.forMenuId(item.itemId)
 
         viewModel.onOptionItemSelected(filter)
-        listener?.onUpdateFilter(pageIndex)
+        listener?.onUpdateFilter(pageTitle)
 
         return true
     }
 
     interface OnFragmentInteractionListener {
-        fun onUpdateFilter(pageIndex: Int)
+        fun onUpdateFilter(pageTitle: String)
     }
 
     @dagger.Module

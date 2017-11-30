@@ -189,7 +189,6 @@ class BookmarkActivity : DaggerAppCompatActivity(),
         Snackbar.make(findViewById(R.id.content), getString(R.string.message_error_network), Snackbar.LENGTH_SHORT).setAction("Action", null).show()
     }
 
-
     @ForActivity
     @dagger.Subcomponent(modules = arrayOf(
             ActivityModule::class,

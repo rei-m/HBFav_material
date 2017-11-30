@@ -9,9 +9,10 @@ import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.model.UserModel
 
 class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
-                                        private val userIdErrorMessage: String) : ViewModel() {
+                                        private val userIdErrorMessage: String,
+                                        userId: String) : ViewModel() {
 
-    val userId: ObservableField<String> = ObservableField("")
+    val userId: ObservableField<String> = ObservableField(userId)
 
     val idErrorMessage: ObservableField<String> = ObservableField("")
 
@@ -25,8 +26,8 @@ class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
 
     init {
         disposable.addAll(userModel.user.subscribe {
-            if (userId.get() == "") {
-                userId.set(it.id)
+            if (this.userId.get() == "") {
+                this.userId.set(it.id)
             } else {
                 idErrorMessage.set("")
                 dismissDialogEventSubject.onNext(Unit)
@@ -47,11 +48,12 @@ class EditUserIdDialogFragmentViewModel(private val userModel: UserModel,
     }
 
     class Factory(private val userModel: UserModel,
-                  private val userIdErrorMessage: String) : ViewModelProvider.Factory {
+                  private val userIdErrorMessage: String,
+                  var userId: String = "") : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(EditUserIdDialogFragmentViewModel::class.java)) {
-                return EditUserIdDialogFragmentViewModel(userModel, userIdErrorMessage) as T
+                return EditUserIdDialogFragmentViewModel(userModel, userIdErrorMessage, userId) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }

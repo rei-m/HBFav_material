@@ -32,6 +32,8 @@ class MainActivity : BaseDrawerActivity(),
 
         private const val ARG_PAGER_INDEX = "ARG_PAGER_INDEX"
 
+        private const val KEY_PAGER_INDEX = "KEY_PAGER_INDEX"
+
         fun createIntent(context: Context,
                          page: BookmarkPagerAdapter.Page): Intent {
             return Intent(context, MainActivity::class.java)
@@ -39,12 +41,18 @@ class MainActivity : BaseDrawerActivity(),
         }
     }
 
+    private val initialPagerIndex by lazy {
+        intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdapter.Page.BOOKMARK_FAVORITE.index)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val currentPagerIndex = intent.getIntExtra(ARG_PAGER_INDEX, BookmarkPagerAdapter.Page.BOOKMARK_FAVORITE.index)
-
-        val currentPage = BookmarkPagerAdapter.Page.values()[currentPagerIndex]
+        val currentPage = if (savedInstanceState == null) {
+            BookmarkPagerAdapter.Page.values()[initialPagerIndex]
+        } else {
+            BookmarkPagerAdapter.Page.values()[savedInstanceState.getInt(KEY_PAGER_INDEX)]
+        }
 
         supportActionBar?.title = currentPage.title(applicationContext, "")
 
@@ -78,6 +86,15 @@ class MainActivity : BaseDrawerActivity(),
         viewModel.onNavigationPageSelected(currentPage)
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        binding?.appBar?.pager?.currentItem?.let {
+            outState?.putInt(KEY_PAGER_INDEX, it)
+        } ?: let {
+            outState?.putInt(KEY_PAGER_INDEX, initialPagerIndex)
+        }
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_setting -> {
@@ -94,11 +111,8 @@ class MainActivity : BaseDrawerActivity(),
         return super.onNavigationItemSelected(item)
     }
 
-    override fun onUpdateFilter(pageIndex: Int) {
-        if (pageIndex == binding?.appBar?.pager?.currentItem) {
-            val fragment = supportFragmentManager.fragments[pageIndex] as MainPageFragment
-            supportActionBar?.title = fragment.pageTitle
-        }
+    override fun onUpdateFilter(pageTitle: String) {
+        supportActionBar?.title = pageTitle
     }
 
     override fun provideViewModel(): BaseDrawerActivityViewModel =

@@ -17,6 +17,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         private const val BOOKMARK_COUNT_PER_PAGE = 25
     }
 
+    private val userIdSubject = BehaviorSubject.create<String>()
     private val isLoadingSubject = BehaviorSubject.create<Boolean>()
     private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
     private val bookmarkListSubject = BehaviorSubject.create<List<BookmarkEntity>>()
@@ -26,6 +27,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
     private val isRaisedGetNextPageErrorSubject = PublishSubject.create<Unit>()
     private val isRaisedRefreshErrorSubject = PublishSubject.create<Unit>()
 
+    val userId: Observable<String> = userIdSubject
     val isLoading: Observable<Boolean> = isLoadingSubject
     val isRefreshing: Observable<Boolean> = isRefreshingSubject
     val bookmarkList: Observable<List<BookmarkEntity>> = bookmarkListSubject
@@ -48,9 +50,19 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
             return
         }
 
-        bookmarkListSubject.onNext(listOf())
+        if (userIdSubject.hasValue()) {
+            if (userIdSubject.value == userId) {
+                bookmarkListSubject.retry()
+                hasNextPageSubject.retry()
+                return
+            } else {
+                bookmarkListSubject.onNext(listOf())
+            }
+        }
 
         isLoadingSubject.onNext(true)
+
+        userIdSubject.onNext(userId)
 
         hatenaRssService.favorite(userId, 0).map {
             parseResponse(it)
