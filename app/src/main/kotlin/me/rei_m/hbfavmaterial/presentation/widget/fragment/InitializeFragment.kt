@@ -24,6 +24,9 @@ import javax.inject.Inject
 class InitializeFragment : DaggerFragment() {
 
     companion object {
+
+        private const val KEY_USER_ID = "KEY_USER_ID"
+
         fun newInstance() = InitializeFragment()
     }
 
@@ -44,6 +47,9 @@ class InitializeFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            viewModelFactory.userId = savedInstanceState.getString(KEY_USER_ID)
+        }
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(InitializeFragmentViewModel::class.java)
     }
 
@@ -76,6 +82,11 @@ class InitializeFragment : DaggerFragment() {
         disposable?.dispose()
         disposable = null
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_USER_ID, viewModel.userId.get())
     }
 
     @dagger.Module

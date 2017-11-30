@@ -34,7 +34,6 @@ class NewEntryModel(private val hatenaRssService: HatenaRssService) {
     init {
         isLoadingSubject.onNext(false)
         isRefreshingSubject.onNext(false)
-        entryTypeFilterSubject.onNext(EntryTypeFilter.ALL)
     }
 
     fun getList(entryTypeFilter: EntryTypeFilter) {
@@ -43,14 +42,21 @@ class NewEntryModel(private val hatenaRssService: HatenaRssService) {
             return
         }
 
+        if (entryListSubject.hasValue() && entryTypeFilterSubject.hasValue()) {
+            if (entryTypeFilterSubject.value == entryTypeFilter) {
+                entryListSubject.retry()
+                entryTypeFilterSubject.retry()
+                return
+            } else {
+                entryListSubject.onNext(listOf())
+            }
+        }
+
         isLoadingSubject.onNext(true)
 
         fetch(entryTypeFilter).subscribeAsync({
-            entryListSubject.onNext(listOf())
             entryListSubject.onNext(it)
-            if (entryTypeFilterSubject.value != entryTypeFilter) {
-                entryTypeFilterSubject.onNext(entryTypeFilter)
-            }
+            entryTypeFilterSubject.onNext(entryTypeFilter)
             isRaisedGetErrorSubject.onNext(false)
         }, {
             isRaisedGetErrorSubject.onNext(true)

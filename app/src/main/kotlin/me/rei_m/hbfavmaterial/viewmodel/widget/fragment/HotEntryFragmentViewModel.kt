@@ -14,7 +14,8 @@ import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.model.HotEntryModel
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 
-class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel) : ViewModel() {
+class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel,
+                                entryTypeFilter: EntryTypeFilter) : ViewModel() {
 
     val entryList: ObservableArrayList<EntryEntity> = ObservableArrayList()
 
@@ -24,7 +25,7 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel) : View
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
-    val entryTypeFilter: ObservableField<EntryTypeFilter> = ObservableField(EntryTypeFilter.ALL)
+    val entryTypeFilter: ObservableField<EntryTypeFilter> = ObservableField(entryTypeFilter)
 
     val isVisibleError: ObservableBoolean = ObservableBoolean(false)
 
@@ -37,7 +38,7 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel) : View
 
     private val entryTypeFilterChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            hotEntryModel.getList(entryTypeFilter.get())
+            hotEntryModel.getList(this@HotEntryFragmentViewModel.entryTypeFilter.get())
         }
     }
 
@@ -57,9 +58,9 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel) : View
             isVisibleError.set(it)
         })
 
-        entryTypeFilter.addOnPropertyChangedCallback(entryTypeFilterChangedCallback)
+        this.entryTypeFilter.addOnPropertyChangedCallback(entryTypeFilterChangedCallback)
 
-        hotEntryModel.getList(entryTypeFilter.get())
+        hotEntryModel.getList(this.entryTypeFilter.get())
     }
 
     override fun onCleared() {
@@ -81,11 +82,12 @@ class HotEntryFragmentViewModel(private val hotEntryModel: HotEntryModel) : View
         this.entryTypeFilter.set(entryTypeFilter)
     }
 
-    class Factory(private val hotEntryModel: HotEntryModel) : ViewModelProvider.Factory {
+    class Factory(private val hotEntryModel: HotEntryModel,
+                  var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(HotEntryFragmentViewModel::class.java)) {
-                return HotEntryFragmentViewModel(hotEntryModel) as T
+                return HotEntryFragmentViewModel(hotEntryModel, entryTypeFilter) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }

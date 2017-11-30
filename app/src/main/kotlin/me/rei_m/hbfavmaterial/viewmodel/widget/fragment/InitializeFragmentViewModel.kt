@@ -9,9 +9,10 @@ import io.reactivex.subjects.BehaviorSubject
 import me.rei_m.hbfavmaterial.model.UserModel
 
 class InitializeFragmentViewModel(private val userModel: UserModel,
-                                  private val userIdErrorMessage: String) : ViewModel() {
+                                  private val userIdErrorMessage: String,
+                                  userId: String) : ViewModel() {
 
-    val userId: ObservableField<String> = ObservableField("")
+    val userId: ObservableField<String> = ObservableField(userId)
 
     val idErrorMessage: ObservableField<String> = ObservableField("")
 
@@ -46,11 +47,12 @@ class InitializeFragmentViewModel(private val userModel: UserModel,
     }
 
     class Factory(private val userModel: UserModel,
-                  private val userIdErrorMessage: String) : ViewModelProvider.Factory {
+                  private val userIdErrorMessage: String,
+                  var userId: String = "") : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(InitializeFragmentViewModel::class.java)) {
-                return InitializeFragmentViewModel(userModel, userIdErrorMessage) as T
+                return InitializeFragmentViewModel(userModel, userIdErrorMessage, userId) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }

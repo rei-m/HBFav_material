@@ -14,7 +14,8 @@ import me.rei_m.hbfavmaterial.constant.EntryTypeFilter
 import me.rei_m.hbfavmaterial.model.NewEntryModel
 import me.rei_m.hbfavmaterial.model.entity.EntryEntity
 
-class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel) : ViewModel() {
+class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel,
+                                entryTypeFilter: EntryTypeFilter) : ViewModel() {
 
     val entryList: ObservableArrayList<EntryEntity> = ObservableArrayList()
 
@@ -24,7 +25,7 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel) : View
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
-    val entryTypeFilter: ObservableField<EntryTypeFilter> = ObservableField(EntryTypeFilter.ALL)
+    val entryTypeFilter: ObservableField<EntryTypeFilter> = ObservableField(entryTypeFilter)
 
     val isVisibleError: ObservableBoolean = ObservableBoolean(false)
 
@@ -37,7 +38,7 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel) : View
 
     private val entryTypeFilterChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            newEntryModel.getList(entryTypeFilter.get())
+            newEntryModel.getList(this@NewEntryFragmentViewModel.entryTypeFilter.get())
         }
     }
 
@@ -57,9 +58,9 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel) : View
             isVisibleError.set(it)
         })
 
-        entryTypeFilter.addOnPropertyChangedCallback(entryTypeFilterChangedCallback)
+        this.entryTypeFilter.addOnPropertyChangedCallback(entryTypeFilterChangedCallback)
 
-        newEntryModel.getList(entryTypeFilter.get())
+        newEntryModel.getList(this.entryTypeFilter.get())
     }
 
     override fun onCleared() {
@@ -81,11 +82,12 @@ class NewEntryFragmentViewModel(private val newEntryModel: NewEntryModel) : View
         this.entryTypeFilter.set(entryTypeFilter)
     }
 
-    class Factory(private val newEntryModel: NewEntryModel) : ViewModelProvider.Factory {
+    class Factory(private val newEntryModel: NewEntryModel,
+                  var entryTypeFilter: EntryTypeFilter = EntryTypeFilter.ALL) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewEntryFragmentViewModel::class.java)) {
-                return NewEntryFragmentViewModel(newEntryModel) as T
+                return NewEntryFragmentViewModel(newEntryModel, entryTypeFilter) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }

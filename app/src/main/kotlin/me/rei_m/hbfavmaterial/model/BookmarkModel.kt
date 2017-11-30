@@ -16,6 +16,7 @@ class BookmarkModel(private val hatenaApiService: HatenaApiService) {
     private val isLoadingSubject = BehaviorSubject.create<Boolean>()
     private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
     private val bookmarkUserListSubject = BehaviorSubject.create<List<BookmarkUserEntity>>()
+    private val bookmarkCommentFilterSubject = BehaviorSubject.create<BookmarkCommentFilter>()
     private val isRaisedGetErrorSubject = BehaviorSubject.create<Boolean>()
 
     private val isRaisedRefreshErrorSubject = PublishSubject.create<Unit>()
@@ -42,11 +43,21 @@ class BookmarkModel(private val hatenaApiService: HatenaApiService) {
             return
         }
 
+        if (bookmarkUserListSubject.hasValue() && bookmarkCommentFilterSubject.hasValue()) {
+            if (bookmarkCommentFilterSubject.value == bookmarkCommentFilter) {
+                bookmarkUserListSubject.retry()
+                bookmarkCommentFilterSubject.retry()
+                return
+            } else {
+                bookmarkUserListSubject.onNext(listOf())
+            }
+        }
+
         isLoadingSubject.onNext(true)
 
         fetch(articleUrl, bookmarkCommentFilter).subscribeAsync({
-            bookmarkUserListSubject.onNext(listOf())
             bookmarkUserListSubject.onNext(it)
+            bookmarkCommentFilterSubject.onNext(bookmarkCommentFilter)
             isRaisedGetErrorSubject.onNext(false)
         }, {
             isRaisedGetErrorSubject.onNext(true)

@@ -28,6 +28,8 @@ class EditUserIdDialogFragment : DialogFragment() {
 
         val TAG: String = EditUserIdDialogFragment::class.java.simpleName
 
+        private const val KEY_USER_ID = "KEY_USER_ID"
+
         fun newInstance() = EditUserIdDialogFragment()
     }
 
@@ -56,6 +58,9 @@ class EditUserIdDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            viewModelFactory.userId = savedInstanceState.getString(KEY_USER_ID)
+        }
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditUserIdDialogFragmentViewModel::class.java)
     }
 
@@ -90,6 +95,11 @@ class EditUserIdDialogFragment : DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adjustScreenWidth()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_USER_ID, viewModel.userId.get())
     }
 
     @dagger.Module

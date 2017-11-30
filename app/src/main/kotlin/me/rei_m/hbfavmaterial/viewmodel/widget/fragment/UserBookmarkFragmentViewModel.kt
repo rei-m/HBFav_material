@@ -18,7 +18,8 @@ import me.rei_m.hbfavmaterial.model.UserModel
 import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
 
 class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkModel,
-                                    userModel: UserModel) : ViewModel() {
+                                    userModel: UserModel,
+                                    readAfterFilter: ReadAfterFilter) : ViewModel() {
 
     val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
 
@@ -30,7 +31,7 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
 
     val isRefreshing: ObservableBoolean = ObservableBoolean(false)
 
-    val readAfterFilter: ObservableField<ReadAfterFilter> = ObservableField(ReadAfterFilter.ALL)
+    val readAfterFilter: ObservableField<ReadAfterFilter> = ObservableField(readAfterFilter)
 
     val isVisibleError: ObservableBoolean = ObservableBoolean(false)
 
@@ -50,7 +51,7 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
 
     private val userIdChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            userBookmarkModel.getList(userId.get(), readAfterFilter.get())
+            userBookmarkModel.getList(userId.get(), this@UserBookmarkFragmentViewModel.readAfterFilter.get())
         }
     }
 
@@ -62,14 +63,14 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
 
     private val readAfterFilterChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            userBookmarkModel.getList(userId.get(), readAfterFilter.get())
+            userBookmarkModel.getList(userId.get(), this@UserBookmarkFragmentViewModel.readAfterFilter.get())
         }
     }
 
     init {
         userId.addOnPropertyChangedCallback(userIdChangedCallback)
         hasNextPage.addOnPropertyChangedCallback(hasNextPageChangedCallback)
-        readAfterFilter.addOnPropertyChangedCallback(readAfterFilterChangedCallback)
+        this.readAfterFilter.addOnPropertyChangedCallback(readAfterFilterChangedCallback)
 
         disposable.addAll(userBookmarkModel.bookmarkList.subscribe {
             if (it.isEmpty()) {
@@ -120,11 +121,12 @@ class UserBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkM
     }
 
     class Factory(private val userBookmarkModel: UserBookmarkModel,
-                  private val userModel: UserModel) : ViewModelProvider.Factory {
+                  private val userModel: UserModel,
+                  var readAfterFilter: ReadAfterFilter = ReadAfterFilter.ALL) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(UserBookmarkFragmentViewModel::class.java)) {
-                return UserBookmarkFragmentViewModel(userBookmarkModel, userModel) as T
+                return UserBookmarkFragmentViewModel(userBookmarkModel, userModel, readAfterFilter) as T
             }
             throw IllegalArgumentException("Unknown class name")
         }
