@@ -1,9 +1,22 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.presentation.helper
 
 import android.app.Activity
 import android.content.Intent
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.model.entity.EntryEntity
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
+import me.rei_m.hbfavmaterial.model.entity.Entry
 import me.rei_m.hbfavmaterial.presentation.activity.*
 import me.rei_m.hbfavmaterial.presentation.widget.adapter.BookmarkPagerAdapter
 
@@ -19,18 +32,18 @@ open class Navigator(private val activity: Activity) {
         activity.startActivity(intentToLaunch)
     }
 
-    open fun navigateToBookmark(bookmarkEntity: BookmarkEntity) {
-        val intentToLaunch = BookmarkActivity.createIntent(activity, bookmarkEntity)
+    open fun navigateToBookmark(bookmark: Bookmark) {
+        val intentToLaunch = BookmarkActivity.createIntent(activity, bookmark)
         activity.startActivity(intentToLaunch)
     }
 
-    open fun navigateToBookmark(entryEntity: EntryEntity) {
-        val intentToLaunch = BookmarkActivity.createIntent(activity, entryEntity)
+    open fun navigateToBookmark(entry: Entry) {
+        val intentToLaunch = BookmarkActivity.createIntent(activity, entry)
         activity.startActivity(intentToLaunch)
     }
 
-    fun navigateToBookmarkedUsers(bookmarkEntity: BookmarkEntity) {
-        val intentToLaunch = BookmarkedUsersActivity.createIntent(activity, bookmarkEntity)
+    fun navigateToBookmarkedUsers(bookmark: Bookmark) {
+        val intentToLaunch = BookmarkedUsersActivity.createIntent(activity, bookmark)
         activity.startActivity(intentToLaunch)
     }
 

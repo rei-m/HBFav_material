@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.viewmodel.widget.fragment
 
 import android.arch.lifecycle.ViewModel
@@ -13,12 +26,12 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.constant.ReadAfterFilter
 import me.rei_m.hbfavmaterial.model.UserBookmarkModel
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
 
 class OthersBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmarkModel,
                                       private val bookmarkUserId: String) : ViewModel() {
 
-    val bookmarkList: ObservableArrayList<BookmarkEntity> = ObservableArrayList()
+    val bookmarkList: ObservableArrayList<Bookmark> = ObservableArrayList()
 
     val hasNextPage: ObservableBoolean = ObservableBoolean(false)
 
@@ -33,8 +46,8 @@ class OthersBookmarkFragmentViewModel(private val userBookmarkModel: UserBookmar
     private var hasNextPageUpdatedEventSubject = BehaviorSubject.create<Boolean>()
     val hasNextPageUpdatedEvent: io.reactivex.Observable<Boolean> = hasNextPageUpdatedEventSubject
 
-    private val onItemClickEventSubject = PublishSubject.create<BookmarkEntity>()
-    val onItemClickEvent: io.reactivex.Observable<BookmarkEntity> = onItemClickEventSubject
+    private val onItemClickEventSubject = PublishSubject.create<Bookmark>()
+    val onItemClickEvent: io.reactivex.Observable<Bookmark> = onItemClickEventSubject
 
     val onRaiseGetNextPageErrorEvent = userBookmarkModel.isRaisedGetNextPageError
 

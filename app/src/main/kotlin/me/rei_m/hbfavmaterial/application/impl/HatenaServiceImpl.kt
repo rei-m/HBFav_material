@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.application.impl
 
 import android.content.SharedPreferences
@@ -11,8 +24,8 @@ import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthApiService
 import me.rei_m.hbfavmaterial.infra.network.HatenaOAuthManager
 import me.rei_m.hbfavmaterial.infra.network.SignedRetrofitFactory
-import me.rei_m.hbfavmaterial.model.entity.EditableBookmarkEntity
-import me.rei_m.hbfavmaterial.model.entity.OAuthTokenEntity
+import me.rei_m.hbfavmaterial.model.entity.EditableBookmark
+import me.rei_m.hbfavmaterial.model.entity.OAuthToken
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 
@@ -27,7 +40,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         private const val MAX_TAGS_COUNT = 10
     }
 
-    private val editableBookmarkSubject = PublishSubject.create<EditableBookmarkEntity>()
+    private val editableBookmarkSubject = PublishSubject.create<EditableBookmark>()
 
     private val registeredEventSubject = PublishSubject.create<Unit>()
 
@@ -44,7 +57,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
     private val completeDeleteAccessTokenEventSubject = PublishSubject.create<Unit>()
     private val confirmAuthorisedEventSubject = PublishSubject.create<Boolean>()
 
-    override val editableBookmark: Observable<EditableBookmarkEntity> = editableBookmarkSubject
+    override val editableBookmark: Observable<EditableBookmark> = editableBookmarkSubject
 
     override val registeredEvent: Observable<Unit> = registeredEventSubject
 
@@ -81,7 +94,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
     override fun registerAccessToken(requestToken: String) {
         Single.create<Boolean> {
             if (hatenaOAuthManager.retrieveAccessToken(requestToken)) {
-                val token = OAuthTokenEntity(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret)
+                val token = OAuthToken(hatenaOAuthManager.consumer.token, hatenaOAuthManager.consumer.tokenSecret)
                 preferences.edit()
                         .putString(KEY_PREF_OAUTH, Gson().toJson(token))
                         .apply()
@@ -126,7 +139,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         val retrofit = signedRetrofitFactory.create(hatenaOAuthManager.consumer)
 
         retrofit.create(HatenaOAuthApiService::class.java).getBookmark(urlString).map { (_, private, _, _, tags, _, comment) ->
-            return@map EditableBookmarkEntity(url = urlString,
+            return@map EditableBookmark(url = urlString,
                     isFirstEdit = false,
                     comment = comment,
                     isPrivate = private,
@@ -135,7 +148,7 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
             return@onErrorResumeNext if (it is HttpException) {
                 when (it.code()) {
                     HttpURLConnection.HTTP_NOT_FOUND -> {
-                        Single.just(EditableBookmarkEntity(url = urlString, isFirstEdit = true))
+                        Single.just(EditableBookmark(url = urlString, isFirstEdit = true))
                     }
                     else -> {
                         Single.error(it)
@@ -227,12 +240,12 @@ class HatenaServiceImpl(private val preferences: SharedPreferences,
         })
     }
 
-    private fun getTokenFromPreferences(): OAuthTokenEntity {
+    private fun getTokenFromPreferences(): OAuthToken {
         val oauthJsonString = preferences.getString(KEY_PREF_OAUTH, null)
         return if (oauthJsonString != null) {
-            Gson().fromJson(oauthJsonString, OAuthTokenEntity::class.java)
+            Gson().fromJson(oauthJsonString, OAuthToken::class.java)
         } else {
-            OAuthTokenEntity()
+            OAuthToken()
         }
     }
 }

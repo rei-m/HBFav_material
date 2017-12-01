@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
@@ -21,8 +34,8 @@ import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkBinding
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.replaceFragment
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
-import me.rei_m.hbfavmaterial.model.entity.EntryEntity
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
+import me.rei_m.hbfavmaterial.model.entity.Entry
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
 import me.rei_m.hbfavmaterial.presentation.helper.Navigator
 import me.rei_m.hbfavmaterial.presentation.widget.dialog.EditBookmarkDialogFragment
@@ -46,14 +59,14 @@ class BookmarkActivity : DaggerAppCompatActivity(),
         private const val KEY_ENTRY_TITLE = "KEY_ENTRY_TITLE"
         private const val KEY_ENTRY_LINK = "KEY_ENTRY_LINK"
 
-        fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
+        fun createIntent(context: Context, bookmark: Bookmark): Intent {
             return Intent(context, BookmarkActivity::class.java)
-                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
+                    .putExtra(ARG_BOOKMARK, bookmark)
         }
 
-        fun createIntent(context: Context, entryEntity: EntryEntity): Intent {
+        fun createIntent(context: Context, entry: Entry): Intent {
             return Intent(context, BookmarkActivity::class.java).apply {
-                putExtra(ARG_ENTRY, entryEntity)
+                putExtra(ARG_ENTRY, entry)
             }
         }
     }
@@ -82,14 +95,14 @@ class BookmarkActivity : DaggerAppCompatActivity(),
 
         if (savedInstanceState == null) {
             if (intent.hasExtra(ARG_BOOKMARK)) {
-                val bookmarkEntity = intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
-                viewModel.entryTitle.set(bookmarkEntity.article.title)
-                viewModel.entryLink.set(bookmarkEntity.article.url)
-                setFragment(BookmarkFragment.newInstance(bookmarkEntity))
+                val bookmark = intent.getSerializableExtra(ARG_BOOKMARK) as Bookmark
+                viewModel.entryTitle.set(bookmark.article.title)
+                viewModel.entryLink.set(bookmark.article.url)
+                setFragment(BookmarkFragment.newInstance(bookmark))
             } else {
-                val entryEntity = intent.getSerializableExtra(ARG_ENTRY) as EntryEntity
-                viewModel.entryTitle.set(entryEntity.article.title)
-                viewModel.entryLink.set(entryEntity.article.url)
+                val entry = intent.getSerializableExtra(ARG_ENTRY) as Entry
+                viewModel.entryTitle.set(entry.article.title)
+                viewModel.entryLink.set(entry.article.url)
                 setFragment(EntryWebViewFragment.newInstance(viewModel.entryLink.get()), EntryWebViewFragment.TAG)
             }
             supportActionBar?.title = viewModel.entryTitle.get()

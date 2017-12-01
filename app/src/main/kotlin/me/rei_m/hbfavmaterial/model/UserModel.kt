@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.model
 
 import android.content.SharedPreferences
@@ -8,7 +21,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaBookmarkService
-import me.rei_m.hbfavmaterial.model.entity.UserEntity
+import me.rei_m.hbfavmaterial.model.entity.User
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 
@@ -20,12 +33,12 @@ class UserModel(private val preferences: SharedPreferences,
     }
 
     private val isLoadingSubject = BehaviorSubject.create<Boolean>()
-    private val userSubject = BehaviorSubject.create<UserEntity>()
+    private val userSubject = BehaviorSubject.create<User>()
     private val unauthorisedSubject = BehaviorSubject.create<Unit>()
 
     private val isRaisedErrorSubject = PublishSubject.create<Unit>()
 
-    val user: Observable<UserEntity> = userSubject
+    val user: Observable<User> = userSubject
     val isLoading: Observable<Boolean> = isLoadingSubject
     val unauthorised: Observable<Unit> = unauthorisedSubject
 
@@ -33,9 +46,6 @@ class UserModel(private val preferences: SharedPreferences,
 
     init {
         userSubject.onNext(getUserFromPreferences())
-        userSubject.doAfterNext {
-            storeUserToPreferences(it)
-        }
     }
 
     fun setUpUserId(userId: String) {
@@ -61,7 +71,9 @@ class UserModel(private val preferences: SharedPreferences,
             }
         }.subscribeAsync({ isValidId ->
             if (isValidId) {
-                userSubject.onNext(UserEntity(userId))
+                val user = User(userId)
+                userSubject.onNext(user)
+                storeUserToPreferences(user)
             } else {
                 unauthorisedSubject.onNext(Unit)
             }
@@ -72,16 +84,16 @@ class UserModel(private val preferences: SharedPreferences,
         })
     }
 
-    private fun getUserFromPreferences(): UserEntity {
+    private fun getUserFromPreferences(): User {
         val userJsonString = preferences.getString(KEY_PREF_USER, null)
         return if (userJsonString != null) {
-            Gson().fromJson(userJsonString, UserEntity::class.java)
+            Gson().fromJson(userJsonString, User::class.java)
         } else {
-            UserEntity(id = "")
+            User(id = "")
         }
     }
 
-    private fun storeUserToPreferences(user: UserEntity) {
+    private fun storeUserToPreferences(user: User) {
         preferences.edit()
                 .putString(KEY_PREF_USER, Gson().toJson(user))
                 .apply()

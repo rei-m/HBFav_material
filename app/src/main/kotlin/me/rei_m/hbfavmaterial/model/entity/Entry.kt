@@ -11,15 +11,15 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-package me.rei_m.hbfavmaterial.infra.network.response
+package me.rei_m.hbfavmaterial.model.entity
 
-data class BookmarkEntryResponse(val count: Int,
-                                 val bookmarks: List<Entity>) {
+import java.io.Serializable
+import java.util.*
 
-    companion object {
-        data class Entity(val timestamp: String,
-                          val comment: String,
-                          val user: String,
-                          val tags: List<String>)
-    }
-}
+/**
+ * エントリ情報のEntity.
+ */
+data class Entry(val article: Article,
+                 val description: String,
+                 val date: Date,
+                 val subject: String) : Serializable
