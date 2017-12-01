@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.model
 
 import io.reactivex.Observable
@@ -6,8 +19,8 @@ import io.reactivex.subjects.PublishSubject
 import me.rei_m.hbfavmaterial.extension.subscribeAsync
 import me.rei_m.hbfavmaterial.infra.network.HatenaRssService
 import me.rei_m.hbfavmaterial.infra.network.response.BookmarkRssXml
-import me.rei_m.hbfavmaterial.model.entity.ArticleEntity
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.Article
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
 import me.rei_m.hbfavmaterial.model.util.RssXmlUtil
 import org.jsoup.Jsoup
 
@@ -20,7 +33,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
     private val userIdSubject = BehaviorSubject.create<String>()
     private val isLoadingSubject = BehaviorSubject.create<Boolean>()
     private val isRefreshingSubject = BehaviorSubject.create<Boolean>()
-    private val bookmarkListSubject = BehaviorSubject.create<List<BookmarkEntity>>()
+    private val bookmarkListSubject = BehaviorSubject.create<List<Bookmark>>()
     private val hasNextPageSubject = BehaviorSubject.create<Boolean>()
     private val isRaisedErrorSubject = BehaviorSubject.create<Boolean>()
 
@@ -30,7 +43,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
     val userId: Observable<String> = userIdSubject
     val isLoading: Observable<Boolean> = isLoadingSubject
     val isRefreshing: Observable<Boolean> = isRefreshingSubject
-    val bookmarkList: Observable<List<BookmarkEntity>> = bookmarkListSubject
+    val bookmarkList: Observable<List<Bookmark>> = bookmarkListSubject
     val hasNextPage: Observable<Boolean> = hasNextPageSubject
     val isRaisedError: Observable<Boolean> = isRaisedErrorSubject
 
@@ -79,7 +92,7 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
 
     fun getNextPage(userId: String) {
 
-        if (isLoadingNextPage || !hasNextPageSubject.value) {
+        if (!bookmarkListSubject.hasValue() || isLoadingNextPage || !hasNextPageSubject.value) {
             return
         }
 
@@ -132,18 +145,18 @@ class FavoriteBookmarkModel(private val hatenaRssService: HatenaRssService) {
         })
     }
 
-    private fun parseResponse(response: BookmarkRssXml): List<BookmarkEntity> {
+    private fun parseResponse(response: BookmarkRssXml): List<Bookmark> {
         return response.list.map {
             val parsedContent = Jsoup.parse(it.content)
-            val articleEntity = ArticleEntity(
+            val article = Article(
                     title = it.title,
                     url = it.link,
                     bookmarkCount = it.bookmarkCount,
                     iconUrl = RssXmlUtil.extractArticleIcon(parsedContent),
                     body = RssXmlUtil.extractArticleBodyForBookmark(parsedContent),
                     bodyImageUrl = RssXmlUtil.extractArticleImageUrl(parsedContent))
-            BookmarkEntity(
-                    article = articleEntity,
+            Bookmark(
+                    article = article,
                     description = it.description,
                     creator = it.creator,
                     date = RssXmlUtil.parseStringToDate(it.dateString),

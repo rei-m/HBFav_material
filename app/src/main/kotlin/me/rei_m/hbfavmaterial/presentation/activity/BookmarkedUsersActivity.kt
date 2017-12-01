@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.presentation.activity
 
 import android.app.Activity
@@ -16,7 +29,7 @@ import me.rei_m.hbfavmaterial.constant.BookmarkCommentFilter
 import me.rei_m.hbfavmaterial.databinding.ActivityBookmarkedUsersBinding
 import me.rei_m.hbfavmaterial.di.ForActivity
 import me.rei_m.hbfavmaterial.extension.setFragment
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
 import me.rei_m.hbfavmaterial.presentation.activity.di.ActivityModule
 import me.rei_m.hbfavmaterial.presentation.widget.fragment.BookmarkedUsersFragment
 
@@ -27,14 +40,14 @@ class BookmarkedUsersActivity : DaggerAppCompatActivity(),
 
         private const val ARG_BOOKMARK = "ARG_BOOKMARK"
 
-        fun createIntent(context: Context, bookmarkEntity: BookmarkEntity): Intent {
+        fun createIntent(context: Context, bookmark: Bookmark): Intent {
             return Intent(context, BookmarkedUsersActivity::class.java)
-                    .putExtra(ARG_BOOKMARK, bookmarkEntity)
+                    .putExtra(ARG_BOOKMARK, bookmark)
         }
     }
 
-    private val bookmark: BookmarkEntity by lazy {
-        intent.getSerializableExtra(ARG_BOOKMARK) as BookmarkEntity
+    private val bookmark: Bookmark by lazy {
+        intent.getSerializableExtra(ARG_BOOKMARK) as Bookmark
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

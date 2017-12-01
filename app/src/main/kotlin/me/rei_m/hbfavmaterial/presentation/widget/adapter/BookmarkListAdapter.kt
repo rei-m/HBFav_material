@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2017. Rei Matsushita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 package me.rei_m.hbfavmaterial.presentation.widget.adapter
 
 import android.content.Context
@@ -9,7 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.rei_m.hbfavmaterial.databinding.ListItemBookmarkBinding
-import me.rei_m.hbfavmaterial.model.entity.BookmarkEntity
+import me.rei_m.hbfavmaterial.model.entity.Bookmark
 import me.rei_m.hbfavmaterial.viewmodel.widget.adapter.BookmarkListItemViewModel
 
 /**
@@ -17,28 +30,28 @@ import me.rei_m.hbfavmaterial.viewmodel.widget.adapter.BookmarkListItemViewModel
  */
 class BookmarkListAdapter(context: Context,
                           private val injector: Injector,
-                          private val bookmarkList: ObservableArrayList<BookmarkEntity>) : ArrayAdapter<BookmarkEntity>(context, 0, bookmarkList) {
+                          private val bookmarkList: ObservableArrayList<Bookmark>) : ArrayAdapter<Bookmark>(context, 0, bookmarkList) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private val bookmarkListChangedCallback = object : ObservableList.OnListChangedCallback<ObservableArrayList<BookmarkEntity>>() {
-        override fun onItemRangeInserted(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+    private val bookmarkListChangedCallback = object : ObservableList.OnListChangedCallback<ObservableArrayList<Bookmark>>() {
+        override fun onItemRangeInserted(p0: ObservableArrayList<Bookmark>?, p1: Int, p2: Int) {
             notifyDataSetChanged()
         }
 
-        override fun onItemRangeRemoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+        override fun onItemRangeRemoved(p0: ObservableArrayList<Bookmark>?, p1: Int, p2: Int) {
             notifyDataSetChanged()
         }
 
-        override fun onItemRangeMoved(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int, p3: Int) {
+        override fun onItemRangeMoved(p0: ObservableArrayList<Bookmark>?, p1: Int, p2: Int, p3: Int) {
             notifyDataSetChanged()
         }
 
-        override fun onChanged(p0: ObservableArrayList<BookmarkEntity>?) {
+        override fun onChanged(p0: ObservableArrayList<Bookmark>?) {
             notifyDataSetChanged()
         }
 
-        override fun onItemRangeChanged(p0: ObservableArrayList<BookmarkEntity>?, p1: Int, p2: Int) {
+        override fun onItemRangeChanged(p0: ObservableArrayList<Bookmark>?, p1: Int, p2: Int) {
             notifyDataSetChanged()
         }
     }

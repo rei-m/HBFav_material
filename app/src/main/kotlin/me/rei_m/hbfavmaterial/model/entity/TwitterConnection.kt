@@ -11,15 +11,15 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-package me.rei_m.hbfavmaterial.infra.network.response
+package me.rei_m.hbfavmaterial.model.entity
 
-data class BookmarkEntryResponse(val count: Int,
-                                 val bookmarks: List<Entity>) {
+import java.io.Serializable
 
-    companion object {
-        data class Entity(val timestamp: String,
-                          val comment: String,
-                          val user: String,
-                          val tags: List<String>)
-    }
+/**
+ * TwitterSessionのEntity.
+ */
+data class TwitterConnection(var userId: Long = 0,
+                             var userName: String = "",
+                             var oAuthToken: OAuthToken = OAuthToken()) : Serializable {
+    var isShare: Boolean = false
 }
